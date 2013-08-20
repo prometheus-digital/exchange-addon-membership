@@ -7,11 +7,19 @@
 
 /**
 */
+include( 'api/load.php' );
+
+/**
+*/
 include( 'lib/addon-settings.php' );
 
 /**
 */
 include( 'lib/addon-functions.php' );
+
+/**
+*/
+include( 'lib/required-hooks.php' );
 
 /**
  * New Product Features added by the Exchange Membership Add-on.

@@ -83,7 +83,7 @@ class IT_Exchange_Membership_Add_On {
         $this->_current_page   = empty( $_GET['page'] ) ? false : $_GET['page'];
         $this->_current_add_on = empty( $_GET['add-on-settings'] ) ? false : $_GET['add-on-settings'];
 
-        if ( ! empty( $_POST ) && $this->_is_admin && 'it-exchange-addons' == $this->_current_page && 'membership' == $this->_current_add_on ) {
+        if ( ! empty( $_POST ) && $this->_is_admin && 'it-exchange-addons' == $this->_current_page && 'membership-product-type' == $this->_current_add_on ) {
             add_action( 'it_exchange_save_add_on_settings_membership', array( $this, 'save_settings' ) );
             do_action( 'it_exchange_save_add_on_settings_membership' );
         }

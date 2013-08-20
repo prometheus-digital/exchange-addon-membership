@@ -26,7 +26,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Duration {
 		add_filter( 'it_exchange_get_product_feature_membership-duration', array( $this, 'get_feature' ), 9, 3 );
 		add_filter( 'it_exchange_product_has_feature_membership-duration', array( $this, 'product_has_feature') , 9, 2 );
 		add_filter( 'it_exchange_product_supports_feature_membership-duration', array( $this, 'product_supports_feature') , 9, 2 );
-		add_filter( 'it_exchange_default_field_names', array( $this, 'set_membership_duration_vars' ) );
 	}
 
 	/**
@@ -40,7 +39,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Duration {
 		$description = __( 'How long a membership should last.', 'LION' );
 		it_exchange_register_product_feature( $slug, $description );
 
-		it_exchange_add_feature_support_to_product_type( 'membership-duration', 'membership' );
+		it_exchange_add_feature_support_to_product_type( 'membership-duration', 'membership-product-type' );
 	}
 
 	/**
@@ -116,24 +115,11 @@ class IT_Exchange_Addon_Membership_Product_Feature_Duration {
             <select name="it-exchange-product-membership-duration-type">
             	<option value="day" <?php selected( 'day', $product_feature_type ); ?>><?php _e( 'Day(s)', 'LION' ); ?></option>
             	<option value="week" <?php selected( 'week', $product_feature_type ); ?>><?php _e( 'Week(s)', 'LION' ); ?></option>
+            	<option value="month" <?php selected( 'month', $product_feature_type ); ?>><?php _e( 'Month(s)', 'LION' ); ?></option>
             	<option value="year" <?php selected( 'year', $product_feature_type ); ?>><?php _e( 'Year(s)', 'LION' ); ?></option>
             </select>
             <p class="description"><?php _e( 'Leave blank for unlimited.', 'LION' ); ?></p>
 		<?php
-	}
-
-	/**
-	 * Sets the purchase quantity query_var
-	 *
-	 * @since 0.4.0
-	 *
-	 * @param array $vars sent in through filter
-	 * @return array
-	*/
-	function set_membership_duration_vars( $vars ) {
-		$vars['product_membership_duration_time'] = 'it-exchange-product-membership-duration-time';
-		$vars['product_membership_duration_type'] = 'it-exchange-product-membership-duration-type';
-		return $vars;
 	}
 
 	/**
