@@ -267,7 +267,8 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 		}
 		
 	}
-/**
+	
+	/**
 	 * This updates the feature for a product
 	 *
 	 * @since 0.4.0
