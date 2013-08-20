@@ -201,13 +201,69 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 			}
 			
 			it_exchange_update_product_feature( $product_id, 'membership-content-access-rules', $_REQUEST['it_exchange_content_access_rules'] );
-
-		} else {
-			if ( !empty( $access_rules ) ) {
-				// we need to sync up removals with previous settings
-
-			}
 			
+		} else {
+			
+			it_exchange_update_product_feature( $product_id, 'membership-content-access-rules', array() );
+			
+		}
+			
+		if ( !empty( $existing_access_rules ) ) {
+			
+			$updated_access_rules = it_exchange_get_product_feature( $product_id, 'membership-content-access-rules' );
+			$diff_access_rules = array_diff_assoc( $existing_access_rules, $updated_access_rules );
+				
+			if ( ! empty( $diff_access_rules ) ) {
+				
+				foreach( $diff_access_rules as $rule ) {
+				
+					switch( $rule['selected'] ) {
+					
+						case 'posts':
+							if ( !( $rules = get_post_meta( $rule['term'], '_item-content-rule', true ) ) )
+								$rules = array();
+								
+							if( false !== $key = array_search( $product_id, $rules ) ) {
+								unset( $rules[$key] );
+								if ( empty( $rules ) )
+									delete_post_meta(  $rule['term'], '_item-content-rule' );
+								else
+									update_post_meta( $rule['term'], '_item-content-rule', $rules );
+							}	
+							break;
+							
+						case 'post_types':
+							if ( !( $rules = get_option( '_item-content-rule-post-type-' . $rule['term'] ) ) )
+								$rules = array();
+								
+							if( false !== $key = array_search( $product_id, $rules ) ) {
+								unset( $rules[$key] );
+								if ( empty( $rules ) )
+									delete_option( '_item-content-rule-post-type-' . $rule['term'] );
+								else
+									update_option( '_item-content-rule-post-type-' . $rule['term'],  $rules );
+							}
+							break;
+							
+						case 'taxonomy':
+							if ( !( $rules = get_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] ) ) )
+								$rules = array();
+								
+							if( false !==  $key = array_search( $product_id, $rules ) ) {
+								unset( $rules[$key] );
+								if ( empty( $rules ) )
+									delete_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] );
+								else
+									update_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'],  $rules );
+							}
+							break;
+						
+					}
+					
+				}
+				
+			}
+
 		}
 		
 	}

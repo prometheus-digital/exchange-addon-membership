@@ -199,12 +199,17 @@ function it_exchange_membership_addon_content_rule( $selected, $selection, $term
 			break;
 		
 		case 'taxonomy':
-			$return .= '<span class="it_exchange_content_type_taxonomy">' . $selection . ':</span> ';
+			$tax_obj = get_taxonomy( $selection );
+			$return .= '<span class="it_exchange_content_type_taxonomy">' . $tax_obj->labels->name . ':</span> ';
 			$term_obj = get_term_by( 'id', $term, $selection );
 			$return .= '<span class="it_exchange_content_type_post_type_title">' . $term_obj->name . '</span> ';
 			break;
 		
 	}
+	
+	$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule">';
+	$return .= '<a href="#">×</a>';
+	$return .= '</div>';
 	
 	$return .= '</div>';
 	
