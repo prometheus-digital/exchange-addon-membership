@@ -123,9 +123,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 			?>
             </div>
         
-            <div class="it-exchange-membership-addon-new-content-access-rules">
-            </div>
-        
             <div class="it-exchange-membership-content-access-add-new-rule left">
                 <a href class="button"><?php _e( 'Add New Rule', 'LION' ); ?></a>
             </div>
@@ -162,39 +159,48 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 		
 		if ( ! empty( $_REQUEST['it_exchange_content_access_rules'] ) ) {
 			
-			foreach( $_REQUEST['it_exchange_content_access_rules'] as $rule ) {
-			
-				switch( $rule['selected'] ) {
+			foreach( $_REQUEST['it_exchange_content_access_rules'] as $key => $rule ) {
 				
-					case 'posts':
-						if ( !( $rules = get_post_meta( $rule['term'], '_item-content-rule', true ) ) )
-							$rules = array();
+				if ( !empty( $rule['selected'] ) && !empty( $rule['selection'] ) && !empty( $rule['term'] ) ) {
+				
+					switch( $rule['selected'] ) {
+					
+						case 'posts':
+							if ( !( $rules = get_post_meta( $rule['term'], '_item-content-rule', true ) ) )
+								$rules = array();
+								
+							if ( !in_array( $product_id, $rules ) ) {
+								$rules[] = $product_id;
+								update_post_meta( $rule['term'], '_item-content-rule', $rules );
+							}
+							break;
 							
-						if ( !in_array( $product_id, $rules ) ) {
-							$rules[] = $product_id;
-							update_post_meta( $rule['term'], '_item-content-rule', $rules );
-						}
-						break;
-						
-					case 'post_types':
-						if ( !( $rules = get_option( '_item-content-rule-post-type-' . $rule['term'] ) ) )
-							$rules = array();
-
-						if ( !in_array( $product_id, $rules ) ) {
-							$rules[] = $product_id;
-							update_option( '_item-content-rule-post-type-' . $rule['term'],  $rules );
-						}
-						break;
-						
-					case 'taxonomy':
-						if ( !( $rules = get_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] ) ) )
-							$rules = array();
+						case 'post_types':
+							if ( !( $rules = get_option( '_item-content-rule-post-type-' . $rule['term'] ) ) )
+								$rules = array();
+	
+							if ( !in_array( $product_id, $rules ) ) {
+								$rules[] = $product_id;
+								update_option( '_item-content-rule-post-type-' . $rule['term'],  $rules );
+							}
+							break;
 							
-						if ( !in_array( $product_id, $rules ) ) {
-							$rules[] = $product_id;
-							update_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'],  $rules );
-						}
-						break;
+						case 'taxonomy':
+							if ( !( $rules = get_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] ) ) )
+								$rules = array();
+								
+							if ( !in_array( $product_id, $rules ) ) {
+								$rules[] = $product_id;
+								update_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'],  $rules );
+							}
+							break;
+						
+					}
+				
+				} else {
+				
+					//This should only happen if the user adds a new rule but doesn't make a selection
+					unset( $_REQUEST['it_exchange_content_access_rules'][$key] );
 					
 				}
 				
@@ -211,8 +217,28 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 		if ( !empty( $existing_access_rules ) ) {
 			
 			$updated_access_rules = it_exchange_get_product_feature( $product_id, 'membership-content-access-rules' );
-			$diff_access_rules = array_diff_assoc( $existing_access_rules, $updated_access_rules );
+			$diff_access_rules = array();
+			
+			foreach ( $existing_access_rules as $existing_access_rule ) {
 				
+				$found = false;
+			
+				foreach ( $updated_access_rules as $updated_access_rule ) {
+				
+					if ( $existing_access_rule['selection'] === $updated_access_rule['selection']
+						&& $existing_access_rule['selected'] === $updated_access_rule['selected']
+						&& $existing_access_rule['term'] === $updated_access_rule['term'] ) {
+						$found = true;
+						continue;
+					}
+				
+				}
+				
+				if ( !$found )
+					$diff_access_rules[] = $existing_access_rule;
+				
+			}
+						
 			if ( ! empty( $diff_access_rules ) ) {
 				
 				foreach( $diff_access_rules as $rule ) {

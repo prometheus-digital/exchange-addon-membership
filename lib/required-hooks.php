@@ -70,59 +70,41 @@ function it_exchange_membership_addon_admin_wp_enqueue_styles() {
 }
 add_action( 'admin_print_styles', 'it_exchange_membership_addon_admin_wp_enqueue_styles' );
 
-function it_exchange_membership_addon_ajax_show_empty_content_access_rule() {	
-	$taxonomies = get_taxonomies( array( 'public' => true ), 'objects' );
+function it_exchange_membership_addon_ajax_add_content_access_rule() {
 	
-	$return  = '<div class="it-exchange-empty-content-access-rule">';
+	$return = '';
 	
-	$return .= '<select class="it-exchange-membership-content-type-selections" name="content_type_selection">';
-	$return .= '<option value="">' . __( 'Select Content', 'LION' ) . '</option>';
+	if ( isset( $_REQUEST['count'] ) ) {
+		
+		$count = $_REQUEST['count'];
+		
+		$return  = '<div class="it-exchange-membership-content-access-rule" data-count="' . $count . '">';
+		
+		$return .= it_exchange_membership_addon_get_selections( 0, NULL, $count );
+		
+		$return .= '<div class="it-exchange-membership-content-type-terms hidden">';
+		$return .= '</div>';
+		
+		/* No Drip Yet!
+		$return .= '<div class="it_exchange-membership-content-type-drip hidden">';
+		$return .= '<input type="text" class="it-exchange-membership-content-type-drip-time small" name="content_type_drip_times" disabled="disabled">';
+		
+		$return .= '<select class="it-exchange_membership-content-type-drip-type" name="content_type_drip_types" disabled="disabled">';
+		$return .= '<option value="days">' . __( 'Day(s)', 'LION' ) . '</option>';
+		$return .= '<option value="weeks">' . __( 'Week(s)', 'LION' ) . '</option>';
+		$return .= '<option value="months">' . __( 'Month(s)', 'LION' ) . '</option>';
+		$return .= '<option value="years">' . __( 'Year(s)', 'LION' ) . '</option>';
+		$return .= '</select>';
+		$return .= '</div>';
+		/**/
+		
+		$return .= '</div>';
 	
-	$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item' ) );
-	$post_types = get_post_types( array(), 'objects' );
-	
-	foreach ( $post_types as $post_type ) {
-		if ( in_array( $post_type->name, $hidden_post_types ) ) 
-			continue;
-			
-		$return .= '<option data-type="posts" value="' . $post_type->name . '">' . $post_type->label . '</option>';	
 	}
-	
-	$return .= '<option data-type="post_types" value="post_type">' . __( 'Post Types', 'LION' ) . '</option>';
-	foreach ( $taxonomies as $tax ) {
-		// we want to skip post format taxonomies, not really needed here
-		if ( 'post_format' === $tax->name )
-			continue;
-			
-		$return .= '<option data-type="taxonomy" value="' . $tax->name . '">' . $tax->label . '</option>';	
-	}	
-	$return .= '</select>';
-	
-	$return .= '<div class="it-exchange-membership-content-type-terms hidden">';
-	$return .= '</div>';
-	
-	/* No Drip Yet!
-	$return .= '<div class="it_exchange-membership-content-type-drip hidden">';
-	$return .= '<input type="text" class="it-exchange-membership-content-type-drip-time small" name="content_type_drip_times" disabled="disabled">';
-	
-	$return .= '<select class="it-exchange_membership-content-type-drip-type" name="content_type_drip_types" disabled="disabled">';
-	$return .= '<option value="days">' . __( 'Day(s)', 'LION' ) . '</option>';
-	$return .= '<option value="weeks">' . __( 'Week(s)', 'LION' ) . '</option>';
-	$return .= '<option value="months">' . __( 'Month(s)', 'LION' ) . '</option>';
-	$return .= '<option value="years">' . __( 'Year(s)', 'LION' ) . '</option>';
-	$return .= '</select>';
-	$return .= '</div>';
-	/**/
-	
-	$return .= '<div class="it-exchange-membership-content-rule-submit hidden">';
-	$return .= '<a href class="button">' . __( 'OK', 'LION' ) . '</a>';
-	$return .= '</div>';
-	
-	$return .= '</div>';
 	
 	die( $return );
 }
-add_action( 'wp_ajax_it-exchange-membership-addon-show-empty-content-access-rule', 'it_exchange_membership_addon_ajax_show_empty_content_access_rule' );
+add_action( 'wp_ajax_it-exchange-membership-addon-add-content-access-rule', 'it_exchange_membership_addon_ajax_add_content_access_rule' );
 
 function it_exchange_membership_addon_ajax_get_content_type_term() {
 	
@@ -130,46 +112,44 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 	
 	if ( !empty( $_REQUEST['type'] ) && !empty( $_REQUEST['value'] ) ) {
 			
-		$type = $_REQUEST['type'];
+		$type  = $_REQUEST['type'];
 		$value = $_REQUEST['value'];
+		$count = $_REQUEST['count'];
+		$options = '';
 	
 		switch( $type ) {
 			
 			case 'posts':
 				$posts = get_posts( array( 'post_type' => $value, 'posts_per_page' => -1 ) );
-				$return .= '<input type="hidden" value="posts" name="content_type_selected" />';
-				$return .= '<select class="it-exchange-membership-content-type-term" name="content_type_term">';
 				foreach ( $posts as $post ) {
-					$return .= '<option value="' . $post->ID . '">' . $post->post_title . '</option>';	
+					$options .= '<option value="' . $post->ID . '">' . $post->post_title . '</option>';	
 				}
-				$return .= '</select>';
 				break;
 			
 			case 'post_types':
 				$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item' ) );
 				$post_types = get_post_types( array(), 'objects' );
-				$return .= '<input type="hidden" value="post_types" name="content_type_selected" />';
-				$return .= '<select class="it-exchange-membership-content-type-term" name="content_type_term">';
 				foreach ( $post_types as $post_type ) {
 					if ( in_array( $post_type->name, $hidden_post_types ) ) 
 						continue;
 						
-					$return .= '<option value="' . $post_type->name . '">' . $post_type->label . '</option>';	
+					$options .= '<option value="' . $post_type->name . '">' . $post_type->label . '</option>';	
 				}
-				$return .= '</select>';
 				break;
 			
 			case 'taxonomy':
 				$terms = get_terms( $value, array( 'hide_empty' => false ) );
-				$return .= '<input type="hidden" value="taxonomy" name="content_type_selected" />';
-				$return .= '<select class="it-exchange-membership-content-type-term" name="content_type_term">';
 				foreach ( $terms as $term ) {
-					$return .= '<option value="' . $term->term_id . '">' . $term->name . '</option>';	
+					$options .= '<option value="' . $term->term_id . '">' . $term->name . '</option>';	
 				}
-				$return .= '</select>';
 				break;
 			
 		}
+
+		$return .= '<input type="hidden" value="' . $type . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
+		$return .= '<select class="it-exchange-membership-content-type-term" name="it_exchange_content_access_rules[' . $count . '][term]">';
+		$return .= $options;
+		$return .= '</select>';
 			
 	}
 
@@ -177,67 +157,6 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 	
 }
 add_action( 'wp_ajax_it-exchange-membership-addon-content-type-terms', 'it_exchange_membership_addon_ajax_get_content_type_term' );
-
-function it_exchange_membership_addon_content_rule( $selected, $selection, $term, $count ) {
-
-	$return  = '<div class="it-exchange-membership-content-access-rule">';
-	$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][selected]" value="' . $selected . '" />';
-	$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][selection]" value="' . $selection . '" />';
-	$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][term]" value="' . $term . '" />';
-
-	switch( $selected ) {
-		
-		case 'posts':
-			$return .= '<span class="it_exchange_content_type_post">' . __( 'Post', 'LION' ) . ':</span> ';
-			$return .= '<span class="it_exchange_content_type_post_title">' . get_the_title( $term ) . '</span> ';
-			break;
-		
-		case 'post_types':
-			$return .= '<span class="it_exchange_content_type_post_type">' . __( 'Post Type', 'LION' ) . ':</span> ';
-			$post_type_obj = get_post_type_object( $term );
-			$return .= '<span class="it_exchange_content_type_post_type_title">' . $post_type_obj->labels->name . '</span> ';
-			break;
-		
-		case 'taxonomy':
-			$tax_obj = get_taxonomy( $selection );
-			$return .= '<span class="it_exchange_content_type_taxonomy">' . $tax_obj->labels->name . ':</span> ';
-			$term_obj = get_term_by( 'id', $term, $selection );
-			$return .= '<span class="it_exchange_content_type_post_type_title">' . $term_obj->name . '</span> ';
-			break;
-		
-	}
-	
-	$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule">';
-	$return .= '<a href="#">×</a>';
-	$return .= '</div>';
-	
-	$return .= '</div>';
-	
-	return $return;
-	
-}
-
-function it_exchange_membership_addon_ajax_add_content_rule() {
-	
-	$return = '';
-	
-	if ( !empty( $_REQUEST['content_type_selected'] ) 
-		&& !empty( $_REQUEST['content_type_selection'] )
-		&& !empty( $_REQUEST['content_type_term'] )
-		&& isset( $_REQUEST['count'] ) ) {
-			
-		$selected  = $_REQUEST['content_type_selected'];
-		$selection = $_REQUEST['content_type_selection'];
-		$term      = $_REQUEST['content_type_term'];
-		$count     = $_REQUEST['count'];
-		
-		$return = it_exchange_membership_addon_content_rule( $selected, $selection, $term, $count );
-			
-	}
-
-	die( $return );
-}
-add_action( 'wp_ajax_it-exchange-membership-addon-add-content-rule', 'it_exchange_membership_addon_ajax_add_content_rule' );
 
 function it_exchange_membership_addon_is_content_restricted() {
 		
