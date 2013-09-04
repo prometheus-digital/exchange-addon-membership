@@ -1,3 +1,4 @@
+#it-exchange-product-membership-content-access{margin-bottom:3em;}
 #it-exchange-product-membership-content-access .it-exchange-content-access-header{overflow:hidden;clear:both;margin-top:3em;}
 #it-exchange-product-membership-content-access .it-exchange-content-access-label-add{float:left;}
 #it-exchange-product-membership-content-access .it-exchange-membership-content-access-add-new-rule{float:right;margin-bottom:10px;}
@@ -15,12 +16,12 @@
 #it-exchange-product-membership-content-access .col-7-12{width:62.3333333%;}
 #it-exchange-product-membership-content-access .it-exchange-membership-addon-content-access-rules .columns-wrapper{background:#FFF;border-top:1px solid #DEDEDE;}
 #it-exchange-product-membership-content-access .it-exchange-membership-addon-content-access-rules .column{padding:1em;}
-#it-exchange-product-membership-content-access .it-exchange-membership-addon-sort-content-access-rule{min-height:50px;background:#EEE;border-right:1px solid #DDD;}
-#it-exchange-product-membership-content-access .it-exchange-membership-addon-sort-content-access-rule:hover{cursor:move;}
+#it-exchange-product-membership-content-access .it-exchange-membership-addon-sort-content-access-rule{min-height:50px;cursor:move;background:#F6F6F6 url(images/drag-dots.png) center center no-repeat;border-right:1px solid #DDD;opacity:.5;-webkit-transition:opacity .2s ease;-moz-transition:opacity .2s ease;transition:opacity .2s ease;}
+#it-exchange-product-membership-content-access .it-exchange-membership-addon-sort-content-access-rule:hover{opacity:1;}
 #it-exchange-product-membership-content-access .it-exchange-membership-addon-remove-content-access-rule.column{float:right;text-align:right;padding:0;}
 #it-exchange-product-membership-content-access .it-exchange-membership-addon-remove-content-access-rule a{-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;display:inline-block;width:20px;height:20px;margin-top:12px;margin-right:12px;border:2px solid transparent;border-radius:50%;font-size:14px;line-height:1.3em;text-decoration:none;text-align:center;color:#BBB;-webkit-transition:all .2s linear;-moz-transition:all .2s linear;transition:all .2s linear;}
 #it-exchange-product-membership-content-access .it-exchange-membership-content-access-rule:hover .it-exchange-membership-addon-remove-content-access-rule .it-exchange-delete-digital-download{border-color:#BBB;}
 #it-exchange-product-membership-content-access .it-exchange-membership-addon-remove-content-access-rule a:active{outline:none;opacity:.8;}
 #it-exchange-product-membership-content-access .it-exchange-membership-content-access-rule .it-exchange-membership-addon-remove-content-access-rule A:hover{border-color:#E1797A;color:#E1797A;}
 #it-exchange-product-membership-content-access .it-exchange-membership-addon-sorting-placeholder{height:50px;width:100%;background:#F6F6F6;}
-#it-exchange-product-membership-content-access .ui-sortable-helper{border:1px solid #DEDEDE;}
+#it-exchange-product-membership-content-access .ui-sortable-helper{border:1px solid #DEDEDE;box-shadow:#DDD 0 0 10px;}
