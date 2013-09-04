@@ -78,6 +78,11 @@ function it_exchange_membership_addon_content_rule( $selected, $selection, $valu
 	$options = '';
 
 	$return  = '<div class="it-exchange-membership-content-access-rule" data-count="' . $count . '">';
+	
+	$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule">';
+	$return .= 'SORT';
+	$return .= '</div>';
+	
 	$return .= it_exchange_membership_addon_get_selections( $selection, $selected, $count );
 	$return .= '<div class="it-exchange-membership-content-type-terms">';
 	switch( $selected ) {
