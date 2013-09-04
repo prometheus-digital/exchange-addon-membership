@@ -106,10 +106,26 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 		// Set the value of the feature for this product
 		$access_rules = it_exchange_get_product_feature( $product->ID, 'membership-content-access-rules' );
 		?>
-        <div class="it-exchange-content-access-label-add">
-            <label><?php _e( 'Content Access', 'LION' ); ?> <span class="tip" title="<?php _e( 'Restrict access to your content by membership.', 'LION' ); ?>">i</span></label>
-        </div>
+		<div class="it-exchange-content-access-header">
+	        <div class="it-exchange-content-access-label-add">
+	            <label><?php _e( 'Content Access', 'LION' ); ?> <span class="tip" title="<?php _e( 'Restrict access to your content by membership.', 'LION' ); ?>">i</span></label>
+	        </div>
+	        <div class="it-exchange-membership-content-access-add-new-rule left">
+	            <a href class="button"><?php _e( 'Add New Rule', 'LION' ); ?></a>
+	        </div>
+		</div>
         <div class="it-exchange-content-access-list-wrapper">
+			<div class="it-exchange-content-access-list-titles">
+				<div class="it-exchange-content-access-item columns-wrapper">
+					<div class="column col-1_4-12"></div>
+					<div class="it-exchange-content-access-type column col-3-12">
+						<span><?php _e( 'Type', 'LION' ); ?></span>
+					</div>
+					<div class="it-exchange-content-access-content column col-3-12">
+						<span><?php _e( 'Content', 'LION' ); ?></span>
+					</div>
+				</div>
+			</div>
         	<?php $count = 0; ?>
             <div class="it-exchange-membership-addon-content-access-rules">
             <?php
@@ -121,10 +137,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 				}
 			}
 			?>
-            </div>
-        
-            <div class="it-exchange-membership-content-access-add-new-rule left">
-                <a href class="button"><?php _e( 'Add New Rule', 'LION' ); ?></a>
             </div>
         </div>
 		<script type="text/javascript" charset="utf-8">
@@ -145,7 +157,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 		// Abort if we can't determine a product type
 		if ( ! $product_type = it_exchange_get_product_type() )
 			return;
-
+		
 		// Abort if we don't have a product ID
 		$product_id = empty( $_POST['ID'] ) ? false : $_POST['ID'];
 		if ( ! $product_id )

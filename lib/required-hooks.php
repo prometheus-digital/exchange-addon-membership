@@ -78,16 +78,14 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 		
 		$count = $_REQUEST['count'];
 		
-		$return  = '<div class="it-exchange-membership-content-access-rule" data-count="' . $count . '">';
+		$return  = '<div class="it-exchange-membership-content-access-rule columns-wrapper" data-count="' . $count . '">';
 		
-		$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule">';
-		$return .= 'SORT';
-		$return .= '</div>';
+		$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>';
 		
 		$return .= it_exchange_membership_addon_get_selections( 0, NULL, $count );
 		
-		$return .= '<div class="it-exchange-membership-content-type-terms hidden">';
-		$return .= '</div>';
+		$return .= '<div class="column col-3-12"><div class="it-exchange-membership-content-type-terms hidden">';
+		$return .= '</div></div>';
 		
 		/* No Drip Yet!
 		$return .= '<div class="it_exchange-membership-content-type-drip hidden">';
@@ -102,7 +100,7 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 		$return .= '</div>';
 		/**/
 		
-		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule">';
+		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-1-12">';
 		$return .= '<a href="#">×</a>';
 		$return .= '</div>';
 		

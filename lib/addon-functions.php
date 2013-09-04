@@ -27,7 +27,7 @@ add_filter( 'plugin_action_links_exchange-addon-membership/exchange-addon-member
 
 function it_exchange_membership_addon_get_selections( $selection = 0, $selection_type = NULL, $count ) {
 	
-	$return  = '<select class="it-exchange-membership-content-type-selections" name="it_exchange_content_access_rules[' . $count . '][selection]">';
+	$return  = '<div class="column col-3-12"><select class="it-exchange-membership-content-type-selections" name="it_exchange_content_access_rules[' . $count . '][selection]">';
 	$return .= '<option value="">' . __( 'Select Content', 'LION' ) . '</option>';
 	
 	//Posts
@@ -68,7 +68,7 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 			
 		$return .= '<option data-type="taxonomy" value="' . $tax->name . '" ' . $selected . '>' . $tax->label . '</option>';	
 	}	
-	$return .= '</select>';
+	$return .= '</select></div>';
 	
 	return $return;
 }
@@ -77,14 +77,12 @@ function it_exchange_membership_addon_content_rule( $selected, $selection, $valu
 
 	$options = '';
 
-	$return  = '<div class="it-exchange-membership-content-access-rule" data-count="' . $count . '">';
+	$return  = '<div class="it-exchange-membership-content-access-rule columns-wrapper" data-count="' . $count . '">';
 	
-	$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule">';
-	$return .= 'SORT';
-	$return .= '</div>';
+	$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>';
 	
 	$return .= it_exchange_membership_addon_get_selections( $selection, $selected, $count );
-	$return .= '<div class="it-exchange-membership-content-type-terms">';
+	$return .= '<div class="column col-3-12"><div class="it-exchange-membership-content-type-terms">';
 	switch( $selected ) {
 		
 		case 'posts':
@@ -118,9 +116,9 @@ function it_exchange_membership_addon_content_rule( $selected, $selection, $valu
 	$return .= '<select class="it-exchange-membership-content-type-term" name="it_exchange_content_access_rules[' . $count . '][term]">';
 	$return .= $options;
 	$return .= '</select>';
-	$return .= '</div>';
+	$return .= '</div></div>';
 	
-	$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule">';
+	$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-1-12">';
 	$return .= '<a href="#">×</a>';
 	$return .= '</div>';
 	
