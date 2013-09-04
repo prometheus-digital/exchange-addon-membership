@@ -80,6 +80,10 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 		
 		$return  = '<div class="it-exchange-membership-content-access-rule" data-count="' . $count . '">';
 		
+		$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule">';
+		$return .= 'SORT';
+		$return .= '</div>';
+		
 		$return .= it_exchange_membership_addon_get_selections( 0, NULL, $count );
 		
 		$return .= '<div class="it-exchange-membership-content-type-terms hidden">';
@@ -97,6 +101,10 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 		$return .= '</select>';
 		$return .= '</div>';
 		/**/
+		
+		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule">';
+		$return .= '<a href="#">×</a>';
+		$return .= '</div>';
 		
 		$return .= '</div>';
 	
