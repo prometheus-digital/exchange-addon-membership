@@ -31,7 +31,7 @@ function it_exchange_register_membership_addon() {
 		'description'       => __( 'Add Memberships levels to your customers.', 'LION' ),
 		'author'            => 'iThemes',
 		'author_url'        => 'http://ithemes.com/exchange/membership/',
-		'icon'              => ITUtility::get_url_from_file( dirname( __FILE__ ) . '/images/membership50px.png' ),
+		'icon'              => ITUtility::get_url_from_file( dirname( __FILE__ ) . '/lib/images/membership50px.png' ),
 		'file'              => dirname( __FILE__ ) . '/init.php',
 		'category'          => 'product-type',
 		'basename'          => plugin_basename( __FILE__ ),
