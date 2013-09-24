@@ -72,7 +72,7 @@ function it_exchange_membership_addon_admin_wp_enqueue_styles() {
 	if ( isset( $post_type ) && 'it_exchange_prod' === $post_type ) {
 		wp_enqueue_style( 'it-exchange-membership-addon-add-edit-product', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/styles/add-edit-product.css' );
 	} else if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
-		wp_enqueue_script( 'it-exchange-membership-addon-add-edit-post', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/styles/add-edit-post.css' );
+		wp_enqueue_style( 'it-exchange-membership-addon-add-edit-post', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/styles/add-edit-post.css' );
 	}
 }
 add_action( 'admin_print_styles', 'it_exchange_membership_addon_admin_wp_enqueue_styles' );
@@ -248,14 +248,14 @@ add_filter( 'it_exchange_possible_template_paths', 'it_exchange_membership_addon
 
 function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
 	
-	$return  = '<div class="it-exchange-new-membership-rule-post">';
+	$return  = '<div class="it-exchange-new-membership-rule-post it-exchange-new-membership-rule">';
 	$return .= '<select class="it-exchange-membership-id" name="it_exchange_membership_id">';
 	$membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type' ) );
 	foreach ( $membership_products as $membership ) {
 		$return .= '<option type="checkbox" value="' . $membership->ID . '">' . get_the_title( $membership->ID ) . '</option>';
 	}
 	$return .= '</select>';
-	$return .= '<span class="it-exchange-membership-remove-new-rule">x</span>';
+	$return .= '<span class="it-exchange-membership-remove-new-rule">&times;</span>';
 	//This is where we'll handle dripped content
 	//but not yet :)
 	$return .= '<div class="it-exchange-add-new-restriction-ok-button">';
