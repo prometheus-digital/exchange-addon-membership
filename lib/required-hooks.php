@@ -81,7 +81,7 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 	
 	$return = '';
 	
-	if ( !empty( $_REQUEST['count'] ) ) {
+	if ( isset( $_REQUEST['count'] ) ) { //use isset() in case count is 0
 		
 		$count = $_REQUEST['count'];
 		
