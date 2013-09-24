@@ -73,7 +73,7 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 	return $return;
 }
 
-function it_exchange_membership_addon_content_rule( $selected, $selection, $value, $count ) {
+function it_exchange_membership_addon_build_content_rule( $selected, $selection, $value, $count ) {
 
 	$options = '';
 
@@ -123,6 +123,107 @@ function it_exchange_membership_addon_content_rule( $selected, $selection, $valu
 	$return .= '</div>';
 	
 	$return .= '</div>';
+	
+	return $return;
+	
+}
+
+function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
+	
+	$return = '';
+	
+	$post_type = get_post_type( $post_id );
+	
+	/*
+	* Use get_post_meta() to retrieve an existing value
+	* from the database and use the value for the form.
+	*/
+	$post_rules = get_post_meta( $post_id, '_item-content-rule', true );
+	$post_type_rules = get_option( '_item-content-rule-post-type-' . $post_type, array() );
+	$taxonomy_rules = array();
+	$restriction_exceptions = (array)get_post_meta( $post_id, '_item-content-rule-exemptions', true );
+	
+	$taxonomies = get_taxonomies( '', 'names' ); 
+	$terms = wp_get_object_terms( $post_id, $taxonomies );
+	foreach( $terms as $term ) {
+		$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
+		if ( !empty( $term_rules ) )
+			$taxonomy_rules[$term->taxonomy][$term->term_id]  = array_merge( $taxonomy_rules, $term_rules );
+	}
+	
+	//Re-order for output!
+	if ( !empty( $post_rules ) ) {
+		foreach( $post_rules as $product_id ) {
+			$rules[$product_id]['post'] = true;
+		}
+	}
+	if ( !empty( $post_type_rules ) ) {
+		foreach( $post_type_rules as $product_id ) {
+			$post_type = get_post_type_object( $post_type );
+			$rules[$product_id]['post_type'] = $post_type->labels->singular_name;
+		}
+	}
+	if ( !empty( $taxonomy_rules ) ) {
+		foreach( $taxonomy_rules as $taxonomy => $term_rules ) {
+			foreach( $term_rules as $term_id => $product_ids ) {
+				foreach( $product_ids as $product_id ) {
+					$rules[$product_id]['taxonomy'][] = $taxonomy;
+					$rules[$product_id][$taxonomy]['term_ids'][] = $term_id;
+				}
+			}
+		}
+	}	
+	if ( !empty( $rules ) ) {
+		
+		$return .= '<div class="it-exchange-membership-restrictions">';
+			
+		foreach ( $rules as $membership_id => $rule ) {
+			$return .= '<div class="it-exchange-membership-restriction-group">';
+			$title = get_the_title( $membership_id );
+			$restriction_exception = !empty( $restriction_exceptions[$membership_id] ) ? $restriction_exceptions[$membership_id] : array();
+			
+			$return .= '<input type="hidden" name="it_exchange_membership_id" value="' . $membership_id . '">';
+			
+			if ( !empty( $rule['post'] ) && true === $rule['post'] ) {
+				$return .= '<div class="it-exchange-membership-rule-post">';
+				$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="post" ' . checked( in_array( 'post', $restriction_exception ), false, false ) . '>';
+				$return .= $title;
+				$return .= '<span class="it-exchange-membership-remove-rule">x</span>';
+				//This is where we'll handle dripped content
+				//but not yet :)
+				$return .= '</div>';
+			}
+			
+			if ( !empty( $rule['post_type'] ) ) {
+				$return .= '<div class="it-exchange-membership-rule-post-type">';
+				$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="posttype" ' . checked( in_array( 'posttype', $restriction_exception ), false, false ) . '>';
+				$return .= $title;
+				$return .= '<div class="it-exchange-membership-rule-description">' . $rule['post_type'] . '</div>';
+				$return .= '</div>';
+			}
+			
+			if ( !empty( $rule['taxonomy'] ) ) {
+				foreach ( $rule['taxonomy'] as $taxonomy ) {
+					foreach( $rules[$product_id][$taxonomy]['term_ids'] as $term_id ) {
+						$term = get_term_by( 'id', $term_id, $taxonomy );
+						$return .= '<div class="it-exchange-membership-rule-post-type">';
+						$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="taxonomy|' . $taxonomy . '|' . $term_id . '" ' . checked( in_array( 'taxonomy|' . $taxonomy . '|' . $term_id, $restriction_exception ), false, false ) . '>';
+						$return .= $title;
+						$return .= '<div class="it-exchange-membership-rule-description">' . ucwords( $taxonomy ) . ' "' .  $term->name . '"</div>';
+						$return .= '</div>';
+					}
+				}
+			}
+			$return .= '</div>';
+		}
+		
+		$return .= '</div>';
+	
+	} else {
+	
+		$return = __( 'No Rules', 'LION' );
+		
+	}
 	
 	return $return;
 	

@@ -132,7 +132,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 			if ( !empty( $access_rules ) ) {
 				foreach( $access_rules as $rule ) {
 					
-					echo it_exchange_membership_addon_content_rule( $rule['selected'], $rule['selection'], $rule['term'], $count++ );
+					echo it_exchange_membership_addon_build_content_rule( $rule['selected'], $rule['selection'], $rule['term'], $count++ );
 					
 				}
 			}

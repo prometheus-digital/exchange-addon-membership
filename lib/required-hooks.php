@@ -13,6 +13,8 @@ function ithemes_exchange_membership_addon_add_feature_digital_downloads() {
 add_action( 'it_exchange_enabled_addons_loaded', 'ithemes_exchange_membership_addon_add_feature_digital_downloads' );
 
 function it_exchange_membership_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
+	global $post;
+	
 	if ( isset( $_REQUEST['post_type'] ) ) {
 		$post_type = $_REQUEST['post_type'];
 	} else {
@@ -29,10 +31,12 @@ function it_exchange_membership_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
 		if ( isset( $post ) && !empty( $post ) )
 			$post_type = $post->post_type;
 	}
-
+	
 	if ( isset( $post_type ) && 'it_exchange_prod' === $post_type ) {
 		$deps = array( 'post', 'jquery-ui-sortable', 'jquery-ui-droppable', 'jquery-ui-tabs', 'jquery-ui-tooltip', 'jquery-ui-datepicker', 'autosave' );
 		wp_enqueue_script( 'it-exchange-membership-addon-add-edit-product', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/js/add-edit-product.js', $deps );
+	} else if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
+		wp_enqueue_script( 'it-exchange-membership-addon-add-edit-post', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/js/add-edit-post.js' );
 	}
 }
 add_action( 'admin_enqueue_scripts', 'it_exchange_membership_addon_admin_wp_enqueue_scripts' );
@@ -44,7 +48,7 @@ add_action( 'admin_enqueue_scripts', 'it_exchange_membership_addon_admin_wp_enqu
  * @return void
 */
 function it_exchange_membership_addon_admin_wp_enqueue_styles() {
-	global $hook_suffix;
+	global $post, $hook_suffix;
 
 	if ( isset( $_REQUEST['post_type'] ) ) {
 		$post_type = $_REQUEST['post_type'];
@@ -65,8 +69,11 @@ function it_exchange_membership_addon_admin_wp_enqueue_styles() {
 	}
 
 	// Exchange Product pages
-	if ( isset( $post_type ) && 'it_exchange_prod' === $post_type )
+	if ( isset( $post_type ) && 'it_exchange_prod' === $post_type ) {
 		wp_enqueue_style( 'it-exchange-membership-addon-add-edit-product', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/styles/add-edit-product.css' );
+	} else if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
+		wp_enqueue_script( 'it-exchange-membership-addon-add-edit-post', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/styles/add-edit-post.css' );
+	}
 }
 add_action( 'admin_print_styles', 'it_exchange_membership_addon_admin_wp_enqueue_styles' );
 
@@ -74,7 +81,7 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 	
 	$return = '';
 	
-	if ( isset( $_REQUEST['count'] ) ) {
+	if ( !empty( $_REQUEST['count'] ) ) {
 		
 		$count = $_REQUEST['count'];
 		
@@ -238,3 +245,139 @@ function it_exchange_membership_addon_template_path( $possible_template_paths, $
 	return $possible_template_paths;
 }
 add_filter( 'it_exchange_possible_template_paths', 'it_exchange_membership_addon_template_path', 10, 2 );
+
+function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
+	
+	$return  = '<div class="it-exchange-new-membership-rule-post">';
+	$return .= '<select class="it-exchange-membership-id" name="it_exchange_membership_id">';
+	$membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type' ) );
+	foreach ( $membership_products as $membership ) {
+		$return .= '<option type="checkbox" value="' . $membership->ID . '">' . get_the_title( $membership->ID ) . '</option>';
+	}
+	$return .= '</select>';
+	$return .= '<span class="it-exchange-membership-remove-new-rule">x</span>';
+	//This is where we'll handle dripped content
+	//but not yet :)
+	$return .= '<div class="it-exchange-add-new-restriction-ok-button">';
+	$return .= '<a href class="button">' . __( 'OK', 'LION' ) . '</a>';
+	$return .= '</div>';
+	$return .= '</div>';
+	
+	die( $return );
+}
+add_action( 'wp_ajax_it-exchange-membership-addon-add-content-access-rule-to-post', 'it_exchange_membership_addon_ajax_add_content_access_rule_to_post' );
+
+function it_exchange_membership_addon_ajax_remove_rule_from_post() {
+	
+	$return = '';
+	
+	if ( !empty( $_REQUEST['membership_id'] ) && !empty( $_REQUEST['post_id'] ) ) {
+		
+		$post_id = $_REQUEST['post_id'];
+		$membership_id = $_REQUEST['membership_id'];
+
+		if ( !( $rules = get_post_meta( $post_id, '_item-content-rule', true ) ) )
+			$rules = array();
+			
+		if ( ( $key = array_search( $membership_id, $rules ) ) !== false ) {
+			unset( $rules[$key] );
+			update_post_meta( $post_id, '_item-content-rule', $rules );
+		}
+		
+		//Remove from Membership Product (we need to keep these in sync)
+		$membership_product_feature = it_exchange_get_product_feature( $membership_id, 'membership-content-access-rules' );
+		$value = array(
+			'selection' => 'post',
+			'selected'  => 'posts',
+			'term'      => $post_id,
+		);	
+		if ( false !== $key = array_search( $value, $membership_product_feature ) ) {
+			unset( $membership_product_feature[$key] );
+			it_exchange_update_product_feature( $membership_id, 'membership-content-access-rules', $membership_product_feature );
+		}
+		
+		$return = it_exchange_membership_addon_build_post_restriction_rules( $post_id );
+	
+	}
+	
+	die( $return );
+}
+add_action( 'wp_ajax_it-exchange-membership-addon-remove-rule-from-post', 'it_exchange_membership_addon_ajax_remove_rule_from_post' );
+
+function it_exchange_membership_addon_ajax_add_new_rule_to_post() {
+	
+	$return = '';
+	
+	if ( !empty( $_REQUEST['membership_id'] ) && !empty( $_REQUEST['post_id'] ) ) {
+		
+		$post_id = $_REQUEST['post_id'];
+		$membership_id = $_REQUEST['membership_id'];
+
+		if ( !( $rules = get_post_meta( $post_id, '_item-content-rule', true ) ) )
+			$rules = array();
+			
+		if ( !in_array( $membership_id, $rules ) ) {
+			$rules[] = $membership_id;
+			update_post_meta( $post_id, '_item-content-rule', $rules );
+		}
+		
+		//Add details to Membership Product (we need to keep these in sync)
+		$membership_product_feature = it_exchange_get_product_feature( $membership_id, 'membership-content-access-rules' );
+		
+		$value = array(
+			'selection' => 'post',
+			'selected'  => 'posts',
+			'term'      => $post_id,
+		);	
+		if ( false === array_search( $value, $membership_product_feature ) ) {
+			$membership_product_feature[] = $value;
+			it_exchange_update_product_feature( $membership_id, 'membership-content-access-rules', $membership_product_feature );
+		}
+		
+		$return = it_exchange_membership_addon_build_post_restriction_rules( $post_id );
+	
+	}
+	
+	die( $return );
+}
+add_action( 'wp_ajax_it-exchange-membership-addon-add-new-rule-to-post', 'it_exchange_membership_addon_ajax_add_new_rule_to_post' );
+
+function it_exchange_membership_addon_ajax_modify_restrictions_exemptions() {
+	
+	$return = '';
+		
+	if ( !empty( $_REQUEST['post_id'] ) && !empty( $_REQUEST['membership_id'] ) && !empty( $_REQUEST['exemption'] ) && !empty( $_REQUEST['checked'] ) ) {
+		$post_id       = $_REQUEST['post_id'];
+		$membership_id = $_REQUEST['membership_id'];
+		$exemption     = $_REQUEST['exemption'];
+		$checked       = $_REQUEST['checked'];
+		
+		if ( 'false' === $checked ) {
+			//add to exemptions
+			if ( !( $exemptions = get_post_meta( $post_id, '_item-content-rule-exemptions', true ) ) )
+				$exemptions = array();
+				
+			if ( !in_array( $exemption, $exemptions[$membership_id] ) ) {
+				$exemptions[$membership_id][] = $exemption;
+				update_post_meta( $post_id, '_item-content-rule-exemptions', $exemptions );
+			}
+		} else {
+			//remove from exemptions
+			if ( !( $exemptions = get_post_meta( $post_id, '_item-content-rule-exemptions', true ) ) )
+				$exemptions = array();
+				
+			if ( ( $key = array_search( $exemption, $exemptions[$membership_id] ) ) !== false ) {
+				unset( $exemptions[$membership_id][$key] );
+				if ( empty( $exemptions[$membership_id][$key] ) )
+					unset( $exemptions[$membership_id] );
+				if ( empty( $exemptions ) )
+					delete_post_meta( $post_id, '_item-content-rule-exemptions' );
+				else
+					update_post_meta( $post_id, '_item-content-rule-exemptions', $exemptions );
+			}
+		}
+	}
+	
+	die();
+}
+add_action( 'wp_ajax_it-exchange-membership-addon-modify-restrictions-exemptions', 'it_exchange_membership_addon_ajax_modify_restrictions_exemptions' );

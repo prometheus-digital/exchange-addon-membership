@@ -22,6 +22,10 @@ include( 'lib/addon-functions.php' );
 include( 'lib/required-hooks.php' );
 
 /**
+*/
+include( 'lib/addon-metaboxes.php' );
+
+/**
  * New Product Features added by the Exchange Membership Add-on.
 */
 require( 'lib/product-features/load.php' );
