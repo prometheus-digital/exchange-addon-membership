@@ -77,6 +77,68 @@ function it_exchange_membership_addon_admin_wp_enqueue_styles() {
 }
 add_action( 'admin_print_styles', 'it_exchange_membership_addon_admin_wp_enqueue_styles' );
 
+/**
+ * Adds necessary details to Exchange upon successfully completed transaction
+ *
+ * @since 1.0.0
+ * @param int $transaction_id iThemes Exchange Transaction ID 
+ * @return void
+*/
+function it_exchange_membership_addon_add_transaction( $transaction_id ) {
+	$cart_object = get_post_meta( $transaction_id, '_it_exchange_cart_object', true );
+	$customer_id = get_post_meta( $transaction_id, '_it_exchange_customer_id', true );
+	$customer = new IT_Exchange_Customer( $customer_id );
+	$member_access = (array)$customer->get_customer_meta( 'member_access' );
+	
+	foreach ( $cart_object->products as $product ) {
+		if ( it_exchange_product_supports_feature( $product['product_id'], 'membership-content-access-rules' ) ) {
+			//This is a membership product!
+			if ( !in_array( $product['product_id'], $member_access ) ) {
+				//If this user isn't already a member of this product, add it to their access list
+				$member_access[$transaction_id] = $product['product_id'];
+				$customer->update_customer_meta( 'member_access', $member_access );
+			}
+		}
+	}
+}
+add_action( 'it_exchange_add_transaction_success', 'it_exchange_membership_addon_add_transaction' );
+
+/**
+ * Adds necessary details to Exchange upon successfully completed child transaction
+ *
+ * @since 1.0.0
+ * @param int $transaction_id iThemes Exchange Child Transaction ID 
+ * @return void
+*/
+function it_exchange_membership_addon_add_child_transaction( $transaction_id ) {
+	$parent_txn_id =  get_post_meta( $transaction_id, '_it_exchange_parent_tx_id', true );
+	it_exchange_membership_addon_add_transaction( $parent_txn_id );
+}
+add_action( 'it_exchange_add_child_transaction_success', 'it_exchange_membership_addon_add_child_transaction' );
+
+function it_exchange_membership_addon_setup_customer_session() {
+	if ( is_user_logged_in() ) {
+		$user_id = get_current_user_id();
+		$customer = new IT_Exchange_Customer( $user_id );
+		it_exchange_clear_session_data( 'member_access' );
+		if ( ! $member_access = it_exchange_get_session_data( 'member_access' ) ) {		
+			$member_access = (array)$customer->get_customer_meta( 'member_access' );	
+			if ( !empty( $member_access ) ) {
+				foreach( $member_access as $txn_id => $product_id ) {
+					$transaction = it_exchange_get_transaction( $txn_id );
+					$subscription_status = $transaction->get_transaction_meta( 'subscriber_status' );
+					//empty means it was never set... which should mean that recurring payments isn't setup
+					if ( !empty( $subscription_status ) && 'active' !== $subscription_status )
+						unset( $member_access[$txn_id] );
+				}
+				$customer->update_customer_meta( 'member_access', $member_access );
+				it_exchange_add_session_data( 'member_access', $member_access );
+			}
+		}
+	}
+}
+add_action( 'wp', 'it_exchange_membership_addon_setup_customer_session' );
+
 function it_exchange_membership_addon_ajax_add_content_access_rule() {
 	
 	$return = '';
@@ -174,48 +236,74 @@ add_action( 'wp_ajax_it-exchange-membership-addon-content-type-terms', 'it_excha
 function it_exchange_membership_addon_is_content_restricted() {
 		
 	global $post;
+	$restriction = false;
 	
-	if ( $restricted = get_post_meta( $post->ID, '_item-content-rule', true ) )
-		return true;
-
-	if ( $restricted = get_option( '_item-content-rule-post-type-' . $post->post_type ) )
-		return true;
+	if ( current_user_can( 'administrator' ) )
+		return false;
 	
-	$taxonomies = get_object_taxonomies( $post->post_type ); 
+	$member_access = it_exchange_get_session_data( 'member_access' );
 	
-	foreach ( $taxonomies as $tax ) {
-	
-		$terms = wp_get_post_terms( $post->ID, $tax );
-		
-		if ( !empty( $terms ) ) {
-		
-			foreach ( $terms as $term ) {
-			
-				if ( $restricted = get_option( '_item-content-rule-tax-' . $tax . '-' . $term->term_id ) ) 
-					return true;
-				
-			}
-			
+	$restriction_exemptions = (array)get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
+	if ( !empty( $restriction_exemptions ) ) {
+		foreach( $member_access as $txn_id => $product_id ) {
+			if ( array_key_exists( $product_id, $restriction_exemptions ) )
+				return true;
 		}
-				
 	}
 	
-	return false;
+	$post_rules = (array)get_post_meta( $post->ID, '_item-content-rule', true );
+	if ( !empty( $post_type_rules ) ) {
+		if ( empty( $member_access ) ) return true;
+		foreach( $member_access as $txn_id => $product_id ) {
+			if ( in_array( $product_id, $post_rules ) )
+				return false;	
+		}
+		$restriction = true;
+	}
+	
+	$post_type_rules = get_option( '_item-content-rule-post-type-' . $post->post_type, array() );	
+	if ( !empty( $post_type_rules ) ) {
+		if ( empty( $member_access ) ) return true;
+		foreach( $member_access as $txn_id => $product_id ) {
+			if ( !empty( $restriction_exemptions[$product_id] )  )
+				return true;
+			if ( in_array( $product_id, $post_type_rules ) )
+				return false;	
+		}
+		$restriction = true;
+	}
+	
+	$taxonomy_rules = array();
+	$taxonomies = get_object_taxonomies( $post->post_type );
+	$terms = wp_get_object_terms( $post->ID, $taxonomies );
+	foreach( $terms as $term ) {
+		$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
+		if ( !empty( $post_type_rules ) ) {
+			if ( empty( $member_access ) ) return true;
+			foreach( $member_access as $txn_id => $product_id ) {
+				if ( in_array( $product_id, $term_rules ) )
+					return false;	
+			}
+			$restriction = true;
+		}
+	}
+	
+	return $restriction;
 	
 }
 
 function it_exchange_membership_addon_content_filter( $content ) {
-	if ( it_exchange_membership_addon_is_content_restricted() )
+	if ( it_exchange_membership_addon_is_content_restricted() ) {
 		$content = it_exchange_membership_addon_content_restricted_template();
-		
+	}
 	return $content;	
 }
 add_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
 
 function it_exchange_membership_addon_excerpt_filter( $excerpt ) {
-	if ( it_exchange_membership_addon_is_content_restricted() )
+	if ( it_exchange_membership_addon_is_content_restricted() ) {
 		$excerpt = it_exchange_membership_addon_excerpt_restricted_template();
-		
+	}	
 	return $excerpt;
 }
 add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
@@ -276,12 +364,27 @@ function it_exchange_membership_addon_ajax_remove_rule_from_post() {
 		$post_id = $_REQUEST['post_id'];
 		$membership_id = $_REQUEST['membership_id'];
 
+		//remove from content rule
 		if ( !( $rules = get_post_meta( $post_id, '_item-content-rule', true ) ) )
 			$rules = array();
 			
 		if ( ( $key = array_search( $membership_id, $rules ) ) !== false ) {
 			unset( $rules[$key] );
 			update_post_meta( $post_id, '_item-content-rule', $rules );
+		}
+		
+		//remove from exemptions
+		if ( !( $exemptions = get_post_meta( $post_id, '_item-content-rule-exemptions', true ) ) )
+			$exemptions = array();
+			
+		if ( ( $key = array_search( 'post', $exemptions[$membership_id] ) ) !== false ) {
+			unset( $exemptions[$membership_id][$key] );
+			if ( empty( $exemptions[$membership_id][$key] ) )
+				unset( $exemptions[$membership_id] );
+			if ( empty( $exemptions ) )
+				delete_post_meta( $post_id, '_item-content-rule-exemptions' );
+			else
+				update_post_meta( $post_id, '_item-content-rule-exemptions', $exemptions );
 		}
 		
 		//Remove from Membership Product (we need to keep these in sync)

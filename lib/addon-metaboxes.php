@@ -17,6 +17,9 @@ function it_exchange_membership_add_post_metabox() {
 	$post_types = get_post_types( $args, $output, $operator ); 
 
     foreach ( $post_types as $post_type ) {
+		if ( 'it_exchange_prod' === $post_type )
+			continue;
+			
         add_meta_box(
             'it_exchange_membership_addon_membership_access_metabox',
             __( 'Membership Access', 'LION' ),

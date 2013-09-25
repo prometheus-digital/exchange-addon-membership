@@ -35,11 +35,11 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	*/
 	function add_feature_support_to_product_types() {
 		// Register the product feature
-		$slug        = 'membership-content-access';
+		$slug        = 'membership-content-access-rules';
 		$description = __( 'How long a membership should last.', 'LION' );
 		it_exchange_register_product_feature( $slug, $description );
 
-		it_exchange_add_feature_support_to_product_type( 'membership-content-access', 'membership-product-type' );
+		it_exchange_add_feature_support_to_product_type( 'membership-content-access-rules', 'membership-product-type' );
 	}
 
 	/**
@@ -75,7 +75,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 			$product_type = it_exchange_get_product_type( $post );
 		
 		if ( !empty( $post_type ) && 'it_exchange_prod' === $post_type ) {
-			if ( !empty( $product_type ) &&  it_exchange_product_type_supports_feature( $product_type, 'membership-content-access' ) )
+			if ( !empty( $product_type ) &&  it_exchange_product_type_supports_feature( $product_type, 'membership-content-access-rules' ) )
 				add_action( 'it_exchange_product_metabox_callback_' . $product_type, array( $this, 'register_metabox' ) );
 		}
 		
@@ -90,7 +90,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	 * @return void
 	*/
 	function register_metabox() {
-		add_meta_box( 'it-exchange-product-membership-content-access', __( 'Membership Content Access', 'LION' ), array( $this, 'print_metabox' ), 'it_exchange_prod', 'it_exchange_normal', 'low'  );
+		add_meta_box( 'it-exchange-product-membership-content-access-rules', __( 'Membership Content Access', 'LION' ), array( $this, 'print_metabox' ), 'it_exchange_prod', 'it_exchange_normal', 'low'  );
 	}
 
 	/**
@@ -164,7 +164,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 			return;
 
 		// Abort if this product type doesn't support this feature 
-		if ( ! it_exchange_product_type_supports_feature( $product_type, 'membership-content-access' ) )
+		if ( ! it_exchange_product_type_supports_feature( $product_type, 'membership-content-access-rules' ) )
 			return;
 		
 		$existing_access_rules = it_exchange_get_product_feature( $product_id, 'membership-content-access-rules' );
@@ -365,7 +365,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	function product_supports_feature( $result, $product_id ) {
 		// Does this product type support this feature?
 		$product_type = it_exchange_get_product_type( $product_id );
-		if ( ! it_exchange_product_type_supports_feature( $product_type, 'membership-content-access' ) )
+		if ( ! it_exchange_product_type_supports_feature( $product_type, 'membership-content-access-rules' ) )
 			return false;
 
 		return true;

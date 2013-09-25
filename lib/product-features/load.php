@@ -9,7 +9,8 @@
 require( 'class.content-access.php' );
 
 // Product Feature: Membership Duration
-require( 'class.duration.php' );
+//how does this differ from Recurring?
+//require( 'class.duration.php' );
 
 // Product Feature: Membership Welcome Message
 require( 'class.welcome-message.php' );

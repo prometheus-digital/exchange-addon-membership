@@ -138,12 +138,12 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	* Use get_post_meta() to retrieve an existing value
 	* from the database and use the value for the form.
 	*/
-	$post_rules = get_post_meta( $post_id, '_item-content-rule', true );
+	$post_rules = (array)get_post_meta( $post_id, '_item-content-rule', true );
 	$post_type_rules = get_option( '_item-content-rule-post-type-' . $post_type, array() );
 	$taxonomy_rules = array();
-	$restriction_exceptions = (array)get_post_meta( $post_id, '_item-content-rule-exemptions', true );
+	$restriction_exemptions = (array)get_post_meta( $post_id, '_item-content-rule-exemptions', true );
 	
-	$taxonomies = get_taxonomies( '', 'names' ); 
+	$taxonomies = get_object_taxonomies( $post_type );
 	$terms = wp_get_object_terms( $post_id, $taxonomies );
 	foreach( $terms as $term ) {
 		$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
@@ -180,7 +180,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 		foreach ( $rules as $membership_id => $rule ) {
 			$return .= '<div class="it-exchange-membership-restriction-group">';
 			$title = get_the_title( $membership_id );
-			$restriction_exception = !empty( $restriction_exceptions[$membership_id] ) ? $restriction_exceptions[$membership_id] : array();
+			$restriction_exception = !empty( $restriction_exemptions[$membership_id] ) ? $restriction_exemptions[$membership_id] : array();
 			
 			$return .= '<input type="hidden" name="it_exchange_membership_id" value="' . $membership_id . '">';
 			
