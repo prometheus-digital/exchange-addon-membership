@@ -185,17 +185,17 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 			$return .= '<input type="hidden" name="it_exchange_membership_id" value="' . $membership_id . '">';
 			
 			if ( !empty( $rule['post'] ) && true === $rule['post'] ) {
-				$return .= '<div class="it-exchange-membership-rule-post">';
+				$return .= '<div class="it-exchange-membership-rule-post it-exchange-membership-rule">';
 				$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="post" ' . checked( in_array( 'post', $restriction_exception ), false, false ) . '>';
 				$return .= $title;
-				$return .= '<span class="it-exchange-membership-remove-rule">x</span>';
+				$return .= '<span class="it-exchange-membership-remove-rule">&times;</span>';
 				//This is where we'll handle dripped content
 				//but not yet :)
 				$return .= '</div>';
 			}
 			
 			if ( !empty( $rule['post_type'] ) ) {
-				$return .= '<div class="it-exchange-membership-rule-post-type">';
+				$return .= '<div class="it-exchange-membership-rule-post-type it-exchange-membership-rule">';
 				$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="posttype" ' . checked( in_array( 'posttype', $restriction_exception ), false, false ) . '>';
 				$return .= $title;
 				$return .= '<div class="it-exchange-membership-rule-description">' . $rule['post_type'] . '</div>';
@@ -206,7 +206,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 				foreach ( $rule['taxonomy'] as $taxonomy ) {
 					foreach( $rules[$product_id][$taxonomy]['term_ids'] as $term_id ) {
 						$term = get_term_by( 'id', $term_id, $taxonomy );
-						$return .= '<div class="it-exchange-membership-rule-post-type">';
+						$return .= '<div class="it-exchange-membership-rule-post-type it-exchange-membership-rule">';
 						$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="taxonomy|' . $taxonomy . '|' . $term_id . '" ' . checked( in_array( 'taxonomy|' . $taxonomy . '|' . $term_id, $restriction_exception ), false, false ) . '>';
 						$return .= $title;
 						$return .= '<div class="it-exchange-membership-rule-description">' . ucwords( $taxonomy ) . ' "' .  $term->name . '"</div>';

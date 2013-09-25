@@ -1,2 +1,11 @@
-/* CSS Document */
-
+#it_exchange_membership_addon_membership_access_metabox .it-exchange-membership-restriction-group{margin-bottom:10px;background:#FFF;border:1px solid #DDD;border-top:0;box-shadow:#F6F6F6 0 0 10px;}
+#it_exchange_membership_addon_membership_access_metabox .it-exchange-membership-rule{position:relative;padding:15px 30px 15px 35px;padding-left:35px;border-top:1px solid #DDD;}
+#it_exchange_membership_addon_membership_access_metabox .it-exchange-membership-rule input[type="checkbox"]{position:absolute;left:15px;}
+#it_exchange_membership_addon_membership_access_metabox .it-exchange-membership-rule-description{padding-left:10px;font-size:10px;color:#AAA;}
+#it_exchange_membership_addon_membership_access_metabox .it-exchange-membership-remove-rule,
+#it_exchange_membership_addon_membership_access_metabox .it-exchange-membership-remove-new-rule{cursor:pointer;position:absolute;z-index:100;color:#CCC;top:15px;right:15px;-webkit-transition:color .2s ease;-moz-transition:color .2s ease;transition:color .2s ease;}
+#it_exchange_membership_addon_membership_access_metabox .it-exchange-membership-remove-rule:hover,
+#it_exchange_membership_addon_membership_access_metabox .it-exchange-membership-remove-new-rule:hover{color:#E1797A;}
+#it_exchange_membership_addon_membership_access_metabox .it-exchange-new-membership-rule{margin-bottom:10px;position:relative;padding:15px 35px 15px 15px;background:#FFF;border:1px solid #DDD;}
+#it_exchange_membership_addon_membership_access_metabox .it-exchange-new-membership-rule select{max-width:100%;}
+#it_exchange_membership_addon_membership_access_metabox .it-exchange-add-new-restriction-ok-button{margin-top:5px;}
