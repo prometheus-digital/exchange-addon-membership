@@ -51,21 +51,27 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 	*/
 	function content( $options=array() ) {
 		$defaults = array(
-			'more_link_text' => null,
-			'strip_teaser' => false
+			'before' => '',
+			'after'  => '',
+			'message' => __( 'This content is for members only. Please sign up to get access to this content and other awesome content added for members only.', 'LION' ),
+			'class'  => 'it-exchange-membership-restricted-content',
+		//	'more_link_text' => null,
+		//	'strip_teaser' => false
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
 			
-		remove_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
-		remove_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
+		//remove_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
+		//remove_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
 		
-		$content = get_the_content( $options['more_link_text'], $options['strip_teaser'] );
-		$content = apply_filters( 'the_content', $content );
-		$content = str_replace( ']]>', ']]&gt;', $content );
-		$content = '<h1>You must be logged in with the correct membership level to access this content</h1>';
+		//$content = get_the_content( $options['more_link_text'], $options['strip_teaser'] );
+		//$content = apply_filters( 'the_content', $content );
+		//$content = str_replace( ']]>', ']]&gt;', $content );
+		$content  = $options['before'];
+		$content .= '<p class="' . $options['class'] . '">' . $options['message'] . '</p>';
+		$content .= $options['after'];
 		
-		add_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
-		add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
+		//add_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
+		//add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
 		
 		return $content;
 	}
@@ -75,14 +81,26 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 	 * @return string
 	*/
 	function excerpt( $options=array() ) {
-		remove_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
-		remove_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
+		$defaults = array(
+			'before'  => '',
+			'after'   => '',
+			'message' => __( 'This content is for members only. Please sign up to get access to this content and other awesome content added for members only.', 'LION' ),
+			'class'   => 'it-exchange-membership-restricted-excerpt',
+		//	'more_link_text' => null,
+		//	'strip_teaser' => false
+		);
+		$options = ITUtility::merge_defaults( $options, $defaults );
 		
-		$excerpt = apply_filters( 'the_excerpt', get_the_excerpt() );
-		$excerpt = '<h1>You must be logged in with the correct membership level to access this excerpt</h1>';
+		//remove_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
+		//remove_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
 		
-		add_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
-		add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
+		//$excerpt = apply_filters( 'the_excerpt', get_the_excerpt() );
+		$content  = $options['before'];
+		$content .= '<p class="' . $options['class'] . '">' . $options['message'] . '</p>';
+		$content .= $options['after'];
+		
+		//add_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
+		//add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
 		
 		return $excerpt;
 	}

@@ -120,7 +120,6 @@ function it_exchange_membership_addon_setup_customer_session() {
 	if ( is_user_logged_in() ) {
 		$user_id = get_current_user_id();
 		$customer = new IT_Exchange_Customer( $user_id );
-		it_exchange_clear_session_data( 'member_access' );
 		if ( ! $member_access = it_exchange_get_session_data( 'member_access' ) ) {		
 			$member_access = (array)$customer->get_customer_meta( 'member_access' );	
 			if ( !empty( $member_access ) ) {
@@ -135,6 +134,8 @@ function it_exchange_membership_addon_setup_customer_session() {
 				it_exchange_add_session_data( 'member_access', $member_access );
 			}
 		}
+	} else {
+		it_exchange_clear_session_data( 'member_access' );
 	}
 }
 add_action( 'wp', 'it_exchange_membership_addon_setup_customer_session' );
