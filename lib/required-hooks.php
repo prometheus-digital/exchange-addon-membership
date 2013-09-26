@@ -203,7 +203,7 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 				break;
 			
 			case 'post_types':
-				$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item' ) );
+				$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download' ) );
 				$post_types = get_post_types( array(), 'objects' );
 				foreach ( $post_types as $post_type ) {
 					if ( in_array( $post_type->name, $hidden_post_types ) ) 
@@ -233,65 +233,6 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 	
 }
 add_action( 'wp_ajax_it-exchange-membership-addon-content-type-terms', 'it_exchange_membership_addon_ajax_get_content_type_term' );
-
-function it_exchange_membership_addon_is_content_restricted() {
-		
-	global $post;
-	$restriction = false;
-	
-	if ( current_user_can( 'administrator' ) )
-		return false;
-	
-	$member_access = it_exchange_get_session_data( 'member_access' );
-	
-	$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
-	if ( !empty( $restriction_exemptions ) ) {
-		foreach( $member_access as $txn_id => $product_id ) {
-			if ( array_key_exists( $product_id, $restriction_exemptions ) )
-				return true;
-		}
-	}
-	
-	$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
-	if ( !empty( $post_rules ) ) {
-		if ( empty( $member_access ) ) return true;
-		foreach( $member_access as $txn_id => $product_id ) {
-			if ( in_array( $product_id, $post_rules ) )
-				return false;	
-		}
-		$restriction = true;
-	}
-	
-	$post_type_rules = get_option( '_item-content-rule-post-type-' . $post->post_type, array() );	
-	if ( !empty( $post_type_rules ) ) {
-		if ( empty( $member_access ) ) return true;
-		foreach( $member_access as $txn_id => $product_id ) {
-			if ( !empty( $restriction_exemptions[$product_id] )  )
-				return true;
-			if ( in_array( $product_id, $post_type_rules ) )
-				return false;	
-		}
-		$restriction = true;
-	}
-	
-	$taxonomy_rules = array();
-	$taxonomies = get_object_taxonomies( $post->post_type );
-	$terms = wp_get_object_terms( $post->ID, $taxonomies );
-	foreach( $terms as $term ) {
-		$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
-		if ( !empty( $term_rules ) ) {
-			if ( empty( $member_access ) ) return true;
-			foreach( $member_access as $txn_id => $product_id ) {
-				if ( in_array( $product_id, $term_rules ) )
-					return false;	
-			}
-			$restriction = true;
-		}
-	}
-	
-	return $restriction;
-	
-}
 
 function it_exchange_membership_addon_content_filter( $content ) {
 	if ( it_exchange_membership_addon_is_content_restricted() ) {
@@ -589,9 +530,10 @@ function it_exchange_get_membership_page_urls( $page ) {
 		return add_query_arg( array( $slug => 1 ), $base );
 }
 
-function it_exchange_membership_addon_pages_to_protect( $pages ) {
+function it_exchange_membership_addon_pages( $pages ) {
 	$pages[] = 'memberships';
 	return $pages;	
 }
-add_filter( 'it_exchange_pages_to_protect', 'it_exchange_membership_addon_pages_to_protect' );
-add_filter( 'it_exchange_profile_pages', 'it_exchange_membership_addon_profile_pages' );
+add_filter( 'it_exchange_pages_to_protect', 'it_exchange_membership_addon_pages' );
+add_filter( 'it_exchange_profile_pages', 'it_exchange_membership_addon_pages' );
+add_filter( 'it_exchange_account_based_pages', 'it_exchange_membership_addon_pages' );
