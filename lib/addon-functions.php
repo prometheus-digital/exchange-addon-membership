@@ -131,6 +131,7 @@ function it_exchange_membership_addon_build_content_rule( $selected, $selection,
 function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	
 	$return = '';
+	$rules = array();
 	
 	$post_type = get_post_type( $post_id );
 	
@@ -138,10 +139,10 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	* Use get_post_meta() to retrieve an existing value
 	* from the database and use the value for the form.
 	*/
-	$post_rules = (array)get_post_meta( $post_id, '_item-content-rule', true );
+	$post_rules = get_post_meta( $post_id, '_item-content-rule', true );
 	$post_type_rules = get_option( '_item-content-rule-post-type-' . $post_type, array() );
 	$taxonomy_rules = array();
-	$restriction_exemptions = (array)get_post_meta( $post_id, '_item-content-rule-exemptions', true );
+	$restriction_exemptions = get_post_meta( $post_id, '_item-content-rule-exemptions', true );
 	
 	$taxonomies = get_object_taxonomies( $post_type );
 	$terms = wp_get_object_terms( $post_id, $taxonomies );
@@ -150,7 +151,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 		if ( !empty( $term_rules ) )
 			$taxonomy_rules[$term->taxonomy][$term->term_id]  = array_merge( $taxonomy_rules, $term_rules );
 	}
-	
+		
 	//Re-order for output!
 	if ( !empty( $post_rules ) ) {
 		foreach( $post_rules as $product_id ) {
@@ -221,7 +222,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	
 	} else {
 	
-		$return = __( 'No Rules', 'LION' );
+		$return = __( 'No Rules Found', 'LION' );
 		
 	}
 	

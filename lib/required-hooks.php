@@ -88,12 +88,12 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 	$cart_object = get_post_meta( $transaction_id, '_it_exchange_cart_object', true );
 	$customer_id = get_post_meta( $transaction_id, '_it_exchange_customer_id', true );
 	$customer = new IT_Exchange_Customer( $customer_id );
-	$member_access = (array)$customer->get_customer_meta( 'member_access' );
+	$member_access = $customer->get_customer_meta( 'member_access' );
 	
 	foreach ( $cart_object->products as $product ) {
 		if ( it_exchange_product_supports_feature( $product['product_id'], 'membership-content-access-rules' ) ) {
 			//This is a membership product!
-			if ( !in_array( $product['product_id'], $member_access ) ) {
+			if ( !in_array( $product['product_id'], (array)$member_access ) ) {
 				//If this user isn't already a member of this product, add it to their access list
 				$member_access[$transaction_id] = $product['product_id'];
 				$customer->update_customer_meta( 'member_access', $member_access );
@@ -121,7 +121,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 		$user_id = get_current_user_id();
 		$customer = new IT_Exchange_Customer( $user_id );
 		if ( ! $member_access = it_exchange_get_session_data( 'member_access' ) ) {		
-			$member_access = (array)$customer->get_customer_meta( 'member_access' );	
+			$member_access = $customer->get_customer_meta( 'member_access' );	
 			if ( !empty( $member_access ) ) {
 				foreach( $member_access as $txn_id => $product_id ) {
 					$transaction = it_exchange_get_transaction( $txn_id );
@@ -244,7 +244,7 @@ function it_exchange_membership_addon_is_content_restricted() {
 	
 	$member_access = it_exchange_get_session_data( 'member_access' );
 	
-	$restriction_exemptions = (array)get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
+	$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
 	if ( !empty( $restriction_exemptions ) ) {
 		foreach( $member_access as $txn_id => $product_id ) {
 			if ( array_key_exists( $product_id, $restriction_exemptions ) )
@@ -252,7 +252,7 @@ function it_exchange_membership_addon_is_content_restricted() {
 		}
 	}
 	
-	$post_rules = (array)get_post_meta( $post->ID, '_item-content-rule', true );
+	$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
 	if ( !empty( $post_type_rules ) ) {
 		if ( empty( $member_access ) ) return true;
 		foreach( $member_access as $txn_id => $product_id ) {
@@ -485,3 +485,109 @@ function it_exchange_membership_addon_ajax_modify_restrictions_exemptions() {
 	die();
 }
 add_action( 'wp_ajax_it-exchange-membership-addon-modify-restrictions-exemptions', 'it_exchange_membership_addon_ajax_modify_restrictions_exemptions' );
+
+/*
+ * Registers the membership page
+ *
+ * @since 1.0.0
+ *
+ * @return void
+*/
+function it_exchange_membership_addon_account_page() {
+
+    // Cart
+    $options = array(
+		'slug'          => 'memberships',
+		'name'          => __( 'Memberships', 'LION' ),
+		'rewrite-rules' => array( 1000, 'it_exchange_get_memberships_page_rewrites' ),
+		'url'           => 'it_exchange_get_membership_page_urls',
+		'settings-name' => __( 'Membership Page', 'LION' ),
+		'tip'           => __( 'Membership pages appear in the customers account profile.', 'LION' ),
+		'type'          => 'exchange',
+		'menu'          => true,
+		'optional'      => true,
+    );  
+    it_exchange_register_page( 'memberships', $options );
+}
+add_action( 'init', 'it_exchange_membership_addon_account_page', 9 );
+
+/**
+ * Returns rewrites for membership pages
+ *
+ * @since 1.0.0
+ *
+ * @param string page
+ * @return array
+*/
+function it_exchange_get_memberships_page_rewrites( $page ) {
+	$slug = it_exchange_get_page_slug( $page );
+	switch( $page ) {
+		case 'memberships' :
+			$account_slug = it_exchange_get_page_slug( 'account' );
+
+			// If we're using WP as acount page type, add the WP slug to rewrites and return.
+			if ( 'wordpress' == it_exchange_get_page_type( 'account' ) ) {
+				$account = get_page( it_exchange_get_page_wpid( 'account' ) );
+				$account_slug = $account->post_name;
+			}
+
+			$rewrites = array(
+				$account_slug  . '/([^/]+)/' . $slug  . '/([^/]+)/'  => 'index.php?' . $account_slug . '=$matches[1]&' . $slug . '=1&membership=$matches[2]',
+				$account_slug . '/' . $slug  . '/([^/]+)/' => 'index.php?' . $account_slug . '=1&' . $slug . '=1&membership=$matches[2]',
+			);
+			return $rewrites;
+			break;
+	}
+	return false;
+}
+
+/**
+ * Returns URL for membership pages
+ *
+ * @since 1.0.0
+ *
+ * @param string page
+ * @return array
+*/
+function it_exchange_get_membership_page_urls( $page ) {
+	// Get slugs
+    $slug       = it_exchange_get_page_slug( $page );
+    $permalinks = (boolean) get_option( 'permalink_structure' );
+    $base       = trailingslashit( get_home_url() );
+
+	// Account Slug
+	if ( 'wordpress' == it_exchange_get_page_type( 'account' ) ) {
+		$account_page = get_page( it_exchange_get_page_wpid( 'account' ) );
+		$account_slug = $account_page->post_name;
+	} else {
+		$account_slug = it_exchange_get_page_slug( 'account' );
+	}
+	
+	// Replace account value with name if user is logged in
+	if ( $permalinks )
+		$base = trailingslashit( $base . $account_slug );
+	else
+		$base = add_query_arg( array( $account_slug => 1 ), $base );
+
+	$account_name = get_query_var( 'account' );
+	if ( $account_name && '1' != $account_name && ( 'login' != $page && 'logout' != $page ) ) {
+		if ( $permalinks ) {
+			$base = trailingslashit( $base . $account_name );
+		} else {
+			$base = remove_query_arg( $account_slug, $base );
+			$base = add_query_arg( array( $account_slug => $account_name ), $base );
+		}
+	}
+
+	if ( $permalinks )
+		return trailingslashit( $base . $slug );
+	else
+		return add_query_arg( array( $slug => 1 ), $base );
+}
+
+function it_exchange_membership_addon_pages_to_protect( $pages ) {
+	$pages[] = 'memberships';
+	return $pages;	
+}
+add_filter( 'it_exchange_pages_to_protect', 'it_exchange_membership_addon_pages_to_protect' );
+add_filter( 'it_exchange_profile_pages', 'it_exchange_membership_addon_profile_pages' );
