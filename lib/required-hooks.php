@@ -377,15 +377,17 @@ function it_exchange_membership_addon_ajax_remove_rule_from_post() {
 		//remove from exemptions
 		if ( !( $exemptions = get_post_meta( $post_id, '_item-content-rule-exemptions', true ) ) )
 			$exemptions = array();
-			
-		if ( ( $key = array_search( 'post', $exemptions[$membership_id] ) ) !== false ) {
-			unset( $exemptions[$membership_id][$key] );
-			if ( empty( $exemptions[$membership_id][$key] ) )
-				unset( $exemptions[$membership_id] );
-			if ( empty( $exemptions ) )
-				delete_post_meta( $post_id, '_item-content-rule-exemptions' );
-			else
-				update_post_meta( $post_id, '_item-content-rule-exemptions', $exemptions );
+		
+		if ( !empty( $exemptions[$membership_id] ) ) {
+			if ( ( $key = array_search( 'post', $exemptions[$membership_id] ) ) !== false ) {
+				unset( $exemptions[$membership_id][$key] );
+				if ( empty( $exemptions[$membership_id][$key] ) )
+					unset( $exemptions[$membership_id] );
+				if ( empty( $exemptions ) )
+					delete_post_meta( $post_id, '_item-content-rule-exemptions' );
+				else
+					update_post_meta( $post_id, '_item-content-rule-exemptions', $exemptions );
+			}
 		}
 		
 		//Remove from Membership Product (we need to keep these in sync)
@@ -469,15 +471,17 @@ function it_exchange_membership_addon_ajax_modify_restrictions_exemptions() {
 			//remove from exemptions
 			if ( !( $exemptions = get_post_meta( $post_id, '_item-content-rule-exemptions', true ) ) )
 				$exemptions = array();
-				
-			if ( ( $key = array_search( $exemption, $exemptions[$membership_id] ) ) !== false ) {
-				unset( $exemptions[$membership_id][$key] );
-				if ( empty( $exemptions[$membership_id][$key] ) )
-					unset( $exemptions[$membership_id] );
-				if ( empty( $exemptions ) )
-					delete_post_meta( $post_id, '_item-content-rule-exemptions' );
-				else
-					update_post_meta( $post_id, '_item-content-rule-exemptions', $exemptions );
+			
+			if ( !empty( $exemptions[$membership_id] ) ) {
+				if ( ( $key = array_search( $exemption, $exemptions[$membership_id] ) ) !== false ) {
+					unset( $exemptions[$membership_id][$key] );
+					if ( empty( $exemptions[$membership_id][$key] ) )
+						unset( $exemptions[$membership_id] );
+					if ( empty( $exemptions ) )
+						delete_post_meta( $post_id, '_item-content-rule-exemptions' );
+					else
+						update_post_meta( $post_id, '_item-content-rule-exemptions', $exemptions );
+				}
 			}
 		}
 	}
