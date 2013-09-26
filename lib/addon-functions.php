@@ -174,9 +174,10 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 			}
 		}
 	}	
+	
+	$return .= '<div class="it-exchange-membership-restrictions">';
+	
 	if ( !empty( $rules ) ) {
-		
-		$return .= '<div class="it-exchange-membership-restrictions">';
 			
 		foreach ( $rules as $membership_id => $rule ) {
 			$return .= '<div class="it-exchange-membership-restriction-group">';
@@ -217,14 +218,14 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 			}
 			$return .= '</div>';
 		}
-		
-		$return .= '</div>';
 	
 	} else {
 	
 		$return = __( 'No Rules Found', 'LION' );
 		
 	}
+	
+	$return .= '</div>';
 	
 	return $return;
 	

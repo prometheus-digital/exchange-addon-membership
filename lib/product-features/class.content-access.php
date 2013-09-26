@@ -31,7 +31,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	/**
 	 * Register the product feature and add it to enabled product-type addons
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	*/
 	function add_feature_support_to_product_types() {
 		// Register the product feature
@@ -45,7 +45,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	/**
 	 * Register's the metabox for any product type that supports the feature
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 * @return void
 	*/
 	function init_feature_metaboxes() {
@@ -86,7 +86,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	 *
 	 * Hooked to it_exchange_product_metabox_callback_[product-type] where product type supports the feature 
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 * @return void
 	*/
 	function register_metabox() {
@@ -96,7 +96,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	/**
 	 * This echos the feature metabox.
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 * @return void
 	*/
 	function print_metabox( $post ) {
@@ -148,7 +148,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	/**
 	 * This saves the value
 	 *
-	 * @since 0.3.8
+	 * @since 1.0.0
 	 *
 	 * @param object $post wp post object
 	 * @return void
@@ -309,7 +309,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	/**
 	 * This updates the feature for a product
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 *
 	 * @param integer $product_id the product id
 	 * @param mixed $new_value the new value 
@@ -325,7 +325,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	/**
 	 * Return the product's features
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 * @param mixed $existing the values passed in by the WP Filter API. Ignored here.
 	 * @param integer product_id the WordPress post ID
 	 * @return string product feature
@@ -337,7 +337,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	/**
 	 * Does the product have the feature?
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 * @param mixed $result Not used by core
 	 * @param integer $product_id
 	 * @return boolean
@@ -357,7 +357,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	 * This is different than if it has the feature, a product can 
 	 * support a feature but might not have the feature set.
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 * @param mixed $result Not used by core
 	 * @param integer $product_id
 	 * @return boolean

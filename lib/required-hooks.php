@@ -253,7 +253,7 @@ function it_exchange_membership_addon_is_content_restricted() {
 	}
 	
 	$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
-	if ( !empty( $post_type_rules ) ) {
+	if ( !empty( $post_rules ) ) {
 		if ( empty( $member_access ) ) return true;
 		foreach( $member_access as $txn_id => $product_id ) {
 			if ( in_array( $product_id, $post_rules ) )
@@ -279,7 +279,7 @@ function it_exchange_membership_addon_is_content_restricted() {
 	$terms = wp_get_object_terms( $post->ID, $taxonomies );
 	foreach( $terms as $term ) {
 		$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
-		if ( !empty( $post_type_rules ) ) {
+		if ( !empty( $term_rules ) ) {
 			if ( empty( $member_access ) ) return true;
 			foreach( $member_access as $txn_id => $product_id ) {
 				if ( in_array( $product_id, $term_rules ) )
