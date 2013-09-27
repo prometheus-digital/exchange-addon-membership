@@ -290,3 +290,49 @@ function it_exchange_membership_addon_is_content_restricted() {
 	return $restriction;
 	
 }
+
+/*
+ * Returns current membership object for Member Dashboard
+ *
+*/
+function it_exchange_membership_addon_get_current_membership() {
+	if ( $membership_slug = get_query_var( 'memberships' ) ) {
+		$args = array(
+		  'name' => $membership_slug,
+		  'post_type' => 'it_exchange_prod',
+		  'post_status' => 'publish',
+		  'numberposts' => 1
+		);
+		$posts = get_posts( $args );
+		foreach( $posts as $post ) { //should only be one
+			return it_exchange_get_product( $post );
+		}
+	}
+	return false;
+}
+
+/*
+ * Returns membership access rules sorted by selected type
+ *
+*/
+function it_exchange_membership_access_rules_sorted_by_selected_type( $membership_product_id, $exclude_exempted=true ) {
+	$access_rules = it_exchange_get_product_feature( $membership_product_id, 'membership-content-access-rules' );
+	$sorted_access_rules = array();
+	
+	foreach( $access_rules as $rule ) {
+		if ( $exclude_exempted && 'posts' === $rule['selected'] ) {		
+			$restriction_exemptions = get_post_meta( $rule['term'], '_item-content-rule-exemptions', true );
+			if ( !empty( $restriction_exemptions ) ) {
+				if ( array_key_exists( $membership_product_id, $restriction_exemptions ) )
+					continue;
+			}
+		}
+		$sorted_access_rules[$rule['selected']][] = array(
+			'type' => $rule['selection'],
+			'term' => $rule['term'],
+		);
+	}
+	
+	return $sorted_access_rules;
+	
+}

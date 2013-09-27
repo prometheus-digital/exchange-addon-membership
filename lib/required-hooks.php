@@ -439,12 +439,10 @@ add_action( 'wp_ajax_it-exchange-membership-addon-modify-restrictions-exemptions
  * @return void
 */
 function it_exchange_membership_addon_account_page() {
-
-    // Cart
     $options = array(
 		'slug'          => 'memberships',
 		'name'          => __( 'Memberships', 'LION' ),
-		'rewrite-rules' => array( 1000, 'it_exchange_get_memberships_page_rewrites' ),
+		'rewrite-rules' => array( 115, 'it_exchange_get_memberships_page_rewrites' ),
 		'url'           => 'it_exchange_get_membership_page_urls',
 		'settings-name' => __( 'Membership Page', 'LION' ),
 		'tip'           => __( 'Membership pages appear in the customers account profile.', 'LION' ),
@@ -477,8 +475,8 @@ function it_exchange_get_memberships_page_rewrites( $page ) {
 			}
 
 			$rewrites = array(
-				$account_slug  . '/([^/]+)/' . $slug  . '/([^/]+)/'  => 'index.php?' . $account_slug . '=$matches[1]&' . $slug . '=1&membership=$matches[2]',
-				$account_slug . '/' . $slug  . '/([^/]+)/' => 'index.php?' . $account_slug . '=1&' . $slug . '=1&membership=$matches[2]',
+				$account_slug  . '/([^/]+)/' . $slug  . '/([^/]+)'  => 'index.php?' . $account_slug . '=$matches[1]&' . $slug . '=$matches[2]',
+				$account_slug . '/' . $slug  . '/([^/]+)' => 'index.php?' . $account_slug . '=1&' . $slug . '=$matches[2]',
 			);
 			return $rewrites;
 			break;
@@ -527,7 +525,7 @@ function it_exchange_get_membership_page_urls( $page ) {
 	if ( $permalinks )
 		return trailingslashit( $base . $slug );
 	else
-		return add_query_arg( array( $slug => 1 ), $base );
+		return add_query_arg( $slug, '', $base );
 }
 
 function it_exchange_membership_addon_pages( $pages ) {
@@ -537,3 +535,29 @@ function it_exchange_membership_addon_pages( $pages ) {
 add_filter( 'it_exchange_pages_to_protect', 'it_exchange_membership_addon_pages' );
 add_filter( 'it_exchange_profile_pages', 'it_exchange_membership_addon_pages' );
 add_filter( 'it_exchange_account_based_pages', 'it_exchange_membership_addon_pages' );
+
+function it_exchange_membership_addon_append_to_customer_menu_loop( $nav, $customer ) {
+	$memberships = $customer->get_customer_meta( 'member_access' );
+	$page_slug = 'memberships';
+	$permalinks = (bool)get_option( 'permalink_structure' );
+	
+	foreach ( $memberships as $membership_id ) {
+		
+		$membership_post = get_post( $membership_id );
+		$membership_slug = $membership_post->post_name;
+		
+		$query_var = get_query_var( 'memberships' );
+		
+		$class = !empty( $query_var ) && $query_var == $membership_slug ? ' class="current"' : '';
+		
+		if ( $permalinks )
+			$url = it_exchange_get_page_url( $page_slug ) . $membership_slug;
+		else
+			$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
+			
+		$nav .= '<li' . $class . '><a href="' . $url . '">' . get_the_title( $membership_id ) . '</a></li>';	
+	}
+	
+	return $nav;
+}
+add_filter( 'it_exchange_after_customer_menu_loop', 'it_exchange_membership_addon_append_to_customer_menu_loop', 10, 2 );

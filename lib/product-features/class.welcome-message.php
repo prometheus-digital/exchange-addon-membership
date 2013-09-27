@@ -31,7 +31,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	/**
 	 * Register the product feature and add it to enabled product-type addons
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	*/
 	function add_feature_support_to_product_types() {
 		// Register the product feature
@@ -45,7 +45,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	/**
 	 * Register's the metabox for any product type that supports the feature
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 * @return void
 	*/
 	function init_feature_metaboxes() {
@@ -86,7 +86,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	 *
 	 * Hooked to it_exchange_product_metabox_callback_[product-type] where product type supports the feature 
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 * @return void
 	*/
 	function register_metabox() {
@@ -96,7 +96,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	/**
 	 * This echos the feature metabox.
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 * @return void
 	*/
 	function print_metabox( $post ) {
@@ -112,7 +112,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	/**
 	 * This saves the value
 	 *
-	 * @since 0.3.8
+	 * @since 1.0.0
 	 *
 	 * @param object $post wp post object
 	 * @return void
@@ -135,25 +135,18 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 		if ( empty( $_POST['it-exchange-product-membership-welcome-message'] ) )
 			delete_post_meta( $product_id, '_it-exchange-product-membership-welcome-message' );
 		else
-			it_exchange_update_product_feature( $product_id, 'membership-welcome-message', absint( $_POST['it-exchange-product-membership-welcome-message'] ) );
+			it_exchange_update_product_feature( $product_id, 'membership-welcome-message', $_POST['it-exchange-product-membership-welcome-message'] );
 	}
 /**
 	 * This updates the feature for a product
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 *
 	 * @param integer $product_id the product id
 	 * @param mixed $new_value the new value 
 	 * @return bolean
 	*/
-	function save_feature( $product_id, $new_value, $options=array() ) {
-		// Using options to determine if we're setting the enabled setting or the actual max_number setting
-		$defaults = array(
-			'setting' => 'membership-welcome-message',
-		);
-		$options = ITUtility::merge_defaults( $options, $defaults );
-		
-		$new_value = empty( $new_value ) && !is_numeric( $new_value ) ? '' : absint( $new_value );
+	function save_feature( $product_id, $new_value ) {
 		update_post_meta( $product_id, '_it-exchange-product-membership-welcome-message', $new_value );
 		return true;
 	}
@@ -161,7 +154,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	/**
 	 * Return the product's features
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 * @param mixed $existing the values passed in by the WP Filter API. Ignored here.
 	 * @param integer product_id the WordPress post ID
 	 * @return string product feature
@@ -181,7 +174,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	/**
 	 * Does the product have the feature?
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 * @param mixed $result Not used by core
 	 * @param integer $product_id
 	 * @return boolean
@@ -199,7 +192,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	 * This is different than if it has the feature, a product can 
 	 * support a feature but might not have the feature set.
 	 *
-	 * @since 0.4.0
+	 * @since 1.0.0
 	 * @param mixed $result Not used by core
 	 * @param integer $product_id
 	 * @return boolean
