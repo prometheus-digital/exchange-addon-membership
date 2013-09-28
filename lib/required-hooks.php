@@ -44,7 +44,7 @@ add_action( 'admin_enqueue_scripts', 'it_exchange_membership_addon_admin_wp_enqu
 /**
  * Inits the scripts used by IT Exchange dashboard
  *
- * @since 0.4.0
+ * @since 1.0.0
  * @return void
 */
 function it_exchange_membership_addon_admin_wp_enqueue_styles() {
@@ -76,6 +76,22 @@ function it_exchange_membership_addon_admin_wp_enqueue_styles() {
 	}
 }
 add_action( 'admin_print_styles', 'it_exchange_membership_addon_admin_wp_enqueue_styles' );
+
+/**
+ * Loads the frontend CSS on all exchange pages
+ *
+ * @since 1.0.0
+ *
+ * @return void
+*/
+function it_exchange_membership_addon_load_public_scripts( $current_view ) {
+	// Frontend Membership Dashboard CSS & JS
+	if ( it_exchange_is_page( 'memberships' ) ) {
+		wp_enqueue_script( 'it-exchange-membership-addon-public-js', ITUtility::get_url_from_file( dirname( __FILE__ ) . '/assets/js/membership-dashboard.js' ), array( 'jquery-zoom' ), false, true );
+		wp_enqueue_style( 'it-exchange-membership-addon-public-css', ITUtility::get_url_from_file( dirname( __FILE__ ) . '/assets/styles/membership-dashboard.css' ) );
+	}
+}
+add_action( 'wp_enqueue_scripts', 'it_exchange_membership_addon_load_public_scripts' );
 
 /**
  * Adds necessary details to Exchange upon successfully completed transaction
@@ -203,7 +219,7 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 				break;
 			
 			case 'post_types':
-				$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download' ) );
+				$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download', 'page' ) );
 				$post_types = get_post_types( array(), 'objects' );
 				foreach ( $post_types as $post_type ) {
 					if ( in_array( $post_type->name, $hidden_post_types ) ) 

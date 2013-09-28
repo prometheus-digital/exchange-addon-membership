@@ -95,9 +95,11 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 			$defaults      = array(
 				'before' => '<div class="entry-content">',
 				'after'  => '</div>',
+				'title'              => __( 'Welcome', 'LION' ),
 			);
 			$options      = ITUtility::merge_defaults( $options, $defaults );
-	
+			
+			$result .= '<h2>' . $options['title'] . '</h2>';
 			$result .= $options['before'];
 			$result .= $message;
 			$result .= $options['after'];
@@ -126,6 +128,8 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 				'posts_per_grouping' => 5,
 			);
 			$options      = ITUtility::merge_defaults( $options, $defaults );
+			
+			$result .= '<h2>' . $options['title'] . '</h2>';
 	
 			foreach ( $this->_membership_access_rules as $content ) {
 				
@@ -158,7 +162,16 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 							'posts_per_page' => $options['posts_per_grouping'],
 						);
 						$restricted_posts = get_posts( $args );
-						$more_content_link = get_post_type_archive_link( $content['term'] );
+						switch( $content['term'] ) {
+							
+							case 'post':
+								$more_content_link = get_home_url();
+								break;
+								
+							default:
+								$more_content_link = get_post_type_archive_link( $content['term'] );
+								break;
+						}
 						break;
 						
 					case 'posts':
@@ -189,8 +202,9 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 						if ( !empty( $more_content_link ) )
 							$result .= '<p><a href="' . $more_content_link . '">' . __( 'read more content in this group', 'LION' ) . '</a>';
 					} else {
-						//should just be a regular post
-						$result .= '<p><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p>';
+						foreach( $restricted_posts as $post ) { //should just be a regular post
+							$result .= '<p><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p>';
+						}
 					}
 				
 					$result .= $options['after'];

@@ -31,7 +31,7 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 	$return .= '<option value="">' . __( 'Select Content', 'LION' ) . '</option>';
 	
 	//Posts
-	$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download' ) );
+	$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download', 'page' ) );
 	$post_types = get_post_types( array(), 'objects' );
 	
 	foreach ( $post_types as $post_type ) {
@@ -93,7 +93,7 @@ function it_exchange_membership_addon_build_content_rule( $selected, $selection,
 			break;
 		
 		case 'post_types':
-			$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download' ) );
+			$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download', 'page' ) );
 			$post_types = get_post_types( array(), 'objects' );
 			foreach ( $post_types as $post_type ) {
 				if ( in_array( $post_type->name, $hidden_post_types ) ) 
