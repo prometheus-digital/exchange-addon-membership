@@ -31,7 +31,7 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 	$return .= '<option value="">' . __( 'Select Content', 'LION' ) . '</option>';
 	
 	//Posts
-	$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download', 'page' ) );
+	$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download' ) );
 	$post_types = get_post_types( array(), 'objects' );
 	
 	foreach ( $post_types as $post_type ) {
