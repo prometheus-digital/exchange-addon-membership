@@ -23,6 +23,10 @@ include( 'lib/required-hooks.php' );
 
 /**
 */
+include( 'lib/addon-ajax-hooks.php' );
+
+/**
+*/
 include( 'lib/addon-metaboxes.php' );
 
 /**

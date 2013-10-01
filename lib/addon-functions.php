@@ -143,17 +143,14 @@ function it_exchange_membership_addon_build_drip_rules( $rule = false, $count, $
 	$return = '';
 
 	if ( !empty( $product_id ) && !empty( $rule['selected'] ) && 'posts' === $rule['selected'] && !empty( $rule['term'] ) )
-		$dripped = get_post_meta( $rule['term'], '_item-content-rule-dripped', true );
-	else
-		$dripped = false;
-		
-	if ( $dripped && 'on' === $dripped ) {
 		$drip_interval = get_post_meta( $rule['term'], '_item-content-rule-drip-interval-' . $product_id, true );
-		$drip_interval = !empty( $drip_interval ) ? $drip_interval : 0;
+	else
+		$drip_interval = 0;
+		
+	if ( 0 < $drip_interval ) {
 		$drip_duration = get_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $product_id, true );
 		$drip_duration = !empty( $drip_duration ) ? $drip_duration : 'days';
 	} else {
-		$drip_interval = 0;
 		$drip_duration = 'days';
 	}
 	
@@ -207,6 +204,12 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	if ( !empty( $post_type_rules ) ) {
 		foreach( $post_type_rules as $product_id ) {
 			$post_type = get_post_type_object( $post_type );
+			if ( !empty( $post_type->labels->singular_name ) )
+				$name = $post_type->labels->singular_name;
+			else if ( !empty( $post_type->labels->name ) )
+				$name = $post_type->labels->name;
+			else
+				$name = $post_type->label;
 			$rules[$product_id]['post_type'] = $post_type->labels->singular_name;
 		}
 	}
@@ -238,11 +241,9 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 				$return .= $title;
 				$return .= '<span class="it-exchange-membership-remove-rule">&times;</span>';
 				
-				$dripped = get_post_meta( $post_id, '_item-content-rule-dripped', true );
+				$drip_interval = get_post_meta( $post_id, '_item-content-rule-drip-interval-' . $membership_id, true );				
 				
-				if ( !empty( $dripped ) ) {
-					$drip_interval = get_post_meta( $post_id, '_item-content-rule-drip-interval-' . $membership_id, true );
-					$drip_interval = !empty( $drip_interval ) ? $drip_interval : 0;
+				if ( 0 < $drip_interval ) {
 					$drip_duration = get_post_meta( $post_id, '_item-content-rule-drip-duration-' . $membership_id, true );
 					$drip_duration = !empty( $drip_duration ) ? $drip_duration : 'days';
 					
@@ -250,8 +251,8 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 					
 						$return .= '<div class="it-exchange-membership-rule-description">' . __( 'Delay', 'LION' ) . '</div>';
 						$return .= '<div class="it-exchange-membership-drip-rule">';
-						$return .= '<input type="number" min="0" value="' . $drip_interval . '" name="it_exchange_membership_drip_interval" />';
-						$return .= '<select class="it-exchange-membership-content-drip-duration" name="it_exchange_membership_drip_duration">';
+						$return .= '<input class="it-exchange-membership-drip-rule-interval" type="number" min="0" value="' . $drip_interval . '" name="it_exchange_membership_drip_interval" />';
+						$return .= '<select class="it-exchange-membership-drip-rule-duration" name="it_exchange_membership_drip_duration">';
 						$durations = array(
 							'days'   => __( 'Days', 'LION' ),
 							'weeks'  => __( 'Weeks', 'LION' ),
@@ -376,30 +377,22 @@ function it_exchange_membership_addon_is_content_dripped() {
 		return false;
 	
 	$member_access = it_exchange_get_session_data( 'member_access' );
-	$dripped = get_post_meta( $post->ID, '_item-content-rule-dripped', true );
-	if ( 'on' === $dripped ) {
-		foreach( $member_access as $txn_id => $product_id ) {
-			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
-			$interval = !empty( $interval ) ? $interval : 0;
-			$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
-			$duration = !empty( $duration ) ? $duration : 'days';
-			if ( 0 < $interval ) {
-				$purchase_time = get_post_time( 'U', true, $product_id );
-				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
-				$now = time();
-				error_log( $dripping );
-				error_log( $now );
-				
-				if ( $dripping < $now )						
-					return false; // we can return here because they should have access to this content with this membership
-				else
-					$dripped = true; // we don't want to return here, because other memberships might have access to content sooner
-			}
+	foreach( $member_access as $txn_id => $product_id ) {
+		$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
+		$interval = !empty( $interval ) ? $interval : 0;
+		$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
+		$duration = !empty( $duration ) ? $duration : 'days';
+		if ( 0 < $interval ) {
+			$purchase_time = get_post_time( 'U', true, $product_id );
+			$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
+			$now = time();
+			if ( $dripping < $now )						
+				return false; // we can return here because they should have access to this content with this membership
+			else
+				$dripped = true; // we don't want to return here, because other memberships might have access to content sooner
 		}
-		return $dripped;
 	}
-	
-	return false;
+	return $dripped;
 }
 
 /*

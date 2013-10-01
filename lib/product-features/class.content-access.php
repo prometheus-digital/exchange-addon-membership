@@ -185,13 +185,12 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 								$rules = array();
 								
 							if ( !empty( $rule['drip-interval'] ) && !empty( $rule['drip-duration'] ) ) {
-								update_post_meta( $rule['term'], '_item-content-rule-dripped', 'on' );
 								update_post_meta( $rule['term'], '_item-content-rule-drip-interval-' . $product_id, absint( $rule['drip-interval'] ) );
 								update_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $product_id, $rule['drip-duration'] );
 								unset( $rule['drip-interval'] );
 								unset( $rule['drip-duration'] );
-							} else {
-								update_post_meta( $rule['term'], '_item-content-rule-dripped', 'off' );
+								unset( $_REQUEST['it_exchange_content_access_rules'][$key]['drip-interval'] );
+								unset( $_REQUEST['it_exchange_content_access_rules'][$key]['drip-duration'] );
 							}
 								
 							if ( !in_array( $product_id, $rules ) ) {
@@ -230,7 +229,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 				}
 				
 			}
-			
+				
 			it_exchange_update_product_feature( $product_id, 'membership-content-access-rules', $_REQUEST['it_exchange_content_access_rules'] );
 			
 		} else {
