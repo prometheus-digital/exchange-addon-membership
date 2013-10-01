@@ -125,9 +125,10 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 		if ( !empty( $this->_membership_access_rules ) ) {
 			$result = '';
 			$defaults      = array(
-				'before'             => '<div class="restricted-content">',
+				'before'             => '<div class="it-exchange-restricted-content">',
 				'after'              => '</div>',
 				'title'              => __( 'Membership Content', 'LION' ),
+				'toggle'             => true,
 				'posts_per_grouping' => 5,
 			);
 			$options      = ITUtility::merge_defaults( $options, $defaults );
@@ -199,17 +200,37 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 					$result .= $options['before'];	
 					
 					if ( !empty( $label ) ) {
-						//we're ina  group
-						$result .= '<h3>' . $label . '</h3>';
-						
-						$result .= '<ul>';
-						foreach( $restricted_posts as $post ) {
-							$result .= '<li><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></li>';
+						// We're in a group.
+						if ( true == $options['toggle'] ) {
+							$result .= '<div class="it-exchange-content-group">';
+							
+							$result .= '<p class="it-exchange-group-content-label">' . $label . '<span class="it-exchange-open-group"></span></p>';
+							
+							$result .= '<ul class="it-exchange-hidden">';
+							
+							foreach( $restricted_posts as $post ) {
+								$result .= '<li><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></li>';
+							}
+							
+							if ( ! empty( $more_content_link ) && $options['posts_per_grouping'] <= count( $restricted_posts ) )
+								$result .= '<li class="it-exchange-content-more"><a href="' . $more_content_link . '">' . __( 'Read More Content In This Group', 'LION' ) . '</a></li>';
+							
+							$result .= '</ul>';
+							
+							$result .= '</div>';
+						} else {
+							$result .= '<p class="it-exchange-group-content-label">' . $label . '</h3>';
+							
+							$result .= '<ul>';
+							foreach( $restricted_posts as $post ) {
+								$result .= '<li><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></li>';
+							}
+							
+							if ( !empty( $more_content_link ) && $options['posts_per_grouping'] <= count( $restricted_posts ) )
+								$result .= '<li class="it-exchange-content-more"><a href="' . $more_content_link . '">' . __( 'Read More Content In This Group', 'LION' ) . '</a></li>';
+							
+							$result .= '</ul>';
 						}
-						$result .= '<ul>';
-						
-						if ( !empty( $more_content_link ) )
-							$result .= '<p><a href="' . $more_content_link . '">' . __( 'read more content in this group', 'LION' ) . '</a>';
 					} else {
 						foreach( $restricted_posts as $post ) { //should just be a regular post
 							if ( 'on' === get_post_meta( $post->ID, '_item-content-rule-dripped', true ) ) {
@@ -223,25 +244,23 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 									$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
 									$now = time();
 									if ( $dripping < $now )						
-										$result .= '<p class="it-exchange-membership-drip-available"><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p>';
+										$result .= '<p class="it-exchange-content-item it-exchange-membership-drip-available"><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p>';
 									else {																
 										$earliest_drip = $dripping - $purchase_time;
-										$result .= '<p class="it-exchange-membership-drip-unavailable">' . get_the_title( $post->ID ) . ' (' . sprintf( __( 'available in %s days', 'LION' ), floor( $earliest_drip / 60 / 60 / 24 ) ) . ')</p>';
+										$result .= '<p class="it-exchange-content-item it-exchange-membership-drip-unavailable">' . get_the_title( $post->ID ) . ' (' . sprintf( __( 'available in %s days', 'LION' ), floor( $earliest_drip / 60 / 60 / 24 ) ) . ')</p>';
 									}
 								}
 								
 							} else {
-								$result .= '<p><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p>';
+								$result .= '<p class="it-exchange-content-item"><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p>';
 							}
 						}
 					}
-				
-					$result .= $options['after'];
 					
+					$result .= $options['after'];
 				}
-
 			}
-				
+			
 			return $result;
 		}
 		return false;
