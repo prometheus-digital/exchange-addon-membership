@@ -173,18 +173,9 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 		$return .= '<div class="column col-3-12"><div class="it-exchange-membership-content-type-terms hidden">';
 		$return .= '</div></div>';
 		
-		/* No Drip Yet!
-		$return .= '<div class="it_exchange-membership-content-type-drip hidden">';
-		$return .= '<input type="text" class="it-exchange-membership-content-type-drip-time small" name="content_type_drip_times" disabled="disabled">';
-		
-		$return .= '<select class="it-exchange_membership-content-type-drip-type" name="content_type_drip_types" disabled="disabled">';
-		$return .= '<option value="days">' . __( 'Day(s)', 'LION' ) . '</option>';
-		$return .= '<option value="weeks">' . __( 'Week(s)', 'LION' ) . '</option>';
-		$return .= '<option value="months">' . __( 'Month(s)', 'LION' ) . '</option>';
-		$return .= '<option value="years">' . __( 'Year(s)', 'LION' ) . '</option>';
-		$return .= '</select>';
-		$return .= '</div>';
-		/**/
+		$return .= '<div class="column col-3-12"><div class="it-exchange-membership-content-type-drip hidden">';
+		$return .= it_exchange_membership_addon_build_drip_rules( false, $count );
+		$return .= '</div></div>';
 		
 		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-1-12">';
 		$return .= '<a href="#">×</a>';
@@ -242,7 +233,7 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 		$return .= '<select class="it-exchange-membership-content-type-term" name="it_exchange_content_access_rules[' . $count . '][term]">';
 		$return .= $options;
 		$return .= '</select>';
-			
+		
 	}
 
 	die( $return );
@@ -251,17 +242,19 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 add_action( 'wp_ajax_it-exchange-membership-addon-content-type-terms', 'it_exchange_membership_addon_ajax_get_content_type_term' );
 
 function it_exchange_membership_addon_content_filter( $content ) {
-	if ( it_exchange_membership_addon_is_content_restricted() ) {
-		$content = it_exchange_membership_addon_content_restricted_template();
-	}
+	if ( it_exchange_membership_addon_is_content_restricted() )
+		return it_exchange_membership_addon_content_restricted_template();
+	if ( it_exchange_membership_addon_is_content_dripped() )
+		return it_exchange_membership_addon_content_dripped_template();
 	return $content;	
 }
 add_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
 
 function it_exchange_membership_addon_excerpt_filter( $excerpt ) {
-	if ( it_exchange_membership_addon_is_content_restricted() ) {
-		$excerpt = it_exchange_membership_addon_excerpt_restricted_template();
-	}	
+	if ( it_exchange_membership_addon_is_content_restricted() )
+		return it_exchange_membership_addon_excerpt_restricted_template();
+	if ( it_exchange_membership_addon_is_content_dripped() )
+		return it_exchange_membership_addon_excerpt_dripped_template();
 	return $excerpt;
 }
 add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
@@ -269,8 +262,6 @@ add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
 function it_exchange_membership_addon_content_restricted_template() {
 	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
 	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
-	//Get the Membership Addon's Content Restricted template
-	//add_filter( 'template_include', 'it_exchange_membership_addon_fetch_template' );
 	ob_start();
 	it_exchange_get_template_part( 'content', 'restricted' );
 	return ob_get_clean();	
@@ -279,10 +270,24 @@ function it_exchange_membership_addon_content_restricted_template() {
 function it_exchange_membership_addon_excerpt_restricted_template() {
 	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
 	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
-	//Get the Membership Addon's Content Restricted template
-	//add_filter( 'template_include', 'it_exchange_membership_addon_fetch_template' );
 	ob_start();
 	it_exchange_get_template_part( 'excerpt', 'restricted' );
+	return ob_get_clean();	
+}
+
+function it_exchange_membership_addon_content_dripped_template() {
+	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
+	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
+	ob_start();
+	it_exchange_get_template_part( 'content', 'dripped' );
+	return ob_get_clean();	
+}
+
+function it_exchange_membership_addon_excerpt_dripped_template() {
+	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
+	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
+	ob_start();
+	it_exchange_get_template_part( 'excerpt', 'dripped' );
 	return ob_get_clean();	
 }
 

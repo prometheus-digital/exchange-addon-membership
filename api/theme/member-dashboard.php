@@ -43,8 +43,8 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 	 * @since 1.0.0
 	*/
 	public $_tag_map = array(
-		'welcomemessage'       => 'welcome_message',
-		'membershipcontent'      => 'membership_content',
+		'welcomemessage'    => 'welcome_message',
+		'membershipcontent' => 'membership_content',
 	);
 
 	/**
@@ -114,6 +114,9 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 	 * @return string
 	*/
 	function membership_content( $options=array() ) {
+		
+		$product_id = $this->_membership_product->ID;
+		
 		// Return boolean if has flag was set
 		if ( $options['has'] )
 			return !empty( $this->_membership_access_rules ) ? true : false;
@@ -148,7 +151,7 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 									'field' => 'id',
 									'terms' => $content['term']
 								)
-							),
+							)
 						);
 						$restricted_posts = get_posts( $args );
 						$more_content_link = get_term_link( $term, $content['selection'] );
@@ -178,6 +181,12 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 						$label = '';
 						$args = array(
 							'p'              => $content['term'],
+							//'meta_query' => array(
+							//	array(
+							//		'key' => '_item-content-rule-dripped',
+							//		'value' => 'off',
+							//	)
+							//)
 						);
 						$restricted_posts = get_posts( $args );
 						$more_content_link = '';
@@ -203,7 +212,27 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 							$result .= '<p><a href="' . $more_content_link . '">' . __( 'read more content in this group', 'LION' ) . '</a>';
 					} else {
 						foreach( $restricted_posts as $post ) { //should just be a regular post
-							$result .= '<p><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p>';
+							if ( 'on' === get_post_meta( $post->ID, '_item-content-rule-dripped', true ) ) {
+								$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
+								$interval = !empty( $interval ) ? $interval : 0;
+								$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
+								$duration = !empty( $duration ) ? $duration : 'days';
+								$member_access = it_exchange_get_session_data( 'member_access' );
+								if ( false !== $key = array_search( $product_id, $member_access ) ) {
+									$purchase_time = get_post_time( 'U', true, $key );
+									$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
+									$now = time();
+									if ( $dripping < $now )						
+										$result .= '<p class="it-exchange-membership-drip-available"><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p>';
+									else {																
+										$earliest_drip = $dripping - $purchase_time;
+										$result .= '<p class="it-exchange-membership-drip-unavailable">' . get_the_title( $post->ID ) . ' (' . sprintf( __( 'available in %s days', 'LION' ), floor( $earliest_drip / 60 / 60 / 24 ) ) . ')</p>';
+									}
+								}
+								
+							} else {
+								$result .= '<p><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p>';
+							}
 						}
 					}
 				

@@ -124,6 +124,9 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 					<div class="it-exchange-content-access-content column col-3-12">
 						<span><?php _e( 'Content', 'LION' ); ?></span>
 					</div>
+					<div class="it-exchange-content-access-content column col-3-12">
+						<span><?php _e( 'Delay Access', 'LION' ); ?> <span class="tip" title="<?php _e( 'This setting will allow you to drip individual content to your members.', 'LION' ); ?>">i</span></span>
+					</div>
 				</div>
 			</div>
         	<?php $count = 0; ?>
@@ -132,7 +135,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 			if ( !empty( $access_rules ) ) {
 				foreach( $access_rules as $rule ) {
 					
-					echo it_exchange_membership_addon_build_content_rule( $rule['selected'], $rule['selection'], $rule['term'], $count++ );
+					echo it_exchange_membership_addon_build_content_rule( $rule, $count++, $product->ID );
 					
 				}
 			}
@@ -180,6 +183,16 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 						case 'posts':
 							if ( !( $rules = get_post_meta( $rule['term'], '_item-content-rule', true ) ) )
 								$rules = array();
+								
+							if ( !empty( $rule['drip-interval'] ) && !empty( $rule['drip-duration'] ) ) {
+								update_post_meta( $rule['term'], '_item-content-rule-dripped', 'on' );
+								update_post_meta( $rule['term'], '_item-content-rule-drip-interval-' . $product_id, absint( $rule['drip-interval'] ) );
+								update_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $product_id, $rule['drip-duration'] );
+								unset( $rule['drip-interval'] );
+								unset( $rule['drip-duration'] );
+							} else {
+								update_post_meta( $rule['term'], '_item-content-rule-dripped', 'off' );
+							}
 								
 							if ( !in_array( $product_id, $rules ) ) {
 								$rules[] = $product_id;
@@ -267,7 +280,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 									delete_post_meta(  $rule['term'], '_item-content-rule' );
 								else
 									update_post_meta( $rule['term'], '_item-content-rule', $rules );
-							}	
+							}
 							break;
 							
 						case 'post_types':

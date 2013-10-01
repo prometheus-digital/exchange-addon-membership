@@ -73,9 +73,13 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 	return $return;
 }
 
-function it_exchange_membership_addon_build_content_rule( $selected, $selection, $value, $count ) {
+function it_exchange_membership_addon_build_content_rule( $rule, $count, $product_id ) {
 
 	$options = '';
+	
+	$selection = !empty( $rule['selection'] ) ? $rule['selection'] : false;
+	$selected  = !empty( $rule['selected'] ) ? $rule['selected'] : false;
+	$value     = !empty( $rule['term'] ) ? $rule['term'] : false;
 
 	$return  = '<div class="it-exchange-membership-content-access-rule columns-wrapper" data-count="' . $count . '">';
 	
@@ -88,7 +92,7 @@ function it_exchange_membership_addon_build_content_rule( $selected, $selection,
 		case 'posts':
 			$posts = get_posts( array( 'post_type' => $selection, 'posts_per_page' => -1 ) );
 			foreach ( $posts as $post ) {
-				$options .= '<option value="' . $post->ID . '" ' . selected( $post->ID, $value, false ) . '>' . get_the_title( $value ) . '</option>';	
+				$options .= '<option value="' . $post->ID . '" ' . selected( $post->ID, $value, false ) . '>' . get_the_title( $post->ID ) . '</option>';	
 			}
 			break;
 		
@@ -118,6 +122,12 @@ function it_exchange_membership_addon_build_content_rule( $selected, $selection,
 	$return .= '</select>';
 	$return .= '</div></div>';
 	
+	$return .= '<div class="column col-3-12"><div class="it-exchange-membership-content-type-drip">';
+	if ( 'posts' === $selected ) {
+		$return .= it_exchange_membership_addon_build_drip_rules( $rule, $count, $product_id );
+	}
+	$return .= '</div></div>';
+	
 	$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-1-12">';
 	$return .= '<a href="#">×</a>';
 	$return .= '</div>';
@@ -126,6 +136,42 @@ function it_exchange_membership_addon_build_content_rule( $selected, $selection,
 	
 	return $return;
 	
+}
+
+function it_exchange_membership_addon_build_drip_rules( $rule = false, $count, $product_id = false ) {
+	
+	$return = '';
+
+	if ( !empty( $product_id ) && !empty( $rule['selected'] ) && 'posts' === $rule['selected'] && !empty( $rule['term'] ) )
+		$dripped = get_post_meta( $rule['term'], '_item-content-rule-dripped', true );
+	else
+		$dripped = false;
+		
+	if ( $dripped && 'on' === $dripped ) {
+		$drip_interval = get_post_meta( $rule['term'], '_item-content-rule-drip-interval-' . $product_id, true );
+		$drip_interval = !empty( $drip_interval ) ? $drip_interval : 0;
+		$drip_duration = get_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $product_id, true );
+		$drip_duration = !empty( $drip_duration ) ? $drip_duration : 'days';
+	} else {
+		$drip_interval = 0;
+		$drip_duration = 'days';
+	}
+	
+	$return  .= '<input type="number" min="0" value="' . $drip_interval . '" name="it_exchange_content_access_rules[' . $count . '][drip-interval]" />';
+	$return .= '<select class="it-exchange-membership-content-drip-duration" name="it_exchange_content_access_rules[' . $count . '][drip-duration]">';
+	$durations = array(
+		'days'   => __( 'Days', 'LION' ),
+		'weeks'  => __( 'Weeks', 'LION' ),
+		'months' => __( 'Months', 'LION' ),
+		'years'  => __( 'Years', 'LION' ),
+	);
+	$durations = apply_filters( 'it-exchange-membership-drip-durations', $durations );
+	foreach( $durations as $key => $string ) {
+		$return .= '<option value="' . $key . '"' . selected( $key, $drip_duration, false ) . '>' . $string . '</option>';
+	}
+	$return .= '</select>';
+	
+	return $return;
 }
 
 function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
@@ -191,8 +237,38 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 				$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="post" ' . checked( in_array( 'post', $restriction_exception ), false, false ) . '>';
 				$return .= $title;
 				$return .= '<span class="it-exchange-membership-remove-rule">&times;</span>';
-				//This is where we'll handle dripped content
-				//but not yet :)
+				
+				$dripped = get_post_meta( $post_id, '_item-content-rule-dripped', true );
+				
+				if ( !empty( $dripped ) ) {
+					$drip_interval = get_post_meta( $post_id, '_item-content-rule-drip-interval-' . $membership_id, true );
+					$drip_interval = !empty( $drip_interval ) ? $drip_interval : 0;
+					$drip_duration = get_post_meta( $post_id, '_item-content-rule-drip-duration-' . $membership_id, true );
+					$drip_duration = !empty( $drip_duration ) ? $drip_duration : 'days';
+					
+					if ( !empty( $drip_interval ) && !empty( $drip_duration ) ) {
+					
+						$return .= '<div class="it-exchange-membership-rule-description">' . __( 'Delay', 'LION' ) . '</div>';
+						$return .= '<div class="it-exchange-membership-drip-rule">';
+						$return .= '<input type="number" min="0" value="' . $drip_interval . '" name="it_exchange_membership_drip_interval" />';
+						$return .= '<select class="it-exchange-membership-content-drip-duration" name="it_exchange_membership_drip_duration">';
+						$durations = array(
+							'days'   => __( 'Days', 'LION' ),
+							'weeks'  => __( 'Weeks', 'LION' ),
+							'months' => __( 'Months', 'LION' ),
+							'years'  => __( 'Years', 'LION' ),
+						);
+						$durations = apply_filters( 'it-exchange-membership-drip-durations', $durations );
+						foreach( $durations as $key => $string ) {
+							$return .= '<option value="' . $key . '"' . selected( $key, $drip_duration, false ) . '>' . $string . '</option>';
+						}
+						$return .= '</select>';
+						$return .= '</div>';
+					
+					}
+
+				}
+				
 				$return .= '</div>';
 			}
 			
@@ -231,9 +307,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	
 }
 
-
 function it_exchange_membership_addon_is_content_restricted() {
-		
 	global $post;
 	$restriction = false;
 	
@@ -241,13 +315,17 @@ function it_exchange_membership_addon_is_content_restricted() {
 		return false;
 	
 	$member_access = it_exchange_get_session_data( 'member_access' );
-	
+		
 	$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
 	if ( !empty( $restriction_exemptions ) ) {
 		foreach( $member_access as $txn_id => $product_id ) {
 			if ( array_key_exists( $product_id, $restriction_exemptions ) )
-				return true;
+				$restriction = true; //we don't want restrict yet, not until we know there aren't other memberships that still have access to this content
+			else
+				continue; //get out of this, we're in a membership that hasn't been exempted
 		}
+		if ( $restriction ) //if it has been restricted, we can return true now
+			return true;
 	}
 	
 	$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
@@ -288,7 +366,40 @@ function it_exchange_membership_addon_is_content_restricted() {
 	}
 	
 	return $restriction;
+}
+
+function it_exchange_membership_addon_is_content_dripped() {
+	global $post;
+	$dripped = false;
 	
+	if ( current_user_can( 'administrator' ) )
+		return false;
+	
+	$member_access = it_exchange_get_session_data( 'member_access' );
+	$dripped = get_post_meta( $post->ID, '_item-content-rule-dripped', true );
+	if ( 'on' === $dripped ) {
+		foreach( $member_access as $txn_id => $product_id ) {
+			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
+			$interval = !empty( $interval ) ? $interval : 0;
+			$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
+			$duration = !empty( $duration ) ? $duration : 'days';
+			if ( 0 < $interval ) {
+				$purchase_time = get_post_time( 'U', true, $product_id );
+				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
+				$now = time();
+				error_log( $dripping );
+				error_log( $now );
+				
+				if ( $dripping < $now )						
+					return false; // we can return here because they should have access to this content with this membership
+				else
+					$dripped = true; // we don't want to return here, because other memberships might have access to content sooner
+			}
+		}
+		return $dripped;
+	}
+	
+	return false;
 }
 
 /*
