@@ -1,30 +1,26 @@
 <?php
 /**
+ * iThemes Exchange Membership Add-on
+ * @package IT_Exchange_Addon_Membership
+ * @since 1.0.0
+*/
+
+/**
  * The following file contains utility functions specific to our membership add-on
  * If you're building your own product-type addon, it's likely that you will
  * need to do similar things. This includes enqueueing scripts, formatting data for stripe, etc.
 */
 
 /**
- * Adds actions to the plugins page for the iThemes Exchange Membership plugin
+ * Returns HTML w/ selection options for content access rule builder
  *
  * @since 1.0.0
  *
- * @param array $meta Existing meta
- * @param string $plugin_file the wp plugin slug (path)
- * @param array $plugin_data the data WP harvested from the plugin header
- * @param string $context 
- * @return array
+ * @param int $selection current selection (if it exists)
+ * @param string $selection_type current selection type (if it exists)
+ * @param int $count current row count, used for JavaScript/AJAX
+ * @return string HTML output of selections row div
 */
-function it_exchange_membership_plugin_row_actions( $actions, $plugin_file, $plugin_data, $context ) {
-    
-    $actions['setup_addon'] = '<a href="' . get_admin_url( NULL, 'admin.php?page=it-exchange-addons&add-on-settings=membership' ) . '">' . __( 'Setup Add-on', 'LION' ) . '</a>';
-    
-    return $actions;
-    
-}
-add_filter( 'plugin_action_links_exchange-addon-membership/exchange-addon-membership.php', 'it_exchange_membership_plugin_row_actions', 10, 4 );
-
 function it_exchange_membership_addon_get_selections( $selection = 0, $selection_type = NULL, $count ) {
 	
 	$return  = '<div class="column col-3-12"><select class="it-exchange-membership-content-type-selections" name="it_exchange_content_access_rules[' . $count . '][selection]">';
@@ -73,6 +69,16 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 	return $return;
 }
 
+/**
+ * Builds the actual content rule HTML
+ *
+ * @since 1.0.0
+ *
+ * @param array $rule A Memberships rule
+ * @param int $count current row count, used for JavaScript/AJAX
+ * @param int $product_id Memberhip's product ID
+ * @return string HTML output of selections row div
+*/
 function it_exchange_membership_addon_build_content_rule( $rule, $count, $product_id ) {
 
 	$options = '';
@@ -138,6 +144,16 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 	
 }
 
+/**
+ * Builds the actual drip rule HTML
+ *
+ * @since 1.0.0
+ *
+ * @param array $rule A Memberships rule
+ * @param int $count current row count, used for JavaScript/AJAX
+ * @param int $product_id Memberhip's product ID
+ * @return string HTML output of drip rule div
+*/
 function it_exchange_membership_addon_build_drip_rules( $rule = false, $count, $product_id = false ) {
 	
 	$return = '';
@@ -171,6 +187,14 @@ function it_exchange_membership_addon_build_drip_rules( $rule = false, $count, $
 	return $return;
 }
 
+/**
+ * Builds the actual restriction rule HTML, used for non-iThemes Exchange post types
+ *
+ * @since 1.0.0
+ *
+ * @param int $post_id WordPress $post ID
+ * @return string HTML output of drip rule div
+*/
 function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	
 	$return = '';
@@ -308,6 +332,23 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	
 }
 
+/**
+ * Checks if current content should be restricted
+ * if admin - false
+ * if member has access - false
+ * if post|posttype|taxonomy has rule - true (unless above rule overrides)
+ * if exemption exists - true
+ *
+ * An exemption basically tells the Membership addon that a member who has access to
+ * specific content should not have access to it. For instance, say you have a post in 
+ * a restricted category and you have two membership levels who have access to that category
+ * but you only want that post to be visible to one of the memberships. By adding the
+ * exemption for the other membership, they will no longer have access to that content.
+ *
+ * @since 1.0.0
+ *
+ * @return bool
+*/
 function it_exchange_membership_addon_is_content_restricted() {
 	global $post;
 	$restriction = false;
@@ -369,6 +410,19 @@ function it_exchange_membership_addon_is_content_restricted() {
 	return $restriction;
 }
 
+/**
+ * Checks if current content should be dripped
+ * if admin - false
+ * if member has access - check if content is dripped, otherwise false
+ * Dripped content is basically published content that you want to arbitrarily delay for
+ * your members. Say you have a class and you want to release 1 class a week to your membership
+ * this will allow you to do that. Simply set your content to the appropriate timeline and new members 
+ * will have access to the classes based on the set schedule.
+ *
+ * @since 1.0.0
+ *
+ * @return bool
+*/
 function it_exchange_membership_addon_is_content_dripped() {
 	global $post;
 	$dripped = false;
@@ -395,9 +449,13 @@ function it_exchange_membership_addon_is_content_dripped() {
 	return $dripped;
 }
 
-/*
- * Returns current membership object for Member Dashboard
+/**
+ * Gets the membership currently being viewed from the membership dashboard on the
+ * WordPress frontend
  *
+ * @since 1.0.0
+ *
+ * @return mixed object|bool
 */
 function it_exchange_membership_addon_get_current_membership() {
 	if ( $membership_slug = get_query_var( 'memberships' ) ) {
@@ -418,6 +476,11 @@ function it_exchange_membership_addon_get_current_membership() {
 /*
  * Returns membership access rules sorted by selected type
  *
+ * @since 1.0.0
+ *
+ * @param int $membership_product_id
+ * @param bool $exclude_exempted (optional) argument to exclude exemptions from access rules (true by default)
+ * @return array
 */
 function it_exchange_membership_access_rules_sorted_by_selected_type( $membership_product_id, $exclude_exempted=true ) {
 	$access_rules = it_exchange_get_product_feature( $membership_product_id, 'membership-content-access-rules' );

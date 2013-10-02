@@ -1,6 +1,6 @@
 <?php
 /**
- * Restricted Content class for THEME API in Membership Add-on
+ * Dripped class for THEME API in Membership Add-on
  *
  * @since 1.0.0
 */

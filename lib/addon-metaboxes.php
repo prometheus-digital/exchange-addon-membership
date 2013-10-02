@@ -1,11 +1,20 @@
 <?php
 /**
+ * iThemes Exchange Membership Add-on
+ * @package IT_Exchange_Addon_Membership
+ * @since 1.0.0
+*/
+
+/**
  * The following file contains metabox functions specific to our membership add-on
 */
 
 /**
  * Adds a box to the main column on the Post and Page edit screens.
- */
+ *
+ * @since 1.0.0
+ * @return void
+*/
 function it_exchange_membership_add_post_metabox() {
     $args = array(
 	   'public'   => true
@@ -32,6 +41,13 @@ function it_exchange_membership_add_post_metabox() {
 }
 add_action( 'add_meta_boxes', 'it_exchange_membership_add_post_metabox' );
 
+/**
+ * Outputs metabox.
+ *
+ * @since 1.0.0
+ * @param object $post WordPress Post object
+ * @return void
+*/
 function it_exchange_membership_addon_membership_access_metabox( $post ) {
 	
 	// Add a nonce field so we can check for it later.

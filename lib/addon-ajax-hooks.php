@@ -1,5 +1,16 @@
 <?php
+/**
+ * iThemes Exchange Membership Add-on
+ * @package IT_Exchange_Addon_Membership
+ * @since 1.0.0
+*/
 
+/**
+ * AJAX function called to add new content access rule rows
+ *
+ * @since 1.0.0
+ * @return string HTML output of content access rule row div
+*/
 function it_exchange_membership_addon_ajax_add_content_access_rule() {
 	
 	$return = '';
@@ -33,6 +44,12 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 }
 add_action( 'wp_ajax_it-exchange-membership-addon-add-content-access-rule', 'it_exchange_membership_addon_ajax_add_content_access_rule' );
 
+/**
+ * AJAX function called to add new content type terms
+ *
+ * @since 1.0.0
+ * @return string HTML output of content type terms
+*/
 function it_exchange_membership_addon_ajax_get_content_type_term() {
 	
 	$return = '';
@@ -85,7 +102,12 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 }
 add_action( 'wp_ajax_it-exchange-membership-addon-content-type-terms', 'it_exchange_membership_addon_ajax_get_content_type_term' );
 
-
+/**
+ * AJAX function called to add new content access rules to a WordPress $post
+ *
+ * @since 1.0.0
+ * @return string HTML output of content access rules
+*/
 function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
 	
 	$return  = '<div class="it-exchange-new-membership-rule-post it-exchange-new-membership-rule">';
@@ -123,6 +145,12 @@ function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
 }
 add_action( 'wp_ajax_it-exchange-membership-addon-add-content-access-rule-to-post', 'it_exchange_membership_addon_ajax_add_content_access_rule_to_post' );
 
+/**
+ * AJAX function called to remove content access rules to a WordPress $post
+ *
+ * @since 1.0.0
+ * @return string HTML output of content access rules
+*/
 function it_exchange_membership_addon_ajax_remove_rule_from_post() {
 	
 	$return = '';
@@ -177,6 +205,12 @@ function it_exchange_membership_addon_ajax_remove_rule_from_post() {
 }
 add_action( 'wp_ajax_it-exchange-membership-addon-remove-rule-from-post', 'it_exchange_membership_addon_ajax_remove_rule_from_post' );
 
+/**
+ * AJAX function called to add new content access rules to a WordPress $post
+ *
+ * @since 1.0.0
+ * @return string HTML output of content access rules
+*/
 function it_exchange_membership_addon_ajax_add_new_rule_to_post() {
 	
 	$return = '';
@@ -210,8 +244,6 @@ function it_exchange_membership_addon_ajax_add_new_rule_to_post() {
 			'selected'  => 'posts',
 			'term'      => $post_id,
 		);
-		wp_mail( 'lew@ithemes.com', 'membership_product_feature', print_r( $membership_product_feature, true ) );
-		wp_mail( 'lew@ithemes.com', 'value', print_r( $value, true ) );
 		if ( false === array_search( $value, $membership_product_feature ) ) {
 			$membership_product_feature[] = $value;
 			it_exchange_update_product_feature( $membership_id, 'membership-content-access-rules', $membership_product_feature );
@@ -225,6 +257,12 @@ function it_exchange_membership_addon_ajax_add_new_rule_to_post() {
 }
 add_action( 'wp_ajax_it-exchange-membership-addon-add-new-rule-to-post', 'it_exchange_membership_addon_ajax_add_new_rule_to_post' );
 
+/**
+ * AJAX function called to set/unset restriction exemptions
+ *
+ * @since 1.0.0
+ * @return void
+*/
 function it_exchange_membership_addon_ajax_modify_restrictions_exemptions() {
 	
 	$return = '';
@@ -267,6 +305,12 @@ function it_exchange_membership_addon_ajax_modify_restrictions_exemptions() {
 }
 add_action( 'wp_ajax_it-exchange-membership-addon-modify-restrictions-exemptions', 'it_exchange_membership_addon_ajax_modify_restrictions_exemptions' );
 
+/**
+ * AJAX to update drips interval
+ *
+ * @since 1.0.0
+ * @return void
+*/
 function it_exchange_membership_addon_ajax_update_interval() {
 	
 	$return = '';
@@ -282,6 +326,12 @@ function it_exchange_membership_addon_ajax_update_interval() {
 }
 add_action( 'wp_ajax_it-exchange-membership-addon-update-drip-rule-interval', 'it_exchange_membership_addon_ajax_update_interval' );
 
+/**
+ * AJAX to update drips duration
+ *
+ * @since 1.0.0
+ * @return void
+*/
 function it_exchange_membership_addon_ajax_update_duration() {
 	
 	$return = '';
