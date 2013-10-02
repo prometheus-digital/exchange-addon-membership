@@ -176,10 +176,11 @@ add_action( 'it_exchange_add_child_transaction_success', 'it_exchange_membership
 function it_exchange_membership_addon_setup_customer_session() {
 	if ( is_user_logged_in() ) {
 		$user_id = get_current_user_id();
-		$customer = new IT_Exchange_Customer( $user_id );
-		if ( ! $member_access = it_exchange_get_session_data( 'member_access' ) ) {		
-			$member_access = $customer->get_customer_meta( 'member_access' );	
-			if ( !empty( $member_access ) ) {
+		$customer = new IT_Exchange_Customer( $user_id );	
+		$member_access = $customer->get_customer_meta( 'member_access' );
+		if ( !empty( $member_access )  ) {
+			//If the transient doesn't exist, verify the membership access subscriber status and reset transient
+			if ( false === get_transient( 'member_access_check_' . $customer->id ) ) {
 				foreach( $member_access as $txn_id => $product_id ) {
 					$transaction = it_exchange_get_transaction( $txn_id );
 					$subscription_status = $transaction->get_transaction_meta( 'subscriber_status' );
@@ -187,10 +188,11 @@ function it_exchange_membership_addon_setup_customer_session() {
 					if ( !empty( $subscription_status ) && 'active' !== $subscription_status )
 						unset( $member_access[$txn_id] );
 				}
+				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 24 ); //only do it daily
 				$customer->update_customer_meta( 'member_access', $member_access );
-				it_exchange_add_session_data( 'member_access', $member_access );
 			}
 		}
+		it_exchange_update_session_data( 'member_access', $member_access );
 	} else {
 		it_exchange_clear_session_data( 'member_access' );
 	}
