@@ -240,7 +240,7 @@ function it_exchange_membership_addon_ajax_add_new_rule_to_post() {
 		$membership_product_feature = it_exchange_get_product_feature( $membership_id, 'membership-content-access-rules' );
 		
 		$value = array(
-			'selection' => 'post',
+			'selection' => get_post_type( $post_id ),
 			'selected'  => 'posts',
 			'term'      => $post_id,
 		);
