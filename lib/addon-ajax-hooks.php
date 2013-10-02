@@ -25,14 +25,14 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 		
 		$return .= it_exchange_membership_addon_get_selections( 0, NULL, $count );
 		
-		$return .= '<div class="column col-3-12"><div class="it-exchange-membership-content-type-terms hidden">';
+		$return .= '<div class="column col-6-12"><div class="it-exchange-membership-content-type-terms hidden">';
 		$return .= '</div></div>';
 		
 		$return .= '<div class="column col-3-12"><div class="it-exchange-membership-content-type-drip hidden">';
 		$return .= it_exchange_membership_addon_build_drip_rules( false, $count );
 		$return .= '</div></div>';
 		
-		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-1-12">';
+		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-3_4-12">';
 		$return .= '<a href="#">×</a>';
 		$return .= '</div>';
 		
@@ -118,7 +118,7 @@ function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
 	}
 	$return .= '</select>';
 	$return .= '<span class="it-exchange-membership-remove-new-rule">&times;</span>';
-	$return .= '<div class="it-exchange-membership-rule-description">' . __( 'Delay', 'LION' ) . '</div>';
+	// $return .= '<div class="it-exchange-membership-rule-delay">' . __( 'Delay', 'LION' ) . '</div>';
 	
 	$return .= '<div class="it-exchange-membership-drip-rule">';
 	$return .= '<input class="it-exchange-membership-drip-rule-interval" type="number" min="0" value="0" name="it_exchange_membership_drip_interval" />';

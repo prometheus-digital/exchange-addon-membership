@@ -1,18 +1,22 @@
+/** -----------------------------------------------------:[ Content Access ]:---------- */
 #it-exchange-product-membership-content-access-rules{margin-bottom:3em;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-header{overflow:hidden;clear:both;margin-top:3em;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-label-add{float:left;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-content-access-add-new-rule{float:right;margin-bottom:10px;}
 #it-exchange-product-membership-content-access-rules input{margin:5px;font-size:14px;width:98%;}
+#it-exchange-product-membership-content-access-rules select{max-width:100%;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-list-wrapper{overflow:hidden;border:1px solid #DEDEDE;}
 #it-exchange-product-membership-content-access-rules .columns-wrapper{clear:both;overflow:hidden;}
-#it-exchange-product-membership-content-access-rules .it-exchange-content-access-list-titles .column{padding:10px 15px;font-weight:bold;}
+#it-exchange-product-membership-content-access-rules .it-exchange-content-access-list-titles .column{padding:.8em 1em;font-weight:bold;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-list-titles .columns-wrapper{border-top:0;}
 #it-exchange-product-membership-content-access-rules .column{position:relative;float:left;}
 #it-exchange-product-membership-content-access-rules .col-1_4-12{width:2.0833333%;}
+#it-exchange-product-membership-content-access-rules .col-3_4-12{width:2.0833333%;}
 #it-exchange-product-membership-content-access-rules .col-1-12{width:8.3333333%;}
 #it-exchange-product-membership-content-access-rules .col-2-12{width:16.6666667%;}
 #it-exchange-product-membership-content-access-rules .col-3-12{width:25%;}
 #it-exchange-product-membership-content-access-rules .col-4-12{width:33.3333333%;}
+#it-exchange-product-membership-content-access-rules .col-6-12{width:50%;}
 #it-exchange-product-membership-content-access-rules .col-7-12{width:62.3333333%;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rules .columns-wrapper{background:#FFF;border-top:1px solid #DEDEDE;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rules .column{padding:1em;}
@@ -22,6 +26,9 @@
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-remove-content-access-rule a{-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;display:inline-block;width:20px;height:20px;margin-top:12px;margin-right:12px;border:2px solid transparent;border-radius:50%;font-size:14px;line-height:1.3em;text-decoration:none;text-align:center;color:#BBB;-webkit-transition:all .2s linear;-moz-transition:all .2s linear;transition:all .2s linear;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-content-access-rule:hover .it-exchange-membership-addon-remove-content-access-rule .it-exchange-delete-digital-download{border-color:#BBB;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-remove-content-access-rule a:active{outline:none;opacity:.8;}
-#it-exchange-product-membership-content-access-rules .it-exchange-membership-content-access-rule .it-exchange-membership-addon-remove-content-access-rule A:hover{border-color:#E1797A;color:#E1797A;}
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-content-access-rule .it-exchange-membership-addon-remove-content-access-rule a:hover{border-color:#E1797A;color:#E1797A;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-sorting-placeholder{height:50px;width:100%;background:#F6F6F6;}
 #it-exchange-product-membership-content-access-rules .ui-sortable-helper{border:1px solid #DEDEDE;box-shadow:#DDD 0 0 10px;}
+/** ----------------------------------------:[ content drip ]:--- */
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-content-type-drip input{max-width:60px;margin:0 10px 0 0;padding:5px;}
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rules .column-reduce-padding{padding:.9em 1em;}

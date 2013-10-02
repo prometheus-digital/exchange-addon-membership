@@ -23,7 +23,7 @@
 */
 function it_exchange_membership_addon_get_selections( $selection = 0, $selection_type = NULL, $count ) {
 	
-	$return  = '<div class="column col-3-12"><select class="it-exchange-membership-content-type-selections" name="it_exchange_content_access_rules[' . $count . '][selection]">';
+	$return  = '<div class="column col-2-12"><select class="it-exchange-membership-content-type-selections" name="it_exchange_content_access_rules[' . $count . '][selection]">';
 	$return .= '<option value="">' . __( 'Select Content', 'LION' ) . '</option>';
 	
 	//Posts
@@ -92,7 +92,7 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 	$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>';
 	
 	$return .= it_exchange_membership_addon_get_selections( $selection, $selected, $count );
-	$return .= '<div class="column col-3-12"><div class="it-exchange-membership-content-type-terms">';
+	$return .= '<div class="column col-6-12"><div class="it-exchange-membership-content-type-terms">';
 	switch( $selected ) {
 		
 		case 'posts':
@@ -128,13 +128,13 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 	$return .= '</select>';
 	$return .= '</div></div>';
 	
-	$return .= '<div class="column col-3-12"><div class="it-exchange-membership-content-type-drip">';
+	$return .= '<div class="column col-3-12 column-reduce-padding"><div class="it-exchange-membership-content-type-drip">';
 	if ( 'posts' === $selected ) {
 		$return .= it_exchange_membership_addon_build_drip_rules( $rule, $count, $product_id );
 	}
 	$return .= '</div></div>';
 	
-	$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-1-12">';
+	$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-3_4-12">';
 	$return .= '<a href="#">×</a>';
 	$return .= '</div>';
 	
@@ -273,7 +273,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 					
 					if ( !empty( $drip_interval ) && !empty( $drip_duration ) ) {
 					
-						$return .= '<div class="it-exchange-membership-rule-description">' . __( 'Delay', 'LION' ) . '</div>';
+						$return .= '<div class="it-exchange-membership-rule-delay">' . __( 'Delay', 'LION' ) . '</div>';
 						$return .= '<div class="it-exchange-membership-drip-rule">';
 						$return .= '<input class="it-exchange-membership-drip-rule-interval" type="number" min="0" value="' . $drip_interval . '" name="it_exchange_membership_drip_interval" />';
 						$return .= '<select class="it-exchange-membership-drip-rule-duration" name="it_exchange_membership_drip_duration">';

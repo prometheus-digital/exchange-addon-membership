@@ -118,10 +118,10 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 			<div class="it-exchange-content-access-list-titles">
 				<div class="it-exchange-content-access-item columns-wrapper">
 					<div class="column col-1_4-12"></div>
-					<div class="it-exchange-content-access-type column col-3-12">
+					<div class="it-exchange-content-access-type column col-2-12">
 						<span><?php _e( 'Type', 'LION' ); ?></span>
 					</div>
-					<div class="it-exchange-content-access-content column col-3-12">
+					<div class="it-exchange-content-access-content column col-6-12">
 						<span><?php _e( 'Content', 'LION' ); ?></span>
 					</div>
 					<div class="it-exchange-content-access-content column col-3-12">
