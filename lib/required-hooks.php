@@ -1,4 +1,9 @@
 <?php
+/**
+ * iThemes Exchange Membership Add-on
+ * @package IT_Exchange_Addon_Membership
+ * @since 1.0.0
+*/
 
 /**
  * Adds digital downloads to the iThemes Exchange Membership plugin
@@ -12,6 +17,14 @@ function ithemes_exchange_membership_addon_add_feature_digital_downloads() {
 }
 add_action( 'it_exchange_enabled_addons_loaded', 'ithemes_exchange_membership_addon_add_feature_digital_downloads' );
 
+/**
+ * Enqueues Membership scripts to WordPress Dashboard
+ *
+ * @since 1.0.0
+ *
+ * @param string $hook_suffix WordPress passed variable
+ * @return void
+*/
 function it_exchange_membership_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
 	global $post;
 	
@@ -42,9 +55,10 @@ function it_exchange_membership_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
 add_action( 'admin_enqueue_scripts', 'it_exchange_membership_addon_admin_wp_enqueue_scripts' );
 
 /**
- * Inits the scripts used by IT Exchange dashboard
+ * Enqueues Membership styles to WordPress Dashboard
  *
  * @since 1.0.0
+ *
  * @return void
 */
 function it_exchange_membership_addon_admin_wp_enqueue_styles() {
@@ -78,10 +92,11 @@ function it_exchange_membership_addon_admin_wp_enqueue_styles() {
 add_action( 'admin_print_styles', 'it_exchange_membership_addon_admin_wp_enqueue_styles' );
 
 /**
- * Loads the frontend CSS on all exchange pages
+ * Enqueues Membership scripts to WordPress frontend
  *
  * @since 1.0.0
  *
+ * @param string $current_view WordPress passed variable
  * @return void
 */
 function it_exchange_membership_addon_load_public_scripts( $current_view ) {
@@ -132,6 +147,12 @@ function it_exchange_membership_addon_add_child_transaction( $transaction_id ) {
 }
 add_action( 'it_exchange_add_child_transaction_success', 'it_exchange_membership_addon_add_child_transaction' );
 
+/**
+ * Creates sessions data with logged in customer's membership access rules
+ *
+ * @since 1.0.0
+ * @return void
+*/
 function it_exchange_membership_addon_setup_customer_session() {
 	if ( is_user_logged_in() ) {
 		$user_id = get_current_user_id();
@@ -156,7 +177,15 @@ function it_exchange_membership_addon_setup_customer_session() {
 }
 add_action( 'wp', 'it_exchange_membership_addon_setup_customer_session' );
 
-
+/**
+ * Checks if $post is restriction rules apply, if so, return Membership restricted templates
+ * If not, check if $post drip rules apply, if so, return Membership dripped templates
+ * Otherwise, return $post's $content
+ *
+ * @since 1.0.0
+ * @param string $content
+ * @return string
+*/
 function it_exchange_membership_addon_content_filter( $content ) {
 	if ( it_exchange_membership_addon_is_content_restricted() )
 		return it_exchange_membership_addon_content_restricted_template();
@@ -166,6 +195,15 @@ function it_exchange_membership_addon_content_filter( $content ) {
 }
 add_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
 
+/**
+ * Checks if $post is restriction rules apply, if so, return Membership restricted templates
+ * If not, check if $post drip rules apply, if so, return Membership dripped templates
+ * Otherwise, return $post's $content
+ *
+ * @since 1.0.0
+ * @param string $content
+ * @return string
+*/
 function it_exchange_membership_addon_excerpt_filter( $excerpt ) {
 	if ( it_exchange_membership_addon_is_content_restricted() )
 		return it_exchange_membership_addon_excerpt_restricted_template();
@@ -175,6 +213,12 @@ function it_exchange_membership_addon_excerpt_filter( $excerpt ) {
 }
 add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
 
+/**
+ * Returns Membership content restricted template part
+ *
+ * @since 1.0.0
+ * @return string
+*/
 function it_exchange_membership_addon_content_restricted_template() {
 	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
 	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
@@ -183,6 +227,12 @@ function it_exchange_membership_addon_content_restricted_template() {
 	return ob_get_clean();	
 }
 
+/**
+ * Returns Membership excerpt restricted template part
+ *
+ * @since 1.0.0
+ * @return string
+*/
 function it_exchange_membership_addon_excerpt_restricted_template() {
 	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
 	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
@@ -191,6 +241,12 @@ function it_exchange_membership_addon_excerpt_restricted_template() {
 	return ob_get_clean();	
 }
 
+/**
+ * Returns Membership content dripped template part
+ *
+ * @since 1.0.0
+ * @return string
+*/
 function it_exchange_membership_addon_content_dripped_template() {
 	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
 	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
@@ -199,6 +255,12 @@ function it_exchange_membership_addon_content_dripped_template() {
 	return ob_get_clean();	
 }
 
+/**
+ * Returns Membership excerpt dripped template part
+ *
+ * @since 1.0.0
+ * @return string
+*/
 function it_exchange_membership_addon_excerpt_dripped_template() {
 	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
 	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
@@ -207,6 +269,14 @@ function it_exchange_membership_addon_excerpt_dripped_template() {
 	return ob_get_clean();	
 }
 
+/**
+ * Adds Membership Template Path to iThemes Exchange Template paths
+ *
+ * @since 1.0.0
+ * @param array $possible_template_paths iThemes Exchange existing Template paths array
+ * @param array $template_names
+ * @return array
+*/
 function it_exchange_membership_addon_template_path( $possible_template_paths, $template_names ) {
 	$possible_template_paths[] = dirname( __FILE__ ) . '/templates/';
 	return $possible_template_paths;
@@ -214,7 +284,7 @@ function it_exchange_membership_addon_template_path( $possible_template_paths, $
 add_filter( 'it_exchange_possible_template_paths', 'it_exchange_membership_addon_template_path', 10, 2 );
 
 /*
- * Registers the membership page
+ * Registers the membership frontend dashboard page in iThemes Exchange
  *
  * @since 1.0.0
  *
@@ -237,12 +307,13 @@ function it_exchange_membership_addon_account_page() {
 add_action( 'init', 'it_exchange_membership_addon_account_page', 9 );
 
 /**
- * Returns rewrites for membership pages
+ * Returns rewrites for membership frontend dashboard page
+ * callback from rewrite-rules $options in it_exchange_membership_addon_account_page()
  *
  * @since 1.0.0
  *
  * @param string page
- * @return array
+ * @return mixed array|false
 */
 function it_exchange_get_memberships_page_rewrites( $page ) {
 	$slug = it_exchange_get_page_slug( $page );
@@ -267,12 +338,12 @@ function it_exchange_get_memberships_page_rewrites( $page ) {
 }
 
 /**
- * Returns URL for membership pages
+ * Returns URL for membership frontend dashboard page
  *
  * @since 1.0.0
  *
  * @param string page
- * @return array
+ * @return string URL
 */
 function it_exchange_get_membership_page_urls( $page ) {
 	// Get slugs
@@ -310,6 +381,17 @@ function it_exchange_get_membership_page_urls( $page ) {
 		return add_query_arg( $slug, '', $base );
 }
 
+/**
+ * Adds memberships to iThemes Exchange's pages API for:
+ *  protected pages
+ *  profile pages
+ *  account based pages
+ *
+ * @since 1.0.0
+ *
+ * @param string page
+ * @return array
+*/
 function it_exchange_membership_addon_pages( $pages ) {
 	$pages[] = 'memberships';
 	return $pages;	
@@ -318,8 +400,17 @@ add_filter( 'it_exchange_pages_to_protect', 'it_exchange_membership_addon_pages'
 add_filter( 'it_exchange_profile_pages', 'it_exchange_membership_addon_pages' );
 add_filter( 'it_exchange_account_based_pages', 'it_exchange_membership_addon_pages' );
 
+/**
+ * Adds memberships URLs to customer's menus in the iThemes Exchange account pages
+ *
+ * @since 1.0.0
+ *
+ * @param string $nav Current nav HTML
+ * @param object $customer current Customer
+ * @return array
+*/
 function it_exchange_membership_addon_append_to_customer_menu_loop( $nav, $customer ) {
-	$memberships = $customer->get_customer_meta( 'member_access' );
+	$memberships = it_exchange_get_session_data( 'member_access' );
 	$page_slug = 'memberships';
 	$permalinks = (bool)get_option( 'permalink_structure' );
 	

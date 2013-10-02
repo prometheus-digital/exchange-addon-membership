@@ -21,7 +21,7 @@ define( 'ITE_MEMBERSHIP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 /**
  * This registers our plugin as a membership addon
  *
- * @since 0.1.0
+ * @since 1.0.0
  *
  * @return void
 */
@@ -38,7 +38,6 @@ function it_exchange_register_membership_addon() {
 		'labels'      => array(
 			'singular_name' => __( 'Membership', 'LION' ),
 		),
-		'settings-callback' => 'it_exchange_membership_addon_settings_callback',
 	);
 	it_exchange_register_addon( 'membership-product-type', $options );
 }
