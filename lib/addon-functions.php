@@ -322,7 +322,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	
 	} else {
 	
-		$return .= __( 'No Rules Found', 'LION' );
+		$return .= '<div class="it-exchange-membership-no-restrictions">' . __( 'No membership restrictions for this content.', 'LION' ) . '</div>';
 		
 	}
 	
