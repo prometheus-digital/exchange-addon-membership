@@ -178,6 +178,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 		$user_id = get_current_user_id();
 		$customer = new IT_Exchange_Customer( $user_id );	
 		$member_access = $customer->get_customer_meta( 'member_access' );
+		$member_access_session = it_exchange_get_session_data( 'member_access' );
 		if ( !empty( $member_access )  ) {
 			//If the transient doesn't exist, verify the membership access subscriber status and reset transient
 			if ( false === get_transient( 'member_access_check_' . $customer->id ) ) {
@@ -192,7 +193,9 @@ function it_exchange_membership_addon_setup_customer_session() {
 				$customer->update_customer_meta( 'member_access', $member_access );
 			}
 		}
-		it_exchange_update_session_data( 'member_access', $member_access );
+		$member_diff = array_diff( (array)$member_access, (array)$member_access_session );
+		if ( !empty( $member_diff ) )
+			it_exchange_update_session_data( 'member_access', $member_access );
 	} else {
 		it_exchange_clear_session_data( 'member_access' );
 	}
