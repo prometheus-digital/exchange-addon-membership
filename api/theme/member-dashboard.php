@@ -181,7 +181,8 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 					case 'posts':
 						$label = '';
 						$args = array(
-							'p'              => $content['term'],
+							'p'         => $content['term'],
+							'post_type' => 'any',
 						);
 						$restricted_posts = get_posts( $args );
 						$more_content_link = '';
