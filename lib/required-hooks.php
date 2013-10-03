@@ -438,23 +438,26 @@ function it_exchange_membership_addon_append_to_customer_menu_loop( $nav, $custo
 	$memberships = it_exchange_get_session_data( 'member_access' );
 	$page_slug = 'memberships';
 	$permalinks = (bool)get_option( 'permalink_structure' );
-	
-	foreach ( $memberships as $membership_id ) {
 		
-		$membership_post = get_post( $membership_id );
-		if ( !empty( $membership_post ) ) {
-			$membership_slug = $membership_post->post_name;
-			
-			$query_var = get_query_var( 'memberships' );
-			
-			$class = !empty( $query_var ) && $query_var == $membership_slug ? ' class="current"' : '';
-			
-			if ( $permalinks )
-				$url = it_exchange_get_page_url( $page_slug ) . $membership_slug;
-			else
-				$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
-				
-			$nav .= '<li' . $class . '><a href="' . $url . '">' . get_the_title( $membership_id ) . '</a></li>';
+	if ( !empty( $memberships ) ) {
+		foreach ( $memberships as $membership_id ) {
+			if ( !empty( $membership_id ) ) {				
+				$membership_post = get_post( $membership_id );
+				if ( !empty( $membership_post ) ) {
+					$membership_slug = $membership_post->post_name;
+					
+					$query_var = get_query_var( 'memberships' );
+					
+					$class = !empty( $query_var ) && $query_var == $membership_slug ? ' class="current"' : '';
+					
+					if ( $permalinks )
+						$url = it_exchange_get_page_url( $page_slug ) . $membership_slug;
+					else
+						$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
+						
+					$nav .= '<li' . $class . '><a href="' . $url . '">' . get_the_title( $membership_id ) . '</a></li>';
+				}
+			}
 		}
 	}
 	
