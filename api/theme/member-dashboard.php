@@ -116,6 +116,7 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 	function membership_content( $options=array() ) {
 		
 		$product_id = $this->_membership_product->ID;
+		$now = time();
 		
 		// Return boolean if has flag was set
 		if ( $options['has'] )
@@ -233,14 +234,13 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 								$duration = !empty( $duration ) ? $duration : 'days';
 								$member_access = it_exchange_get_session_data( 'member_access' );
 								if ( false !== $key = array_search( $product_id, $member_access ) ) {
-									$purchase_time = get_post_time( 'U', true, $key );
+									$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $key ) );
 									$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
-									$now = time();
 									if ( $dripping < $now )						
 										$result .= '<p class="it-exchange-content-item it-exchange-membership-drip-available"><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p>';
 									else {																
-										$earliest_drip = $dripping - $purchase_time;
-										$result .= '<p class="it-exchange-content-item it-exchange-membership-drip-unavailable">' . get_the_title( $post->ID ) . ' (' . sprintf( __( 'available in %s days', 'LION' ), floor( $earliest_drip / 60 / 60 / 24 ) ) . ')</p>';
+										$earliest_drip = $dripping - $now;
+										$result .= '<p class="it-exchange-content-item it-exchange-membership-drip-unavailable">' . get_the_title( $post->ID ) . ' (' . sprintf( __( 'available in %s days', 'LION' ), ceil( $earliest_drip / 60 / 60 / 24 ) ) . ')</p>';
 									}
 								}
 								

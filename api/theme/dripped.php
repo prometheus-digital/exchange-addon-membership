@@ -52,6 +52,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 	function content( $options=array() ) {
 		global $post;
 		$earliest_drip = false;
+		$now = time();
 		
 		$member_access = it_exchange_get_session_data( 'member_access' );
 		foreach( $member_access as $txn_id => $product_id ) {
@@ -60,8 +61,8 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 			$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
 			$duration = !empty( $duration ) ? $duration : 'days';
 			if ( 0 < $interval ) {
-				$purchase_time = get_post_time( 'U', true, $product_id );
-				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time ) - $purchase_time;
+				$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
+				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time ) - $now;
 				if ( !$earliest_drip || $dripping < $earliest_drip )
 					$earliest_drip = $dripping;
 			}
@@ -70,7 +71,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 		$defaults = array(
 			'before' => '',
 			'after'  => '',
-			'message' => sprintf( __( 'This content will be available to you in %s days.', 'LION' ), floor( $earliest_drip / 60 / 60 / 24 ) ),
+			'message' => sprintf( __( 'This content will be available to you in %s days.', 'LION' ), ceil( $earliest_drip / 60 / 60 / 24 ) ),
 			'class'  => 'it-exchange-membership-restricted-content',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
@@ -97,8 +98,8 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 			$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
 			$duration = !empty( $duration ) ? $duration : 'days';
 			if ( 0 < $interval ) {
-				$purchase_time = get_post_time( 'U', true, $product_id );
-				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time ) - $purchase_time;
+				$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
+				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time ) - $now;
 				if ( !$earliest_drip || $dripping < $earliest_drip )
 					$earliest_drip = $dripping;
 			}
@@ -107,7 +108,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 		$defaults = array(
 			'before' => '',
 			'after'  => '',
-			'message' => sprintf( __( 'This content will be available to you in %s days.', 'LION' ), floor( $earliest_drip / 60 / 60 / 24 ) ),
+			'message' => sprintf( __( 'This content will be available to you in %s days.', 'LION' ), ceil( $earliest_drip / 60 / 60 / 24 ) ),
 			'class'   => 'it-exchange-membership-restricted-excerpt',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );

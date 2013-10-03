@@ -437,7 +437,7 @@ function it_exchange_membership_addon_is_content_dripped() {
 		$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
 		$duration = !empty( $duration ) ? $duration : 'days';
 		if ( 0 < $interval ) {
-			$purchase_time = get_post_time( 'U', true, $product_id );
+			$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
 			$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
 			$now = time();
 			if ( $dripping < $now )						
