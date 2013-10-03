@@ -3,6 +3,7 @@
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-header{overflow:hidden;clear:both;margin-top:3em;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-label-add{float:left;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-content-access-add-new-rule{float:right;margin-bottom:10px;}
+#it-exchange-product-membership-content-access-rules .it-exchange-content-no-rules{float:none;margin:0;padding:1.2em;text-align:center;}
 #it-exchange-product-membership-content-access-rules input{margin:5px;font-size:14px;width:98%;}
 #it-exchange-product-membership-content-access-rules select{max-width:100%;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-list-wrapper{overflow:hidden;border:1px solid #DEDEDE;}
