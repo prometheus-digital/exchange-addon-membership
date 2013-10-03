@@ -21,18 +21,18 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 		
 		$return  = '<div class="it-exchange-membership-content-access-rule columns-wrapper" data-count="' . $count . '">';
 		
-		$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>';
+		$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column"></div>';
 		
 		$return .= it_exchange_membership_addon_get_selections( 0, NULL, $count );
 		
-		$return .= '<div class="column col-6-12"><div class="it-exchange-membership-content-type-terms hidden">';
+		$return .= '<div class="it-exchange-content-access-content column"><div class="it-exchange-membership-content-type-terms hidden">';
 		$return .= '</div></div>';
 		
-		$return .= '<div class="column col-3-12"><div class="it-exchange-membership-content-type-drip hidden">';
+		$return .= '<div class="it-exchange-content-access-delay column"><div class="it-exchange-membership-content-type-drip hidden">';
 		$return .= it_exchange_membership_addon_build_drip_rules( false, $count );
 		$return .= '</div></div>';
 		
-		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-3_4-12">';
+		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column">';
 		$return .= '<a href="#">×</a>';
 		$return .= '</div>';
 		
