@@ -115,32 +115,45 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	        </div>
 		</div>
         <div class="it-exchange-content-access-list-wrapper">
-			<div class="it-exchange-content-access-list-titles">
-				<div class="it-exchange-content-access-item columns-wrapper">
-					<div class="column"></div>
-					<div class="it-exchange-content-access-type column">
-						<span><?php _e( 'Type', 'LION' ); ?></span>
-					</div>
-					<div class="it-exchange-content-access-content column">
-						<span><?php _e( 'Content', 'LION' ); ?></span>
-					</div>
-					<div class="it-exchange-content-access-delay column">
-						<span><?php _e( 'Delay Access', 'LION' ); ?> <span class="tip" title="<?php _e( 'This setting will allow you to drip individual content to your members.', 'LION' ); ?>">i</span></span>
-					</div>
-				</div>
-			</div>
-        	<?php $count = 0; ?>
-            <div class="it-exchange-membership-addon-content-access-rules">
-            <?php
-			if ( !empty( $access_rules ) ) {
-				foreach( $access_rules as $rule ) {
-					
-					echo it_exchange_membership_addon_build_content_rule( $rule, $count++, $product->ID );
-					
+			<?php
+            if ( !empty( $access_rules ) )
+                $hidden_class = '';
+            else
+                $hidden_class = 'hidden';
+            ?>
+        	<div class="it-exchange-content-access-list <?php echo $hidden_class; ?>">
+                <div class="it-exchange-content-access-list-titles">
+                    <div class="it-exchange-content-access-item columns-wrapper">
+                        <div class="column"></div>
+                        <div class="it-exchange-content-access-type column">
+                            <span><?php _e( 'Type', 'LION' ); ?></span>
+                        </div>
+                        <div class="it-exchange-content-access-content column">
+                            <span><?php _e( 'Content', 'LION' ); ?></span>
+                        </div>
+                        <div class="it-exchange-content-access-delay column">
+                            <span><?php _e( 'Delay Access', 'LION' ); ?> <span class="tip" title="<?php _e( 'This setting will allow you to drip individual content to your members.', 'LION' ); ?>">i</span></span>
+                        </div>
+                    </div>
+                </div>
+                <?php $count = 0; ?>
+                <div class="it-exchange-membership-addon-content-access-rules">
+                <?php
+				if ( !empty( $access_rules ) ) {
+					foreach( $access_rules as $rule ) {
+						echo it_exchange_membership_addon_build_content_rule( $rule, $count++, $product->ID );
+					}
 				}
+                ?>
+                </div>
+            </div>
+            <?php
+			if ( !empty( $hidden_class ) ) {
+				?>
+                <div class="it-exchange-content-no-rules it-exchange-membership-content-access-add-new-rule">No content added to membership yet. <a href="">Add Content by Adding a Membership Rule</a>.</div>
+                <?php	
 			}
 			?>
-            </div>
         </div>
 		<script type="text/javascript" charset="utf-8">
             var it_exchange_membership_addon_content_access_interation = <?php echo $count; ?>;
