@@ -150,7 +150,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
             <?php
 			if ( !empty( $hidden_class ) ) {
 				?>
-                <div class="it-exchange-content-no-rules it-exchange-membership-content-access-add-new-rule">No Rules Added | <a href="">Add First Rule</a></div>
+                <div class="it-exchange-content-no-rules it-exchange-membership-content-access-add-new-rule">No content access rules added to this membership yet. <a href="">Add New Rule</a></div>
                 <?php	
 			}
 			?>
