@@ -30,8 +30,8 @@ function it_exchange_membership_addon_settings_callback() {
 */
 function it_exchange_membership_addon_default_settings( $values ) {
     $defaults = array(
-        'membership-restricted-content-message'   => __( 'This content is for members only. Please sign up to get access to this content and other awesome content added for members only.', 'LION' ),
-        'membership-dripped-content-message'   => __( 'This content will be available to you in %d days', 'LION' ),
+        'membership-restricted-content-message'   => __( 'This content is for members only. Become a member now to get access to this and other awesome members-only content.', 'LION' ),
+        'membership-dripped-content-message'   => __( 'This content will be available in %d days.', 'LION' ),
 	);
     $values = ITUtility::merge_defaults( $values, $defaults );
     return $values;
@@ -149,7 +149,7 @@ class IT_Exchange_Membership_Add_On {
         <?php endif; ?>
         <div class="it-exchange-addon-settings it-exchange-membership-addon-settings">
             <p>
-                <label for="membership-restricted-content-message"><?php _e( 'Restricted Content Message', 'LION' ); ?> <span class="tip" title="<?php _e( 'The message you want to appear when a non-member tries to access content that has been restricted', 'LION' ); ?>">i</span></label>
+                <label for="membership-restricted-content-message"><?php _e( 'Restricted Content Message', 'LION' ); ?> <span class="tip" title="<?php _e( 'This message will display when a non-member attempts to access content that has been restricted.', 'LION' ); ?>">i</span></label>
                 <?php
                 if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
                     echo wp_editor( $settings['membership-restricted-content-message'], 'membership-restricted-content-message', array( 'textarea_name' => 'it-exchange-add-on-membership-restricted-content-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
@@ -162,7 +162,7 @@ class IT_Exchange_Membership_Add_On {
 				?>
             </p>
             <p>
-                <label for="membership-dripped-content-message"><?php _e( 'Delayed Content Message', 'LION' ); ?> <span class="tip" title="<?php _e( 'The message you want to appear when a member tries to access content that has been delayed', 'LION' ); ?>">i</span></label>
+                <label for="membership-dripped-content-message"><?php _e( 'Delayed Content Message', 'LION' ); ?> <span class="tip" title="<?php _e( 'This message will appear when a member attempts to access content that has been delayed.', 'LION' ); ?>">i</span></label>
                 <?php
                 if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
                     echo wp_editor( $settings['membership-dripped-content-message'], 'membership-dripped-content-message', array( 'textarea_name' => 'it-exchange-add-on-membership-dripped-content-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );

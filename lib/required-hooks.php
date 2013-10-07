@@ -568,3 +568,34 @@ function it_exchange_membership_addon_append_to_customer_menu_loop( $nav, $custo
 	return $nav;
 }
 add_filter( 'it_exchange_after_customer_menu_loop', 'it_exchange_membership_addon_append_to_customer_menu_loop', 10, 2 );
+
+/**
+ * Adds memberships URLs to customer's menus in the iThemes Exchange account pages
+ *
+ * @since 1.0.0
+ *
+ * @param string $product_name Product Name
+ * @param object $product_obj iThemes Exchange Product Object
+ * @return string $product_name Product Name
+*/
+function it_exchange_membership_addon_email_notification_order_table_product_name( $product_name, $product_obj ) {
+	if ( it_exchange_product_has_feature( $product_obj['product_id'], 'membership-content-access-rules' ) ) {
+	
+		$page_slug = 'memberships';
+		$permalinks = (bool)get_option( 'permalink_structure' );
+		
+		$membership_post = get_post( $product_obj['product_id'] );
+		if ( !empty( $membership_post ) ) {
+			$membership_slug = $membership_post->post_name;
+			
+			if ( $permalinks )
+				$url = it_exchange_get_page_url( $page_slug ) . $membership_slug;
+			else
+				$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
+				
+			$product_name .= '<p><small>(<a href="' . $url . '">' . __( 'View available content', 'LION' ) . '</a><p>)</small>';
+		}
+	}
+	return $product_name;
+}
+add_filter( 'it_exchange_email_notification_order_table_product_name', 'it_exchange_membership_addon_email_notification_order_table_product_name', 10, 2 );
