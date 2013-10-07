@@ -18,7 +18,7 @@
 */
 function it_exchange_membership_plugin_row_actions( $actions, $plugin_file, $plugin_data, $context ) {
     
-    $actions['setup_addon'] = '<a href="' . get_admin_url( NULL, 'admin.php?page=it-exchange-addons&add-on-settings=membership' ) . '">' . __( 'Setup Add-on', 'LION' ) . '</a>';
+    $actions['setup_addon'] = '<a href="' . get_admin_url( NULL, 'admin.php?page=it-exchange-addons&add-on-settings=membership-product-type' ) . '">' . __( 'Setup Add-on', 'LION' ) . '</a>';
     
     return $actions;
     
