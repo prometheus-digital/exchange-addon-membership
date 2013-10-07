@@ -50,13 +50,12 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 	 * @return string
 	*/
 	function content( $options=array() ) {
+		$membership_settings = it_exchange_get_option( 'addon_membership' );
 		$defaults = array(
 			'before' => '',
 			'after'  => '',
-			'message' => __( 'This content is for members only. Please sign up to get access to this content and other awesome content added for members only.', 'LION' ),
+			'message' => $membership_settings['membership-restricted-content-message'],
 			'class'  => 'it-exchange-membership-restricted-content',
-		//	'more_link_text' => null,
-		//	'strip_teaser' => false
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
 			
@@ -72,10 +71,11 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 	 * @return string
 	*/
 	function excerpt( $options=array() ) {
+		$membership_settings = it_exchange_get_option( 'addon_membership' );
 		$defaults = array(
 			'before'  => '',
 			'after'   => '',
-			'message' => __( 'This content is for members only. Please sign up to get access to this content and other awesome content added for members only.', 'LION' ),
+			'message' => $membership_settings['membership-restricted-content-message'],
 			'class'   => 'it-exchange-membership-restricted-excerpt',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );

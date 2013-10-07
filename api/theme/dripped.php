@@ -53,6 +53,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 		global $post;
 		$earliest_drip = false;
 		$now = time();
+		$membership_settings = it_exchange_get_option( 'addon_membership' );
 		
 		$member_access = it_exchange_get_session_data( 'member_access' );
 		foreach( $member_access as $txn_id => $product_id ) {
@@ -71,7 +72,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 		$defaults = array(
 			'before' => '',
 			'after'  => '',
-			'message' => sprintf( __( 'This content will be available to you in %s days.', 'LION' ), ceil( $earliest_drip / 60 / 60 / 24 ) ),
+			'message' => sprintf( $membership_settings['membership-dripped-content-message'], ceil( $earliest_drip / 60 / 60 / 24 ) ),
 			'class'  => 'it-exchange-membership-restricted-content',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
@@ -90,6 +91,8 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 	function excerpt( $options=array() ) {
 		global $post;
 		$earliest_drip = false;
+		$now = time();
+		$membership_settings = it_exchange_get_option( 'addon_membership' );
 		
 		$member_access = it_exchange_get_session_data( 'member_access' );
 		foreach( $member_access as $txn_id => $product_id ) {
@@ -108,7 +111,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 		$defaults = array(
 			'before' => '',
 			'after'  => '',
-			'message' => sprintf( __( 'This content will be available to you in %s days.', 'LION' ), ceil( $earliest_drip / 60 / 60 / 24 ) ),
+			'message' => sprintf( $membership_settings['membership-dripped-content-message'], ceil( $earliest_drip / 60 / 60 / 24 ) ),
 			'class'   => 'it-exchange-membership-restricted-excerpt',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );

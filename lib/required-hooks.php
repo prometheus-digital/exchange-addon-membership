@@ -129,6 +129,26 @@ function it_exchange_membership_addon_load_public_scripts( $current_view ) {
 add_action( 'wp_enqueue_scripts', 'it_exchange_membership_addon_load_public_scripts' );
 
 /**
+ * Adds shortcode information below extended description box
+ *
+ * @since 1.0.0
+ * @param object $post WordPress post object 
+ * @return void
+*/
+function it_exchange_membership_addon_after_print_extended_description_metabox( $post ) {
+	
+	$product_type = it_exchange_get_product_type( $post->ID );
+			
+	if ( 'membership-product-type' === $product_type ) {
+		echo '<p class="description">[it-exchange-membership-included-content] - ' . __( 'Displays content available with this membership', 'LION' ) . '</p>';
+	}
+	
+	return;
+	
+}
+add_action( 'it_exchange_after_print_extended_description_metabox', 'it_exchange_membership_addon_after_print_extended_description_metabox' );
+
+/**
  * Adds necessary details to Exchange upon successfully completed transaction
  *
  * @since 1.0.0
@@ -201,6 +221,77 @@ function it_exchange_membership_addon_setup_customer_session() {
 	}
 }
 add_action( 'wp', 'it_exchange_membership_addon_setup_customer_session' );
+
+/**
+ * Creates sessions data with logged in customer's membership access rules
+ *
+ * @since 1.0.0
+ * @param int $post_id WordPress Post ID
+ * @return void
+*/
+function it_exchange_before_delete_membership_product( $post_id ){
+	$existing_access_rules = it_exchange_get_product_feature( $post_id, 'membership-content-access-rules' );
+	
+	if ( !empty( $existing_access_rules ) ) {
+		foreach( $existing_access_rules as $rule ) {
+			switch( $rule['selected'] ) {
+				case 'posts':
+					if ( !( $rules = get_post_meta( $rule['term'], '_item-content-rule', true ) ) )
+						$rules = array();
+					
+					delete_post_meta( $rule['term'], '_item-content-rule-drip-interval-' . $post_id );
+					delete_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $post_id );
+					
+					$restriction_exemptions = get_post_meta( $rule['term'], '_item-content-rule-exemptions', true );
+					if ( !empty( $restriction_exemptions ) ) {
+						if ( array_key_exists( $post_id, $restriction_exemptions ) ) {
+							unset( $restriction_exemptions[$post_id] );
+							if ( !empty( $restriction_exemptions ) )
+								update_post_meta( $rule['term'], '_item-content-rule-exemptions', $restriction_exemptions );
+							else
+								delete_post_meta( $rule['term'], '_item-content-rule-exemptions' );
+						}
+					}
+						
+					if( false !== $key = array_search( $post_id, $rules ) ) {
+						unset( $rules[$key] );
+						if ( empty( $rules ) )
+							delete_post_meta( $rule['term'], '_item-content-rule' );
+						else
+							update_post_meta( $rule['term'], '_item-content-rule', $rules );
+					}
+					break;
+					
+				case 'post_types':
+					if ( !( $rules = get_option( '_item-content-rule-post-type-' . $rule['term'] ) ) )
+						$rules = array();
+						
+					if( false !== $key = array_search( $post_id, $rules ) ) {
+						unset( $rules[$key] );
+						if ( empty( $rules ) )
+							delete_option( '_item-content-rule-post-type-' . $rule['term'] );
+						else
+							update_option( '_item-content-rule-post-type-' . $rule['term'],  $rules );
+					}
+					break;
+					
+				case 'taxonomy':
+					if ( !( $rules = get_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] ) ) )
+						$rules = array();
+						
+					if( false !==  $key = array_search( $post_id, $rules ) ) {
+						unset( $rules[$key] );
+						if ( empty( $rules ) )
+							delete_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] );
+						else
+							update_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'],  $rules );
+					}
+					break;
+			}
+		}
+	}
+}
+add_action( 'before_delete_post', 'it_exchange_before_delete_membership_product' );
 
 /**
  * Checks if $post is restriction rules apply, if so, return Membership restricted templates
@@ -295,6 +386,19 @@ function it_exchange_membership_addon_excerpt_dripped_template() {
 }
 
 /**
+ * Function to modify the default transaction confirmation elements
+ *
+ * @since 1.0.0
+ * @param array $elements Elements being loaded by Theme API
+ * @return array $elements Modified elements array
+*/
+function it_exchange_membership_addon_content_confirmation_products_loop_elements( $elements ) {
+	$elements[] = 'membership-confirmation';
+	return $elements;	
+}
+add_filter( 'it_exchange_get_content_confirmation_products_loop_elements', 'it_exchange_membership_addon_content_confirmation_products_loop_elements' );
+
+/**
  * Adds Membership Template Path to iThemes Exchange Template paths
  *
  * @since 1.0.0
@@ -354,7 +458,7 @@ function it_exchange_get_memberships_page_rewrites( $page ) {
 
 			$rewrites = array(
 				$account_slug  . '/([^/]+)/' . $slug  . '/([^/]+)'  => 'index.php?' . $account_slug . '=$matches[1]&' . $slug . '=$matches[2]',
-				$account_slug . '/' . $slug  . '/([^/]+)' => 'index.php?' . $account_slug . '=1&' . $slug . '=$matches[2]',
+				$account_slug . '/' . $slug  . '/([^/]+)' => 'index.php?' . $account_slug . '=1&' . $slug . '=$matches[1]',
 			);
 			return $rewrites;
 			break;

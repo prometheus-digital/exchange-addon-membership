@@ -76,7 +76,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 		
 		if ( !empty( $post_type ) && 'it_exchange_prod' === $post_type ) {
 			if ( !empty( $product_type ) &&  it_exchange_product_type_supports_feature( $product_type, 'membership-content-access-rules' ) )
-				add_action( 'it_exchange_product_metabox_callback_' . $product_type, array( $this, 'register_metabox' ) );
+				add_action( 'it_exchange_product_metabox_callback_' . $product_type, array( $this, 'register_metabox' ), 1 ); //we want this to appear first in Membership product types
 		}
 		
 	}
@@ -132,7 +132,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
                             <span><?php _e( 'Content', 'LION' ); ?></span>
                         </div>
                         <div class="it-exchange-content-access-delay column">
-                            <span><?php _e( 'Delay Access', 'LION' ); ?> <span class="tip" title="<?php _e( 'This setting will allow you to drip individual content to your members.', 'LION' ); ?>">i</span></span>
+                            <span><?php _e( 'Delay Access', 'LION' ); ?> <span class="tip" title="<?php _e( 'This setting can only be applied to individual posts or pages.', 'LION' ); ?>">i</span></span>
                         </div>
                     </div>
                 </div>
@@ -150,7 +150,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
             <?php
 			if ( !empty( $hidden_class ) ) {
 				?>
-                <div class="it-exchange-content-no-rules it-exchange-membership-content-access-add-new-rule">No content access rules added to this membership yet. <a href="">Add New Rule</a></div>
+                <div class="it-exchange-content-no-rules it-exchange-membership-content-access-add-new-rule"><?php _e( 'No content access rules added to this membership yet. <a href="">Add New Rule</a>', 'LION' ); ?></div>
                 <?php	
 			}
 			?>

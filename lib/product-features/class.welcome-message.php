@@ -76,7 +76,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 		
 		if ( !empty( $post_type ) && 'it_exchange_prod' === $post_type ) {
 			if ( !empty( $product_type ) &&  it_exchange_product_type_supports_feature( $product_type, 'membership-welcome-message' ) )
-				add_action( 'it_exchange_product_metabox_callback_' . $product_type, array( $this, 'register_metabox' ) );
+				add_action( 'it_exchange_product_metabox_callback_' . $product_type, array( $this, 'register_metabox' ), 1 ); //we want this to appear first in Membership product types
 		}
 		
 	}
@@ -90,7 +90,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	 * @return void
 	*/
 	function register_metabox() {
-		add_meta_box( 'it-exchange-product-membership-welcome-message', __( 'Membership Welcome Message', 'LION' ), array( $this, 'print_metabox' ), 'it_exchange_prod', 'normal' );
+		add_meta_box( 'it-exchange-product-membership-welcome-message', __( 'Membership Welcome Message', 'LION' ), array( $this, 'print_metabox' ), 'it_exchange_prod', 'it_exchange_advanced', 'high' ); //needs to be set to 'high' too, to appear first in Membership product types
 	}
 
 	/**
@@ -106,6 +106,13 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 		// Set the value of the feature for this product
 		$product_feature_value = it_exchange_get_product_feature( $product->ID, 'membership-welcome-message' );
 		
+		$description = __( "This message will appear above the list of protected membership content in your user's account. Use it to describe this membership, let them know what to read first or do next.", 'LION' );
+		$description = apply_filters( 'it_exchange_membership_addon_product_welcome-message_metabox_description', $description );
+
+		if ( $description ) {
+			echo '<p class="intro-description">' . $description . '</p>';
+		}
+	
         echo wp_editor( $product_feature_value, 'welcome-message-template', array( 'textarea_name' => 'it-exchange-product-membership-welcome-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
 	}
 

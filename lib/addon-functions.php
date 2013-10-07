@@ -131,6 +131,10 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 	$return .= '<div class="it-exchange-content-access-delay column col-3-12 column-reduce-padding"><div class="it-exchange-membership-content-type-drip">';
 	if ( 'posts' === $selected ) {
 		$return .= it_exchange_membership_addon_build_drip_rules( $rule, $count, $product_id );
+	} else {
+		$return .= '<span class="it-exchange-content-access-delay-unavailable">';
+		$return .= __( 'Available for single posts or pages', 'LION' );	
+		$return .= '</span>';
 	}
 	$return .= '</div></div>';
 	
@@ -167,6 +171,7 @@ function it_exchange_membership_addon_build_drip_rules( $rule = false, $count, $
 		$drip_duration = get_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $product_id, true );
 		$drip_duration = !empty( $drip_duration ) ? $drip_duration : 'days';
 	} else {
+		$drip_interval = 0;
 		$drip_duration = 'days';
 	}
 	
