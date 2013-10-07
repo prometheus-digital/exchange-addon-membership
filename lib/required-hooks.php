@@ -593,7 +593,7 @@ function it_exchange_membership_addon_email_notification_order_table_product_nam
 			else
 				$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
 				
-			$product_name .= '<p><small>(<a href="' . $url . '">' . __( 'View available content', 'LION' ) . '</a><p>)</small>';
+			$product_name .= '<p><small>&nbsp;&nbsp;<a href="' . $url . '">' . __( 'View available content', 'LION' ) . '</a><p></small>';
 		}
 	}
 	return $product_name;
