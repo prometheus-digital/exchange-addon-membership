@@ -23,6 +23,8 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 		'title'              => '',
 		'toggle'             => 'on',
 		'posts_per_grouping' => 5,
+		'show_drip'          => 'on',
+		'show_drip_time'     => 'on',
 	);
 	$atts = shortcode_atts( $defaults, $atts );
 		
@@ -115,7 +117,28 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 						}
 					} else {
 						foreach( $restricted_posts as $restricted_post ) { //should just be a regular post
-							$result .= '<div class="it-exchange-content-group it-exchange-group-single"><p class="it-exchange-content-item">' . get_the_title( $restricted_post->ID ) . '</p></div>';
+							
+							$drip_label = '';
+						
+							if ( 0 < $interval = get_post_meta( $restricted_post->ID, '_item-content-rule-drip-interval-' . $atts['product_id'], true ) ) {
+								
+								if ( 'on' !== $atts['show_drip'] )
+									continue;
+								
+								if ( 'on' === $atts['show_drip_time'] ) {
+									$duration = get_post_meta( $restricted_post->ID, '_item-content-rule-drip-duration-' . $atts['product_id'], true );
+									$duration = !empty( $duration ) ? $duration : 'days';
+									
+									$now = strtotime( 'midnight', time() );
+									$dripping = strtotime( $interval . ' ' . $duration, $now );
+									$earliest_drip = $dripping - $now;
+									$drip_label = ' (' . sprintf( __( 'available in %s days', 'LION' ), ceil( $earliest_drip / 60 / 60 / 24 ) ) . ')';
+								}
+								
+							}
+							
+							
+							$result .= '<div class="it-exchange-content-group it-exchange-group-single"><p class="it-exchange-content-item">' . get_the_title( $restricted_post->ID ) . $drip_label . '</p></div>';
 						}
 					}
 					
