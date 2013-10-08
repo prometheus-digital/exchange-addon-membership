@@ -121,10 +121,8 @@ add_action( 'admin_print_styles', 'it_exchange_membership_addon_admin_wp_enqueue
 */
 function it_exchange_membership_addon_load_public_scripts( $current_view ) {
 	// Frontend Membership Dashboard CSS & JS
-	if ( it_exchange_is_page( 'memberships' ) ) {
-		wp_enqueue_script( 'it-exchange-membership-addon-public-js', ITUtility::get_url_from_file( dirname( __FILE__ ) . '/assets/js/membership-dashboard.js' ), array( 'jquery-zoom' ), false, true );
-		wp_enqueue_style( 'it-exchange-membership-addon-public-css', ITUtility::get_url_from_file( dirname( __FILE__ ) . '/assets/styles/membership-dashboard.css' ) );
-	}
+	wp_enqueue_script( 'it-exchange-membership-addon-public-js', ITUtility::get_url_from_file( dirname( __FILE__ ) . '/assets/js/membership-dashboard.js' ), array( 'jquery-zoom' ), false, true );
+	wp_enqueue_style( 'it-exchange-membership-addon-public-css', ITUtility::get_url_from_file( dirname( __FILE__ ) . '/assets/styles/membership-dashboard.css' ) );
 }
 add_action( 'wp_enqueue_scripts', 'it_exchange_membership_addon_load_public_scripts' );
 

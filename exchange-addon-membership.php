@@ -32,6 +32,7 @@ function it_exchange_register_membership_addon() {
 		'author'            => 'iThemes',
 		'author_url'        => 'http://ithemes.com/exchange/membership/',
 		'icon'              => ITUtility::get_url_from_file( dirname( __FILE__ ) . '/lib/images/membership50px.png' ),
+		'wizard-icon'       => ITUtility::get_url_from_file( dirname( __FILE__ ) . '/lib/images/wizard-membership.png' ),
 		'file'              => dirname( __FILE__ ) . '/init.php',
 		'category'          => 'product-type',
 		'basename'          => plugin_basename( __FILE__ ),
