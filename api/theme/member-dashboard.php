@@ -237,15 +237,15 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 									$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $key ) );
 									$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
 									if ( $dripping < $now )						
-										$result .= '<p class="it-exchange-content-item it-exchange-membership-drip-available"><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p>';
-									else {																
+										$result .= '<div class="it-exchange-content-group it-exchange-content-single"><p class="it-exchange-content-item it-exchange-membership-drip-available"><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p></div>';
+									else {
 										$earliest_drip = $dripping - $now;
-										$result .= '<p class="it-exchange-content-item it-exchange-membership-drip-unavailable">' . get_the_title( $post->ID ) . ' (' . sprintf( __( 'available in %s days', 'LION' ), ceil( $earliest_drip / 60 / 60 / 24 ) ) . ')</p>';
+										$result .= '<div class="it-exchange-content-group it-exchange-content-single"><p class="it-exchange-content-item it-exchange-membership-drip-unavailable">' . get_the_title( $post->ID ) . ' (' . sprintf( __( 'available in %s days', 'LION' ), ceil( $earliest_drip / 60 / 60 / 24 ) ) . ')</p></div>';
 									}
 								}
 								
 							} else {
-								$result .= '<p class="it-exchange-content-item"><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p>';
+								$result .= '<div class="it-exchange-content-group it-exchange-content-single"><p class="it-exchange-content-item"><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p></div>';
 							}
 						}
 					}

@@ -36,9 +36,11 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 		if ( !empty( $rules ) ) {
 			$result = '';
 			
+			echo '<div class="it-exchange-membership-membership-content">';
+			
 			if ( !empty( $atts['title'] ) )
 				$result .= '<h4>' . $atts['title'] . '</h4>';
-	
+			
 			foreach ( $rules as $rule ) {
 				
 				switch ( $rule['selected'] ) {
@@ -113,7 +115,7 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 						}
 					} else {
 						foreach( $restricted_posts as $restricted_post ) { //should just be a regular post
-							$result .= '<p class="it-exchange-content-item">' . get_the_title( $restricted_post->ID ) . '</p>';
+							$result .= '<div class="it-exchange-content-group it-exchange-group-single"><p class="it-exchange-content-item">' . get_the_title( $restricted_post->ID ) . '</p></div>';
 						}
 					}
 					
@@ -122,6 +124,8 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 			}
 			
 			return $result;
+			
+			echo '</div>';
 		}
 		
 	}
