@@ -138,8 +138,10 @@ function it_exchange_membership_addon_after_print_extended_description_metabox( 
 	$product_type = it_exchange_get_product_type( $post->ID );
 			
 	if ( 'membership-product-type' === $product_type ) {
-		echo '<p class="description">[it-exchange-membership-included-content] - ' . __( 'Displays content available with this membership', 'LION' ) . '</p>';
+		echo '<p class="description">[it-exchange-membership-included-content] - ' . __( 'Displays content available with this membership. <a href="http://ithemes.com/codex/page/Exchange_Product_Types:_Memberships#Shortcodes">Click here to read about the available shortcode options.</a>', 'LION' ) . '</p>';
 	}
+	
+	//http://ithemes.com/codex/page/Exchange_Product_Types:_Memberships#Shortcodes
 	
 	return;
 	
