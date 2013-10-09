@@ -84,6 +84,14 @@ function it_exchange_membership_addon_activation() {
 }
 register_activation_hook( __FILE__, 'it_exchange_membership_addon_activation' );
 
+/**
+ * Action to activate bundled addons w/ parent addon is activated
+ *
+ * @since 1.0.0
+ * @param string $plugin Current plugin being activated (should be this plugin)
+ * @param bool $network_wide Whether or not the plugin being activated is being activated Network Wid
+ * @return void
+ */
 function it_exchange_membership_addon_activated_bundled_addons( $plugin, $network_wide ) {
 	wp_cache_delete( 'plugins', 'plugins' );
 	if ( basename( __FILE__ ) === basename( $plugin ) ) {
