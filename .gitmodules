@@ -1,0 +1,3 @@
+[submodule "bundled-addons/exchange-addon-recurring-payments"]
+	path = bundled-addons/exchange-addon-recurring-payments
+	url = git@projectpress.net:exchange-addon-recurring-payments
