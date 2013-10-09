@@ -59,7 +59,7 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 			$this->_customer = it_exchange_get_current_customer();
 			
 		$this->_membership_product = it_exchange_membership_addon_get_current_membership();
-		$this->_membership_access_rules = it_exchange_get_product_feature( $this->_membership_product->ID, 'membership-content-access-rules' );
+		$this->_membership_access_rules = !empty( $this->_membership_product ) ? it_exchange_get_product_feature( $this->_membership_product->ID, 'membership-content-access-rules' ) : false;
 	}
 
 	/**
@@ -78,6 +78,9 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 	 * @return string
 	*/
 	function welcome_message( $options=array() ) {
+		
+		if ( empty( $this->_membership_product ) )
+			return false;
 		
 		// Return boolean if has flag was set
 		if ( $options['supports'] )
@@ -114,6 +117,9 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 	 * @return string
 	*/
 	function membership_content( $options=array() ) {
+		
+		if ( empty( $this->_membership_product ) )
+			return false;
 		
 		$product_id = $this->_membership_product->ID;
 		$now = time();
