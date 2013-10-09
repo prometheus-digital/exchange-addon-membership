@@ -92,7 +92,7 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 						if ( 'on' == $atts['toggle'] ) {
 							$result .= '<div class="it-exchange-content-group">';
 							$result .= '<p class="it-exchange-group-content-label">' . $label . '<span class="it-exchange-open-group"></span></p>';
-							$result .= '<ul>';
+							$result .= '<ul class="it-exchange-hidden">';
 							
 							foreach( $restricted_posts as $restricted_post ) {
 								$result .= '<li>' . get_the_title( $restricted_post->ID ) . '</li>';
@@ -104,7 +104,7 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 							$result .= '</ul>';
 							$result .= '</div>';
 						} else {
-							$result .= '<p class="it-exchange-group-content-label">' . $label . '</h3>';
+							$result .= '<p class="it-exchange-group-content-label">' . $label . '</p>';
 							$result .= '<ul>';
 							foreach( $restricted_posts as $restricted_post ) {
 								$result .= '<li>' . get_the_title( $restricted_post->ID ) . '</li>';
