@@ -15,5 +15,7 @@
 ?>
 
 <?php do_action( 'it_exchange_content_confirmation_before_membership_confirmation_element' ); ?>
-<span class="it-exchange-item-membership-confirmation-content"><?php it_exchange( 'membership-confirmation', 'dashboard-link' ); ?></span>
+<div class="it-exchange-item-membership-confirmation-content it-exchange-clearfix">
+	<p><?php it_exchange( 'membership-confirmation', 'dashboard-link' ); ?></p>
+</div>
 <?php do_action( 'it_exchange_content_confirmation_after_membership_confirmation_element' ); ?>

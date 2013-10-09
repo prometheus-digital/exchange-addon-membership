@@ -392,10 +392,10 @@ function it_exchange_membership_addon_excerpt_dripped_template() {
  * @param array $elements Elements being loaded by Theme API
  * @return array $elements Modified elements array
 */
-function it_exchange_membership_addon_content_confirmation_after_product_title( $elements ) {
+function it_exchange_membership_addon_content_confirmation_after_product_attrubutes( $elements ) {
 	it_exchange_get_template_part( 'content-confirmation/elements/membership-confirmation' );
 }
-add_filter( 'it_exchange_content_confirmation_after_product_title', 'it_exchange_membership_addon_content_confirmation_after_product_title' );
+add_filter( 'it_exchange_content_confirmation_after_product_attibutes', 'it_exchange_membership_addon_content_confirmation_after_product_attrubutes' );
 
 /**
  * Adds Membership Template Path to iThemes Exchange Template paths
