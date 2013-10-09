@@ -70,3 +70,28 @@ function ithemes_exchange_addon_membership_updater_register( $updater ) {
 }
 add_action( 'ithemes_updater_register', 'ithemes_exchange_addon_membership_updater_register' );
 require( dirname( __FILE__ ) . '/lib/updater/load.php' );
+
+/**
+ * When addon is activated, copy bundled-addons folders to plugins directory
+ *
+ * @since 1.0.0
+ */
+function it_exchange_membership_addon_activation() {
+	if ( WP_Filesystem( 'Direct', plugin_dir_path( __FILE__ ) ) ) {
+		copy_dir( plugin_dir_path( __FILE__ ) . 'bundled-addons/', WP_PLUGIN_DIR );
+		add_action( 'activated_plugin', 'it_exchange_membership_addon_activated_bundled_addons', 10, 2 );
+	}
+}
+register_activation_hook( __FILE__, 'it_exchange_membership_addon_activation' );
+
+function it_exchange_membership_addon_activated_bundled_addons( $plugin, $network_wide ) {
+	wp_cache_delete( 'plugins', 'plugins' );
+	if ( basename( __FILE__ ) === basename( $plugin ) ) {
+		foreach ( glob( plugin_dir_path( __FILE__ ) . 'bundled-addons/*' ) as $file_path ) {
+			$file = basename( $file_path );
+			$new_plugin = "$file/$file.php";
+			if ( is_plugin_inactive( $new_plugin ) )
+				$output = activate_plugin( $new_plugin, '', $network_wide );
+		}
+	}
+}
