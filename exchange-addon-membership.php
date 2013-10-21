@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: iThemes Exchange - Membership Add-on
- * Version: 1.0.1
+ * Version: 1.0.2
  * Description: Adds the membership management to iThemes Exchange
  * Plugin URI: http://ithemes.com/exchange/membership/
  * Author: iThemes
@@ -53,7 +53,7 @@ add_action( 'it_exchange_register_addons', 'it_exchange_register_membership_addo
  * @return void
 */
 function it_exchange_membership_set_textdomain() {
-	load_plugin_textdomain( 'LION', false, plugin_basename( __FILE__  ) . '/lang/' );
+	load_plugin_textdomain( 'LION', false, dirname( plugin_basename( __FILE__  ) ) . '/lang/' );
 }
 add_action( 'plugins_loaded', 'it_exchange_membership_set_textdomain' );
 
