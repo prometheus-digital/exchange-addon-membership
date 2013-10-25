@@ -30,8 +30,11 @@ function it_exchange_membership_addon_settings_callback() {
 */
 function it_exchange_membership_addon_default_settings( $values ) {
     $defaults = array(
-        'membership-restricted-content-message'   => __( 'This content is for members only. Become a member now to get access to this and other awesome members-only content.', 'LION' ),
-        'membership-dripped-content-message'   => __( 'This content will be available in %d days.', 'LION' ),
+        'membership-restricted-content-message' => __( 'This content is for members only. Become a member now to get access to this and other awesome members-only content.', 'LION' ),
+        'membership-dripped-content-message'    => __( 'This content will be available in %d days.', 'LION' ),
+        'membership-prerequisites-label'        => __( 'Prerequisites', 'LION' ),
+        'membership-intended-audience-label'    => __( 'Intended Audience', 'LION' ),
+        'membership-objectives-label'           => __( 'Objectives', 'LION' ),
 	);
     $values = ITUtility::merge_defaults( $values, $defaults );
     return $values;
@@ -86,9 +89,9 @@ class IT_Exchange_Membership_Add_On {
         $this->_current_page   = empty( $_GET['page'] ) ? false : $_GET['page'];
         $this->_current_add_on = empty( $_GET['add-on-settings'] ) ? false : $_GET['add-on-settings'];
 
-        if ( ! empty( $_POST ) && $this->_is_admin && 'it-exchange-addons' == $this->_current_page && 'membership' == $this->_current_add_on ) {
-            add_action( 'it_exchange_save_add_on_settings_membership', array( $this, 'save_settings' ) );
-            do_action( 'it_exchange_save_add_on_settings_membership' );
+        if ( ! empty( $_POST ) && $this->_is_admin && 'it-exchange-addons' == $this->_current_page && 'membership-product-type' == $this->_current_add_on ) {
+            add_action( 'it_exchange_save_add_on_settings_membership-product-type', array( $this, 'save_settings' ) );
+            do_action( 'it_exchange_save_add_on_settings_membership-product-type' );
         }
     }
 
@@ -104,7 +107,7 @@ class IT_Exchange_Membership_Add_On {
         $form_options = array(
             'id'      => apply_filters( 'it_exchange_add_on_membership', 'it-exchange-add-on-membership-settings' ),
             'enctype' => apply_filters( 'it_exchange_add_on_membership_settings_form_enctype', false ),
-            'action'  => 'admin.php?page=it-exchange-addons&add-on-settings=membership',
+            'action'  => 'admin.php?page=it-exchange-addons&add-on-settings=membership-product-type',
         );
         $form         = new ITForm( $form_values, array( 'prefix' => 'it-exchange-add-on-membership' ) );
 		
@@ -152,7 +155,7 @@ class IT_Exchange_Membership_Add_On {
                 <label for="membership-restricted-content-message"><?php _e( 'Restricted Content Message', 'LION' ); ?> <span class="tip" title="<?php _e( 'This message will display when a non-member attempts to access content that has been restricted.', 'LION' ); ?>">i</span></label>
                 <?php
                 if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
-                    echo wp_editor( $settings['membership-restricted-content-message'], 'membership-restricted-content-message', array( 'textarea_name' => 'it-exchange-add-on-membership-restricted-content-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
+                    echo wp_editor( $settings['membership-restricted-content-message'], 'membership-restricted-content-message', array( 'textarea_name' => 'it-exchange-add-on-membership-membership-restricted-content-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
 					
 					//We do this for some ITForm trickery... just to add recurring-payments-cancel-body to the used inputs field
 					$form->get_text_area( 'membership-restricted-content-message', array( 'rows' => 10, 'cols' => 30, 'class' => 'large-text' ) );
@@ -165,7 +168,7 @@ class IT_Exchange_Membership_Add_On {
                 <label for="membership-dripped-content-message"><?php _e( 'Delayed Content Message', 'LION' ); ?> <span class="tip" title="<?php _e( 'This message will appear when a member attempts to access content that has been delayed.', 'LION' ); ?>">i</span></label>
                 <?php
                 if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
-                    echo wp_editor( $settings['membership-dripped-content-message'], 'membership-dripped-content-message', array( 'textarea_name' => 'it-exchange-add-on-membership-dripped-content-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
+                    echo wp_editor( $settings['membership-dripped-content-message'], 'membership-dripped-content-message', array( 'textarea_name' => 'it-exchange-add-on-membership-membership-dripped-content-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
 					
 					//We do this for some ITForm trickery... just to add recurring-payments-cancel-body to the used inputs field
 					$form->get_text_area( 'membership-dripped-content-message', array( 'rows' => 10, 'cols' => 30, 'class' => 'large-text' ) );
@@ -179,6 +182,18 @@ class IT_Exchange_Membership_Add_On {
             _e( 'Use %d to represent the number of days until the delayed content will be available.', 'LION' ); 
             ?>
             </p>
+            <p>
+                <label for="membership-prerequisite-label"><?php _e( 'Default Prerequisites Label', 'LION' ); ?> <span class="tip" title="<?php _e( 'This label will appear when displaying the prerequisite information on a membership.', 'LION' ); ?>">i</span></label>
+            </p>
+			<p> <?php $form->add_text_box( 'membership-prerequisites-label' ); ?> </p>
+            <p>
+                <label for="membership-intended-audience-label"><?php _e( 'Default Intended Audience Label', 'LION' ); ?> <span class="tip" title="<?php _e( 'This label will appear when displaying the intended audience information on a membership.', 'LION' ); ?>">i</span></label>
+            </p>
+			<p> <?php $form->add_text_box( 'membership-intended-audience-label' ); ?> </p>
+            <p>
+                <label for="membership-objectives-label"><?php _e( 'Default Objectives Label', 'LION' ); ?> <span class="tip" title="<?php _e( 'This label will appear when displaying the objective information on a membership.', 'LION' ); ?>">i</span></label>
+            </p>
+			<p> <?php $form->add_text_box( 'membership-objectives-label' ); ?> </p>
         </div>
         <?php
     }
