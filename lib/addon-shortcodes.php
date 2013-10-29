@@ -38,7 +38,7 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 		if ( !empty( $rules ) ) {
 			$result = '';
 			
-			echo '<div class="it-exchange-membership-membership-content">';
+			$result .= '<div class="it-exchange-membership-membership-content">';
 			
 			if ( !empty( $atts['title'] ) )
 				$result .= '<h4>' . $atts['title'] . '</h4>';
@@ -146,9 +146,9 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 				}
 			}
 			
-			return $result;
+			$result .= '</div>';
 			
-			echo '</div>';
+			return $result;
 		}
 		
 	}

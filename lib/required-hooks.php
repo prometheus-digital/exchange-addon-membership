@@ -436,6 +436,23 @@ function it_exchange_membership_addon_template_path( $possible_template_paths, $
 }
 add_filter( 'it_exchange_possible_template_paths', 'it_exchange_membership_addon_template_path', 10, 2 );
 
+
+/**
+ * Replaces base-price content product element with customer-pricing element, if found
+ *
+ * @since CHANGEME
+ *
+ * @param array $parts Element array for temmplate parts
+ * @return array Modified array with new customer-pricing element (if base-price was found).
+*/
+function it_exchange_memnbership_addon_get_content_product_product_advanced_loop_elements( $parts ) {
+	$parts[] = 'intended-audience';	
+	$parts[] = 'objectives';	
+	$parts[] = 'prerequisites';	
+	return $parts;
+}
+add_filter( 'it_exchange_get_content_product_product_advanced_loop_elements', 'it_exchange_memnbership_addon_get_content_product_product_advanced_loop_elements' );
+
 /*
  * Registers the membership frontend dashboard page in iThemes Exchange
  *

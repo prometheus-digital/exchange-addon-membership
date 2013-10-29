@@ -201,7 +201,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Prerequisites {
 		switch ( $options['setting'] ) {
 			
 			case 'label':
-				$enabled = get_post_meta( $product_id, '_it-exchange-membership-prerequisites-label', true );
+				return get_post_meta( $product_id, '_it-exchange-membership-prerequisites-label', true );
 				break;
 			case 'description':
 				return get_post_meta( $product_id, '_it-exchange-membership-prerequisites-description', true );
@@ -221,7 +221,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Prerequisites {
 	 * @return boolean
 	*/
 	function product_has_feature( $result, $product_id, $options=array() ) {
-		$defaults['setting'] = 'enabled';
+		$defaults['setting'] = 'description';
 		$options = ITUtility::merge_defaults( $options, $defaults );
 
 		// Does this product type support this feature?
