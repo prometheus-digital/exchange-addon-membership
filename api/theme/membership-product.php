@@ -61,36 +61,37 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	*/
 	function intended_audience( $options=array() ) {
 		$result = '';
+		$membership_settings = it_exchange_get_option( 'addon_membership' );
 		
 		$defaults      = array(
-			'before' => '',
-			'after'  => '',
+			'before'       => '',
+			'after'        => '',
+			'label'        => $membership_settings['membership-intended-audience-label'],
 			'before_label' => '<h3>',
 			'after_label'  => '</h3>',
-			'before_desc' => '<p>',
-			'after_desc'  => '</p>',
+			'before_desc'  => '<p>',
+			'after_desc'   => '</p>',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
 				
 		// Return boolean if has flag was set
 		if ( $options['supports'] )
-			return it_exchange_product_supports_feature( $this->product->ID, 'membership-intended-audience' );
+			return it_exchange_product_supports_feature( $this->product->ID, 'membership-information' );
 
 		// Return boolean if has flag was set
 		if ( $options['has'] )
-			return it_exchange_product_has_feature( $this->product->ID, 'membership-intended-audience' );
+			return it_exchange_product_has_feature( $this->product->ID, 'membership-information', array( 'setting' => 'intended-audience' ) );
 
 		// Repeats checks for when flags were not passed.
-		if ( it_exchange_product_supports_feature( $this->product->ID, 'membership-intended-audience' )	
-				&& it_exchange_product_has_feature( $this->product->ID, 'membership-intended-audience' ) ) {
+		if ( it_exchange_product_supports_feature( $this->product->ID, 'membership-information' )	
+				&& it_exchange_product_has_feature( $this->product->ID, 'membership-information', array( 'setting' => 'intended-audience' ) ) ) {
 			
-			$label = it_exchange_get_product_feature( $this->product->ID, 'membership-intended-audience', array( 'setting' => 'label' ) );
-			$description = it_exchange_get_product_feature( $this->product->ID, 'membership-intended-audience', array( 'setting' => 'description' ) );
+			$description = it_exchange_get_product_feature( $this->product->ID, 'membership-information', array( 'setting' => 'intended-audience' ) );
 			
 			if ( !empty( $description ) ) {
 			
 				$result .= $options['before'];
-				$result .= $options['before_label'] . $label . $options['after_label'];
+				$result .= $options['before_label'] . $options['label'] . $options['after_label'];
 				$description = wpautop( $description );
 				$description = shortcode_unautop( $description );
 				$description = do_shortcode( $description );
@@ -102,7 +103,6 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 		}
 		
 		return $result;
-					
 	}
 
 	/**
@@ -111,36 +111,37 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	*/
 	function objectives( $options=array() ) {
 		$result = '';
+		$membership_settings = it_exchange_get_option( 'addon_membership' );
 		
 		$defaults      = array(
-			'before' => '',
-			'after'  => '',
+			'before'       => '',
+			'after'        => '',
+			'label'        => $membership_settings['membership-objectives-label'],
 			'before_label' => '<h3>',
 			'after_label'  => '</h3>',
-			'before_desc' => '<p>',
-			'after_desc'  => '</p>',
+			'before_desc'  => '<p>',
+			'after_desc'   => '</p>',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
 				
 		// Return boolean if has flag was set
 		if ( $options['supports'] )
-			return it_exchange_product_supports_feature( $this->product->ID, 'membership-objectives' );
+			return it_exchange_product_supports_feature( $this->product->ID, 'membership-information' );
 
 		// Return boolean if has flag was set
 		if ( $options['has'] )
-			return it_exchange_product_has_feature( $this->product->ID, 'membership-objectives' );
+			return it_exchange_product_has_feature( $this->product->ID, 'membership-information', array( 'setting' => 'objectives' ) );
 
 		// Repeats checks for when flags were not passed.
-		if ( it_exchange_product_supports_feature( $this->product->ID, 'membership-objectives' )	
-				&& it_exchange_product_has_feature( $this->product->ID, 'membership-objectives' ) ) {
+		if ( it_exchange_product_supports_feature( $this->product->ID, 'membership-information' )	
+				&& it_exchange_product_has_feature( $this->product->ID, 'membership-information', array( 'setting' => 'objectives' ) ) ) {
 			
-			$label = it_exchange_get_product_feature( $this->product->ID, 'membership-objectives', array( 'setting' => 'label' ) );
-			$description = it_exchange_get_product_feature( $this->product->ID, 'membership-objectives', array( 'setting' => 'description' ) );
+			$description = it_exchange_get_product_feature( $this->product->ID, 'membership-information', array( 'setting' => 'objectives' ) );
 			
 			if ( !empty( $description ) ) {
 			
 				$result .= $options['before'];
-				$result .= $options['before_label'] . $label . $options['after_label'];
+				$result .= $options['before_label'] . $options['label'] . $options['after_label'];
 				$description = wpautop( $description );
 				$description = shortcode_unautop( $description );
 				$description = do_shortcode( $description );
@@ -152,7 +153,6 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 		}
 		
 		return $result;
-					
 	}
 
 	/**
@@ -161,36 +161,37 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	*/
 	function prerequisites( $options=array() ) {
 		$result = '';
+		$membership_settings = it_exchange_get_option( 'addon_membership' );
 		
 		$defaults      = array(
-			'before' => '',
-			'after'  => '',
+			'before'       => '',
+			'after'        => '',
+			'label'        => $membership_settings['membership-prerequisites-label'],
 			'before_label' => '<h3>',
 			'after_label'  => '</h3>',
-			'before_desc' => '<p>',
-			'after_desc'  => '</p>',
+			'before_desc'  => '<p>',
+			'after_desc'   => '</p>',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
 				
 		// Return boolean if has flag was set
 		if ( $options['supports'] )
-			return it_exchange_product_supports_feature( $this->product->ID, 'membership-prerequisites' );
+			return it_exchange_product_supports_feature( $this->product->ID, 'membership-information' );
 
 		// Return boolean if has flag was set
 		if ( $options['has'] )
-			return it_exchange_product_has_feature( $this->product->ID, 'membership-prerequisites' );
+			return it_exchange_product_has_feature( $this->product->ID, 'membership-information', array( 'setting' => 'prerequisites' ) );
 
 		// Repeats checks for when flags were not passed.
-		if ( it_exchange_product_supports_feature( $this->product->ID, 'membership-prerequisites' )	
-				&& it_exchange_product_has_feature( $this->product->ID, 'membership-prerequisites' ) ) {
+		if ( it_exchange_product_supports_feature( $this->product->ID, 'membership-information' )	
+				&& it_exchange_product_has_feature( $this->product->ID, 'membership-information', array( 'setting' => 'prerequisites' ) ) ) {
 			
-			$label = it_exchange_get_product_feature( $this->product->ID, 'membership-prerequisites', array( 'setting' => 'label' ) );
-			$description = it_exchange_get_product_feature( $this->product->ID, 'membership-prerequisites', array( 'setting' => 'description' ) );
+			$description = it_exchange_get_product_feature( $this->product->ID, 'membership-information', array( 'setting' => 'prerequisites' ) );
 			
 			if ( !empty( $description ) ) {
 			
 				$result .= $options['before'];
-				$result .= $options['before_label'] . $label . $options['after_label'];
+				$result .= $options['before_label'] . $options['label'] . $options['after_label'];
 				$description = wpautop( $description );
 				$description = shortcode_unautop( $description );
 				$description = do_shortcode( $description );
@@ -202,6 +203,5 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 		}
 		
 		return $result;
-					
 	}
 }

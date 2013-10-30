@@ -90,7 +90,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	 * @return void
 	*/
 	function register_metabox() {
-		add_meta_box( 'it-exchange-product-membership-welcome-message', __( 'Membership Welcome Message', 'LION' ), array( $this, 'print_metabox' ), 'it_exchange_prod', 'it_exchange_advanced', 'high' ); //needs to be set to 'high' too, to appear first in Membership product types
+		add_meta_box( 'it-exchange-product-membership-welcome-message', __( 'Welcome Message', 'LION' ), array( $this, 'print_metabox' ), 'it_exchange_prod', 'it_exchange_advanced', 'high' ); //needs to be set to 'high' too, to appear first in Membership product types
 	}
 
 	/**

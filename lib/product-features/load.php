@@ -11,11 +11,5 @@ require( 'class.content-access.php' );
 // Product Feature: Membership Welcome Message
 require( 'class.welcome-message.php' );
 
-// Product Feature: Membership Objectives
-require( 'class.objectives.php' );
-
-// Product Feature: Membership Intended Audience
-require( 'class.intended-audience.php' );
-
-// Product Feature: Membership Requirements / Prerequisites
-require( 'class.prerequisites.php' );
+// Product Feature: Membership Information
+require( 'class.membership-information.php' );
