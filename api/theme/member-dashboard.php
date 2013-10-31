@@ -126,25 +126,45 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 		
 		// Return boolean if has flag was set
 		if ( $options['has'] )
-			return !empty( $this->_membership_access_rules ) ? true : false;
+			return ! empty( $this->_membership_access_rules ) ? true : false;
 		
 		// Repeats checks for when flags were not passed.
 		if ( !empty( $this->_membership_access_rules ) ) {
 			$result = '';
+			
 			$defaults      = array(
 				'before'             => '<div class="it-exchange-restricted-content">',
 				'after'              => '</div>',
 				'title'              => __( 'Membership Content', 'LION' ),
 				'toggle'             => true,
+				'layout'             => 'grid',
 				'posts_per_grouping' => 5,
 			);
-			$options      = ITUtility::merge_defaults( $options, $defaults );
+			
+			$options = ITUtility::merge_defaults( $options, $defaults );
+			
+			$result .= $options['before'];	
 			
 			$result .= '<h2>' . $options['title'] . '</h2>';
-	
+			
+			$result .= '<div class="it-exchange-content-wrapper it-exchange-content-' . $options['layout'] . ' it-exchange-clearfix">'; 
+			
+			$group = 1;
+			$previous['group'] = 0;
+			$previous['selected'] = '';
+			$current['group'] = 0;
+			$current['selected'] = '';
+			
 			foreach ( $this->_membership_access_rules as $content ) {
+				if ( $content['selected'] == 'taxonomy' ||  $content['selected'] == 'post_types' || ( $content['selected'] == 'posts' && ( $previous['selected'] == 'taxonomy' || $previous['selected'] == 'post_types' ) ) ) {
+					$group++;
+				}
+				
+				$current['group'] = $group;
 				
 				$more_content_link = '';
+				
+				$term = '';
 				
 				switch ( $content['selected'] ) {
 					
@@ -197,68 +217,170 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 					
 				}
 				
-				if ( !empty( $restricted_posts ) ) {
-			
-					$result .= $options['before'];	
-					
-					if ( !empty( $label ) ) {
-						// We're in a group.
-						if ( true == $options['toggle'] ) {
-							$result .= '<div class="it-exchange-content-group">';
-							
-							$result .= '<p class="it-exchange-group-content-label">' . $label . '<span class="it-exchange-open-group"></span></p>';
-							
-							$result .= '<ul class="it-exchange-hidden">';
-							
-							foreach( $restricted_posts as $post ) {
-								$result .= '<li><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></li>';
-							}
-							
-							if ( ! empty( $more_content_link ) && $options['posts_per_grouping'] <= count( $restricted_posts ) )
-								$result .= '<li class="it-exchange-content-more"><a href="' . $more_content_link . '">' . __( 'Read More Content In This Group', 'LION' ) . '</a></li>';
-							
-							$result .= '</ul>';
-							
-							$result .= '</div>';
-						} else {
-							$result .= '<p class="it-exchange-group-content-label">' . $label . '</h3>';
-							
-							$result .= '<ul>';
-							foreach( $restricted_posts as $post ) {
-								$result .= '<li><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></li>';
-							}
-							
-							if ( !empty( $more_content_link ) && $options['posts_per_grouping'] <= count( $restricted_posts ) )
-								$result .= '<li class="it-exchange-content-more"><a href="' . $more_content_link . '">' . __( 'Read More Content In This Group', 'LION' ) . '</a></li>';
-							
-							$result .= '</ul>';
-						}
+				if ( ! empty( $restricted_posts ) ) {
+
+					// Closes the group.
+					if ( $previous['group'] == ( $current['group'] - 1 ) && $current['group'] != 1 ) {
+						$close = true;
 					} else {
-						foreach( $restricted_posts as $post ) { //should just be a regular post
-							if ( 0 < $interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true ) ) {
-								$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
-								$duration = !empty( $duration ) ? $duration : 'days';
-								$member_access = it_exchange_get_session_data( 'member_access' );
-								if ( false !== $key = array_search( $product_id, $member_access ) ) {
-									$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $key ) );
-									$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
-									if ( $dripping < $now )						
-										$result .= '<div class="it-exchange-content-group it-exchange-content-single"><p class="it-exchange-content-item it-exchange-membership-drip-available"><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p></div>';
-									else {
-										$earliest_drip = $dripping - $now;
-										$result .= '<div class="it-exchange-content-group it-exchange-content-single"><p class="it-exchange-content-item it-exchange-membership-drip-unavailable">' . get_the_title( $post->ID ) . ' (' . sprintf( __( 'available in %s days', 'LION' ), ceil( $earliest_drip / 60 / 60 / 24 ) ) . ')</p></div>';
-									}
-								}
-								
-							} else {
-								$result .= '<div class="it-exchange-content-group it-exchange-content-single"><p class="it-exchange-content-item"><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p></div>';
-							}
-						}
+						$close = false;
 					}
 					
-					$result .= $options['after'];
+					// Opens a group.
+					if ( $previous['group'] == ( $current['group'] - 1 ) ) {
+						$open = true;
+					} else {
+						$open = false;
+					}
+					
+					// Closes the last group.
+					if ( $content === end( $this->_membership_access_rules ) ) {
+						$close_last = true;
+					} else {
+						$close_last = false;
+					}
+					
+					ob_start();
+					?>
+						<?php if ( 'grid' == $options['layout'] ) : ?>
+							<?php if ( $close == true ) : ?>
+									</div>
+								</div>
+							<?php endif; ?>
+							
+							<?php if ( $open == true ) : ?>
+								<div class="it-exchange-content-group it-exchange-clearfix">
+							<?php endif; ?>
+							
+							<?php if ( ! empty( $label ) ) : ?>
+								<div class="it-exchange-content-group-header it-exchange-clearfix">
+									<span class="it-exchange-content-group-title it-exchange-left"><?php echo $label; ?></span>
+									<?php if ( ! empty( $term ) ) : ?>
+										<?php if ( $term->count > count( $restricted_posts ) ) : ?>
+											<span class="it-exchange-content-group-count it-exchange-right"><?php echo sprintf( __( '%d of %d Items - %sView All%s', 'LION' ), count( $restricted_posts ), $term->count, '<a href="' . $more_content_link . '">', '</a>' ) ?></span>
+										<?php else : ?>
+											<span class="it-exchange-content-group-count it-exchange-right"><?php echo count( $restricted_posts ); ?> <?php echo ( count( $restricted_posts ) == 1 ) ? __( 'Item', 'LION' ) : __( 'Items', 'LION' ); ?></span>
+										<?php endif; ?>
+									<?php endif; ?>
+								</div>
+							<?php endif; ?>
+							
+							<?php if ( $open == true ) : ?>
+								<div class="it-exchange-content-items it-exchange-columns-wrapper">
+							<?php endif; ?>
+							
+							<?php foreach ( $restricted_posts as $post ) : ?>
+								<?php
+									$dripping = array();
+									
+									if ( $content['selected'] == 'posts' ) {
+										$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
+										if ( $interval > 0 ) {
+											$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
+											$duration = ! empty( $duration ) ? $duration : 'days';
+											$member_access = it_exchange_get_session_data( 'member_access' );
+											$key = array_search( $product_id, $member_access );
+											if ( $key !== false ) {
+												$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $key ) );
+												$dripping['time'] = strtotime( $interval . ' ' . $duration, $purchase_time );
+											}
+										}
+									}
+									
+									if ( ! empty( $dripping ) && $dripping['time'] > $now ) {
+										$dripping['drip'] = true;
+										$dripping['earliest'] = $dripping['time'] - $now;
+									} else {
+										$dripping['drip'] = false;
+									}
+								?>
+								<div class="it-exchange-content-item it-exchange-content-<?php echo $post->post_type; ?> it-exchange-content-<?php echo ( $dripping['drip'] == true ) ? 'unavailable' : 'available'; ?> it-exchange-column">
+									<div class="it-exchange-column-inner">
+										<div class="it-exchange-columns-wrapper">
+											<div class="it-exchange-content-item-icon it-exchange-column">
+												<?php if ( $dripping['drip'] == true ) : ?>
+													<span class="it-exchange-item-icon"></span>
+												<?php else : ?>
+													<a class="it-exchange-item-icon" href="<?php echo get_permalink( $post->ID ); ?>"></a>
+												<?php endif; ?>
+											</div>
+											<div class="it-exchange-content-item-info it-exchange-column">
+												<div class="it-exchange-column-inner">
+													<?php if ( $dripping['drip'] == true ) : ?>
+														<span class="it-exchange-item-unavailable-message"><?php echo sprintf( __( 'available in %s days', 'LION' ), ceil( $dripping['earliest'] / 60 / 60 / 24 ) ); ?></span>
+														<span class="it-exchange-item-title"><?php echo get_the_title( $post->ID ); ?></span>
+													<?php else : ?>
+														<a class="it-exchange-item-title" href="<?php echo get_permalink( $post->ID ); ?>"><span><?php echo get_the_title( $post->ID ); ?></span></a>
+													<?php endif; ?>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							<?php endforeach; ?>
+						<?php elseif ( 'list' == $options['layout'] ) : ?>
+							<?php if ( $content['selected'] == 'posts' ) : ?>
+								<?php foreach ( $restricted_posts as $post ) : ?>
+									<?php
+										$dripping = array();
+									
+										if ( $content['selected'] == 'posts' ) {
+											$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
+											if ( $interval > 0 ) {
+												$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
+												$duration = ! empty( $duration ) ? $duration : 'days';
+												$member_access = it_exchange_get_session_data( 'member_access' );
+												$key = array_search( $product_id, $member_access );
+												if ( $key !== false ) {
+													$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $key ) );
+													$dripping['time'] = strtotime( $interval . ' ' . $duration, $purchase_time );
+												}
+											}
+										}
+									
+										if ( ! empty( $dripping ) && $dripping['time'] > $now ) {
+											$dripping['drip'] = true;
+											$dripping['earliest'] = $dripping['time'] - $now;
+										} else {
+											$dripping['drip'] = false;
+										}
+									?>
+									<div class="it-exchange-content-group it-exchange-content-<?php echo $post->post_type; ?> it-exchange-content-<?php echo ( $dripping['drip'] == true ) ? 'unavailable' : 'available'; ?>">
+										<?php if ( $dripping['drip'] == true ) : ?>
+											<p class="it-exchange-group-content-label">
+												<span class="it-exchange-item-unavailable-message it-exchange-right"><?php echo sprintf( __( 'available in %s days', 'LION' ), ceil( $dripping['earliest'] / 60 / 60 / 24 ) ); ?></span>
+												<span class="it-exchange-item-title"><?php echo get_the_title( $post->ID ); ?></span>
+											</p>
+										<?php else : ?>
+											<p class="it-exchange-group-content-label"><a class="it-exchange-item-title" href="<?php echo get_permalink( $post->ID ); ?>"><span><?php echo get_the_title( $post->ID ); ?></span></a></p>
+										<?php endif; ?>
+									</div>
+								<?php endforeach; ?>
+							<?php else : ?>
+								<div class="it-exchange-content-group it-exchange-content-<?php echo ( $options['toggle'] == true ) ? 'toggle' : 'open'; ?>">
+									<p class="it-exchange-group-content-label"><?php echo $label; ?><?php echo ( $options['toggle'] == true ) ? '<span class="it-exchange-open-group"></span>' : ''; ?></p>
+									<ul class="<?php echo ( $options['toggle'] == true ) ? 'it-exchange-hidden' : '' ?>">
+										<?php foreach ( $restricted_posts as $post ) : ?>
+											<?php echo '<li><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></li>' ?>
+										<?php endforeach; ?>
+										<?php if ( ! empty( $more_content_link ) && $options['posts_per_grouping'] <= count( $restricted_posts ) ) : ?>
+											<?php echo '<li class="it-exchange-content-more"><a href="' . $more_content_link . '">' . __( 'Read More Content In This Group', 'LION' ) . '</a></li>'; ?>
+										<?php endif; ?>
+									</ul>
+								</div>
+							<?php endif; ?>
+						<?php endif; ?>
+					<?php
+					$result .= ob_get_clean();
 				}
+				// Setting the group and selected.
+				$previous['group'] = $current['group'];
+				$previous['selected'] = $content['selected'];
 			}
+			
+			$result .= '</div>';
+			
+			$result .= $options['after'];
 			
 			return $result;
 		}
