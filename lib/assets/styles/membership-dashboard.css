@@ -30,3 +30,15 @@
 .it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-item-unavailable-message{margin-top:4px;}
 .it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group .it-exchange-open-group{float:right;margin:10px 10px 0 0;border-width:6px;border-style:solid;border-color:#AAA transparent transparent transparent;}
 .it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group.open .it-exchange-open-group{margin-top:4px;border-color:transparent transparent #AAA transparent;}
+
+/** -----------------------------------------------------:[ media ]:---------- */
+@media screen and (max-width: 750px) {
+	.it-exchange-membership-membership-content .it-exchange-content-item {
+		width: 50%;
+	}
+}
+@media screen and (max-width: 500px) {
+	.it-exchange-membership-membership-content .it-exchange-content-item {
+		width: 100% !important;
+	}
+}
