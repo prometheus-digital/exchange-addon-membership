@@ -132,12 +132,14 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 		if ( !empty( $this->_membership_access_rules ) ) {
 			$result = '';
 			
+			$membership_settings = it_exchange_get_option( 'addon_membership' );
+			
 			$defaults      = array(
 				'before'             => '<div class="it-exchange-restricted-content">',
 				'after'              => '</div>',
 				'title'              => __( 'Membership Content', 'LION' ),
 				'toggle'             => true,
-				'layout'             => 'grid',
+				'layout'             => $membership_settings['memberships-dashboard-view'],
 				'posts_per_grouping' => 5,
 			);
 			
@@ -363,8 +365,8 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 										<?php foreach ( $restricted_posts as $post ) : ?>
 											<?php echo '<li><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></li>' ?>
 										<?php endforeach; ?>
-										<?php if ( ! empty( $more_content_link ) && $options['posts_per_grouping'] <= count( $restricted_posts ) ) : ?>
-											<?php echo '<li class="it-exchange-content-more"><a href="' . $more_content_link . '">' . __( 'Read More Content In This Group', 'LION' ) . '</a></li>'; ?>
+										<?php if ( ! empty( $more_content_link ) && ! empty( $term ) && $term->count > count( $restricted_posts ) ) : ?>
+											<li class="it-exchange-content-group-count it-exchange-content-more"><?php echo sprintf( __( '%d of %d Items - %sView All%s', 'LION' ), count( $restricted_posts ), $term->count, '<a href="' . $more_content_link . '">', '</a>' ) ?></li>
 										<?php endif; ?>
 									</ul>
 								</div>
