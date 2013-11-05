@@ -17,3 +17,5 @@
 1.0.5 - 2013-10-31 - Lew Ayotte
 	Added Membership Information feature and templates
 	Foxed output bug in content access
+1.0.6 - 2013-11-05 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Only load product JS on add/edit product page
