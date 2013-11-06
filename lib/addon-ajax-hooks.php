@@ -36,6 +36,8 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 		$return .= '<a href="#">×</a>';
 		$return .= '</div>';
 		
+		$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="" />';
+		
 		$return .= '</div>';
 	
 	}
@@ -43,6 +45,42 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 	die( $return );
 }
 add_action( 'wp_ajax_it-exchange-membership-addon-add-content-access-rule', 'it_exchange_membership_addon_ajax_add_content_access_rule' );
+
+
+/**
+ * Adds group to content access lists
+ * 
+ * @access public
+ * @return void
+ */
+function it_exchange_membership_addon_ajax_add_content_access_group() {
+	
+	$return = '';
+	
+	if ( isset( $_REQUEST['count'] ) && isset( $_REQUEST['group_count'] ) ) { //use isset() in case count is 0
+		
+		$count    = $_REQUEST['count'];
+		$group_id = $_REQUEST['group_count'];
+		
+		$return  = '<div class="it-exchange-membership-content-access-rule columns-wrapper" data-count="' . $count . '">';
+		
+		$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column"></div>';
+				
+		$return .= '<input type="text" name="it_exchange_content_access_rules[' . $count . '][group]" value="" />';
+		$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="' . $group_id . '" />';
+						
+		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column">';
+		$return .= '<a href="#">×</a>';
+		$return .= '</div>';
+		$return .= '<div class="columns-wrapper it-exchange-membership-content-access-group-content content-access-sortable" data-group-id="' . $group_id . '"></div>';
+		
+		$return .= '</div>';
+	
+	}
+	
+	die( $return );
+}
+add_action( 'wp_ajax_it-exchange-membership-addon-add-content-access-group', 'it_exchange_membership_addon_ajax_add_content_access_group' );
 
 /**
  * AJAX function called to add new content type terms

@@ -105,6 +105,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 
 		// Set the value of the feature for this product
 		$access_rules = it_exchange_get_product_feature( $product->ID, 'membership-content-access-rules' );
+		
 		?>
 		<div class="it-exchange-content-access-header">
 	        <div class="it-exchange-content-access-label-add">
@@ -137,11 +138,27 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
                     </div>
                 </div>
                 <?php $count = 0; ?>
-                <div class="it-exchange-membership-addon-content-access-rules">
+                <?php $group_count = 0; ?>
+                <?php $prev_group_id = ''; ?>
+                <div class="it-exchange-membership-addon-content-access-rules content-access-sortable">
                 <?php
 				if ( !empty( $access_rules ) ) {
 					foreach( $access_rules as $rule ) {
+						$current_group_id = isset( $rule['group_id'] ) ? $rule['group_id'] : '';
+						if ( '' !== $prev_group_id && $prev_group_id !== $current_group_id ) {
+							echo '</div></div>'; //this is ending the divs from the group opening in it_exchange_membership_addon_build_content_rule()
+						}
+						
 						echo it_exchange_membership_addon_build_content_rule( $rule, $count++, $product->ID );
+						
+						if ( isset( $rule['group_id'] ) && $group_count >= $rule['group_id'] )
+							$group_count = $rule['group_id'] + 1;
+							
+						$prev_group_id = $current_group_id;
+					}
+					
+					if ( '' !== $prev_group_id ) {
+						echo '</div></div>'; //this is ending the divs from the group opening in it_exchange_membership_addon_build_content_rule()
 					}
 				}
                 ?>
@@ -155,8 +172,14 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 			}
 			?>
         </div>
+		<div class="it-exchange-content-access-header">
+            <div class="it-exchange-membership-content-access-add-new-group left">
+                <a href class="button"><?php _e( 'Add New Group', 'LION' ); ?></a>
+            </div>
+        </div>
 		<script type="text/javascript" charset="utf-8">
-            var it_exchange_membership_addon_content_access_interation = <?php echo $count; ?>;
+            var it_exchange_membership_addon_content_access_iteration = <?php echo $count; ?>;
+            var it_exchange_membership_addon_content_access_group_iteration = <?php echo $group_count; ?>;
         </script>
 		<?php
 	}
@@ -185,10 +208,12 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 		
 		$existing_access_rules = it_exchange_get_product_feature( $product_id, 'membership-content-access-rules' );
 		
+		//ITDebug::print_r( $_REQUEST );
+		
 		if ( ! empty( $_REQUEST['it_exchange_content_access_rules'] ) ) {
 			
 			foreach( $_REQUEST['it_exchange_content_access_rules'] as $key => $rule ) {
-				
+			
 				if ( !empty( $rule['selected'] ) && !empty( $rule['selection'] ) && !empty( $rule['term'] ) ) {
 				
 					switch( $rule['selected'] ) {
@@ -232,7 +257,11 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 							}
 							break;
 						
-					}
+					} 
+					
+				} else if ( isset( $rule['group'] ) && isset( $rule['group_id'] ) ) {
+				
+					//nothing really to do here, just want to make sure this case isn't unset by the else
 				
 				} else {
 				
@@ -257,14 +286,23 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 			$diff_access_rules = array();
 			
 			foreach ( $existing_access_rules as $existing_access_rule ) {
+			
+				$defaults = array(
+					'selection' => '',
+					'selected'  => '',
+					'term'      => '',
+				);
+				$existing_access_rule = wp_parse_args( $existing_access_rule, $defaults );
 				
 				$found = false;
 			
 				foreach ( $updated_access_rules as $updated_access_rule ) {
 				
-					if ( $existing_access_rule['selection'] === $updated_access_rule['selection']
-						&& $existing_access_rule['selected'] === $updated_access_rule['selected']
-						&& $existing_access_rule['term'] === $updated_access_rule['term'] ) {
+					$updated_access_rule = wp_parse_args( $updated_access_rule, $defaults );
+													
+					if (   $existing_access_rule['selection'] === $updated_access_rule['selection']
+						&& $existing_access_rule['selected']  === $updated_access_rule['selected']
+						&& $existing_access_rule['term']      === $updated_access_rule['term'] ) {
 						$found = true;
 						continue;
 					}

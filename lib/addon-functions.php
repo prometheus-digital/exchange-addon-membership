@@ -86,63 +86,83 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 	$selection = !empty( $rule['selection'] ) ? $rule['selection'] : false;
 	$selected  = !empty( $rule['selected'] ) ? $rule['selected'] : false;
 	$value     = !empty( $rule['term'] ) ? $rule['term'] : false;
+	$group     = isset( $rule['group'] ) ? $rule['group'] : NULL;
+	$group_id  = isset( $rule['group_id'] ) ? $rule['group_id'] : NULL;
 
 	$return  = '<div class="it-exchange-membership-content-access-rule columns-wrapper" data-count="' . $count . '">';
-	
 	$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>';
-	
-	$return .= it_exchange_membership_addon_get_selections( $selection, $selected, $count );
-	$return .= '<div class="it-exchange-content-access-content column col-6-12"><div class="it-exchange-membership-content-type-terms">';
-	switch( $selected ) {
-		
-		case 'posts':
-			$posts = get_posts( array( 'post_type' => $selection, 'posts_per_page' => -1 ) );
-			foreach ( $posts as $post ) {
-				$options .= '<option value="' . $post->ID . '" ' . selected( $post->ID, $value, false ) . '>' . get_the_title( $post->ID ) . '</option>';	
-			}
-			break;
-		
-		case 'post_types':
-			$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download', 'page' ) );
-			$post_types = get_post_types( array(), 'objects' );
-			foreach ( $post_types as $post_type ) {
-				if ( in_array( $post_type->name, $hidden_post_types ) ) 
-					continue;
-					
-				$options .= '<option value="' . $post_type->name . '" ' . selected( $post_type->name, $value, false ) . '>' . $post_type->label . '</option>';	
-			}
-			break;
-		
-		case 'taxonomy':
-			$terms = get_terms( $selection, array( 'hide_empty' => false ) );
-			foreach ( $terms as $term ) {
-				$options .= '<option value="' . $term->term_id . '"' . selected( $term->term_id, $value, false ) . '>' . $term->name . '</option>';	
-			}
-			break;
-		
-	}
 
-	$return .= '<input type="hidden" value="' . $selected . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
-	$return .= '<select class="it-exchange-membership-content-type-term" name="it_exchange_content_access_rules[' . $count . '][term]">';
-	$return .= $options;
-	$return .= '</select>';
-	$return .= '</div></div>';
-	
-	$return .= '<div class="it-exchange-content-access-delay column col-3-12 column-reduce-padding"><div class="it-exchange-membership-content-type-drip">';
-	if ( 'posts' === $selected ) {
-		$return .= it_exchange_membership_addon_build_drip_rules( $rule, $count, $product_id );
+	if ( isset( $group ) && isset( $group_id ) ) {
+							
+		$return .= '<input type="text" name="it_exchange_content_access_rules[' . $count . '][group]" value="' . $group . '" />';
+		$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="' . $group_id  . '" />';
+						
+		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column">';
+		$return .= '<a href="#">×</a>';
+		$return .= '</div>';
+		$return .= '<div class="columns-wrapper it-exchange-membership-content-access-group-content content-access-sortable" data-group-id="' . $group_id . '">';
+		//we don't want to end the <div> yet, because the next bunch of rules are grouped under this
+		//we only want to end the <div> when a new group_id is set
+		//or the div above
+					
 	} else {
-		$return .= '<span class="it-exchange-content-access-delay-unavailable">';
-		$return .= __( 'Available for single posts or pages', 'LION' );	
-		$return .= '</span>';
+		
+		$return .= it_exchange_membership_addon_get_selections( $selection, $selected, $count );
+		$return .= '<div class="it-exchange-content-access-content column col-6-12"><div class="it-exchange-membership-content-type-terms">';
+		switch( $selected ) {
+			
+			case 'posts':
+				$posts = get_posts( array( 'post_type' => $selection, 'posts_per_page' => -1 ) );
+				foreach ( $posts as $post ) {
+					$options .= '<option value="' . $post->ID . '" ' . selected( $post->ID, $value, false ) . '>' . get_the_title( $post->ID ) . '</option>';	
+				}
+				break;
+			
+			case 'post_types':
+				$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download', 'page' ) );
+				$post_types = get_post_types( array(), 'objects' );
+				foreach ( $post_types as $post_type ) {
+					if ( in_array( $post_type->name, $hidden_post_types ) ) 
+						continue;
+						
+					$options .= '<option value="' . $post_type->name . '" ' . selected( $post_type->name, $value, false ) . '>' . $post_type->label . '</option>';	
+				}
+				break;
+			
+			case 'taxonomy':
+				$terms = get_terms( $selection, array( 'hide_empty' => false ) );
+				foreach ( $terms as $term ) {
+					$options .= '<option value="' . $term->term_id . '"' . selected( $term->term_id, $value, false ) . '>' . $term->name . '</option>';	
+				}
+				break;
+			
+		}
+	
+		$return .= '<input type="hidden" value="' . $selected . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
+		$return .= '<select class="it-exchange-membership-content-type-term" name="it_exchange_content_access_rules[' . $count . '][term]">';
+		$return .= $options;
+		$return .= '</select>';
+		$return .= '</div></div>';
+		
+		$return .= '<div class="it-exchange-content-access-delay column col-3-12 column-reduce-padding"><div class="it-exchange-membership-content-type-drip">';
+		if ( 'posts' === $selected ) {
+			$return .= it_exchange_membership_addon_build_drip_rules( $rule, $count, $product_id );
+		} else {
+			$return .= '<span class="it-exchange-content-access-delay-unavailable">';
+			$return .= __( 'Available for single posts or pages', 'LION' );	
+			$return .= '</span>';
+		}
+		$return .= '</div></div>';
+		
+		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-3_4-12">';
+		$return .= '<a href="#">×</a>';	
+		$return .= '</div>';
+		
+		$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="' . $group_id . '" />';
+		
+		
+		$return .= '</div>';
 	}
-	$return .= '</div></div>';
-	
-	$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-3_4-12">';
-	$return .= '<a href="#">×</a>';
-	$return .= '</div>';
-	
-	$return .= '</div>';
 	
 	return $return;
 	

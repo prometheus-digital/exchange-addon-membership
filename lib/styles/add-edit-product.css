@@ -12,6 +12,7 @@
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-list-titles .columns-wrapper{border-top:0;}
 #it-exchange-product-membership-content-access-rules .column{position:relative;float:left;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-sort-content-access-rule{width:2%;}
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-sort-content-access-group{width:2%;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-type{width:16%;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-content{width:40%;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-delay{width:30%;}
@@ -19,14 +20,18 @@
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rules .columns-wrapper{background:#FFF;border-top:1px solid #DEDEDE;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rules .column{padding:1em;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-sort-content-access-rule{min-height:50px;cursor:row-resize;background:#F6F6F6 url(images/drag-dots.png) center center no-repeat;border-right:1px solid #DDD;opacity:.5;-webkit-transition:opacity .2s ease;-moz-transition:opacity .2s ease;transition:opacity .2s ease;}
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-sort-content-access-group{min-height:50px;cursor:row-resize;background:#F6F6F6 url(images/drag-dots.png) center center no-repeat;border-right:1px solid #DDD;opacity:.5;-webkit-transition:opacity .2s ease;-moz-transition:opacity .2s ease;transition:opacity .2s ease;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-sort-content-access-rule:hover{opacity:1;}
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-sort-content-access-group:hover{opacity:1;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-remove-content-access-rule.column{float:right;text-align:right;padding:0;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-remove-content-access-rule a{-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;display:inline-block;width:20px;height:20px;margin-top:12px;margin-right:12px;border:2px solid transparent;border-radius:50%;font-size:14px;line-height:1.3em;text-decoration:none;text-align:center;color:#BBB;-webkit-transition:all .2s linear;-moz-transition:all .2s linear;transition:all .2s linear;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-content-access-rule:hover .it-exchange-membership-addon-remove-content-access-rule .it-exchange-delete-digital-download{border-color:#BBB;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-remove-content-access-rule a:active{outline:none;opacity:.8;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-content-access-rule .it-exchange-membership-addon-remove-content-access-rule a:hover{border-color:#E1797A;color:#E1797A;}
-#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-sorting-placeholder{height:50px;width:100%;background:#F6F6F6;}
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-sorting-placeholder{height:50px;width:100%;background:#a9a9a9;}
 #it-exchange-product-membership-content-access-rules .ui-sortable-helper{border:1px solid #DEDEDE;box-shadow:#DDD 0 0 10px;}
 /** ----------------------------------------:[ content drip ]:--- */
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-content-type-drip input{max-width:60px;margin:0 10px 0 0;padding:5px;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rules .column-reduce-padding{padding:.9em 1em;}
+
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rules .it-exchange-membership-content-access-group-content {min-height: 2em; padding-left: 2em; background: rgba(0,0,0,0.5); }
