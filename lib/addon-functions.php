@@ -528,3 +528,27 @@ function it_exchange_membership_access_rules_sorted_by_selected_type( $membershi
 	return $sorted_access_rules;
 	
 }
+
+/*
+ * Returns true if product in cart is a membership product
+ *
+ * @since CHANGEME
+ *
+ * @param object cart
+ * @return bool
+*/
+function it_exchange_membership_cart_contains_membership_product( $cart_products = false ) {
+
+	if ( !$cart_products )
+		$cart_products = it_exchange_get_cart_products();
+	
+	foreach ( $cart_products as $product ) {
+		
+		if ( 'membership-product-type' === it_exchange_get_product_type( $product['product_id'] ) )
+			return true;
+		
+	}
+	
+	return false;
+	
+}
