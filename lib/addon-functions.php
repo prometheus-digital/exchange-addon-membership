@@ -83,23 +83,36 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 
 	$options = '';
 	
-	$selection = !empty( $rule['selection'] ) ? $rule['selection'] : false;
-	$selected  = !empty( $rule['selected'] ) ? $rule['selected'] : false;
-	$value     = !empty( $rule['term'] ) ? $rule['term'] : false;
-	$group     = isset( $rule['group'] ) ? $rule['group'] : NULL;
-	$group_id  = isset( $rule['group_id'] ) ? $rule['group_id'] : NULL;
+	$selection    = !empty( $rule['selection'] )    ? $rule['selection'] : false;
+	$selected     = !empty( $rule['selected'] )     ? $rule['selected'] : false;
+	$value        = !empty( $rule['term'] )         ? $rule['term'] : false;
+	$group        = isset( $rule['group'] )         ? $rule['group'] : NULL;
+	$group_layout = !empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
+	$group_id     = isset( $rule['group_id'] )      ? $rule['group_id'] : NULL;
+	$grouped_id   = isset( $rule['grouped_id'] )    ? $rule['grouped_id'] : NULL;
 
-	$return  = '<div class="it-exchange-membership-content-access-rule columns-wrapper" data-count="' . $count . '">';
+	$return  = '<div class="it-exchange-membership-addon-content-access-rule columns-wrapper" data-count="' . $count . '">';
 	$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>';
 
 	if ( isset( $group ) && isset( $group_id ) ) {
 							
 		$return .= '<input type="text" name="it_exchange_content_access_rules[' . $count . '][group]" value="' . $group . '" />';
 		$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="' . $group_id  . '" />';
-						
-		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column">';
-		$return .= '<a href="#">×</a>';
+		$return .= '<span class="group-layout ' . ( 'grid' === $group_layout ? 'active-group-layout' : '' ) . '">grid</span><span class="group-layout ' . ( 'list' === $group_layout ? 'active-group-layout' : '' ) . '">list</span>';
+		$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="' . $group_layout . '" />';
+		
+		$return .= '<div class="it-exchange-membership-addon-group-action">ACTION</div>';
+		$return .= '<div class="it-exchange-membership-addon-group-actions">';
+		$return .= '	<div class="it-exchange-membership-addon-ungroup-content-access-group column">';
+		$return .= '		<a href="#">' . __( 'Ungroup', 'LION' ) . '</a>';
+		$return .= '	</div>';		
+		$return .= '	<div class="it-exchange-membership-addon-remove-content-access-group column">';
+		$return .= '		<a href="#">' . __( 'Delete Group', 'LION' ) . '</a>';
+		$return .= '	</div>';
 		$return .= '</div>';
+		
+		$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][grouped_id]" value="' . $grouped_id . '" />';
+		
 		$return .= '<div class="columns-wrapper it-exchange-membership-content-access-group-content content-access-sortable" data-group-id="' . $group_id . '">';
 		//we don't want to end the <div> yet, because the next bunch of rules are grouped under this
 		//we only want to end the <div> when a new group_id is set
@@ -158,7 +171,7 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 		$return .= '<a href="#">×</a>';	
 		$return .= '</div>';
 		
-		$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="' . $group_id . '" />';
+		$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][grouped_id]" value="' . $grouped_id . '" />';
 		
 		
 		$return .= '</div>';

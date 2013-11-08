@@ -19,7 +19,7 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 		
 		$count = $_REQUEST['count'];
 		
-		$return  = '<div class="it-exchange-membership-content-access-rule columns-wrapper" data-count="' . $count . '">';
+		$return  = '<div class="it-exchange-membership-addon-content-access-rule columns-wrapper" data-count="' . $count . '">';
 		
 		$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column"></div>';
 		
@@ -36,7 +36,7 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 		$return .= '<a href="#">×</a>';
 		$return .= '</div>';
 		
-		$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="" />';
+		$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][grouped_id]" value="" />';
 		
 		$return .= '</div>';
 	
@@ -62,16 +62,27 @@ function it_exchange_membership_addon_ajax_add_content_access_group() {
 		$count    = $_REQUEST['count'];
 		$group_id = $_REQUEST['group_count'];
 		
-		$return  = '<div class="it-exchange-membership-content-access-rule columns-wrapper" data-count="' . $count . '">';
+		$return  = '<div class="it-exchange-membership-addon-content-access-rule columns-wrapper" data-count="' . $count . '">';
 		
 		$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column"></div>';
 				
 		$return .= '<input type="text" name="it_exchange_content_access_rules[' . $count . '][group]" value="" />';
 		$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="' . $group_id . '" />';
-						
-		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column">';
-		$return .= '<a href="#">×</a>';
+		$return .= '<span class="group-layout active-group-layout">grid</span><span class="group-layout">list</span>';
+		$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="grid" />';
+		
+		$return .= '<div class="it-exchange-membership-addon-group-action">ACTION</div>';
+		$return .= '<div class="it-exchange-membership-addon-group-actions">';
+		$return .= '	<div class="it-exchange-membership-addon-ungroup-content-access-group column">';
+		$return .= '		<a href="#">' . __( 'Ungroup', 'LION' ) . '</a>';
+		$return .= '	</div>';		
+		$return .= '	<div class="it-exchange-membership-addon-remove-content-access-group column">';
+		$return .= '		<a href="#">' . __( 'Delete Group', 'LION' ) . '</a>';
+		$return .= '	</div>';
 		$return .= '</div>';
+
+		$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][grouped_id]" value="" />';
+		
 		$return .= '<div class="columns-wrapper it-exchange-membership-content-access-group-content content-access-sortable" data-group-id="' . $group_id . '"></div>';
 		
 		$return .= '</div>';
