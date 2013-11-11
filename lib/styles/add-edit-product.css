@@ -30,6 +30,15 @@
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rule .it-exchange-membership-addon-remove-content-access-rule a:hover{border-color:#E1797A;color:#E1797A;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-sorting-placeholder{height:50px;width:100%;background:#a9a9a9;}
 #it-exchange-product-membership-content-access-rules .ui-sortable-helper{border:1px solid #DEDEDE;box-shadow:#DDD 0 0 10px;}
+
+#it-exchange-product-membership-content-access-rules .group-layout-options {display: inline;margin: 0 .75em;}
+#it-exchange-product-membership-content-access-rules .group-layout-options span {-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;width: 18px;height: 18px;display:inline-block;text-indent: -999em;background: url(images/grid-list-icon.png) 0 0 no-repeat;border: 1px solid transparent;}
+#it-exchange-product-membership-content-access-rules .group-layout-options span.active-group-layout {border-color: #C9C9C9;}
+#it-exchange-product-membership-content-access-rules .group-layout-options span[data-type="list"] {background-position: 0 -18px;}
+#it-exchange-product-membership-content-access-rules .group-layout-options span[data-type="list"].active-group-layout {background-position: -18px -18px;}
+#it-exchange-product-membership-content-access-rules .group-layout-options span[data-type="grid"].active-group-layout {background-position: -18px 0;}
+
+
 /** ----------------------------------------:[ content drip ]:--- */
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-content-type-drip input{max-width:60px;margin:0 10px 0 0;padding:5px;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rule .column-reduce-padding{padding:.9em 1em;}
