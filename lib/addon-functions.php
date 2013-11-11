@@ -98,8 +98,11 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 							
 		$return .= '<input type="text" name="it_exchange_content_access_rules[' . $count . '][group]" value="' . $group . '" />';
 		$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="' . $group_id  . '" />';
-		$return .= '<span class="group-layout ' . ( 'grid' === $group_layout ? 'active-group-layout' : '' ) . '">grid</span><span class="group-layout ' . ( 'list' === $group_layout ? 'active-group-layout' : '' ) . '">list</span>';
-		$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="' . $group_layout . '" />';
+		
+		$return .= '<div class="group-layout-options">';
+		$return .= '<span class="group-layout ' . ( 'grid' === $group_layout ? 'active-group-layout' : '' ) . '" data-type="grid">grid</span><span class="group-layout ' . ( 'list' === $group_layout ? 'active-group-layout' : '' ) . '" data-type="list">list</span>';
+		$return .= '<input type="hidden" class="group-layout-input" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="' . $group_layout . '" />';
+		$return .= '</div>';
 		
 		$return .= '<div class="it-exchange-membership-addon-group-action">ACTION</div>';
 		$return .= '<div class="it-exchange-membership-addon-group-actions">';
@@ -155,6 +158,14 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 		$return .= '<select class="it-exchange-membership-content-type-term" name="it_exchange_content_access_rules[' . $count . '][term]">';
 		$return .= $options;
 		$return .= '</select>';
+				
+		if ( 'post_types' === $selected || 'taxonomy' === $selected ) {
+			$return .= '<div class="group-layout-options">';
+			$return .= '<span class="group-layout ' . ( 'grid' === $group_layout ? 'active-group-layout' : '' ) . '" data-type="grid">grid</span><span class="group-layout ' . ( 'list' === $group_layout ? 'active-group-layout' : '' ) . '" data-type="list">list</span>';
+			$return .= '<input type="hidden" class="group-layout-input" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="' . $group_layout . '" />';
+			$return .= '</div>';
+		}
+		
 		$return .= '</div></div>';
 		
 		$return .= '<div class="it-exchange-content-access-delay column col-3-12 column-reduce-padding"><div class="it-exchange-membership-content-type-drip">';

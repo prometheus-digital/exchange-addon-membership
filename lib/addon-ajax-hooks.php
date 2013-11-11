@@ -68,8 +68,11 @@ function it_exchange_membership_addon_ajax_add_content_access_group() {
 				
 		$return .= '<input type="text" name="it_exchange_content_access_rules[' . $count . '][group]" value="" />';
 		$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="' . $group_id . '" />';
-		$return .= '<span class="group-layout active-group-layout">grid</span><span class="group-layout">list</span>';
-		$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="grid" />';
+		
+		$return .= '<div class="group-layout-options">';
+		$return .= '<span class="group-layout active-group-layout" data-type="grid">grid</span><span class="group-layout" data-type="list">list</span>';
+		$return .= '<input type="hidden" class="group-layout-input" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="grid" />';
+		$return .= '</div>';
 		
 		$return .= '<div class="it-exchange-membership-addon-group-action">ACTION</div>';
 		$return .= '<div class="it-exchange-membership-addon-group-actions">';
@@ -143,6 +146,13 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 		$return .= '<select class="it-exchange-membership-content-type-term" name="it_exchange_content_access_rules[' . $count . '][term]">';
 		$return .= $options;
 		$return .= '</select>';
+		
+		if ( 'post_types' === $type || 'taxonomy' === $type ) {
+			$return .= '<div class="group-layout-options">';
+			$return .= '<span class="group-layout active-group-layout" data-type="grid">grid</span><span class="group-layout"data-type="list">list</span>';
+			$return .= '<input type="hidden" class="group-layout-input" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="grid" />';
+			$return .= '</div>';
+		}
 		
 	}
 
