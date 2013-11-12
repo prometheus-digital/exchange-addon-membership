@@ -28,9 +28,14 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 		$return .= '<div class="it-exchange-content-access-content column"><div class="it-exchange-membership-content-type-terms hidden">';
 		$return .= '</div></div>';
 		
-		$return .= '<div class="it-exchange-content-access-delay column"><div class="it-exchange-membership-content-type-drip hidden">';
+		$return .= '<div class="it-exchange-content-access-delay column">';
+		$return .= '<div class="it-exchange-membership-content-type-drip hidden">';
 		$return .= it_exchange_membership_addon_build_drip_rules( false, $count );
-		$return .= '</div></div>';
+		$return .= '</div>';
+		$return .= '<div class="it-exchange-content-access-delay-unavailable hidden">';
+		$return .= __( 'Available for single posts or pages', 'LION' );	
+		$return .= '</div>';
+		$return .= '</div>';
 		
 		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column">';
 		$return .= '<a href="#">×</a>';

@@ -140,7 +140,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
                 <?php $count = 0; ?>
                 <?php $group_count = 0; ?>
                 <?php $groupings = array(); ?>
-                <?php $prev_grouped_id = false; ?>
                 <div class="it-exchange-membership-addon-content-access-rules content-access-sortable">
                 <?php
 				if ( !empty( $access_rules ) ) {
@@ -171,7 +170,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 						if ( false !== $current_group_id && $group_count >= $current_group_id )
 							$group_count = $rule['group_id'] + 1;
 
-						$prev_grouped_id = $current_grouped_id;
 					}
 					
 					if ( !empty( $groupings ) ) {

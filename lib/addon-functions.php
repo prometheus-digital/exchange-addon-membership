@@ -99,7 +99,7 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 	$return  = '<div class="it-exchange-membership-addon-content-access-rule ' . $group_class . ' columns-wrapper" data-count="' . $count . '">';
 	$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>';
 
-	if ( isset( $group ) && isset( $group_id ) ) {
+	if ( isset( $group_id ) ) {
 							
 		$return .= '<input type="text" name="it_exchange_content_access_rules[' . $count . '][group]" value="' . $group . '" />';
 		$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="' . $group_id  . '" />';
@@ -175,15 +175,19 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 		
 		$return .= '</div></div>';
 		
-		$return .= '<div class="it-exchange-content-access-delay column col-3-12 column-reduce-padding"><div class="it-exchange-membership-content-type-drip">';
 		if ( 'posts' === $selected ) {
-			$return .= it_exchange_membership_addon_build_drip_rules( $rule, $count, $product_id );
+			$drip_hidden = ''; $unavail_hidden = 'hidden';
 		} else {
-			$return .= '<span class="it-exchange-content-access-delay-unavailable">';
-			$return .= __( 'Available for single posts or pages', 'LION' );	
-			$return .= '</span>';
+			$drip_hidden = 'hidden'; $unavail_hidden = '';
 		}
-		$return .= '</div></div>';
+		$return .= '<div class="it-exchange-content-access-delay column col-3-12 column-reduce-padding">';
+		$return .= '<div class="it-exchange-membership-content-type-drip ' . $drip_hidden . '">';
+		$return .= it_exchange_membership_addon_build_drip_rules( false, $count );
+		$return .= '</div>';
+		$return .= '<div class="it-exchange-content-access-delay-unavailable ' . $unavail_hidden . '">';
+		$return .= __( 'Available for single posts or pages', 'LION' );	
+		$return .= '</div>';
+		$return .= '</div>';
 		
 		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-3_4-12">';
 		$return .= '<a href="#">×</a>';	
