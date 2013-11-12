@@ -91,7 +91,7 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 	$group_id     = isset( $rule['group_id'] )      ? $rule['group_id'] : NULL;
 	$grouped_id   = isset( $rule['grouped_id'] )    ? $rule['grouped_id'] : NULL;
 
-	$return  = '<div class="it-exchange-membership-addon-content-access-rule columns-wrapper" data-count="' . $count . '">';
+	$return  = '<div class="it-exchange-membership-addon-content-access-rule it-exchange-membership-addon-content-access-group columns-wrapper" data-count="' . $count . '">';
 	$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>';
 
 	if ( isset( $group ) && isset( $group_id ) ) {
@@ -104,6 +104,7 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 		$return .= '<input type="hidden" class="group-layout-input" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="' . $group_layout . '" />';
 		$return .= '</div>';
 		
+		$return .= '<div class="it-exchange-membership-addon-group-action-wrapper">';
 		$return .= '<div class="it-exchange-membership-addon-group-action">ACTION</div>';
 		$return .= '<div class="it-exchange-membership-addon-group-actions">';
 		$return .= '	<div class="it-exchange-membership-addon-ungroup-content-access-group column">';
@@ -112,6 +113,7 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 		$return .= '	<div class="it-exchange-membership-addon-remove-content-access-group column">';
 		$return .= '		<a href="#">' . __( 'Delete Group', 'LION' ) . '</a>';
 		$return .= '	</div>';
+		$return .= '</div>';
 		$return .= '</div>';
 		
 		$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][grouped_id]" value="' . $grouped_id . '" />';

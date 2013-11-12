@@ -62,7 +62,7 @@ function it_exchange_membership_addon_ajax_add_content_access_group() {
 		$count    = $_REQUEST['count'];
 		$group_id = $_REQUEST['group_count'];
 		
-		$return  = '<div class="it-exchange-membership-addon-content-access-rule columns-wrapper" data-count="' . $count . '">';
+		$return  = '<div class="it-exchange-membership-addon-content-access-rule it-exchange-membership-addon-content-access-group columns-wrapper" data-count="' . $count . '">';
 		
 		$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column"></div>';
 				
@@ -74,6 +74,7 @@ function it_exchange_membership_addon_ajax_add_content_access_group() {
 		$return .= '<input type="hidden" class="group-layout-input" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="grid" />';
 		$return .= '</div>';
 		
+		$return .= '<div class="it-exchange-membership-addon-group-action-wrapper">';
 		$return .= '<div class="it-exchange-membership-addon-group-action">ACTION</div>';
 		$return .= '<div class="it-exchange-membership-addon-group-actions">';
 		$return .= '	<div class="it-exchange-membership-addon-ungroup-content-access-group column">';
@@ -82,6 +83,7 @@ function it_exchange_membership_addon_ajax_add_content_access_group() {
 		$return .= '	<div class="it-exchange-membership-addon-remove-content-access-group column">';
 		$return .= '		<a href="#">' . __( 'Delete Group', 'LION' ) . '</a>';
 		$return .= '	</div>';
+		$return .= '</div>';
 		$return .= '</div>';
 
 		$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][grouped_id]" value="" />';
