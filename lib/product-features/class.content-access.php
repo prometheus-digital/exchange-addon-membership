@@ -152,10 +152,8 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 							echo '</div></div>'; //this is ending the divs from the group opening in it_exchange_membership_addon_build_content_rule()
 							array_pop( $groupings );
 													
-						} else if ( !$current_grouped_id && !empty( $groupings ) ) {
-						
-							ITDebug::print_r( $current_grouped_id );
-						
+						} else if ( false === $current_grouped_id && !empty( $groupings ) ) {
+												
 							foreach( $groupings as $group ) {
 								echo '</div></div>'; //this is ending the divs from the group opening in it_exchange_membership_addon_build_content_rule()
 							}
@@ -164,14 +162,13 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 						}
 												
 						echo it_exchange_membership_addon_build_content_rule( $rule, $count++, $product->ID );
-							
 						
 						$current_group_id = isset( $rule['group_id'] ) ? $rule['group_id'] : false;
 						
-						if ( $current_group_id && !in_array( $current_group_id, $groupings ) )
+						if ( false !== $current_group_id && !in_array( $current_group_id, $groupings ) )
 							$groupings[] = $current_group_id;
 						
-						if ( $current_group_id && $group_count >= $current_group_id )
+						if ( false !== $current_group_id && $group_count >= $current_group_id )
 							$group_count = $rule['group_id'] + 1;
 
 						$prev_grouped_id = $current_grouped_id;
