@@ -90,8 +90,13 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 	$group_layout = !empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
 	$group_id     = isset( $rule['group_id'] )      ? $rule['group_id'] : NULL;
 	$grouped_id   = isset( $rule['grouped_id'] )    ? $rule['grouped_id'] : NULL;
+	
+	if ( isset( $group ) && isset( $group_id ) )
+		$group_class = 'it-exchange-membership-addon-content-access-group';
+	else
+		$group_class = '';
 
-	$return  = '<div class="it-exchange-membership-addon-content-access-rule it-exchange-membership-addon-content-access-group columns-wrapper" data-count="' . $count . '">';
+	$return  = '<div class="it-exchange-membership-addon-content-access-rule ' . $group_class . ' columns-wrapper" data-count="' . $count . '">';
 	$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>';
 
 	if ( isset( $group ) && isset( $group_id ) ) {
