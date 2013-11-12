@@ -239,7 +239,8 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 						if ( !empty( $label ) ) {
 							// We're in a group.
 							if ( true == $options['toggle'] ) {
-								$result .= '<div class="it-exchange-content-group">';
+								$group_layout = !empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
+								$result .= '<div class="it-exchange-content-group it-exchange-content-group-layout-' . $group_layout . '">';
 								$result .= '<p class="it-exchange-group-content-label">' . $label . '<span class="it-exchange-open-group"></span></p>';
 								$result .= '<ul class="it-exchange-hidden">';
 								
