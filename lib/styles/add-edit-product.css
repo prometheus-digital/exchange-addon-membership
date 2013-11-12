@@ -39,11 +39,11 @@
 #it-exchange-product-membership-content-access-rules .group-layout-options span[data-type="list"].active-group-layout {background-position: -18px -18px;}
 #it-exchange-product-membership-content-access-rules .group-layout-options span[data-type="grid"].active-group-layout {background-position: -18px 0;}
 
-#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-group {background: #DCDEE0;}
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rule.it-exchange-membership-addon-content-access-group {background: #DCDEE0;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rule input {width: 100%;max-width: 300px;margin-left: 1em;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-group-action-wrapper {float:right;width: 100%;max-width: 45px;}
-#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-group-action {float:right;width: 100%;max-width: 45px;text-indent: -999em;background: url(images/group-action-icon.png) center center no-repeat;margin-top: 18px;margin-right: 12px;padding-bottom: 5px;position: relative;}
-#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-group-actions {display:none;position: absolute;right: -60px;top: 42px;border: 1px solid #DEDEDE;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;background: #FFF;z-index: 2;}
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-group-action {float:right;width: 100%;max-width: 25px;text-indent: -999em;background: url(images/group-action-icon.png) center center no-repeat;margin-top: 18px;margin-right: 12px;padding-bottom: 5px;position: relative;}
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-group-actions {display:none;position: absolute;right: -60px;top: 38px;border: 1px solid #DEDEDE;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;background: #FFF;z-index: 2;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-group-actions .column {float:none;padding: .5em;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-group-actions .column a {text-decoration: none;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-ungroup-content-access-group {border-bottom: 1px solid #EDEDED;}
