@@ -131,16 +131,22 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 		// Repeats checks for when flags were not passed.
 		if ( !empty( $this->_membership_access_rules ) ) {
 			$result = '';
+			
+			$membership_settings = it_exchange_get_option( 'addon_membership' );
+			
 			$defaults      = array(
 				'before'             => '<div class="it-exchange-restricted-content">',
 				'after'              => '</div>',
 				'title'              => __( 'Membership Content', 'LION' ),
 				'toggle'             => true,
+				'layout'             => $membership_settings['memberships-dashboard-view'],
 				'posts_per_grouping' => 5,
 			);
 			$options      = ITUtility::merge_defaults( $options, $defaults );
 			
 			$result .= '<h2>' . $options['title'] . '</h2>';
+			
+			$result .= '<div class="it-exchange-content-wrapper it-exchange-content-' . $options['layout'] . ' it-exchange-clearfix">'; 
 			
             $groupings = array();
 	
@@ -176,7 +182,7 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 				
 					$group_layout = !empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
 					$result .= '<div class="it-exchange-content-group it-exchange-content-group-layout-' . $group_layout . '">';
-					$result .= '<p class="it-exchange-group-content-label">' . $group . '<span class="it-exchange-open-group"></span></p>';
+					$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-item-title">' . $group . '</span><span class="it-exchange-open-group"></span></p>';
 					$result .= '<ul class="it-exchange-hidden">';
 				
 				} else if ( !empty( $selected ) ) {
@@ -234,18 +240,29 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 					
 					if ( !empty( $restricted_posts ) ) {
 				
-						$result .= $options['before'];	
+						//$result .= $options['before'];	
 						
 						if ( !empty( $label ) ) {
 							// We're in a group.
 							if ( true == $options['toggle'] ) {
 								$group_layout = !empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
 								$result .= '<div class="it-exchange-content-group it-exchange-content-group-layout-' . $group_layout . '">';
-								$result .= '<p class="it-exchange-group-content-label">' . $label . '<span class="it-exchange-open-group"></span></p>';
+								$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-item-title">' . $label . '</span><span class="it-exchange-open-group"></span></p>';
 								$result .= '<ul class="it-exchange-hidden">';
 								
 								foreach( $restricted_posts as $post ) {
-									$result .= '<li><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></li>';
+									$result .= '<li>';
+									$result .= '	<div class="it-exchange-content-group it-exchange-content-single">';
+									$result .= '		<div class="it-exchange-content-item-icon">';
+									$result .= '			<a class="it-exchange-item-icon" href="' .get_permalink( $post->ID ) . '"></a>';
+									$result .= '		</div>';
+									$result .= '		<div class="it-exchange-content-item-info">';
+									$result .= '			<p class="it-exchange-group-content-label">';
+									$result .= '				<a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a>';
+									$result .= '			</p>';
+									$result .= '		</div>';
+									$result .= '	</div>';
+									$result .= '</li>';
 								}
 								
 								if ( ! empty( $more_content_link ) && $options['posts_per_grouping'] <= count( $restricted_posts ) )
@@ -254,7 +271,7 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 								$result .= '</ul>';
 								$result .= '</div>';
 							} else {
-								$result .= '<p class="it-exchange-group-content-label">' . $label . '</h3>';
+								$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-item-title">' . $label . '</span></p>';
 								
 								$result .= '<ul>';
 								foreach( $restricted_posts as $post ) {
@@ -275,21 +292,59 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 									if ( false !== $key = array_search( $product_id, $member_access ) ) {
 										$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $key ) );
 										$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
-										if ( $dripping < $now )						
-											$result .= '<div class="it-exchange-content-group it-exchange-content-single"><p class="it-exchange-content-item it-exchange-membership-drip-available"><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p></div>';
-										else {
+										if ( $dripping < $now )	{	
+											$result .= '<li>';
+											$result .= '<div class="it-exchange-content-group it-exchange-content-single it-exchange-content-available">';
+											$result .= '	<div class="it-exchange-content-item-icon">';
+											$result .= '		<a class="it-exchange-item-icon" href="' .get_permalink( $post->ID ) . '"></a>';
+											$result .= '	</div>';
+											$result .= '	<div class="it-exchange-content-item-info">';
+											$result .= '		<p class="it-exchange-group-content-label">';
+											$result .= '			<a href="' . get_permalink( $post->ID ) . '">';
+											$result .= '				<span class="it-exchange-item-title">' . get_the_title( $post->ID ) . '</span>';
+											$result .= '			</a>';
+											$result .= '		</p>';
+											$result .= '	</div>';
+											$result .= '</div>';
+											$result .= '</li>';
+										} else {
 											$earliest_drip = $dripping - $now;
-											$result .= '<div class="it-exchange-content-group it-exchange-content-single"><p class="it-exchange-content-item it-exchange-membership-drip-unavailable">' . get_the_title( $post->ID ) . ' (' . sprintf( __( 'available in %s days', 'LION' ), ceil( $earliest_drip / 60 / 60 / 24 ) ) . ')</p></div>';
+											$result .= '<li>';
+											$result .= '<div class="it-exchange-content-group it-exchange-content-single it-exchange-content-unavailable">';
+											$result .= '	<div class="it-exchange-content-item-icon">';
+											$result .= '		<a class="it-exchange-item-icon" href="' .get_permalink( $post->ID ) . '"></a>';
+											$result .= '	</div>';
+											$result .= '	<div class="it-exchange-content-item-info">';
+											$result .= '		<p class="it-exchange-group-content-label">';
+											$result .= '			<span class="it-exchange-item-unavailable-message it-exchange-right">' . sprintf( __( 'available in %s days', 'LION' ), ceil( $earliest_drip / 60 / 60 / 24 ) ) . '</span>';
+											$result .= '			<span class="it-exchange-item-title">' . get_the_title( $post->ID ) . '</span>';
+											$result .= '		</p>';
+											$result .= '	</div>';
+											$result .= '</div>';
+											$result .= '</li>';
 										}
 									}
 									
 								} else {
-									$result .= '<div class="it-exchange-content-group it-exchange-content-single"><p class="it-exchange-content-item"><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></p></div>';
+									$result .= '<li>';
+									$result .= '<div class="it-exchange-content-group it-exchange-content-single">';
+									$result .= '	<div class="it-exchange-content-item-icon">';
+									$result .= '		<a class="it-exchange-item-icon" href="' .get_permalink( $post->ID ) . '"></a>';
+									$result .= '	</div>';
+									$result .= '	<div class="it-exchange-content-item-info">';
+									$result .= '		<p class="it-exchange-group-content-label">';
+									$result .= '			<a href="' . get_permalink( $post->ID ) . '">';
+									$result .= '				<span class="it-exchange-item-title">' . get_the_title( $post->ID ) . '</span>';
+									$result .= '			</a>';
+									$result .= '		</p>';
+									$result .= '	</div>';
+									$result .= '</div>';
+									$result .= '</li>';
 								}
 							}
 						}
-					
-						$result .= $options['after'];
+						
+						//$result .= $options['after'];
 					
 					}
 						
@@ -306,7 +361,7 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 				}
 				$groupings = array();
 			}
-			
+			$result .= '</div>';
 			return $result;
 		}
 		return false;

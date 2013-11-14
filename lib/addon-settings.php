@@ -194,6 +194,12 @@ class IT_Exchange_Membership_Add_On {
                 <label for="membership-objectives-label"><?php _e( 'Default Objectives Label', 'LION' ); ?> <span class="tip" title="<?php _e( 'This label will appear when displaying the objective information on a membership.', 'LION' ); ?>">i</span></label>
             </p>
 			<p> <?php $form->add_text_box( 'membership-objectives-label' ); ?> </p>
+			<p>
+				<label for="memberships-dashboard-view"><?php _e( 'Membership Dashboard View', 'LION' ); ?> <span class="tip" title="<?php _e( 'Sets the default way items are displayed in the customer\'s membership dashboard.', 'LION' ); ?>">i</span></label>
+			</p>
+			<p>
+				<?php $form->add_drop_down( 'memberships-dashboard-view', array( 'grid' => __( 'Grid', 'LION'), 'list' => __( 'List', 'LION' ) ) ); ?>
+			</p>
         </div>
         <?php
     }
