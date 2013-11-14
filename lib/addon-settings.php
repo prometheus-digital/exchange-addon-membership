@@ -30,6 +30,7 @@ function it_exchange_membership_addon_settings_callback() {
 */
 function it_exchange_membership_addon_default_settings( $values ) {
     $defaults = array(
+        'membership-restricted-show-excerpt'    => false,
         'membership-restricted-content-message' => __( 'This content is for members only. Become a member now to get access to this and other awesome members-only content.', 'LION' ),
         'membership-dripped-content-message'    => __( 'This content will be available in %d days.', 'LION' ),
         'membership-prerequisites-label'        => __( 'Prerequisites', 'LION' ),
@@ -151,6 +152,10 @@ class IT_Exchange_Membership_Add_On {
             <h3><?php _e( 'Membership', 'LION' ); ?></h3>
         <?php endif; ?>
         <div class="it-exchange-addon-settings it-exchange-membership-addon-settings">
+        	<p>
+                <label for="membership-restricted-show-excerpt"><?php _e( 'Show content excerpt?', 'LION' ); ?> <span class="tip" title="<?php _e( 'Use this to display the post\'s excerpt before the content message.', 'LION' ); ?>">i</span></label>
+                <?php $form->add_check_box( 'membership-restricted-show-excerpt' ); ?>
+            </p>
             <p>
                 <label for="membership-restricted-content-message"><?php _e( 'Restricted Content Message', 'LION' ); ?> <span class="tip" title="<?php _e( 'This message will display when a non-member attempts to access content that has been restricted.', 'LION' ); ?>">i</span></label>
                 <?php
