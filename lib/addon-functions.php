@@ -182,7 +182,7 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 		}
 		$return .= '<div class="it-exchange-content-access-delay column col-3-12 column-reduce-padding">';
 		$return .= '<div class="it-exchange-membership-content-type-drip ' . $drip_hidden . '">';
-		$return .= it_exchange_membership_addon_build_drip_rules( false, $count );
+		$return .= it_exchange_membership_addon_build_drip_rules( $rule, $count , $product_id );
 		$return .= '</div>';
 		$return .= '<div class="it-exchange-content-access-delay-unavailable ' . $unavail_hidden . '">';
 		$return .= __( 'Available for single posts or pages', 'LION' );	
