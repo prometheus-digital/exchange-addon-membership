@@ -205,6 +205,12 @@ class IT_Exchange_Membership_Add_On {
 			<p>
 				<?php $form->add_drop_down( 'memberships-dashboard-view', array( 'grid' => __( 'Grid', 'LION'), 'list' => __( 'List', 'LION' ) ) ); ?>
 			</p>
+			<p>
+				<label for="memberships-group-toggle"><?php _e( 'Membership Group Toggle', 'LION' ); ?> <span class="tip" title="<?php _e( 'Sets the default option for toggling grouped membership content.', 'LION' ); ?>">i</span></label>
+			</p>
+			<p>
+				<?php $form->add_drop_down( 'memberships-group-toggle', array( 'true' => __( 'Yes', 'LION'), 'false' => __( 'No', 'LION' ) ) ); ?>
+			</p>
         </div>
         <?php
     }

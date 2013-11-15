@@ -23,12 +23,12 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 		'before'             => '<div class="it-exchange-restricted-content">',
 		'after'              => '</div>',
 		'title'              => '',
-		'toggle'             => 'on',
+		'toggle'             => $membership_settings['memberships-group-toggle'],
 		'posts_per_grouping' => 5,
 		'show_drip'          => 'on',
 		'show_drip_time'     => 'on',
 		'show_icon'          => 'on',
-		'layout'             => $membership_settings['memberships-dashboard-view']
+		'layout'             => $membership_settings['memberships-dashboard-view'],
 	);
 	$atts = shortcode_atts( $defaults, $atts );
 		
@@ -80,8 +80,13 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 				
 					$group_layout = !empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
 					$result .= '<div class="it-exchange-content-group it-exchange-content-group-layout-' . $group_layout . '">';
-					$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-item-title">' . $group . '</span><span class="it-exchange-open-group"></span></p>';
-					$result .= '<ul class="it-exchange-hidden">';
+					if ( 'true' == $atts['toggle'] ) {
+						$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-item-title">' . $group . '</span><span class="it-exchange-open-group"></span></p>';
+						$result .= '<ul class="it-exchange-hidden">';
+					} else {
+						$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-item-title">' . $group . '</span></p>';
+						$result .= '<ul>';
+					}
 				
 				} else if ( !empty( $selected ) ) {
 					
@@ -129,40 +134,31 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 						
 						if ( !empty( $label ) ) {
 							// We're in a group.
+							$group_layout = !empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
+							$result .= '<div class="it-exchange-content-group it-exchange-content-group-layout-' . $group_layout . '">';
 							
-							if ( 'on' == $atts['toggle'] ) {
-								$group_layout = !empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
-								$result .= '<div class="it-exchange-content-group it-exchange-content-group-layout-' . $group_layout . '">';
+							if ( 'true' == $atts['toggle'] ) {
 								$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-item-title">' . $label . '</span><span class="it-exchange-open-group"></span></p>';
 								$result .= '<ul class="it-exchange-hidden">';
-								
-								foreach( $restricted_posts as $restricted_post ) {
-									
-									$result .= '<li>';
-									$result .= '	<div class="it-exchange-content-group it-exchange-content-single">';
-									$result .= '		<div class="it-exchange-content-item-icon"><span class="it-exchange-item-icon"></span></div>';
-									$result .= '		<div class="it-exchange-content-item-info"><p class="it-exchange-group-content-label">' . get_the_title( $restricted_post->ID ) . '</p></div>';
-									$result .= '	</div>';
-									$result .= '</li>';
-								}
-								
-								if ( $atts['posts_per_grouping'] <= count( $restricted_posts ) )
-									$result .= '<li class="it-exchange-content-more">' . __( 'And More Content In This Group', 'LION' ) . '</li>';
-								
-								$result .= '</ul>';
-								$result .= '</div>';
 							} else {
 								$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-item-title">' . $label . '</span></p>';
 								$result .= '<ul>';
-								foreach( $restricted_posts as $restricted_post ) {
-									$result .= '<li>' . get_the_title( $restricted_post->ID ) . '</li>';
-								}
-								
-								if ( $atts['posts_per_grouping'] <= count( $restricted_posts ) )
-									$result .= '<li class="it-exchange-content-more">' . __( 'And More Content In This Group', 'LION' ) . '</li>';
-								
-								$result .= '</ul>';
 							}
+							
+							foreach( $restricted_posts as $restricted_post ) {
+								$result .= '<li>';
+								$result .= '	<div class="it-exchange-content-group it-exchange-content-single">';
+								$result .= '		<div class="it-exchange-content-item-icon"><span class="it-exchange-item-icon"></span></div>';
+								$result .= '		<div class="it-exchange-content-item-info"><p class="it-exchange-group-content-label">' . get_the_title( $restricted_post->ID ) . '</p></div>';
+								$result .= '	</div>';
+								$result .= '</li>';
+							}
+							
+							if ( $atts['posts_per_grouping'] <= count( $restricted_posts ) )
+								$result .= '<li class="it-exchange-content-more">' . __( 'And More Content In This Group', 'LION' ) . '</li>';
+							
+							$result .= '</ul>';
+							$result .= '</div>';
 						} else {
 							foreach( $restricted_posts as $restricted_post ) { //should just be a regular post
 								
