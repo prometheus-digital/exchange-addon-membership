@@ -135,8 +135,8 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 			$membership_settings = it_exchange_get_option( 'addon_membership' );
 			
 			$defaults      = array(
-				'before'             => '<li class="it-exchange-restricted-content">',
-				'after'              => '</li>',
+				'before'             => '<div class="it-exchange-restricted-content">',
+				'after'              => '</div>',
 				'title'              => __( 'Membership Content', 'LION' ),
 				'toggle'             => true,
 				'layout'             => $membership_settings['memberships-dashboard-view'],
@@ -292,7 +292,8 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 									if ( false !== $key = array_search( $product_id, $member_access ) ) {
 										$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $key ) );
 										$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
-										if ( $dripping < $now )	{	
+										if ( $dripping < $now )	{
+											$result .= '<li>';	
 											$result .= '<div class="it-exchange-content-group it-exchange-content-single it-exchange-content-available">';
 											$result .= '	<div class="it-exchange-content-item-icon">';
 											$result .= '		<a class="it-exchange-item-icon" href="' .get_permalink( $post->ID ) . '"></a>';
@@ -305,8 +306,10 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 											$result .= '		</p>';
 											$result .= '	</div>';
 											$result .= '</div>';
+											$result .= '</li>';
 										} else {
 											$earliest_drip = $dripping - $now;
+											$result .= '<li>';
 											$result .= '<div class="it-exchange-content-group it-exchange-content-single it-exchange-content-unavailable">';
 											$result .= '	<div class="it-exchange-content-item-icon">';
 											$result .= '		<a class="it-exchange-item-icon" href="' .get_permalink( $post->ID ) . '"></a>';
@@ -318,11 +321,12 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 											$result .= '		</p>';
 											$result .= '	</div>';
 											$result .= '</div>';
+											$result .= '</li>';
 										}
 									}
 									
 								} else {
-
+									$result .= '<li>';
 									$result .= '<div class="it-exchange-content-group it-exchange-content-single">';
 									$result .= '	<div class="it-exchange-content-item-icon">';
 									$result .= '		<a class="it-exchange-item-icon" href="' .get_permalink( $post->ID ) . '"></a>';
@@ -335,7 +339,7 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 									$result .= '		</p>';
 									$result .= '	</div>';
 									$result .= '</div>';
-
+									$result .= '</li>';
 									
 								}
 							}
