@@ -81,10 +81,10 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 					$group_layout = !empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
 					$result .= '<div class="it-exchange-content-group it-exchange-content-group-layout-' . $group_layout . '">';
 					if ( 'true' == $atts['toggle'] ) {
-						$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-item-title">' . $group . '</span><span class="it-exchange-open-group"></span></p>';
+						$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-group-title">' . $group . '</span><span class="it-exchange-open-group"></span></p>';
 						$result .= '<ul class="it-exchange-hidden">';
 					} else {
-						$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-item-title">' . $group . '</span></p>';
+						$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-group-title">' . $group . '</span></p>';
 						$result .= '<ul>';
 					}
 				
@@ -138,10 +138,10 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 							$result .= '<div class="it-exchange-content-group it-exchange-content-group-layout-' . $group_layout . '">';
 							
 							if ( 'true' == $atts['toggle'] ) {
-								$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-item-title">' . $label . '</span><span class="it-exchange-open-group"></span></p>';
+								$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-group-title">' . $label . '</span><span class="it-exchange-open-group"></span></p>';
 								$result .= '<ul class="it-exchange-hidden">';
 							} else {
-								$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-item-title">' . $label . '</span></p>';
+								$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-group-title">' . $label . '</span></p>';
 								$result .= '<ul>';
 							}
 							

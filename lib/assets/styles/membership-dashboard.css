@@ -35,8 +35,8 @@
 .it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid .it-exchange-content-group:nth-child(3n+4),
 .it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid ul li:nth-child(3n+4) {clear:both;}
 
-.it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid .it-exchange-item-title,
-.it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid .it-exchange-item-title {background: #ECECEC;font-size: 13px;text-transform: uppercase;border-radius: 3px;padding: 3px 6px;}
+.it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid .it-exchange-group-title,
+.it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid .it-exchange-group-title {background: #ECECEC;font-size: 13px;text-transform: uppercase;border-radius: 3px;padding: 3px 6px;}
 
 .it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-single,
 .it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid .it-exchange-content-group,
