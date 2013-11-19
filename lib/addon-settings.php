@@ -36,6 +36,9 @@ function it_exchange_membership_addon_default_settings( $values ) {
         'membership-prerequisites-label'        => __( 'Prerequisites', 'LION' ),
         'membership-intended-audience-label'    => __( 'Intended Audience', 'LION' ),
         'membership-objectives-label'           => __( 'Objectives', 'LION' ),
+        'memberships-group-toggle'              => true,
+        'memberships-dashboard-view'            => 'grid',
+        
 	);
     $values = ITUtility::merge_defaults( $values, $defaults );
     return $values;
