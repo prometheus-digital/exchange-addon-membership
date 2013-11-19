@@ -1,12 +1,14 @@
 /** -----------------------------------------------------:[ Content Access ]:---------- */
 #it-exchange-product-membership-content-access-rules{margin-bottom:3em;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-header{overflow:hidden;clear:both;margin-top:3em;}
+#it-exchange-product-membership-content-access-rules .it-exchange-content-access-footer{overflow:hidden;clear:both;margin-top:1em;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-label-add{float:left;}
-#it-exchange-product-membership-content-access-rules .it-exchange-membership-content-access-add-new-rule{float:right;margin-bottom:10px;}
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-content-access-add-new-rule{float:left;margin-bottom:10px;margin-right: 1em;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-no-rules{float:none;margin:0;padding:1.2em;text-align:center;}
 #it-exchange-product-membership-content-access-rules input{margin:8px;font-size:14px;width:98%;}
 #it-exchange-product-membership-content-access-rules select{max-width:100%;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-list-wrapper{overflow:visible;border:1px solid #DEDEDE;}
+#it-exchange-product-membership-content-access-rules .it-exchange-content-access-list-titles {background: #FFF;}
 #it-exchange-product-membership-content-access-rules .columns-wrapper{clear:both;overflow:visible;}
 #it-exchange-product-membership-content-access-rules .columns-wrapper:after {content: "."; visibility: hidden; display: block; height: 0; clear: both;}
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-list-titles .column{padding:.8em 1em;font-weight:bold;}
@@ -32,14 +34,15 @@
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-sorting-placeholder{height:50px;width:100%;background:#DCDEE0;box-shadow: inset #AFAFAF 0 0 10px;}
 #it-exchange-product-membership-content-access-rules .ui-sortable-helper{border:1px solid #DEDEDE;box-shadow:#DDD 0 0 10px;}
 
-#it-exchange-product-membership-content-access-rules .group-layout-options {display: inline;margin: 0 .75em;}
+#it-exchange-product-membership-content-access-rules .group-layout-options {display: inline-block;margin: 0 .75em;}
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-content-type-terms .group-layout-options {margin-top: .5em;}
 #it-exchange-product-membership-content-access-rules .group-layout-options span {-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;width: 18px;height: 18px;display:inline-block;text-indent: -999em;background: url(images/grid-list-icon.png) 0 0 no-repeat;border: 1px solid transparent;}
-#it-exchange-product-membership-content-access-rules .group-layout-options span.active-group-layout {border-color: #C9C9C9;}
+#it-exchange-product-membership-content-access-rules .group-layout-options span.active-group-layout {border-color: #C9C9C9;background-color: #FFF}
 #it-exchange-product-membership-content-access-rules .group-layout-options span[data-type="list"] {background-position: 0 -18px;}
 #it-exchange-product-membership-content-access-rules .group-layout-options span[data-type="list"].active-group-layout {background-position: -18px -18px;}
 #it-exchange-product-membership-content-access-rules .group-layout-options span[data-type="grid"].active-group-layout {background-position: -18px 0;}
 
-#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rule.it-exchange-membership-addon-content-access-group {background: #DCDEE0;}
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rule.it-exchange-membership-addon-content-access-group {background: #F3F3F3;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rule input {width: 100%;max-width: 300px;margin-left: 1em;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-group-action-wrapper {float:right;width: 100%;max-width: 45px;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-group-action {float:right;width: 100%;max-width: 25px;text-indent: -999em;background: url(images/group-action-icon.png) center center no-repeat;margin-top: 18px;margin-right: 12px;padding-bottom: 5px;position: relative;}

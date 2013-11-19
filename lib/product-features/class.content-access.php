@@ -111,9 +111,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	        <div class="it-exchange-content-access-label-add">
 	            <label><?php _e( 'Content Access', 'LION' ); ?> <span class="tip" title="<?php _e( 'Content Access settings restrict access to content for this membership.  Note: Delay Access settings can only be applied to individual posts or pages.', 'LION' ); ?>">i</span></label>
 	        </div>
-	        <div class="it-exchange-membership-content-access-add-new-rule left">
-	            <a href class="button"><?php _e( 'Add New Rule', 'LION' ); ?></a>
-	        </div>
 		</div>
         <div class="it-exchange-content-access-list-wrapper">
 			<?php
@@ -190,7 +187,10 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 			}
 			?>
         </div>
-		<div class="it-exchange-content-access-header">
+		<div class="it-exchange-content-access-footer">
+			<div class="it-exchange-membership-content-access-add-new-rule left">
+	            <a href class="button"><?php _e( 'Add New Rule', 'LION' ); ?></a>
+	        </div>
             <div class="it-exchange-membership-content-access-add-new-group left">
                 <a href class="button"><?php _e( 'Add New Group', 'LION' ); ?></a>
             </div>
