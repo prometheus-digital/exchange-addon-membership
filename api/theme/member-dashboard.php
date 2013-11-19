@@ -181,7 +181,12 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 				if ( false !== $group_id ) {
 				
 					$group_layout = !empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
-					$result .= '<div class="it-exchange-content-group it-exchange-content-group-layout-' . $group_layout . '">';
+					
+					if ( 'true' == $options['toggle'] )
+						$result .= '<div class="it-exchange-content-group it-exchange-content-group-toggle it-exchange-content-group-layout-' . $group_layout . '">';
+					else
+						$result .= '<div class="it-exchange-content-group it-exchange-content-group-layout-' . $group_layout . '">';
+
 					if ( 'true' == $options['toggle'] ) {
 						$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-group-title">' . $group . '</span><span class="it-exchange-open-group"></span></p>';
 						$result .= '<ul class="it-exchange-hidden">';
@@ -250,7 +255,12 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 						if ( !empty( $label ) ) {
 							// We're in a group.
 							$group_layout = !empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
-							$result .= '<div class="it-exchange-content-group it-exchange-content-group-layout-' . $group_layout . '">';
+		
+							if ( 'true' == $options['toggle'] )
+								$result .= '<div class="it-exchange-content-group it-exchange-content-group-toggle it-exchange-content-group-layout-' . $group_layout . '">';
+							else
+								$result .= '<div class="it-exchange-content-group it-exchange-content-group-layout-' . $group_layout . '">';				
+											
 							if ( 'true' == $options['toggle'] ) {
 								$result .= '<p class="it-exchange-group-content-label"><span class="it-exchange-group-title">' . $label . '</span><span class="it-exchange-open-group"></span></p>';
 								$result .= '<ul class="it-exchange-hidden">';
