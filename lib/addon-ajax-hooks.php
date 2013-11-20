@@ -93,7 +93,7 @@ function it_exchange_membership_addon_ajax_add_content_access_group() {
 
 		$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][grouped_id]" value="" />';
 		
-		$return .= '<div class="columns-wrapper it-exchange-membership-content-access-group-content content-access-sortable" data-group-id="' . $group_id . '"></div>';
+		$return .= '<div class="columns-wrapper it-exchange-membership-content-access-group-content content-access-sortable" data-group-id="' . $group_id . '"><div class="nosort">' . __( 'Drag content items into this area to group them together.', 'LION' ) . '</div></div>';
 		
 		$return .= '</div>';
 	

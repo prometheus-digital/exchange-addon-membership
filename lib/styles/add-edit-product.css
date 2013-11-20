@@ -54,6 +54,6 @@
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-content-type-drip input{max-width:60px;margin:0 10px 0 0;padding:5px;}
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rule .column-reduce-padding{padding:.9em 1em;}
 
-#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rule .it-exchange-membership-content-access-group-content {min-height: 2em; padding-left: 2em; }
+#it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rule .it-exchange-membership-content-access-group-content { text-align: center; min-height: 4em; padding-left: 2em; background: #c8e5bf;}
 
 .active-group-layout{ color: red; }
