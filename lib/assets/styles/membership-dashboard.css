@@ -20,10 +20,8 @@
 
 /** -----------------------------------------------------:[ Grid/List Combos ]:---------- */
 .it-exchange-membership-membership-content .it-exchange-content-group ul{clear:both;margin-top:1em;margin-right: 1em;list-style:none;}
-
 .it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid,
 .it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid {border: none;border-top: 1px solid #DDD;clear:both;margin: 1em 0;}
-
 .it-exchange-membership-membership-content .it-exchange-content-grid li,
 .it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid ul li,
 .it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid ul li {width: 33%;float:left;border: none;list-style: none;margin-bottom: 2em;}
@@ -45,26 +43,23 @@
 .it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-item-icon,
 .it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid .it-exchange-content-item-icon,
 .it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid .it-exchange-content-item-icon {width: 30%;float: left;}
-
 .it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid .it-exchange-item-icon,
 .it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-item-icon{display:block;width:85px;height:85px;max-width:100%;background:#48C382 url('images/icon-page.png') center center no-repeat;border-radius:3px;}
 
 .it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-item-info,
 .it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid .it-exchange-content-item-info,
 .it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid .it-exchange-content-item-info{width:70%;box-sizing: border-box;float:left;}
-
 .it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid .it-exchange-content-item-info .it-exchange-item-title,
 .it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid .it-exchange-content-item-info .it-exchange-item-title {padding: 0;background: none;font-size: .875em;display: block;}
 
 .it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid .it-exchange-content-item-info .it-exchange-group-content-label,
 .it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-group-content-label,
-.it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid .it-exchange-content-item-info .it-exchange-group-content-label {padding: 0 10px;}
-
+.it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid .it-exchange-content-item-info .it-exchange-group-content-label {padding: 0 10px;margin-top: 0;}
+.it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-list .it-exchange-group-content-label,
+.it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-list .it-exchange-group-content-label,
+.it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group .it-exchange-group-content-label {padding: 1em; margin-top: 0;}
 .it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid .it-exchange-group-content-label,
 .it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid .it-exchange-group-content-label {padding: 1em 0 .25em 0;}
-
-.it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-list .it-exchange-group-content-label,
-.it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-list .it-exchange-group-content-label {padding: 1em;}
 
 .it-exchange-membership-membership-content .it-exchange-content-group-layout-grid .it-exchange-item-unavailable-message {float:none;}
 
@@ -86,12 +81,24 @@
 	.it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid ul li {
 		width: 100%;
 	}
+	
+	.it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-item-icon, 
+	.it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid .it-exchange-content-item-icon, 
+	.it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid .it-exchange-content-item-icon {
+		width: 20%;
+	}
 }
 @media screen and (max-width: 500px) {
 	.it-exchange-membership-membership-content .it-exchange-content-grid li,
 	.it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid ul li,
 	.it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid ul li {
 		width: 100%;
+	}
+	
+	.it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-item-icon, 
+	.it-exchange-membership-membership-content .it-exchange-content-list .it-exchange-content-group-layout-grid .it-exchange-content-item-icon, 
+	.it-exchange-membership-membership-content .it-exchange-content-grid .it-exchange-content-group-layout-grid .it-exchange-content-item-icon {
+		width: 30%;
 	}
 }
 
