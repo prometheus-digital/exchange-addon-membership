@@ -19,3 +19,7 @@
 	Foxed output bug in content access
 1.0.6 - 2013-11-05 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Only load product JS on add/edit product page
+1.0.7 - 2013-11-25 - Lew Ayotte, Ty Carlson
+	Added Manual Grouping
+	Updated group display options
+	Added Prerequisite, Intended Audience and Objective fields
