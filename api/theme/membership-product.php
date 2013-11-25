@@ -2,7 +2,7 @@
 /**
  * Member Dashboard class for THEME API in Membership Add-on
  *
- * @since CHANGEME
+ * @since 1.0.0 
 */
 
 class IT_Theme_API_Membership_Product implements IT_Theme_API {
@@ -10,7 +10,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	/**
 	 * API context
 	 * @var string $_context
-	 * @since CHANGEME
+	 * @since 1.0.0 
 	*/
 	private $_context = 'membership-product';
 
@@ -24,7 +24,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	/**
 	 * Maps api tags to methods
 	 * @var array $_tag_map
-	 * @since CHANGEME
+	 * @since 1.0.0 
 	*/
 	public $_tag_map = array(
 		'intendedaudience' => 'intended_audience',
@@ -35,7 +35,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	/**
 	 * Constructor
 	 *
-	 * @since CHANGEME
+	 * @since 1.0.0
 	 *
 	 * @return void
 	*/
@@ -47,7 +47,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	/**
 	 * Returns the context. Also helps to confirm we are an iThemes Exchange theme API class
 	 *
-	 * @since CHANGEME
+	 * @since 1.0.0
 	 * 
 	 * @return string
 	*/
@@ -56,7 +56,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	}
 
 	/**
-	 * @since CHANGEME
+	 * @since 1.0.0
 	 * @return string
 	*/
 	function intended_audience( $options=array() ) {
@@ -106,7 +106,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	}
 
 	/**
-	 * @since CHANGEME
+	 * @since 1.0.0
 	 * @return string
 	*/
 	function objectives( $options=array() ) {
@@ -156,7 +156,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	}
 
 	/**
-	 * @since CHANGEME
+	 * @since 1.0.0
 	 * @return string
 	*/
 	function prerequisites( $options=array() ) {

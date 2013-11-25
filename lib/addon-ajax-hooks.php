@@ -55,8 +55,8 @@ add_action( 'wp_ajax_it-exchange-membership-addon-add-content-access-rule', 'it_
 /**
  * Adds group to content access lists
  * 
- * @access public
- * @return void
+ * @since 1.0.7
+ * @return string 
  */
 function it_exchange_membership_addon_ajax_add_content_access_group() {
 	

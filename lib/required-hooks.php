@@ -440,7 +440,7 @@ add_filter( 'it_exchange_possible_template_paths', 'it_exchange_membership_addon
 /**
  * Replaces base-price content product element with customer-pricing element, if found
  *
- * @since CHANGEME
+ * @since 1.0.7 
  *
  * @param array $parts Element array for temmplate parts
  * @return array Modified array with new customer-pricing element (if base-price was found).

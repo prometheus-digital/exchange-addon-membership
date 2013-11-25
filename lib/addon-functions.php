@@ -567,7 +567,7 @@ function it_exchange_membership_access_rules_sorted_by_selected_type( $membershi
 /*
  * Returns true if product in cart is a membership product
  *
- * @since CHANGEME
+ * @since 1.0.0 
  *
  * @param object cart
  * @return bool

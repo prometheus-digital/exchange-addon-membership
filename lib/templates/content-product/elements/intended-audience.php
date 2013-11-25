@@ -3,7 +3,7 @@
  * The default template part for the membership's intended audience in
  * the content-product template part's content elements
  *
- * @since CHANGEME
+ * @since 1.0.7 
  * @version 1.0.0
  * @package IT_Exchange_Addon_Membership
  * 
