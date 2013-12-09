@@ -23,3 +23,6 @@
 	Added Manual Grouping
 	Updated group display options
 	Added Prerequisite, Intended Audience and Objective fields
+1.0.8 - 2013-12-09 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Added styles for 3.8 & pre 3.8.
+	Changes height on the settings section.
