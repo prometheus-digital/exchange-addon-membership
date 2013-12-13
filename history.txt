@@ -29,3 +29,8 @@
 1.0.9 - 2013-12-13 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Added styles for 3.8 & pre 3.8.
 	Changes height on the settings section.
+1.0.10 - 2013-12-13 - Packaging Bot (lib/updater)
+	Enhancement: Recently updated plugins and themes no longer report that an update is available.
+	Enhancement: Added alternate line styling to the listings on the licensing page.
+	Enhancement: Products with iThemes in the name will now properly capitalize the name.
+	Enhancement: The updater and licensing system now handle iThemes server outages without causing long page delays or by reporting confusing error messages.
