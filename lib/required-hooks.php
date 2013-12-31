@@ -152,6 +152,132 @@ function it_exchange_membership_addon_load_public_scripts( $current_view ) {
 add_action( 'wp_enqueue_scripts', 'it_exchange_membership_addon_load_public_scripts' );
 
 /**
+ * Outputs the Membership media form button
+ *
+ * @since CHANGEME
+ * @return void
+*/
+function it_exchange_membership_addon_media_form_button() {
+	global $post;
+	
+	if ( isset( $_REQUEST['post_type'] ) ) {
+		$post_type = $_REQUEST['post_type'];
+	} else {
+		if ( isset( $_REQUEST['post'] ) )
+			$post_id = (int) $_REQUEST['post'];
+		elseif ( isset( $_REQUEST['post_ID'] ) )
+			$post_id = (int) $_REQUEST['post_ID'];
+		else
+			$post_id = 0;
+
+		if ( $post_id )
+			$post = get_post( $post_id );
+
+		if ( isset( $post ) && !empty( $post ) )
+			$post_type = $post->post_type;
+	}
+	
+	add_thickbox();
+   
+	if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
+        // display button matching new UI
+        echo '<style>.it_exchange_membership_media_icon{
+					background:url(' . '' . '/images/gravity-admin-icon.png) no-repeat top left;
+					display: inline-block;
+					height: 16px;
+					margin: 0 2px 0 0;
+					vertical-align: text-top;
+					width: 16px;
+				}
+				.wp-core-ui a.it_exchange_membership_media_link{
+					 padding-left: 0.4em;
+				}
+			</style>
+			<a href="#TB_inline?width=380&height=300&inlineId=select-membership-product" class="thickbox button it_exchange_membership_media_link" id="add_membership_content" title="' . __( 'Add Member Content', 'LION' ) . '"><span class="it_exchange_membership_media_icon "></span> ' . __( 'Add Member Content', 'LION' ) . '</a>';
+    }
+}
+add_action( 'media_buttons', 'it_exchange_membership_addon_media_form_button', 15 );
+
+/**
+ * Outputs the Membershpi MCE Popup
+ *
+ * @since CHANGEME
+ * @return void
+*/
+function it_exchange_membership_addon_mce_popup_footer() {
+	global $post;
+	
+	if ( isset( $_REQUEST['post_type'] ) ) {
+		$post_type = $_REQUEST['post_type'];
+	} else {
+		if ( isset( $_REQUEST['post'] ) )
+			$post_id = (int) $_REQUEST['post'];
+		elseif ( isset( $_REQUEST['post_ID'] ) )
+			$post_id = (int) $_REQUEST['post_ID'];
+		else
+			$post_id = 0;
+
+		if ( $post_id )
+			$post = get_post( $post_id );
+
+		if ( isset( $post ) && !empty( $post ) )
+			$post_type = $post->post_type;
+	}
+	
+	if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
+		?>
+		<script>
+            function InsertMemberContentShortcode() {
+            	var membership_ids = new Array;
+
+                jQuery( '#add-membership-id option:selected' ).each( function() {
+					membership_ids.push( jQuery( this ).val() );
+				});
+				
+				if ( membership_ids.length == 0 ){
+                    alert("<?php _e( 'You must select at least one membership product', 'LION' ); ?>");
+                    return;
+                }
+                
+                var content = tinyMCE.activeEditor.selection.getContent();
+
+                window.send_to_editor( '[it-exchange-member-content membership_ids="' + membership_ids.join() + '"]' + content + '[/it-exchange-member-content]' );
+            }
+        </script>
+
+        <div id="select-membership-product" style="display:none;">
+            <div class="wrap">
+                <div>
+                    <div style="padding:15px 15px 0 15px;">
+                        <h3><?php _e( 'Select Membership Product(s)', 'LION' ); ?></h3>
+                        <span>
+                            <?php _e( 'Choose the Memberships allowed to see selected content.', 'LION' ); ?>
+                        </span>
+                    </div>
+                    <div style="padding:15px 15px 0 15px;">
+                        <select id="add-membership-id" multiple="multiple" size="5">
+                            <?php
+                            $membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type' ) );
+							foreach ( $membership_products as $membership ) {
+								echo '<option value="' . $membership->ID . '">' . get_the_title( $membership->ID ) . '</option>';
+							}
+                            ?>
+                        </select>
+                    </div>
+                    <div style="padding:15px;">
+                    <input type="button" class="button-primary" value="<?php _e( 'Insert Shortcode', 'LION' ); ?>" onclick="InsertMemberContentShortcode();"/>&nbsp;&nbsp;&nbsp;
+                    <a class="button" style="color:#bbb;" href="#" onclick="tb_remove(); return false;"><?php _e( 'Cancel', 'LION' ); ?></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+	}
+	
+}
+add_action( 'admin_footer', 'it_exchange_membership_addon_mce_popup_footer' );
+
+/**
  * Adds shortcode information below extended description box
  *
  * @since 1.0.0

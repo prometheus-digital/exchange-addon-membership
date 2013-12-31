@@ -180,7 +180,7 @@ function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
 	$return .= '<select class="it-exchange-membership-id" name="it_exchange_membership_id">';
 	$membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type' ) );
 	foreach ( $membership_products as $membership ) {
-		$return .= '<option type="checkbox" value="' . $membership->ID . '">' . get_the_title( $membership->ID ) . '</option>';
+		$return .= '<option value="' . $membership->ID . '">' . get_the_title( $membership->ID ) . '</option>';
 	}
 	$return .= '</select>';
 	$return .= '<span class="it-exchange-membership-remove-new-rule">&times;</span>';

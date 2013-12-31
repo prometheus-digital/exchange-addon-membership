@@ -8,10 +8,10 @@
 /**
  * Creates a shortcode that returns content template parts for pages
  *
- * @since 0.4.8
+ * @since 1.0.0
  *
  * @param array $atts attributes passed in via shortcode arguments
- * @return string the template part
+ * @return string the shortcode content
 */
 function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 	global $post;
@@ -19,7 +19,7 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 	$membership_settings = it_exchange_get_option( 'addon_membership' );
 	
 	$defaults = array(
-		'product_id' => !empty( $post->ID ) ? $post->ID : false,
+		'product_id'         => !empty( $post->ID ) ? $post->ID : false,
 		'before'             => '<div class="it-exchange-restricted-content">',
 		'after'              => '</div>',
 		'title'              => '',
@@ -225,3 +225,36 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 	return false;
 }
 add_shortcode( 'it-exchange-membership-included-content', 'it_exchange_membership_addon_add_included_content_shortcode' );
+
+/**
+ * Creates a shortcode that hides/displays member content
+ *
+ * @since CHANGEME
+ *
+ * @param array $atts attributes passed in via shortcode arguments
+ * @param string $content current content
+ * @return string the shortcode content
+*/
+function it_exchange_membership_addon_member_content_shortcode( $atts, $content = null ) {	
+	$membership_settings = it_exchange_get_option( 'addon_membership' );
+	
+	$defaults = array(
+		'membership_ids'      => 0,
+	);
+	$atts = shortcode_atts( $defaults, $atts );
+	extract( $atts );
+	$membership_ids = explode( ',', $membership_ids );
+	
+	if ( is_user_logged_in() ) {
+		$member_access = it_exchange_get_session_data( 'member_access' );		
+		if ( !empty( $member_access )  ) {
+			foreach( $member_access as $txn_id => $product_id ) {
+				if ( in_array( $product_id, $membership_ids ) )
+					return $content;
+			}
+		}
+	} 
+	
+	return '';
+}
+add_shortcode( 'it-exchange-member-content', 'it_exchange_membership_addon_member_content_shortcode' );
