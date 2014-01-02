@@ -114,12 +114,15 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 		</div>
         <div class="it-exchange-content-access-list-wrapper">
 			<?php
-            if ( !empty( $access_rules ) )
-                $hidden_class = '';
-            else
-                $hidden_class = 'hidden';
+            if ( !empty( $access_rules ) ) {
+                $hidden_access_list_class = '';
+                $hidden_no_rules_class = 'hidden';
+            } else {
+                $hidden_access_list_class = 'hidden';
+                $hidden_no_rules_class = '';
+            }
             ?>
-        	<div class="it-exchange-content-access-list <?php echo $hidden_class; ?>">
+        	<div class="it-exchange-content-access-list <?php echo $hidden_access_list_class; ?>">
                 <div class="it-exchange-content-access-list-titles">
                     <div class="it-exchange-content-access-item columns-wrapper">
                         <div class="column"></div>
@@ -179,13 +182,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
                 ?>
                 </div>
             </div>
-            <?php
-			if ( !empty( $hidden_class ) ) {
-				?>
-                <div class="it-exchange-content-no-rules it-exchange-membership-content-access-add-new-rule"><?php _e( 'No content access rules added to this membership yet. <a href="">Add New Rule</a>', 'LION' ); ?></div>
-                <?php	
-			}
-			?>
+            <div class="it-exchange-content-no-rules it-exchange-membership-content-access-add-new-rule <?php echo $hidden_no_rules_class; ?>"><?php _e( 'No content access rules added to this membership yet. <a href="">Add New Rule</a>', 'LION' ); ?></div>
         </div>
 		<div class="it-exchange-content-access-footer">
 			<div class="it-exchange-membership-content-access-add-new-rule left">
