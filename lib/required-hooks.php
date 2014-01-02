@@ -182,7 +182,7 @@ function it_exchange_membership_addon_media_form_button() {
 	if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
         // display button matching new UI
         echo '<style>.it_exchange_membership_media_icon{
-					background:url(' . '' . '/images/gravity-admin-icon.png) no-repeat top left;
+					background:url(' . ITUtility::get_url_from_file( dirname( __FILE__ ) . '/images/membership16px.png' ) . ') no-repeat top left;
 					display: inline-block;
 					height: 16px;
 					margin: 0 2px 0 0;
