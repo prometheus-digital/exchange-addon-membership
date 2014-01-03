@@ -193,7 +193,7 @@ function it_exchange_membership_addon_media_form_button() {
 					 padding-left: 0.4em;
 				}
 			</style>
-			<a href="#TB_inline?width=380&height=300&inlineId=select-membership-product" class="thickbox button it_exchange_membership_media_link" id="add_membership_content" title="' . __( 'Add Member Content', 'LION' ) . '"><span class="it_exchange_membership_media_icon "></span> ' . __( 'Add Member Content', 'LION' ) . '</a>';
+			<a href="#TB_inline?width=380&inlineId=select-membership-product" class="thickbox button it_exchange_membership_media_link" id="add_membership_content" title="' . __( 'Restrict content to a specific Membership product in this post with the Member Content shortcode', 'LION' ) . '"><span class="it_exchange_membership_media_icon "></span> ' . __( 'Member Content', 'LION' ) . '</a>';
     }
 }
 add_action( 'media_buttons', 'it_exchange_membership_addon_media_form_button', 15 );
@@ -248,6 +248,7 @@ function it_exchange_membership_addon_mce_popup_footer() {
         <div id="select-membership-product" style="display:none;">
             <div class="wrap">
                 <div>
+                	<p class="description" style="padding:0 15px;"><?php _e( 'To restrict content within this post or page to users with a specific membership level, highlight the section you’d like to restrict in your content, choose the membership levels you’d like to give access to the content and click the Insert Shortcode button below.', 'LION' ); ?></p>
                     <div style="padding:15px 15px 0 15px;">
                         <h3><?php _e( 'Select Membership Product(s)', 'LION' ); ?></h3>
                         <span>
