@@ -54,3 +54,8 @@
 	Bug Fix: Licensing will now be universal across all sites of a multisite network. This means that you will only need to license on one site to have the license apply across the entire network.
 1.0.17 - 2013-12-19 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Bug Fix: Licensing will now be universal across all sites of a multisite network. This means that you will only need to license on one site to have the license apply across the entire network.
+1.0.18 - 2014-01-03 - Lew Ayotte
+	Fixed bug not showing groups when added to empty access set, Added better feedback when removing all access rules
+	Adding new media button icon provided by brad
+	Added shortcode to restricted specific sub-content
+
