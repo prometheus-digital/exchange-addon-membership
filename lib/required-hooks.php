@@ -364,6 +364,10 @@ function it_exchange_membership_addon_setup_customer_session() {
 				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 24 ); //only do it daily
 				$customer->update_customer_meta( 'member_access', $member_access );
 			}
+			foreach( $member_access as $txn_id => $product_id ) {
+				if( $child_id = get_post_meta( $product_id, '_it-exchange-membership-child-id', true ) )
+					$member_access[$product_id . '-' . $child_id] = $child_id;
+			}
 		}
 		$member_diff = array_diff( (array)$member_access, (array)$member_access_session );
 		if ( !empty( $member_diff ) )
