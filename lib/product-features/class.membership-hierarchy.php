@@ -103,18 +103,28 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 		// Grab the iThemes Exchange Product object from the WP $post object
 		$product = it_exchange_get_product( $post );
         $defaults = it_exchange_get_option( 'addon_membership' );
+		$membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type' ) );
 		
-		$child = it_exchange_get_product_feature( $product->ID, 'membership-hierarchy' );
+		$child_ids = it_exchange_get_product_feature( $product->ID, 'membership-hierarchy', array( 'setting' => 'children' ) );
+		$parent_ids = it_exchange_get_product_feature( $product->ID, 'membership-hierarchy', array( 'setting' => 'parents' ) );
 		
-		echo '<p><label for="it-exchange-membership-hierarchy-intended-audience-template" class="customer-information-label">' . __( 'Select Child Membership Product', 'LION' ) . ' <span class="tip" title="' . __( "A Parent gets all of its own access, plus all of it's Child(ren)'s access.", 'LION' ) . '">i</span></label></p>';
+		echo '<p><label for="it-exchange-membership-child-id" class="it-exchange-membership-child-label">' . __( 'Select Child Membership Product', 'LION' ) . ' <span class="tip" title="' . __( "A Parent gets all of its own access, plus all of it's Child(ren)'s access.", 'LION' ) . '">i</span></label></p>';
         
         echo '<select class="it-exchange-membership-child-id" name="it-exchange-membership-child-id">';
 		echo '<option value="">' . __( 'Select a Membership Product', 'LION' ) . '</option>';
-
-		$membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type' ) );
 		foreach ( $membership_products as $membership ) {
-			if ( $membership->ID != $post->ID )
-				echo '<option value="' . $membership->ID . '" ' . selected( $child, $membership->ID ) . '>' . get_the_title( $membership->ID ) . '</option>';
+			if ( $membership->ID != $post->ID ) //needs to be fixed
+				echo '<option value="' . $membership->ID . '" ' . selected( in_array( $membership->ID, $child_ids ) ) . '>' . get_the_title( $membership->ID ) . '</option>';
+		}
+		echo '</select>';
+		
+		echo '<p><label for="it-exchange-membership-parent-id" class="it-exchange-membership-parent-label">' . __( 'Select Parent Membership Product', 'LION' ) . ' <span class="tip" title="' . __( "A Parent gets all of its own access, plus all of it's Child(ren)'s access.", 'LION' ) . '">i</span></label></p>';
+        
+        echo '<select class="it-exchange-membership-parent-id" name="it-exchange-membership-parent-id">';
+		echo '<option value="">' . __( 'Select a Membership Product', 'LION' ) . '</option>';
+		foreach ( $membership_products as $membership ) {
+			if ( $membership->ID != $post->ID ) //needs to be fixed
+				echo '<option value="' . $membership->ID . '" ' . selected( in_array( $membership->ID, $parent_ids ) ) . '>' . get_the_title( $membership->ID ) . '</option>';
 		}
 		echo '</select>';
 	}
@@ -142,11 +152,24 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 			return;
 
 		if ( empty( $_POST['it-exchange-membership-child-id'] ) ) {
-			$child_id = get_post_meta( $product_id, '_it-exchange-membership-parent-id' );
+			$child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' );
 			delete_post_meta( $product_id, '_it-exchange-membership-child-id' );
-			delete_post_meta( $child_id, '_it-exchange-membership-child-id', $product_id );
-		} else
-			it_exchange_update_product_feature( $product_id, 'membership-hierarchy', $_POST['it-exchange-membership-child-id'] );
+			foreach( $child_ids as $child_id ) {
+				delete_post_meta( $child_id, '_it-exchange-membership-parent-id', $product_id );
+			}
+		} else {
+			it_exchange_update_product_feature( $product_id, 'membership-hierarchy', $_POST['it-exchange-membership-child-id'], array( 'setting' => 'children' ) );
+		}
+		
+		if ( empty( $_POST['it-exchange-membership-parent-id'] ) ) {
+			$parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' );
+			delete_post_meta( $product_id, '_it-exchange-membership-parent-id' );
+			foreach( $parent_ids as $parent_id ) {
+				delete_post_meta( $parent_id, '_it-exchange-membership-child-id', $product_id );
+			}
+		} else {
+			it_exchange_update_product_feature( $product_id, 'membership-hierarchy', $_POST['it-exchange-membership-parent-id'], array( 'setting' => 'parents' ) );
+		}
 	}
 
 	/**
@@ -157,11 +180,32 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 	 * @param integer product_id the WordPress post ID
 	 * @return string product feature
 	*/
-	function save_feature( $product_id, $new_value ) {
-		if ( $product_id !== $new_value ) {
-			update_post_meta( $product_id, '_it-exchange-membership-child-id', $new_value );
-			add_post_meta( $new_value, '_it-exchange-membership-parent-id', $product_id );
-		}			
+	function save_feature( $product_id, $new_value, $options=array() ) {
+		if ( $product_id !== $new_value ) { //we don't want to add ourselves as our own parent or child
+			switch ( $options['setting'] ) {
+				
+				case 'children':
+					$child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' );
+					if ( !in_array( $new_value, (array)$child_ids ) )
+						add_post_meta( $product_id, '_it-exchange-membership-child-id', $new_value );
+							
+					$parent_ids = get_post_meta( $new_value, '_it-exchange-membership-parent-id' );
+					if ( !in_array( $product_id, (array)$parent_ids ) )
+						add_post_meta( $new_value, '_it-exchange-membership-parent-id', $product_id );
+					break;
+					
+				case 'parents':
+					$parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' );
+					if ( !in_array( $new_value, (array)$parent_ids ) )
+						add_post_meta( $product_id, '_it-exchange-membership-parent-id', $new_value );
+							
+					$child_ids = get_post_meta( $new_value, '_it-exchange-membership-child-id' );
+					if ( !in_array( $product_id, (array)$child_ids ) )
+						add_post_meta( $new_value, '_it-exchange-membership-child-id', $product_id );
+					break;
+				
+			}
+		}
 		return true;
 	}
 
@@ -174,8 +218,18 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 	 * @param integer product_id the WordPress post ID
 	 * @return string product feature
 	*/
-	function get_feature( $existing, $product_id ) {
-		return get_post_meta( $product_id, '_it-exchange-membership-child-id', true );
+	function get_feature( $existing, $product_id, $options=array() ) {
+		switch ( $options['setting'] ) {
+
+			case 'children':
+				$test = get_post_meta( $product_id, '_it-exchange-membership-child-id' );
+				return $test;
+			case 'parents':
+				return get_post_meta( $product_id, '_it-exchange-membership-parent-id' );
+				
+		}
+		
+		return false;
 	}
 
 	/**
@@ -186,13 +240,13 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 	 * @param integer $product_id
 	 * @return boolean
 	*/
-	function product_has_feature( $result, $product_id ) {
+	function product_has_feature( $result, $product_id, $options=array() ) {
 		// Does this product type support this feature?
-		if ( false === $this->product_supports_feature( false, $product_id ) )
+		if ( false === $this->product_supports_feature( false, $product_id, $options ) )
 			return false;
 
 		// If it does support, does it have it?
-		return (boolean) $this->get_feature( false, $product_id );
+		return (boolean) $this->get_feature( false, $product_id, $options );
 	}
 
 	/**
@@ -206,7 +260,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 	 * @param integer $product_id
 	 * @return boolean
 	*/
-	function product_supports_feature( $result, $product_id ) {
+	function product_supports_feature( $result, $product_id, $options=array() ) {
 		// Does this product type support this feature?
 		$product_type = it_exchange_get_product_type( $product_id );
 		if ( ! it_exchange_product_type_supports_feature( $product_type, 'membership-hierarchy' ) )

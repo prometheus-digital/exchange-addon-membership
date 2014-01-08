@@ -587,3 +587,58 @@ function it_exchange_membership_cart_contains_membership_product( $cart_products
 	return false;
 	
 }
+
+/*
+ * For hierarchical membership types
+ * Get all child membership products and adds it to an array to be used
+ * for generating the member_access session
+ *
+ * @since CHANGEME 
+ *
+ * @param array $membership_products current list of accessible membership products
+ * @param array $product_ids
+ * @return array
+*/
+function setup_recursive_member_access( $membership_products, $product_ids = array() ) {
+	foreach( $membership_products as $product_id ) {
+		if ( in_array( $product_id, $product_ids ) )
+			break;
+		
+		$product_ids[] = $product_id;
+		if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
+			$product_ids = setup_recursive_member_access( $child_ids, $product_ids );
+		}
+	}
+	return $product_ids;
+}
+
+/*
+ * For hierarchical membership types
+ * Finds all the most-parental membership types in the member_access session
+ * Used generally to prevent duplicate content from being printed
+ * in the member's dashboard
+ *
+ * @since CHANGEME
+ *
+ * @param array $membership_products current list of accessible membership products
+ * @param array $product_ids
+ * @return array
+*/
+function setup_parent_member_access( $membership_products, $product_ids = array() ) {
+	foreach( $membership_products as $product_id ) {
+		if ( $parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' ) ) {
+			$parent_found = false;
+			foreach( $parent_ids as $parent_id ) {
+				if ( false !== $key = array_search( $parent_id, $membership_products ) ) {
+					$parent_found = true;
+				}
+			}
+			if ( !$parent_found )
+				$product_ids[] = $product_id; //we're the greatest parent
+				
+		} else {
+			$product_ids[] = $product_id; //we're the greatest parent
+		}
+	}
+	return $product_ids;
+}

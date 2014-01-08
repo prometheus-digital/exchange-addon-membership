@@ -198,13 +198,10 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 			
 			case 'intended-audience':
 				return get_post_meta( $product_id, '_it-exchange-product-membership-intended-audience', true );
-				break;
 			case 'objectives':
 				return get_post_meta( $product_id, '_it-exchange-product-membership-objectives', true );
-				break;
 			case 'prerequisites':
 				return get_post_meta( $product_id, '_it-exchange-product-membership-prerequisites', true );
-				break;
 		}
 		
 		return false;
