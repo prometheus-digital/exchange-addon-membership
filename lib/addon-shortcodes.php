@@ -248,7 +248,7 @@ function it_exchange_membership_addon_member_content_shortcode( $atts, $content 
 	if ( is_user_logged_in() ) {
 		$member_access = it_exchange_get_session_data( 'member_access' );		
 		if ( !empty( $member_access )  ) {
-			foreach( $member_access as $txn_id => $product_id ) {
+			foreach( $member_access as $product_id ) {
 				if ( in_array( $product_id, $membership_ids ) )
 					return $content;
 			}
