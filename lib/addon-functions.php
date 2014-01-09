@@ -600,7 +600,7 @@ function it_exchange_membership_cart_contains_membership_product( $cart_products
  * @param array $product_ids
  * @return array
 */
-function setup_recursive_member_access( $membership_products, $product_ids = array() ) {
+function setup_recursive_member_access_array( $membership_products, $product_ids = array() ) {
 	foreach( $membership_products as $product_id ) {
 		if ( in_array( $product_id, $product_ids ) )
 			break;
@@ -615,6 +615,43 @@ function setup_recursive_member_access( $membership_products, $product_ids = arr
 
 /*
  * For hierarchical membership types
+ * Prints or returns an HTML formatted list of memberships and their children
+ *
+ * @since CHANGEME 
+ *
+ * @param array $membership_products parent IDs of membership products
+ * @param array $args array of arguments for the function
+ * @return string|null
+*/
+function display_membership_hierarchy( $product_ids, $args = array() ) {
+	$defaults = array(
+		'echo'   => true,
+		'delete' => true,
+	);
+	$args = wp_parse_args( $args, $defaults );
+	extract( $args );
+
+	$output = '';
+	foreach( $product_ids as $product_id ) {
+		$output .= '<ul>';
+		$output .= '<li>' . get_the_title( $product_id );
+		if ( $delete )
+			$output .= ' <span data-membership-id="' . $product_id . '" class="delete-membership-child">x</span>';
+		if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
+			$output .= display_membership_hierarchy( $child_ids, array( 'echo' => false ) );
+		}
+		$output .= '</li>';
+		$output .= '</ul>';
+	}
+	
+	if ( $echo )
+		echo $output;
+	else
+		return $output;
+}
+
+/*
+ * For hierarchical membership types
  * Finds all the most-parental membership types in the member_access session
  * Used generally to prevent duplicate content from being printed
  * in the member's dashboard
@@ -625,7 +662,7 @@ function setup_recursive_member_access( $membership_products, $product_ids = arr
  * @param array $product_ids
  * @return array
 */
-function setup_parent_member_access( $membership_products, $product_ids = array() ) {
+function setup_parent_member_access_array( $membership_products, $product_ids = array() ) {
 	foreach( $membership_products as $product_id ) {
 		if ( $parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' ) ) {
 			$parent_found = false;
