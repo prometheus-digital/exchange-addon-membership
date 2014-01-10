@@ -607,7 +607,7 @@ function setup_recursive_member_access_array( $membership_products, $product_ids
 		
 		$product_ids[] = $product_id;
 		if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
-			$product_ids = setup_recursive_member_access( $child_ids, $product_ids );
+			$product_ids = setup_recursive_member_access_array( $child_ids, $product_ids );
 		}
 	}
 	return $product_ids;

@@ -795,3 +795,131 @@ function it_exchange_membership_addon_email_notification_order_table_product_nam
 	return $product_name;
 }
 add_filter( 'it_exchange_email_notification_order_table_product_name', 'it_exchange_membership_addon_email_notification_order_table_product_name', 10, 2 );
+
+function it_exchange_membership_addon_api_theme_product_base_price( $price, $product_id ) {
+	
+	if ( it_exchange_product_supports_feature( $product_id, 'membership-hierarchy' )
+		&& it_exchange_product_has_feature( $product_id, 'membership-hierarchy', array( 'setting' => 'children' ) ) ) {
+		
+		$child_ids = setup_recursive_member_access_array( array( $product_id ) );
+		
+		if ( !empty( $child_ids ) ) {		
+			$base_product_price = it_exchange_get_product_feature( $product_id, 'base-price' );
+			$db_product_price = it_exchange_convert_to_database_number( $base_product_price );
+			$most_priciest = 0;
+			
+			$parent_memberships = it_exchange_get_session_data( 'parent_access' );
+			
+			foreach ( $parent_memberships as $parent_id ) {
+				if ( $parent_id != $product_id && in_array( $parent_id, $child_ids ) ) {
+					$product = it_exchange_get_product( $parent_id );
+					$base_price = it_exchange_get_product_feature( $product->ID, 'base-price' );
+					$db_price = it_exchange_convert_to_database_number( $base_price );
+					if ( $db_price > $most_priciest )
+						$most_priciest = $db_price;
+				}
+			}
+						
+			if ( $most_priciest < $db_product_price ) {
+				$db_product_price -= $most_priciest;
+	
+				$base_product_price = it_exchange_convert_from_database_number( $db_product_price );
+			
+				$price = empty( $db_product_price ) ? '<span class="free-label">' . __( 'Free', 'LION' ) . '</span>' : it_exchange_format_price( $base_product_price );
+			}
+			
+		}
+		
+	}
+	
+	return $price;
+}
+//add_filter( 'it_exchange_api_theme_product_base_price', 'it_exchange_membership_addon_api_theme_product_base_price', 10, 2 );
+
+/**
+ * Replaces base-price with customer's set price from session data
+ *
+ * @since 1.0.0
+ *
+ * @param string $db_base_price default Base Price
+ * @param array $product iThemes Exchange Product
+ * @param bool $format Whether or not the price should be formatted 
+ * @return string $db_base_price modified, if customer price has been set for product
+*/
+function it_exchange_get_membership_addon_cart_product_base_price( $db_base_price, $product, $format ) {
+	if ( it_exchange_product_supports_feature( $product->ID, 'membership-hierarchy' )
+		&& it_exchange_product_has_feature( $product->ID, 'membership-hierarchy', array( 'setting' => 'children' ) ) ) {
+		
+		$child_ids = setup_recursive_member_access_array( array( $product->ID ) );
+		
+		if ( !empty( $child_ids ) ) {		
+			$most_priciest = 0;
+			
+			$parent_memberships = it_exchange_get_session_data( 'parent_access' );
+			
+			foreach ( $parent_memberships as $parent_id ) {
+				if ( $parent_id != $product_id && in_array( $parent_id, $child_ids ) ) {
+					$product = it_exchange_get_product( $parent_id );
+					$base_price = it_exchange_get_product_feature( $product->ID, 'base-price' );
+					$db_price = it_exchange_convert_to_database_number( $base_price );
+					if ( $db_price > $most_priciest )
+						$most_priciest = $db_price;
+				}
+			}
+						
+			if ( $most_priciest < $db_product_price ) {
+				$db_base_price -= $most_priciest;
+			}
+			
+		}
+		
+	}
+	
+	return $db_base_price;
+}
+add_filter( 'it_exchange_get_cart_product_base_price', 'it_exchange_get_membership_addon_cart_product_base_price', 10, 3 );
+
+/**
+ * Replaces base-price with default customer-pricing setting on Products page in WP Dashboard
+ * Or the lowest price option if no default has been set
+ *
+ * @since 1.0.0
+ *
+ * @param string $base_price default Base Price
+ * @param int $product_id iThemes Exchange Product ID
+ * @param array $options Any options being passed through function 
+ * @return string $base_price modified, if  customer pricing has been enabled for product
+*/
+function it_exchange_membership_addon_get_product_feature_base_price( $base_price, $product_id, $options ) {
+	if ( it_exchange_product_supports_feature( $product_id, 'membership-hierarchy' )
+		&& it_exchange_product_has_feature( $product_id, 'membership-hierarchy', array( 'setting' => 'children' ) ) ) {
+		
+		$child_ids = setup_recursive_member_access_array( array( $product_id ) );
+		
+		if ( !empty( $child_ids ) ) {		
+			$db_product_price = it_exchange_convert_to_database_number( $base_price );
+			$most_priciest = 0;
+			
+			$parent_memberships = it_exchange_get_session_data( 'parent_access' );
+			
+			foreach ( $parent_memberships as $parent_id ) {
+				if ( $parent_id != $product_id && in_array( $parent_id, $child_ids ) ) {
+					$product = it_exchange_get_product( $parent_id );
+					$child_base_price = it_exchange_get_product_feature( $product->ID, 'base-price' );
+					$db_price = it_exchange_convert_to_database_number( $child_base_price );
+					if ( $db_price > $most_priciest )
+						$most_priciest = $db_price;
+				}
+			}
+						
+			if ( $most_priciest < $db_product_price ) {
+				$db_product_price -= $most_priciest;
+				$base_price = it_exchange_convert_from_database_number( $db_product_price );
+			}
+			
+		}
+		
+	}
+	return $base_price;
+}
+add_filter( 'it_exchange_get_product_feature_base-price', 'it_exchange_membership_addon_get_product_feature_base_price', 10, 3 );
