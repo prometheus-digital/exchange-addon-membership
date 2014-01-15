@@ -110,13 +110,14 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 		$child_ids = it_exchange_get_product_feature( $product->ID, 'membership-hierarchy', array( 'setting' => 'children' ) );
 		$parent_ids = it_exchange_get_product_feature( $product->ID, 'membership-hierarchy', array( 'setting' => 'parents' ) );
 		
-		echo '<p><label for="it-exchange-membership-child-id" class="it-exchange-membership-child-label">' . __( 'Child Memberships', 'LION' ) . ' <span class="tip" title="' . __( "A Parent gets all of its own access, plus all of it's Child(ren)'s access.", 'LION' ) . '">i</span></label></p>';
+		echo '<p><label for="it-exchange-membership-child-id" class="it-exchange-membership-label it-exchange-membership-child-label">' . __( 'Child Memberships', 'LION' ) . ' <span class="tip" title="' . __( "A Parent gets all of its own access, plus all of it's Child(ren)'s access.", 'LION' ) . '">i</span></label></p>';
 		echo '<p>' . __( 'Additional membership available to owners of this membership level.', 'LION' ) . '</p>';
 	
   		echo '<div class="it-exchange-membership-child-ids-list-div">';
 		display_membership_hierarchy( $child_ids );
 		echo '</div>';
 		        
+        echo '<div class="it-exchange-membership-hierarchy-add it-exchange-membership-hierarchy-add-child">';
         echo '<select class="it-exchange-membership-child-id" name="it-exchange-membership-child-id">';
 		echo '<option value="">' . __( 'Select a Membership', 'LION' ) . '</option>';
 		foreach ( $membership_products as $membership ) {
@@ -124,24 +125,24 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 				echo '<option value="' . $membership->ID . '">' . get_the_title( $membership->ID ) . '</option>';
 		}
 		echo '</select>';
-        echo '<div class="it-exchange-membership-hierarchy-add-child right">';
         echo '<a href class="button">' . __( 'Add Child Membership', 'LION' ) . '</a>';
         echo '</div>';
 				
-		echo '<p><label for="it-exchange-membership-parent-id" class="it-exchange-membership-parent-label">' . __( 'Parent Memberships', 'LION' ) . ' <span class="tip" title="' . __( "A Parent gets all of its own access, plus all of it's Child(ren)'s access.", 'LION' ) . '">i</span></label></p>';
+		echo '<p><label for="it-exchange-membership-parent-id" class="it-exchange-membership-label it-exchange-membership-parent-label">' . __( 'Parent Memberships', 'LION' ) . ' <span class="tip" title="' . __( "A Parent gets all of its own access, plus all of it's Child(ren)'s access.", 'LION' ) . '">i</span></label></p>';
 		echo '<p>' . __( 'Memberships that include content from this membership and all children of it.', 'LION' ) . '</p>';
   		
   		echo '<div class="it-exchange-membership-parent-ids-list-div">';
 		echo '<ul>';
 		foreach ( $parent_ids as $parent_id ) {
 			echo '<li data-parent-id="' . $parent_id . '">';
-			echo get_the_title( $parent_id ) . ' <span data-membership-id="' . $parent_id . '" class="it-exchange-membership-addon-delete-membership-parent">x</span>';
-			echo '<input type="hidden" name="it-exchange-membership-parent-ids[]" value="' . $parent_id . '" />';
+			echo '<div class="inner-wrapper">' . get_the_title( $parent_id ) . ' <a href data-membership-id="' . $parent_id . '" class="it-exchange-membership-addon-delete-membership-parent it-exchange-remove-item">&times;</a>';
+			echo '<input type="hidden" name="it-exchange-membership-parent-ids[]" value="' . $parent_id . '" /></div>';
 			echo '</li>';
 		}
 		echo '</ul>';
 		echo '</div>';
 		
+        echo '<div class="it-exchange-membership-hierarchy-add it-exchange-membership-hierarchy-add-parent">';
         echo '<select class="it-exchange-membership-parent-id" name="it-exchange-membership-parent-id">';
 		echo '<option value="">' . __( 'Select a Membership', 'LION' ) . '</option>';
 		foreach ( $membership_products as $membership ) {
@@ -149,7 +150,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 				echo '<option value="' . $membership->ID . '">' . get_the_title( $membership->ID ) . '</option>';
 		}
 		echo '</select>';
-        echo '<div class="it-exchange-membership-hierarchy-add-parent right">';
         echo '<a href class="button">' . __( 'Add Parent Membership', 'LION' ) . '</a>';
         echo '</div>';
 	}

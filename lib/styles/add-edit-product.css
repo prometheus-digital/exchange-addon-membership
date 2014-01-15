@@ -60,3 +60,12 @@
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rule .it-exchange-membership-content-access-group-content {min-height: 4em; padding-left: 2em; }
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rule .it-exchange-membership-content-access-group-content .nosort { text-align: center;padding: 1.5em 0;background: #fff;-webkit-box-shadow: inset 0 0 10px rgba(0,0,0,0.2); -moz-box-shadow: inset 0 0 10px rgba(0,0,0,0.2);box-shadow: inset 0 0 10px rgba(0,0,0,0.2);}
 .active-group-layout{ color: red; }
+
+/** -----------------------------------------------------:[ Hierarchy ]:---------- */
+#it-exchange-product-membership-hierarchy ul{margin:0;}
+#it-exchange-product-membership-hierarchy li .inner-wrapper{position:relative;border:1px solid #D7D7D7;padding:1em;}
+#it-exchange-product-membership-hierarchy li li{margin-left:2em;}
+#it-exchange-product-membership-hierarchy li li .inner-wrapper{border-top:0;}
+#it-exchange-product-membership-hierarchy .it-exchange-remove-item{position:absolute;right:0;top:0;}
+#it-exchange-product-membership-hierarchy .it-exchange-membership-hierarchy-add{margin-top:1em;}
+#it-exchange-product-membership-hierarchy .it-exchange-membership-label{margin-top:2em;}
