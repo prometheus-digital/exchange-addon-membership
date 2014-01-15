@@ -112,8 +112,10 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 		
 		echo '<p><label for="it-exchange-membership-child-id" class="it-exchange-membership-child-label">' . __( 'Child Memberships', 'LION' ) . ' <span class="tip" title="' . __( "A Parent gets all of its own access, plus all of it's Child(ren)'s access.", 'LION' ) . '">i</span></label></p>';
 		echo '<p>' . __( 'Additional membership available to owners of this membership level.', 'LION' ) . '</p>';
-		
+	
+  		echo '<div class="it-exchange-membership-child-ids-list-div">';
 		display_membership_hierarchy( $child_ids );
+		echo '</div>';
 		        
         echo '<select class="it-exchange-membership-child-id" name="it-exchange-membership-child-id">';
 		echo '<option value="">' . __( 'Select a Membership', 'LION' ) . '</option>';
@@ -129,14 +131,17 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 		echo '<p><label for="it-exchange-membership-parent-id" class="it-exchange-membership-parent-label">' . __( 'Parent Memberships', 'LION' ) . ' <span class="tip" title="' . __( "A Parent gets all of its own access, plus all of it's Child(ren)'s access.", 'LION' ) . '">i</span></label></p>';
 		echo '<p>' . __( 'Memberships that include content from this membership and all children of it.', 'LION' ) . '</p>';
   		
-		if ( !empty( $parent_ids ) ) {
-			echo '<ul>';
-			foreach ( $parent_ids as $parent_id ) {
-				echo '<li>' . get_the_title( $parent_id ) . ' <span data-membership-id="' . $parent_id . '" class="delete-membership-parent">x</span></li>';
-			}
-			echo '</ul>';
+  		echo '<div class="it-exchange-membership-parent-ids-list-div">';
+		echo '<ul>';
+		foreach ( $parent_ids as $parent_id ) {
+			echo '<li data-parent-id="' . $parent_id . '">';
+			echo get_the_title( $parent_id ) . ' <span data-membership-id="' . $parent_id . '" class="it-exchange-membership-addon-delete-membership-parent">x</span>';
+			echo '<input type="hidden" name="it-exchange-membership-parent-ids[]" value="' . $parent_id . '" />';
+			echo '</li>';
 		}
-      
+		echo '</ul>';
+		echo '</div>';
+		
         echo '<select class="it-exchange-membership-parent-id" name="it-exchange-membership-parent-id">';
 		echo '<option value="">' . __( 'Select a Membership', 'LION' ) . '</option>';
 		foreach ( $membership_products as $membership ) {
@@ -171,24 +176,34 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 		if ( ! it_exchange_product_type_supports_feature( $product_type, 'membership-hierarchy' ) )
 			return;
 
-		if ( empty( $_POST['it-exchange-membership-child-id'] ) ) {
-			$child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' );
+		$child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' );
+		if ( empty( $_POST['it-exchange-membership-child-ids'] ) ) {
 			delete_post_meta( $product_id, '_it-exchange-membership-child-id' );
 			foreach( $child_ids as $child_id ) {
 				delete_post_meta( $child_id, '_it-exchange-membership-parent-id', $product_id );
 			}
 		} else {
-			it_exchange_update_product_feature( $product_id, 'membership-hierarchy', $_POST['it-exchange-membership-child-id'], array( 'setting' => 'children' ) );
+			foreach( $child_ids as $child_id ) {
+				if ( !in_array( $child_id, $_POST['it-exchange-membership-child-ids'] ) ) {
+					delete_post_meta( $child_id, '_it-exchange-membership-parent-id', $product_id );
+				}
+			}
+			it_exchange_update_product_feature( $product_id, 'membership-hierarchy', $_POST['it-exchange-membership-child-ids'], array( 'setting' => 'children' ) );
 		}
 		
-		if ( empty( $_POST['it-exchange-membership-parent-id'] ) ) {
-			$parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' );
+		$parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' );
+		if ( empty( $_POST['it-exchange-membership-parent-ids'] ) ) {
 			delete_post_meta( $product_id, '_it-exchange-membership-parent-id' );
 			foreach( $parent_ids as $parent_id ) {
 				delete_post_meta( $parent_id, '_it-exchange-membership-child-id', $product_id );
 			}
 		} else {
-			it_exchange_update_product_feature( $product_id, 'membership-hierarchy', $_POST['it-exchange-membership-parent-id'], array( 'setting' => 'parents' ) );
+			foreach( $parent_ids as $parent_id ) {
+				if ( !in_array( $parent_id, $_POST['it-exchange-membership-parent-ids'] ) ) {
+					delete_post_meta( $parent_id, '_it-exchange-membership-child-id', $product_id );
+				}
+			}
+			it_exchange_update_product_feature( $product_id, 'membership-hierarchy', $_POST['it-exchange-membership-parent-ids'], array( 'setting' => 'parents' ) );
 		}
 	}
 
@@ -206,22 +221,26 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 				
 				case 'children':
 					$child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' );
-					if ( !in_array( $new_value, (array)$child_ids ) )
-						add_post_meta( $product_id, '_it-exchange-membership-child-id', $new_value );
+					foreach ( $new_value as $child_id ) {
+						if ( !in_array( $child_id, (array)$child_ids ) )
+							add_post_meta( $product_id, '_it-exchange-membership-child-id', $child_id );
 							
-					$parent_ids = get_post_meta( $new_value, '_it-exchange-membership-parent-id' );
-					if ( !in_array( $product_id, (array)$parent_ids ) )
-						add_post_meta( $new_value, '_it-exchange-membership-parent-id', $product_id );
+						$parent_ids = get_post_meta( $child_id, '_it-exchange-membership-parent-id' );
+						if ( !in_array( $product_id, (array)$parent_ids ) )
+							add_post_meta( $child_id, '_it-exchange-membership-parent-id', $product_id );
+					}
 					break;
 					
 				case 'parents':
 					$parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' );
-					if ( !in_array( $new_value, (array)$parent_ids ) )
-						add_post_meta( $product_id, '_it-exchange-membership-parent-id', $new_value );
-							
-					$child_ids = get_post_meta( $new_value, '_it-exchange-membership-child-id' );
-					if ( !in_array( $product_id, (array)$child_ids ) )
-						add_post_meta( $new_value, '_it-exchange-membership-child-id', $product_id );
+					foreach ( $new_value as $parent_id ) {
+						if ( !in_array( $parent_id, (array)$parent_ids ) )
+							add_post_meta( $product_id, '_it-exchange-membership-parent-id', $parent_id );
+								
+						$child_ids = get_post_meta( $parent_id, '_it-exchange-membership-child-id' );
+						if ( !in_array( $product_id, (array)$child_ids ) )
+							add_post_meta( $parent_id, '_it-exchange-membership-child-id', $product_id );
+					}
 					break;
 				
 			}
