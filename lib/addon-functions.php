@@ -635,13 +635,15 @@ function display_membership_hierarchy( $product_ids, $args = array() ) {
 	$output = '';
 	foreach( $product_ids as $product_id ) {
 		$output .= '<ul>';
-		$output .= '<li data-child-id="' . $product_id . '">' . get_the_title( $product_id );
+		$output .= '<li data-child-id="' . $product_id . '"><div class="inner-wrapper">' . get_the_title( $product_id );
 		
 		if ( $delete )
-			$output .= ' <span data-membership-id="' . $product_id . '" class="it-exchange-membership-addon-delete-membership-child">x</span>';
+			$output .= ' <a href data-membership-id="' . $product_id . '" class="it-exchange-membership-addon-delete-membership-child it-exchange-remove-item">&times;</a>';
 			
-		if ( $hidden_input )
-			$output .= ' <input type="hidden" name="it-exchange-membership-child-ids[]" value="' . $product_id . '" />';
+		if ( $hidden_input ) {
+			$output .= ' <input type="hidden" name="it-exchange-membership-child-ids[]" value="' . $product_id . '" /></div>';
+		}
+		
 		if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
 			$output .= display_membership_hierarchy( $child_ids, array( 'echo' => false, 'delete' => false, 'hidden_input' => false ) );
 		}
