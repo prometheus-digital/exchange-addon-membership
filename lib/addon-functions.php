@@ -625,8 +625,9 @@ function setup_recursive_member_access_array( $membership_products, $product_ids
 */
 function display_membership_hierarchy( $product_ids, $args = array() ) {
 	$defaults = array(
-		'echo'   => true,
-		'delete' => true,
+		'echo'          => true,
+		'delete'        => true,
+		'hidden_input'  => true,
 	);
 	$args = wp_parse_args( $args, $defaults );
 	extract( $args );
@@ -634,12 +635,17 @@ function display_membership_hierarchy( $product_ids, $args = array() ) {
 	$output = '';
 	foreach( $product_ids as $product_id ) {
 		$output .= '<ul>';
-		$output .= '<li>' . get_the_title( $product_id );
+		$output .= '<li data-child-id="' . $product_id . '">' . get_the_title( $product_id );
+		
 		if ( $delete )
-			$output .= ' <span data-membership-id="' . $product_id . '" class="delete-membership-child">x</span>';
+			$output .= ' <span data-membership-id="' . $product_id . '" class="it-exchange-membership-addon-delete-membership-child">x</span>';
+			
+		if ( $hidden_input )
+			$output .= ' <input type="hidden" name="it-exchange-membership-child-ids[]" value="' . $product_id . '" />';
 		if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
-			$output .= display_membership_hierarchy( $child_ids, array( 'echo' => false ) );
+			$output .= display_membership_hierarchy( $child_ids, array( 'echo' => false, 'delete' => false, 'hidden_input' => false ) );
 		}
+		
 		$output .= '</li>';
 		$output .= '</ul>';
 	}

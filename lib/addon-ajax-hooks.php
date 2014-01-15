@@ -412,3 +412,56 @@ function it_exchange_membership_addon_ajax_update_duration() {
 	die();
 }
 add_action( 'wp_ajax_it-exchange-membership-addon-update-drip-rule-duration', 'it_exchange_membership_addon_ajax_update_duration' );
+
+
+function it_exchange_membership_addon_ajax_add_membership_child() {
+	
+	$return = '';
+		
+	if ( !empty( $_REQUEST['post_id'] ) && !empty( $_REQUEST['product_id'] ) ) {
+		$child_ids = array();
+		if ( !empty( $_REQUEST['child_ids'] ) )
+			$child_ids = $_REQUEST['child_ids'];
+			
+		if ( !in_array( $_REQUEST['product_id'], $child_ids ) )
+			$child_ids[] = $_REQUEST['product_id'];
+			
+		$return = display_membership_hierarchy( $child_ids, array( 'echo' => false ) );
+	}
+
+	die( $return );
+}
+add_action( 'wp_ajax_it-exchange-membership-addon-add-membership-child', 'it_exchange_membership_addon_ajax_add_membership_child' );
+
+/**
+ * AJAX to add new member relatives
+ *
+ * @since 1.0.0
+ * @return void
+*/
+function it_exchange_membership_addon_ajax_add_membership_parent() {
+	
+	$return = '';
+		
+	if ( !empty( $_REQUEST['post_id'] ) && !empty( $_REQUEST['product_id'] ) ) {
+		$parent_ids = array();
+		if ( !empty( $_REQUEST['parent_ids'] ) )
+			$parent_ids = $_REQUEST['parent_ids'];
+		
+		if ( !in_array( $_REQUEST['product_id'], $parent_ids ) )
+			$parent_ids[] = $_REQUEST['product_id'];
+			
+		$return .= '<ul>';
+		foreach ( $parent_ids as $parent_id ) {
+			$return .= '<li>';
+			$return .= get_the_title( $parent_id ) . ' <span data-membership-id="' . $parent_id . '" class="it-exchange-membership-addon-delete-membership-parent">x</span>';
+			$return .= '<input type="hidden" name="it-exchange-membership-parent-ids[]" value="' . $parent_id . '" />';
+			$return .= '</li>';
+		}
+		$return .= '</ul>';
+	}
+	
+	die( $return );
+}
+add_action( 'wp_ajax_it-exchange-membership-addon-add-membership-parent', 'it_exchange_membership_addon_ajax_add_membership_parent' );
+
