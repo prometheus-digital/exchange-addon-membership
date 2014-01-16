@@ -420,8 +420,11 @@ function it_exchange_membership_addon_ajax_add_membership_child() {
 		
 	if ( !empty( $_REQUEST['post_id'] ) && !empty( $_REQUEST['product_id'] ) ) {
 		$child_ids = array();
-		if ( !empty( $_REQUEST['child_ids'] ) )
-			$child_ids = $_REQUEST['child_ids'];
+		if ( !empty( $_REQUEST['child_ids'] ) ) {
+			foreach( $_REQUEST['child_ids'] as $child_id ) {
+				$child_ids[] = $child_id['value'];
+			}
+		}
 			
 		if ( !in_array( $_REQUEST['product_id'], $child_ids ) )
 			$child_ids[] = $_REQUEST['product_id'];
@@ -445,8 +448,11 @@ function it_exchange_membership_addon_ajax_add_membership_parent() {
 		
 	if ( !empty( $_REQUEST['post_id'] ) && !empty( $_REQUEST['product_id'] ) ) {
 		$parent_ids = array();
-		if ( !empty( $_REQUEST['parent_ids'] ) )
-			$parent_ids = $_REQUEST['parent_ids'];
+		if ( !empty( $_REQUEST['parent_ids'] ) ) {
+			foreach( $_REQUEST['parent_ids'] as $name => $value ) {
+				$parent_ids[] = $value;
+			}
+		}
 		
 		if ( !in_array( $_REQUEST['product_id'], $parent_ids ) )
 			$parent_ids[] = $_REQUEST['product_id'];
