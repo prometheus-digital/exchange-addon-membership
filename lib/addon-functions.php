@@ -640,8 +640,10 @@ function display_membership_hierarchy( $product_ids, $args = array() ) {
 			$output .= ' <a href data-membership-id="' . $product_id . '" class="it-exchange-membership-addon-delete-membership-child it-exchange-remove-item">&times;</a>';
 			
 		if ( $hidden_input ) {
-			$output .= ' <input type="hidden" name="it-exchange-membership-child-ids[]" value="' . $product_id . '" /></div>';
+			$output .= ' <input type="hidden" name="it-exchange-membership-child-ids[]" value="' . $product_id . '" />';
 		}
+		
+		$output .= '</div>';
 		
 		if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
 			$output .= display_membership_hierarchy( $child_ids, array( 'echo' => false, 'delete' => false, 'hidden_input' => false ) );

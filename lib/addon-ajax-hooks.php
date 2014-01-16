@@ -454,8 +454,8 @@ function it_exchange_membership_addon_ajax_add_membership_parent() {
 		$return .= '<ul>';
 		foreach ( $parent_ids as $parent_id ) {
 			$return .= '<li>';
-			$return .= get_the_title( $parent_id ) . ' <span data-membership-id="' . $parent_id . '" class="it-exchange-membership-addon-delete-membership-parent">x</span>';
-			$return .= '<input type="hidden" name="it-exchange-membership-parent-ids[]" value="' . $parent_id . '" />';
+			$return .= '<div class="inner-wrapper">' . get_the_title( $parent_id ) . ' <a data-membership-id="' . $parent_id . '" class="it-exchange-membership-addon-delete-membership-parent it-exchange-remove-item">x</a>';
+			$return .= '<input type="hidden" name="it-exchange-membership-parent-ids[]" value="' . $parent_id . '" /></div>';
 			$return .= '</li>';
 		}
 		$return .= '</ul>';
