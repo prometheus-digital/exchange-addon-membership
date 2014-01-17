@@ -838,7 +838,7 @@ function it_exchange_get_membership_addon_cart_product_base_price( $db_base_pric
 	
 	return $db_base_price;
 }
-add_filter( 'it_exchange_get_cart_product_base_price', 'it_exchange_get_membership_addon_cart_product_base_price', 10, 3 );
+//add_filter( 'it_exchange_get_cart_product_base_price', 'it_exchange_get_membership_addon_cart_product_base_price', 10, 3 );
 
 /**
  * Replaces base-price with ugprade price
@@ -884,4 +884,4 @@ function it_exchange_membership_addon_get_product_feature_base_price( $base_pric
 	}
 	return $base_price;
 }
-add_filter( 'it_exchange_get_product_feature_base-price', 'it_exchange_membership_addon_get_product_feature_base_price', 10, 3 );
+//add_filter( 'it_exchange_get_product_feature_base-price', 'it_exchange_membership_addon_get_product_feature_base_price', 10, 3 );
