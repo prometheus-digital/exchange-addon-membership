@@ -154,7 +154,7 @@ add_action( 'wp_enqueue_scripts', 'it_exchange_membership_addon_load_public_scri
 /**
  * Outputs the Membership media form button
  *
- * @since CHANGEME
+ * @since 1.1.18 
  * @return void
 */
 function it_exchange_membership_addon_media_form_button() {
@@ -201,7 +201,7 @@ add_action( 'media_buttons', 'it_exchange_membership_addon_media_form_button', 1
 /**
  * Outputs the Membershpi MCE Popup
  *
- * @since CHANGEME
+ * @since 1.1.18 
  * @return void
 */
 function it_exchange_membership_addon_mce_popup_footer() {
@@ -643,7 +643,7 @@ function it_exchange_get_memberships_page_rewrites( $page ) {
 /**
  * Modifies rewrite rules when setting the Memberships page to a WordPress page
  *
- * @since CHANGEME
+ * @since 1.1.19 
  *
  * @param array $existing rewrite rules
  * @return array modified rewrite rules

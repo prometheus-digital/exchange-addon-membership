@@ -229,7 +229,7 @@ add_shortcode( 'it-exchange-membership-included-content', 'it_exchange_membershi
 /**
  * Creates a shortcode that hides/displays member content
  *
- * @since CHANGEME
+ * @since 1.1.18 
  *
  * @param array $atts attributes passed in via shortcode arguments
  * @param string $content current content
