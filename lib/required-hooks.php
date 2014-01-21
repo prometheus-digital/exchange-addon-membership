@@ -631,8 +631,8 @@ function it_exchange_get_memberships_page_rewrites( $page ) {
 			}
 
 			$rewrites = array(
-				$account_slug  . '/([^/]+)/' . $slug  . '/([^/]+)'  => 'index.php?' . $account_slug . '=$matches[1]&' . $slug . '=$matches[2]',
-				$account_slug . '/' . $slug  . '/([^/]+)' => 'index.php?' . $account_slug . '=1&' . $slug . '=$matches[1]',
+				$account_slug  . '/([^/]+)/' . $slug  . '/([^/]+)/?$'  => 'index.php?' . $account_slug . '=$matches[1]&' . $slug . '=$matches[2]',
+				$account_slug . '/' . $slug  . '/([^/]+)/?$' => 'index.php?' . $account_slug . '=1&' . $slug . '=$matches[1]',
 			);
 			return $rewrites;
 			break;
