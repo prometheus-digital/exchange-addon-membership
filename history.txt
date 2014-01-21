@@ -58,4 +58,5 @@
 	Fixed bug not showing groups when added to empty access set, Added better feedback when removing all access rules
 	Adding new media button icon provided by brad
 	Added shortcode to restricted specific sub-content
-
+1.0.19 - 2014-01-21 - Lew Ayotte
+	Fixed issue with Memberships pages not displaying properly when set as WP pages.
