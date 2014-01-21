@@ -518,7 +518,8 @@ function it_exchange_membership_addon_is_content_dripped() {
  * @return mixed object|bool
 */
 function it_exchange_membership_addon_get_current_membership() {
-	if ( $membership_slug = get_query_var( 'memberships' ) ) {
+	$page_slug = it_exchange_get_page_slug( 'memberships', true );
+	if ( $membership_slug = get_query_var( $page_slug ) ) {
 		$args = array(
 		  'name' => $membership_slug,
 		  'post_type' => 'it_exchange_prod',
