@@ -635,6 +635,29 @@ function it_exchange_get_memberships_page_rewrites( $page ) {
 }
 
 /**
+ * Modifies rewrite rules when setting the Memberships page to a WordPress page
+ *
+ * @since CHANGEME
+ *
+ * @param array $existing rewrite rules
+ * @return array modified rewrite rules
+*/
+function it_exchange_membership_addon_register_rewrite_rules( $existing ) {
+	if ( 'wordpress' == it_exchange_get_page_type( 'memberships', true ) ) {
+		$wpid = it_exchange_get_page_wpid( 'memberships' );
+		if ( $wp_page = get_page( $wpid ) )
+			$page_slug = $wp_page->post_name;
+		else
+			$page_slug = 'memberships';
+
+		$rewrite = array( $page_slug . '/([^/]+)/?$' => 'index.php?pagename=' . $page_slug . '&' . $page_slug . '=$matches[1]' );
+		$existing = array_merge( $rewrite, $existing );
+	}
+	return $existing;
+}
+add_filter( 'rewrite_rules_array', 'it_exchange_membership_addon_register_rewrite_rules' );
+
+/**
  * Returns URL for membership frontend dashboard page
  *
  * @since 1.0.0
