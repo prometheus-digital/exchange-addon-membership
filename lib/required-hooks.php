@@ -365,8 +365,8 @@ function it_exchange_membership_addon_setup_customer_session() {
 				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 24 ); //only do it daily
 				$customer->update_customer_meta( 'member_access', $member_access );
 			}
-			$member_access = setup_recursive_member_access_array( $member_access );
 			$parent_access = setup_parent_member_access_array( $member_access );
+			$member_access = setup_recursive_member_access_array( $member_access );
 		}
 		$member_diff = array_diff( (array)$member_access, (array)$member_access_session );
 		if ( !empty( $member_diff ) ) {
@@ -569,7 +569,6 @@ function it_exchange_membership_addon_template_path( $possible_template_paths, $
 }
 add_filter( 'it_exchange_possible_template_paths', 'it_exchange_membership_addon_template_path', 10, 2 );
 
-
 /**
  * Replaces base-price content product element with customer-pricing element, if found
  *
@@ -585,6 +584,21 @@ function it_exchange_memnbership_addon_get_content_product_product_advanced_loop
 	return $parts;
 }
 add_filter( 'it_exchange_get_content_product_product_advanced_loop_elements', 'it_exchange_memnbership_addon_get_content_product_product_advanced_loop_elements' );
+
+/**
+ * Adds upgrade price after base-price content product element, if found
+ *
+ * @since CHANGEME
+ *
+ * @param array $parts Element array for temmplate parts
+ * @return array Modified array with new customer-pricing element (if base-price was found).
+*/
+function it_exchange_memnbership_addon_get_content_product_product_info_loop_elements( $parts ) {
+	array_unshift( $parts, 'upgrade-details' );
+	array_unshift( $parts, 'downgrade-details' );
+	return $parts;
+}
+add_filter( 'it_exchange_get_content_product_product_info_loop_elements', 'it_exchange_memnbership_addon_get_content_product_product_info_loop_elements' );
 
 /*
  * Registers the membership frontend dashboard page in iThemes Exchange

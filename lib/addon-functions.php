@@ -591,6 +591,37 @@ function it_exchange_membership_cart_contains_membership_product( $cart_products
 
 /*
  * For hierarchical membership types
+ * Finds all the most-parental membership types in the member_access session
+ * Used generally to prevent duplicate content from being printed
+ * in the member's dashboard
+ *
+ * @since CHANGEME
+ *
+ * @param array $membership_products current list of accessible membership products
+ * @param array $product_ids
+ * @return array
+*/
+function setup_parent_member_access_array( $membership_products, $product_ids = array() ) {
+	foreach( $membership_products as $txn_id => $product_id ) {
+		if ( $parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' ) ) {
+			$parent_found = false;
+			foreach( $parent_ids as $parent_id ) {
+				if ( false !== $key = array_search( $parent_id, $membership_products ) ) {
+					$parent_found = true;
+				}
+			}
+			if ( !$parent_found )
+				$product_ids[$txn_id] = $product_id; //we're the greatest parent
+				
+		} else {
+			$product_ids[$txn_id] = $product_id; //we're the greatest parent
+		}
+	}
+	return $product_ids;
+}
+
+/*
+ * For hierarchical membership types
  * Get all child membership products and adds it to an array to be used
  * for generating the member_access session
  *
@@ -658,35 +689,4 @@ function display_membership_hierarchy( $product_ids, $args = array() ) {
 		echo $output;
 	else
 		return $output;
-}
-
-/*
- * For hierarchical membership types
- * Finds all the most-parental membership types in the member_access session
- * Used generally to prevent duplicate content from being printed
- * in the member's dashboard
- *
- * @since CHANGEME
- *
- * @param array $membership_products current list of accessible membership products
- * @param array $product_ids
- * @return array
-*/
-function setup_parent_member_access_array( $membership_products, $product_ids = array() ) {
-	foreach( $membership_products as $product_id ) {
-		if ( $parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' ) ) {
-			$parent_found = false;
-			foreach( $parent_ids as $parent_id ) {
-				if ( false !== $key = array_search( $parent_id, $membership_products ) ) {
-					$parent_found = true;
-				}
-			}
-			if ( !$parent_found )
-				$product_ids[] = $product_id; //we're the greatest parent
-				
-		} else {
-			$product_ids[] = $product_id; //we're the greatest parent
-		}
-	}
-	return $product_ids;
 }
