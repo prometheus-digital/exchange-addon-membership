@@ -237,7 +237,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 				&& it_exchange_product_has_feature( $this->product->ID, 'membership-hierarchy', array( 'setting' => 'children' ) ) ) {
 				
 			$child_ids = setup_recursive_member_access_array( array( $this->product->ID ) );
-			
+						
 			if ( !empty( $child_ids ) ) {
 				$base_price = it_exchange_get_product_feature( $this->product->ID, 'base-price' );
 				$db_product_price = it_exchange_convert_to_database_number( $base_price );
@@ -258,24 +258,28 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						}
 					}
 				}
+
 				
 				if ( !empty( $most_priciest_txn_id ) ) {
 					
-					$days_this_year = date_i18n( 'z', mktime( 0,0,0,12,31,date_i18n('Y') ) );
-					$is_auto_renew = false;
-									
-					if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
-						if ( $auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
-							$is_auto_renew = 'on' === $auto_renew ? true : false;
-						}
+					if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
+						$existimg_membership_time = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) );
+					} else {
+						$existimg_membership_time = 'forever';
 					}
 					
-					if ( $is_auto_renew ) {
-						//We have to have a time and it can't be forever because we're auto-renewing!
-						$existimg_membership_time = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) ); 
-						$upgrade_membership_time = it_exchange_get_product_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'time' ) ); 
-						
+					if ( it_exchange_product_has_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
+						$upgrade_membership_time = it_exchange_get_product_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'time' ) );
+					} else {
+						$upgrade_membership_time = 'forever';
+					}
+					
+					if ( !( 'forever' === $existimg_membership_time && 'forever' !== $upgrade_membership_time ) ) {
+						//forever upgrade to non-forever Products need to be process manually (see notes below)
+						$days_this_year = date_i18n( 'z', mktime( 0,0,0,12,31,date_i18n('Y') ) );
+
 						//Try to get the latest child, if one exists
+						//children should only exist for auto-renewing products
 						$args = array( 
 						    'post_parent' => $most_priciest_txn_id,
 						    'post_type'   => 'it_exchange_tran',
@@ -283,14 +287,26 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						    'post_status' => 'any'
 						);
 						$children = get_posts( $args );
-						
+												
 						if ( !empty( $children ) ) {
 							$transaction = it_exchange_get_transaction( $children[0]->ID );
+							//IF we have children, we know we're auto-renewing
+							//so we can just grab the cart_details total as the last payment
+							$last_payment = $transaction->cart_details->total;
 						} else {
 							$transaction = it_exchange_get_transaction( $most_priciest_txn_id );
+							//We don't know if we're auto-renewing
+							foreach( $transaction->cart_details->products as $key => $product ) {
+								if ( $product['product_id'] === $most_producty->ID ) {
+									$last_payment = $product['product_base_price'];
+									break;
+								}
+							}
+							//Just in case they used a coupon
+							if ( $transaction->cart_details->total < $product['product_subtotal'] )
+								$last_payment = $transaction->cart_details->total;
+							
 						}
-						
-						$last_payment = $transaction->cart_details->total;
 						
 						if ( 0 === $last_payment ) {
 							//get upgrade details if they exist
@@ -298,59 +314,80 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						} else {
 							switch( $existimg_membership_time ) {
 								case 'monthly':
-									$daily_cost_of_existing_membership = ( $last_payment * 12 ) / $days_this_year;
+									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_monthly_membership', ( $last_payment * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+									$next_payment_date = date_i18n( 'z', strtotime( "+1 Month", strtotime( $transaction->post_date ) ) );
 									break;
 									
 								case 'yearly':
-									$daily_cost_of_existing_membership = $last_payment / $days_this_year;
+									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_yearly_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+									$next_payment_date = date_i18n( 'z', strtotime( "+1 Year", strtotime( $transaction->post_date ) ) );
+									break;
+									
+								case 'forever':
+									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_forever_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+									$next_payment_date = 0;
 									break;
 							}		
 						}
 						
-						$last_payment_date = date_i18n( 'z', strtotime( $transaction->post_date ) );
 						$todays_date = date_i18n( 'z', time() );
-						if ( $todays_date < $last_payment_date )
-							$todays_date += $days_this_year;
-						$remaining_days = $todays_date - $last_payment_date;
+						$remaining_days = max( $next_payment_date - $todays_date, 0 );
 						$credit = $remaining_days * $daily_cost_of_existing_membership;
-						
+
 						switch( $upgrade_membership_time ) {
 							case 'monthly':
-								$daily_cost_of_upgrade_membership = ( $base_price * 12 ) / $days_this_year;
+								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_monthly_membership', ( $base_price * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
 								break;
 								
 							case 'yearly':
-								$daily_cost_of_upgrade_membership = $base_price / $days_this_year;
+								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_yearly_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+								break;
+								
+							case 'forever': //treat a "forever" upgrade as a "year", gives the customer a small discount
+								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_forever_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
 								break;
 						}
-						$free_days = floor( $credit / $daily_cost_of_upgrade_membership );
+						$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
+							
+						$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
 						
-						if ( $free_days ) {
-							
-							$next_payment_due = '+' . $free_days .' Days';
-							
-							$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
-							
-							//For cancelling, I need to get the subscription ID and payment method
-							//And since I've done all this hard work, I should store the other pertinent information
-							$upgrade_details = it_exchange_get_session_data( 'upgrade_details' );
-							$upgrade_details[$this->product->ID] = array(
-								'credit'             => $credit,
-								'free_days'          => $free_days,
-								'subscriber_id'      => $transaction->get_transaction_meta( 'subscriber_id' ),
-								'transaction_method' => $transaction->transaction_method,
-							);
-							it_exchange_update_session_data( 'upgrade_details', $upgrade_details );
+						//For cancelling, I need to get the subscription ID and payment method
+						//And since I've done all this hard work, I should store the other pertinent information
+						$upgrade_details = it_exchange_get_session_data( 'upgrade_details' );
+						$upgrade_details[$this->product->ID] = array(
+							'credit'                => $credit,
+							'free_days'             => $free_days,
+							'transaction_method'    => $transaction->transaction_method,
+							'parnet_transaction_id' => $most_priciest_txn_id,
+						);
+						
+						if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
+							if ( 'on' === it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
+								$upgrade_details[$this->product->ID]['subscriber_id'] = $transaction->get_transaction_meta( 'subscriber_id' );
+							}
+						}
+						it_exchange_update_session_data( 'upgrade_details', $upgrade_details );
+						
+						if ( 0 < $free_days ) {
+							$day_string = __( 'day', 'LION' );
+							if ( 1 < $free_days )
+								$day_string = __( 'days', 'LION' );
 												
-							$result = $options['before_desc'] . $options['upgrade_desc'] . sprintf( __( ' %s days free, then ', 'LION' ), $free_days ) . $options['after_desc'];
-							
+							$result = $options['before_desc'] . $options['upgrade_desc'] . sprintf( __( ' %s %s free, then ', 'LION' ), $free_days, $day_string ) . $options['after_desc'];								
 						} else {
+							//no free days, just upgrade!
 							return;
 						}
-					
-					} else {
-						//Current membership is not auto-renewing
 						
+					} else {
+						//If the existing membership is forever and they're wanting to upgrade
+						//to a recurring membership, we cannot give them any upgrade options
+						//they will need to purchase the recurring membership and ask for a credit from
+						//the store owner.
+						//
+						//The reason for this is that it is too complicated to determine the "daily" cost
+						//of a "forever" membership.
+						return;
 					}
 					
 				}
@@ -389,8 +426,164 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 		// Repeats checks for when flags were not passed.
 		if ( it_exchange_product_supports_feature( $this->product->ID, 'membership-hierarchy' )	
 				&& it_exchange_product_has_feature( $this->product->ID, 'membership-hierarchy', array( 'setting' => 'parents' ) ) ) {
+	
+			$parent_access_session = it_exchange_get_session_data( 'parent_access' );
+			$member_access_session = it_exchange_get_session_data( 'member_access' );
 			
-			//$result = $options['before_desc'] . __( '(downgrade)', 'LION' ) . $options['after_desc'];
+			ITDebug::print_r( $parent_access_session );
+			ITDebug::print_r( $member_access_session );
+			ITDebug::print_r( $this->product->ID );
+						
+			if ( !empty( $parent_access_session ) && !empty( $member_access_session ) 
+				&& !in_array( $this->product->ID, $parent_access_session ) 
+				&& in_array( $this->product->ID, $member_access_session ) ) {
+			
+				$base_price = it_exchange_get_product_feature( $this->product->ID, 'base-price' );
+				$db_product_price = it_exchange_convert_to_database_number( $base_price );
+				$most_priciest = 0;
+				$most_priciest_txn_id = 0;
+				
+				return 'downgrade';
+				
+				$most_parental_product_id = it_exchange_get_most_parental_product_id( $this->product->ID );
+
+				$parents = it_exchange_get_product_feature( $this->product->ID, 'membership-hierarchy', array( 'setting' => 'parents' ) );
+				
+				foreach ( $parent_memberships as $txn_id => $parent_id ) {
+					if ( $parent_id != $this->product->ID && in_array( $parent_id, $child_ids ) ) {
+						$product = it_exchange_get_product( $parent_id );
+						$parent_product_base_price = it_exchange_get_product_feature( $parent_id, 'base-price' );
+						$db_price = it_exchange_convert_to_database_number( $parent_product_base_price );
+						if ( $db_price > $most_priciest ) {
+							$most_priciest = $db_price;
+							$most_priciest_txn_id = $txn_id;
+							$most_producty = $product;
+						}
+					}
+				}
+				
+				if ( !empty( $most_priciest_txn_id ) ) {
+					
+					if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
+						$existimg_membership_time = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) );
+					} else {
+						$existimg_membership_time = 'forever';
+					}
+					
+					if ( it_exchange_product_has_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
+						$upgrade_membership_time = it_exchange_get_product_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'time' ) );
+					} else {
+						$upgrade_membership_time = 'forever';
+					}
+					
+					if ( !( 'forever' === $existimg_membership_time && 'forever' !== $upgrade_membership_time ) ) {
+						//forever upgrade to non-forever Products need to be process manually (see notes below)
+						$days_this_year = date_i18n( 'z', mktime( 0,0,0,12,31,date_i18n('Y') ) );
+					
+						//Try to get the latest child, if one exists
+						//children should only exist for auto-renewing products
+						$args = array( 
+						    'post_parent' => $most_priciest_txn_id,
+						    'post_type'   => 'it_exchange_tran',
+						    'numberposts' => 1,
+						    'post_status' => 'any'
+						);
+						$children = get_posts( $args );
+						
+						if ( !empty( $children ) ) {
+							$transaction = it_exchange_get_transaction( $children[0]->ID );
+						} else {
+							$transaction = it_exchange_get_transaction( $most_priciest_txn_id );
+						}
+						
+						$last_payment = $transaction->cart_details->total;
+						
+						if ( 0 === $last_payment ) {
+							//get upgrade details if they exist
+							//and possibly quit
+						} else {
+							switch( $existimg_membership_time ) {
+								case 'monthly':
+									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_monthly_membership', ( $last_payment * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+									break;
+									
+								case 'yearly':
+									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_yearly_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+									break;
+									
+								case 'forever':
+									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_forever_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+									break;
+							}		
+						}
+						
+						$last_payment_date = date_i18n( 'z', strtotime( $transaction->post_date ) );
+						$todays_date = date_i18n( 'z', time() );
+						if ( $todays_date < $last_payment_date )
+							$todays_date += $days_this_year;
+						$remaining_days = $todays_date - $last_payment_date;
+						$credit = $remaining_days * $daily_cost_of_existing_membership;
+						
+						switch( $upgrade_membership_time ) {
+							case 'monthly':
+								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_monthly_membership', ( $base_price * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+								break;
+								
+							case 'yearly':
+								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_yearly_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+								break;
+								
+							case 'forever': //treat a "forever" upgrade as a "year", gives the customer a small discount
+								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_forever_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+								break;
+						}
+						$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
+							
+						$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
+						
+						//For cancelling, I need to get the subscription ID and payment method
+						//And since I've done all this hard work, I should store the other pertinent information
+						$upgrade_details = it_exchange_get_session_data( 'upgrade_details' );
+						$upgrade_details[$this->product->ID] = array(
+							'credit'                => $credit,
+							'free_days'             => $free_days,
+							'transaction_method'    => $transaction->transaction_method,
+							'parnet_transaction_id' => $most_priciest_txn_id,
+						);
+						
+						if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
+							if ( 'on' === $auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
+								$upgrade_details[$this->product->ID]['subscriber_id'] = $transaction->get_transaction_meta( 'subscriber_id' );
+							}
+						}
+						it_exchange_update_session_data( 'upgrade_details', $upgrade_details );
+						
+						if ( 0 < $free_days ) {
+							$day_string = __( 'day', 'LION' );
+							if ( 1 < $free_days )
+								$day_string = __( 'days', 'LION' );
+												
+							$result = $options['before_desc'] . $options['upgrade_desc'] . sprintf( __( ' %s %s free, then ', 'LION' ), $free_days, $day_string ) . $options['after_desc'];								
+						} else {
+							//no free days, just upgrade!
+							return;
+						}
+						
+					} else {
+						//If the existing membership is forever and they're wanting to upgrade
+						//to a recurring membership, we cannot give them any upgrade options
+						//they will need to purchase the recurring membership and ask for a credit from
+						//the store owner.
+						//
+						//The reason for this is that it is too complicated to determine the "daily" cost
+						//of a "forever" membership.
+						return;
+					}
+					
+				}
+				
+			}
+			/**/
 			
 		}
 		
