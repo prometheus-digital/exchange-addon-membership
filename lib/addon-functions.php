@@ -601,7 +601,7 @@ function it_exchange_membership_cart_contains_membership_product( $cart_products
  * @param array $product_ids
  * @return array
 */
-function setup_parent_member_access_array( $membership_products, $product_ids = array() ) {
+function setup_most_parent_member_access_array( $membership_products, $product_ids = array() ) {
 	foreach( $membership_products as $txn_id => $product_id ) {
 		if ( $parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' ) ) {
 			$parent_found = false;

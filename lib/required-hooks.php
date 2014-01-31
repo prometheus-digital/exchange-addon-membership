@@ -365,7 +365,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 24 ); //only do it daily
 				$customer->update_customer_meta( 'member_access', $member_access );
 			}
-			$parent_access = setup_parent_member_access_array( $member_access );
+			$parent_access = setup_most_parent_member_access_array( $member_access );
 			$member_access = setup_recursive_member_access_array( $member_access );
 		}
 		$member_diff = array_diff( (array)$member_access, (array)$member_access_session );
