@@ -62,3 +62,5 @@
 	Fixed issue with Memberships pages not displaying properly when set as WP pages.
 1.0.20 - 2014-02-03 - Packaging Bot (lib/updater)
 	Bug Fix: Licensing on SSL-enabled sites now works properly.
+1.0.21 - 2014-02-03 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Bug Fix: Licensing on SSL-enabled sites now works properly.
