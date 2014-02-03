@@ -351,6 +351,8 @@ function it_exchange_membership_addon_setup_customer_session() {
 		$parent_access = array();
 		$customer = new IT_Exchange_Customer( $user_id );
 		$member_access = $customer->get_customer_meta( 'member_access' );
+		it_exchange_clear_session_data( 'member_access' ); //CHANGE ME -- remove this line
+		it_exchange_clear_session_data( 'parent_access' ); //CHANGE ME -- remove this line
 		$member_access_session = it_exchange_get_session_data( 'member_access' );
 		if ( !empty( $member_access )  ) {
 			//If the transient doesn't exist, verify the membership access subscriber status and reset transient
@@ -365,8 +367,8 @@ function it_exchange_membership_addon_setup_customer_session() {
 				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 24 ); //only do it daily
 				$customer->update_customer_meta( 'member_access', $member_access );
 			}
-			$parent_access = setup_most_parent_member_access_array( $member_access );
-			$member_access = setup_recursive_member_access_array( $member_access );
+			$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $member_access );
+			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
 		}
 		$member_diff = array_diff( (array)$member_access, (array)$member_access_session );
 		if ( !empty( $member_diff ) ) {
@@ -825,7 +827,7 @@ function it_exchange_get_membership_addon_cart_product_base_price( $db_base_pric
 	if ( it_exchange_product_supports_feature( $product->ID, 'membership-hierarchy' )
 		&& it_exchange_product_has_feature( $product->ID, 'membership-hierarchy', array( 'setting' => 'children' ) ) ) {
 		
-		$child_ids = setup_recursive_member_access_array( array( $product->ID ) );
+		$child_ids = it_exchange_membership_addon_setup_recursive_member_access_array( array( $product->ID ) );
 		
 		if ( !empty( $child_ids ) ) {		
 			$most_priciest = 0;
@@ -869,7 +871,7 @@ function it_exchange_membership_addon_get_product_feature_base_price( $base_pric
 		if ( it_exchange_product_supports_feature( $product_id, 'membership-hierarchy' )
 			&& it_exchange_product_has_feature( $product_id, 'membership-hierarchy', array( 'setting' => 'children' ) ) ) {
 			
-			$child_ids = setup_recursive_member_access_array( array( $product_id ) );
+			$child_ids = it_exchange_membership_addon_setup_recursive_member_access_array( array( $product_id ) );
 			
 			if ( !empty( $child_ids ) ) {		
 				$db_product_price = it_exchange_convert_to_database_number( $base_price );

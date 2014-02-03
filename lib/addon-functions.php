@@ -598,26 +598,25 @@ function it_exchange_membership_cart_contains_membership_product( $cart_products
  * @since CHANGEME
  *
  * @param array $membership_products current list of accessible membership products
- * @param array $product_ids
  * @return array
 */
-function setup_most_parent_member_access_array( $membership_products, $product_ids = array() ) {
+function it_exchange_membership_addon_setup_most_parent_member_access_array( $membership_products ) {
+	$found_ids = array();
+	$parent_ids = array();
 	foreach( $membership_products as $txn_id => $product_id ) {
-		if ( $parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' ) ) {
-			$parent_found = false;
-			foreach( $parent_ids as $parent_id ) {
-				if ( false !== $key = array_search( $parent_id, $membership_products ) ) {
-					$parent_found = true;
-				}
-			}
-			if ( !$parent_found )
-				$product_ids[$txn_id] = $product_id; //we're the greatest parent
-				
-		} else {
-			$product_ids[$txn_id] = $product_id; //we're the greatest parent
+		if ( false !== $found_id = it_exchange_membership_addon_get_most_parent_from_member_access( $product_id, $membership_products ) ) {
+			if ( !in_array( $found_id, $found_ids ) )
+				$found_ids[] = $found_id;
 		}
 	}
-	return $product_ids;
+	foreach( $found_ids as $found_id ) {
+		$txn_keys = array_keys( $membership_products, $found_id );
+		if ( !empty( $txn_keys ) )
+			$txn_id = array_shift( $txn_keys );
+		if ( !empty( $txn_id ) )
+			$parent_ids[$txn_id] = $found_id;
+	}
+	return $parent_ids;
 }
 
 /*
@@ -631,17 +630,39 @@ function setup_most_parent_member_access_array( $membership_products, $product_i
  * @param array $product_ids
  * @return array
 */
-function setup_recursive_member_access_array( $membership_products, $product_ids = array() ) {
+function it_exchange_membership_addon_setup_recursive_member_access_array( $membership_products, $product_ids = array() ) {
 	foreach( $membership_products as $product_id ) {
 		if ( in_array( $product_id, $product_ids ) )
 			break;
 		
 		$product_ids[] = $product_id;
 		if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
-			$product_ids = setup_recursive_member_access_array( $child_ids, $product_ids );
+			$product_ids = it_exchange_membership_addon_setup_recursive_member_access_array( $child_ids, $product_ids );
 		}
 	}
 	return $product_ids;
+}
+
+/*
+ * Gets the highest level parent from the parent access session for a given product ID
+ *
+ * @since CHANGEME 
+ *
+ * @param int $product_id Membership product to check
+ * @param array $parent_access Parent access session (or other array)
+ * @return array
+*/
+function it_exchange_membership_addon_get_most_parent_from_member_access( $product_id, $parent_access ) {
+	$most_parent = false;
+	$childs_parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' );
+	foreach( $childs_parent_ids as $parent_id ) {
+		if ( in_array( $parent_id, $parent_access ) )
+			$most_parent = $parent_id; //potentially the most parent, but we need to keep checking!
+	
+		if ( false !== $found_id = it_exchange_membership_addon_get_most_parent_from_member_access( $parent_id, $parent_access ) )
+			$most_parent = $found_id;
+	}
+	return $most_parent;
 }
 
 /*
@@ -654,7 +675,7 @@ function setup_recursive_member_access_array( $membership_products, $product_ids
  * @param array $args array of arguments for the function
  * @return string|null
 */
-function display_membership_hierarchy( $product_ids, $args = array() ) {
+function it_exchange_membership_addon_display_membership_hierarchy( $product_ids, $args = array() ) {
 	$defaults = array(
 		'echo'          => true,
 		'delete'        => true,
@@ -678,7 +699,7 @@ function display_membership_hierarchy( $product_ids, $args = array() ) {
 		$output .= '</div>';
 		
 		if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
-			$output .= display_membership_hierarchy( $child_ids, array( 'echo' => false, 'delete' => false, 'hidden_input' => false ) );
+			$output .= it_exchange_membership_addon_display_membership_hierarchy( $child_ids, array( 'echo' => false, 'delete' => false, 'hidden_input' => false ) );
 		}
 		
 		$output .= '</li>';
