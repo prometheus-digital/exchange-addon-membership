@@ -60,3 +60,5 @@
 	Added shortcode to restricted specific sub-content
 1.0.19 - 2014-01-21 - Lew Ayotte
 	Fixed issue with Memberships pages not displaying properly when set as WP pages.
+1.0.20 - 2014-02-03 - Packaging Bot (lib/updater)
+	Bug Fix: Licensing on SSL-enabled sites now works properly.
