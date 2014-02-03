@@ -114,7 +114,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 		echo '<p>' . __( 'Additional membership available to owners of this membership level.', 'LION' ) . '</p>';
 	
   		echo '<div class="it-exchange-membership-child-ids-list-div">';
-		display_membership_hierarchy( $child_ids );
+		it_exchange_membership_addon_display_membership_hierarchy( $child_ids );
 		echo '</div>';
 		        
         echo '<div class="it-exchange-membership-hierarchy-add it-exchange-membership-hierarchy-add-child">';
