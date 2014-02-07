@@ -311,7 +311,9 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 	$cart_object = get_post_meta( $transaction_id, '_it_exchange_cart_object', true );
 	$customer_id = get_post_meta( $transaction_id, '_it_exchange_customer_id', true );
 	$customer = new IT_Exchange_Customer( $customer_id );
+	$transaction = it_exchange_get_transaction( $transaction_id );
 	$member_access = $customer->get_customer_meta( 'member_access' );
+	$cancel_subscription = it_exchange_get_session_data( 'cancel_subscription' );
 	
 	foreach ( $cart_object->products as $product ) {
 		if ( it_exchange_product_supports_feature( $product['product_id'], 'membership-content-access-rules' ) ) {
@@ -320,6 +322,13 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 				//If this user isn't already a member of this product, add it to their access list
 				$member_access[$transaction_id] = $product['product_id'];
 				$customer->update_customer_meta( 'member_access', $member_access );
+			}
+		}
+		
+		if ( !empty ( $cancel_subscription ) ) {	
+			if ( $product['product_id'] === $cancel_subscription['product_id'] ) {
+				$transaction->update_transaction_meta( 'free_days', $cancel_subscription['free_days'] );
+				$transaction->update_transaction_meta( 'credit', $cancel_subscription['credit'] );
 			}
 		}
 	}
@@ -351,8 +360,6 @@ function it_exchange_membership_addon_setup_customer_session() {
 		$parent_access = array();
 		$customer = new IT_Exchange_Customer( $user_id );
 		$member_access = $customer->get_customer_meta( 'member_access' );
-		it_exchange_clear_session_data( 'member_access' ); //CHANGE ME -- remove this line
-		it_exchange_clear_session_data( 'parent_access' ); //CHANGE ME -- remove this line
 		$member_access_session = it_exchange_get_session_data( 'member_access' );
 		if ( !empty( $member_access )  ) {
 			//If the transient doesn't exist, verify the membership access subscriber status and reset transient
@@ -381,6 +388,21 @@ function it_exchange_membership_addon_setup_customer_session() {
 	}
 }
 add_action( 'wp', 'it_exchange_membership_addon_setup_customer_session' );
+
+function it_exchange_membership_addon_update_transaction_subscription_status( $transaction, $subscriber_id, $status ) {
+	if ( !empty( $transaction->customer_id) ) {
+		$customer = it_exchange_get_customer( $transaction->customer_id );
+		if ( !empty( $customer ) ) {
+			$member_access = $customer->get_customer_meta( 'member_access' );
+			if ( 'active' !== $status ) { //we're canceled, suspended, deactivated or something in between...
+				if ( !empty( $member_access[$transaction->ID] ) )
+					unset( $member_access[$transaction->ID] ); //so we remove it
+			}
+			$customer->update_customer_meta( 'member_access', $member_access );
+		}
+	}
+}
+add_action( 'it_exchange_update_transaction_subscription_status', 'it_exchange_membership_addon_update_transaction_subscription_status', 10, 3 );
 
 /**
  * Creates sessions data with logged in customer's membership access rules
