@@ -654,13 +654,17 @@ function it_exchange_membership_addon_setup_recursive_member_access_array( $memb
 */
 function it_exchange_membership_addon_get_most_parent_from_member_access( $product_id, $parent_access ) {
 	$most_parent = false;
-	$childs_parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' );
-	foreach( $childs_parent_ids as $parent_id ) {
-		if ( in_array( $parent_id, $parent_access ) )
-			$most_parent = $parent_id; //potentially the most parent, but we need to keep checking!
-	
-		if ( false !== $found_id = it_exchange_membership_addon_get_most_parent_from_member_access( $parent_id, $parent_access ) )
-			$most_parent = $found_id;
+	if ( $childs_parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' ) ) {
+		foreach( $childs_parent_ids as $parent_id ) {
+			if ( in_array( $parent_id, $parent_access ) )
+				$most_parent = $parent_id; //potentially the most parent, but we need to keep checking!
+			
+			if ( false !== $found_id = it_exchange_membership_addon_get_most_parent_from_member_access( $parent_id, $parent_access ) )
+				$most_parent = $found_id;
+		}
+	}
+	if ( !$most_parent && in_array( $product_id, $parent_access ) ) {
+		$most_parent = $product_id;
 	}
 	return $most_parent;
 }

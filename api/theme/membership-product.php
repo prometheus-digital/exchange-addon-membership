@@ -308,11 +308,25 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						}
 						
 						$post_date = strtotime( $transaction->post_date );
-						
+						$todays_date = time();
+
 						if ( 0 === $last_payment ) {
 							//get upgrade details if they exist
 							//and possibly quit
-							//CHANGEME -- deal with this!
+							$credit = $transaction->get_transaction_meta( 'credit' );
+							$free_days = $transaction->get_transaction_meta( 'free_days' );
+							
+							if ( !empty( $credit ) && !empty( $free_days ) ) {
+								$date_diff = ( $post_date + ( $free_days * 60*60 ) ) - $todays_date;
+								$days = max( floor( $date_diff / (60*60*24) ), 0 );
+							
+								$daily_cost_of_existing_membership = $credit / $free_days;
+								$next_payment_date = strtotime( '+' . $free_days . ' Days', strtotime( $transaction->post_date ) );
+								
+								$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
+							} else {
+								return;
+							}
 						} else {
 							switch( $existimg_membership_time ) {
 								case 'monthly':
@@ -329,53 +343,60 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_forever_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
 									$next_payment_date = 0;
 									break;
-							}		
-						}
-						
-						$todays_date = time();
-						$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
-						$credit = $remaining_days * $daily_cost_of_existing_membership;
-
-						switch( $upgrade_membership_time ) {
-							case 'monthly':
-								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_monthly_membership', ( $base_price * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-								break;
-								
-							case 'yearly':
-								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_yearly_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-								break;
-								
-							case 'forever': //treat a "forever" upgrade as a "year", gives the customer a small discount
-								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_forever_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-								break;
-						}
-						$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
-							
-						$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
-						
-						//For cancelling, I need to get the subscription ID and payment method
-						//And since I've done all this hard work, I should store the other pertinent information
-						$upgrade_details = it_exchange_get_session_data( 'upgrade_details' );
-						$upgrade_details[$this->product->ID] = array(
-							'credit'                => $credit,
-							'free_days'             => $free_days,
-							'transaction_method'    => $transaction->transaction_method,
-							'parnet_transaction_id' => $most_priciest_txn_id,
-						);
-						
-						if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
-							if ( 'on' === it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
-								$upgrade_details[$this->product->ID]['subscriber_id'] = $transaction->get_transaction_meta( 'subscriber_id' );
 							}
+							
+							$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
 						}
-						it_exchange_update_session_data( 'upgrade_details', $upgrade_details );
 						
-						if ( 0 < $free_days ) {
-							$day_string = __( 'day', 'LION' );
-							if ( 1 < $free_days )
-								$day_string = __( 'days', 'LION' );
-												
-							$result = $options['before_desc'] . $options['upgrade_desc'] . sprintf( __( ' %s %s free, then ', 'LION' ), $free_days, $day_string ) . $options['after_desc'];								
+						if ( 0 < $remaining_days ) {
+						
+							$credit = $remaining_days * $daily_cost_of_existing_membership;
+								
+							switch( $upgrade_membership_time ) {
+								case 'monthly':
+									$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_monthly_membership', ( $base_price * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+									break;
+									
+								case 'yearly':
+									$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_yearly_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+									break;
+									
+								case 'forever': //treat a "forever" upgrade as a "year", gives the customer a small discount
+									$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_forever_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+									break;
+							}
+							$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
+								
+							$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
+							
+							//For cancelling, I need to get the subscription ID and payment method
+							//And since I've done all this hard work, I should store the other pertinent information
+							$upgrade_details = it_exchange_get_session_data( 'updowngrade_details' );
+							$upgrade_details[$this->product->ID] = array(
+								'credit'                 => $credit,
+								'free_days'              => $free_days,
+								'old_transaction_method' => $transaction->transaction_method,
+								'old_transaction_id'     => $most_priciest_txn_id,
+							);
+							
+							if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
+								if ( 'on' === it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
+									$upgrade_details[$this->product->ID]['old_subscriber_id'] = $transaction->get_transaction_meta( 'subscriber_id' );
+								}
+							}
+							it_exchange_update_session_data( 'updowngrade_details', $upgrade_details );
+							
+							if ( 0 < $free_days ) {
+								$day_string = __( 'day', 'LION' );
+								if ( 1 < $free_days )
+									$day_string = __( 'days', 'LION' );
+													
+								$result = $options['before_desc'] . $options['upgrade_desc'] . sprintf( __( ' %s %s free, then ', 'LION' ), $free_days, $day_string ) . $options['after_desc'];								
+							} else {
+								//no free days, just upgrade!
+								return;
+							}
+							
 						} else {
 							//no free days, just upgrade!
 							return;
@@ -495,11 +516,25 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						}
 						
 						$post_date = strtotime( $transaction->post_date );
+						$todays_date = time();
 						
 						if ( 0 === $last_payment ) {
 							//get upgrade details if they exist
 							//and possibly quit
-							//CHANGEME -- deal with this!
+							$credit = $transaction->get_transaction_meta( 'credit' );
+							$free_days = $transaction->get_transaction_meta( 'free_days' );
+
+							if ( !empty( $credit ) && !empty( $free_days ) ) {
+								$date_diff = ( $post_date + ( $free_days * 60*60 ) ) - $todays_date;
+								$days = max( floor( $date_diff / (60*60*24) ), 0 );
+								
+								$daily_cost_of_existing_membership = $credit / $free_days;
+								$next_payment_date = strtotime( '+' . $free_days . ' Days', strtotime( $transaction->post_date ) );
+								
+								$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
+							} else {
+								return;
+							}
 						} else {
 							switch( $existimg_membership_time ) {
 								case 'monthly':
@@ -516,53 +551,60 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_forever_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
 									$next_payment_date = 0;
 									break;
-							}		
-						}
-						
-						$todays_date = time();
-						$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
-						$credit = $remaining_days * $daily_cost_of_existing_membership;
-						
-						switch( $upgrade_membership_time ) {
-							case 'monthly':
-								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_monthly_membership', ( $base_price * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-								break;
-								
-							case 'yearly':
-								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_yearly_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-								break;
-								
-							case 'forever': //treat a "forever" upgrade as a "year", gives the customer a small discount
-								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_forever_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-								break;
-						}
-						$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
-							
-						$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
-						
-						//For cancelling, I need to get the subscription ID and payment method
-						//And since I've done all this hard work, I should store the other pertinent information
-						$downgrade_details = it_exchange_get_session_data( '$downgrade_details' );
-						$downgrade_details[$this->product->ID] = array(
-							'credit'                => $credit,
-							'free_days'             => $free_days,
-							'transaction_method'    => $transaction->transaction_method,
-							'parnet_transaction_id' => $most_priciest_txn_id,
-						);
-						
-						if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
-							if ( 'on' === it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
-								$downgrade_details[$this->product->ID]['subscriber_id'] = $transaction->get_transaction_meta( 'subscriber_id' );
 							}
+							
+							$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
 						}
-						it_exchange_update_session_data( 'downgrade_details', $downgrade_details );
 						
-						if ( 0 < $free_days ) {
-							$day_string = __( 'day', 'LION' );
-							if ( 1 < $free_days )
-								$day_string = __( 'days', 'LION' );
-												
-							$result = $options['before_desc'] . $options['downgrade_desc'] . sprintf( __( ' %s %s free, then ', 'LION' ), $free_days, $day_string ) . $options['after_desc'];								
+						if ( 0 < $remaining_days ) {
+							
+							$credit = $remaining_days * $daily_cost_of_existing_membership;
+							
+							switch( $upgrade_membership_time ) {
+								case 'monthly':
+									$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_monthly_membership', ( $base_price * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+									break;
+									
+								case 'yearly':
+									$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_yearly_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+									break;
+									
+								case 'forever': //treat a "forever" upgrade as a "year", gives the customer a small discount
+									$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_forever_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+									break;
+							}
+							$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
+								
+							$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
+							
+							//For cancelling, I need to get the subscription ID and payment method
+							//And since I've done all this hard work, I should store the other pertinent information
+							$downgrade_details = it_exchange_get_session_data( 'updowngrade_details' );
+							$downgrade_details[$this->product->ID] = array(
+								'credit'                 => $credit,
+								'free_days'              => $free_days,
+								'old_transaction_method' => $transaction->transaction_method,
+								'old_transaction_id'     => $most_priciest_txn_id,
+							);
+							
+							if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
+								if ( 'on' === it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
+									$downgrade_details[$this->product->ID]['old_subscriber_id'] = $transaction->get_transaction_meta( 'subscriber_id' );
+								}
+							}
+							it_exchange_update_session_data( 'updowngrade_details', $downgrade_details );
+							
+							if ( 0 < $free_days ) {
+								$day_string = __( 'day', 'LION' );
+								if ( 1 < $free_days )
+									$day_string = __( 'days', 'LION' );
+													
+								$result = $options['before_desc'] . $options['downgrade_desc'] . sprintf( __( ' %s %s free, then ', 'LION' ), $free_days, $day_string ) . $options['after_desc'];								
+							} else {
+								//no free days, just downgrade!
+								return;
+							}
+							
 						} else {
 							//no free days, just downgrade!
 							return;
