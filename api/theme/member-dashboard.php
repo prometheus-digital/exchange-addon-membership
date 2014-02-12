@@ -160,6 +160,9 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 						
 						if ( 1 < count( $all_access ) )
 							$result .= '<h3>' . get_the_title( $product_id ) . '</h4>';
+
+						if ( 2 <= $count )
+							$result .= $options['child_description'];
 						
 			            $groupings = array();
 			            	
