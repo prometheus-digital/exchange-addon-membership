@@ -184,8 +184,8 @@ function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
 	}
 	$return .= '</select>';
 	$return .= '<span class="it-exchange-membership-remove-new-rule">&times;</span>';
-	// $return .= '<div class="it-exchange-membership-rule-delay">' . __( 'Delay', 'LION' ) . '</div>';
 	
+	$return .= '<div class="it-exchange-membership-rule-delay">' . __( 'Delay', 'LION' ) . '</div>';
 	$return .= '<div class="it-exchange-membership-drip-rule">';
 	$return .= '<input class="it-exchange-membership-drip-rule-interval" type="number" min="0" value="0" name="it_exchange_membership_drip_interval" />';
 	$return .= '<select class="it-exchange-membership-drip-rule-duration" name="it_exchange_membership_drip_duration">';

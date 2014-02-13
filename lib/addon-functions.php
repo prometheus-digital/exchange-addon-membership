@@ -273,6 +273,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	
 	$taxonomies = get_object_taxonomies( $post_type );
 	$terms = wp_get_object_terms( $post_id, $taxonomies );
+	
 	foreach( $terms as $term ) {
 		$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
 		if ( !empty( $term_rules ) )
@@ -315,6 +316,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 		foreach ( $rules as $membership_id => $rule ) {
 			$return .= '<div class="it-exchange-membership-restriction-group">';
 			$title = get_the_title( $membership_id );
+			$parents = it_exchange_membership_addon_get_all_the_parents( $membership_id );
 			$restriction_exception = !empty( $restriction_exemptions[$membership_id] ) ? $restriction_exemptions[$membership_id] : array();
 			
 			$return .= '<input type="hidden" name="it_exchange_membership_id" value="' . $membership_id . '">';
@@ -323,6 +325,8 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 				$return .= '<div class="it-exchange-membership-rule-post it-exchange-membership-rule">';
 				$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="post" ' . checked( in_array( 'post', $restriction_exception ), false, false ) . '>';
 				$return .= $title;
+				if ( !empty( $parents ) )
+					$return .= '<p class="description">' . sprintf( __( 'Included in: %s', 'LION' ), join( ', ', array_map( 'get_the_title', $parents ) ) ) . '</p>';
 				$return .= '<span class="it-exchange-membership-remove-rule">&times;</span>';
 				
 				$drip_interval = get_post_meta( $post_id, '_item-content-rule-drip-interval-' . $membership_id, true );				
@@ -714,4 +718,18 @@ function it_exchange_membership_addon_display_membership_hierarchy( $product_ids
 		echo $output;
 	else
 		return $output;
+}
+
+function it_exchange_membership_addon_get_all_the_parents( $membership_id, $parent_ids = array() ) {
+	$parents = it_exchange_get_product_feature( $membership_id, 'membership-hierarchy', array( 'setting' => 'parents' ) );
+	if ( !empty( $parents ) ) {
+		foreach( $parents as $parent_id ) {
+			$parent_ids[] = $parent_id;
+			if ( false !== $results = it_exchange_membership_addon_get_all_the_parents( $parent_id ) )
+				$parent_ids = array_merge( $parent_ids, $results );
+		}
+	} else {
+		return false;
+	}
+	return $parent_ids;
 }
