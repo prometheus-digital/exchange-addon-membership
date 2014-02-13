@@ -178,7 +178,7 @@ function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
 	
 	$return  = '<div class="it-exchange-new-membership-rule-post it-exchange-new-membership-rule">';
 	$return .= '<select class="it-exchange-membership-id" name="it_exchange_membership_id">';
-	$membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type' ) );
+	$membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type', 'numberposts' => -1 ) );
 	foreach ( $membership_products as $membership ) {
 		$return .= '<option value="' . $membership->ID . '">' . get_the_title( $membership->ID ) . '</option>';
 	}
