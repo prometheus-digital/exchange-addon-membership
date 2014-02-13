@@ -429,7 +429,7 @@ function it_exchange_membership_addon_ajax_add_membership_child() {
 		if ( !in_array( $_REQUEST['product_id'], $child_ids ) )
 			$child_ids[] = $_REQUEST['product_id'];
 			
-		$return = display_membership_hierarchy( $child_ids, array( 'echo' => false ) );
+		$return = it_exchange_membership_addon_display_membership_hierarchy( $child_ids, array( 'echo' => false ) );
 	}
 
 	die( $return );
