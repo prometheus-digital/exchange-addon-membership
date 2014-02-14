@@ -175,36 +175,12 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 		// Abort if this product type doesn't support this feature 
 		if ( ! it_exchange_product_type_supports_feature( $product_type, 'membership-hierarchy' ) )
 			return;
-
-		$child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' );
-		if ( empty( $_POST['it-exchange-membership-child-ids'] ) ) {
-			delete_post_meta( $product_id, '_it-exchange-membership-child-id' );
-			foreach( $child_ids as $child_id ) {
-				delete_post_meta( $child_id, '_it-exchange-membership-parent-id', $product_id );
-			}
-		} else {
-			foreach( $child_ids as $child_id ) {
-				if ( !in_array( $child_id, $_POST['it-exchange-membership-child-ids'] ) ) {
-					delete_post_meta( $child_id, '_it-exchange-membership-parent-id', $product_id );
-				}
-			}
-			it_exchange_update_product_feature( $product_id, 'membership-hierarchy', $_POST['it-exchange-membership-child-ids'], array( 'setting' => 'children' ) );
-		}
-		
-		$parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' );
-		if ( empty( $_POST['it-exchange-membership-parent-ids'] ) ) {
-			delete_post_meta( $product_id, '_it-exchange-membership-parent-id' );
-			foreach( $parent_ids as $parent_id ) {
-				delete_post_meta( $parent_id, '_it-exchange-membership-child-id', $product_id );
-			}
-		} else {
-			foreach( $parent_ids as $parent_id ) {
-				if ( !in_array( $parent_id, $_POST['it-exchange-membership-parent-ids'] ) ) {
-					delete_post_meta( $parent_id, '_it-exchange-membership-child-id', $product_id );
-				}
-			}
-			it_exchange_update_product_feature( $product_id, 'membership-hierarchy', $_POST['it-exchange-membership-parent-ids'], array( 'setting' => 'parents' ) );
-		}
+			
+		$child_ids = empty( $_POST['it-exchange-membership-child-ids'] ) ? array() : $_POST['it-exchange-membership-child-ids'];
+		$parent_ids = empty( $_POST['it-exchange-membership-parent-ids'] ) ? array() : $_POST['it-exchange-membership-parent-ids'];
+			
+		it_exchange_update_product_feature( $product_id, 'membership-hierarchy', $child_ids, array( 'setting' => 'children' ) );
+		it_exchange_update_product_feature( $product_id, 'membership-hierarchy', $parent_ids, array( 'setting' => 'parents' ) );
 	}
 
 	/**
@@ -216,11 +192,23 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 	 * @return string product feature
 	*/
 	function save_feature( $product_id, $new_value, $options=array() ) {
-		if ( $product_id !== $new_value ) { //we don't want to add ourselves as our own parent or child
-			switch ( $options['setting'] ) {
-				
-				case 'children':
-					$child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' );
+		switch ( $options['setting'] ) {
+			
+			case 'children':
+				$child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' );
+				if ( empty( $new_value ) ) {
+					delete_post_meta( $product_id, '_it-exchange-membership-child-id' );
+					foreach( $child_ids as $child_id ) {
+						delete_post_meta( $child_id, '_it-exchange-membership-parent-id', $product_id );
+					}
+				} else {
+					foreach( $child_ids as $child_id ) {
+						if ( !in_array( $child_id, $new_value ) ) {
+							delete_post_meta( $product_id, '_it-exchange-membership-child-id', $child_id );
+							delete_post_meta( $child_id, '_it-exchange-membership-parent-id', $product_id );
+						}
+					}
+					
 					foreach ( $new_value as $child_id ) {
 						if ( !in_array( $child_id, (array)$child_ids ) )
 							add_post_meta( $product_id, '_it-exchange-membership-child-id', $child_id );
@@ -229,10 +217,24 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 						if ( !in_array( $product_id, (array)$parent_ids ) )
 							add_post_meta( $child_id, '_it-exchange-membership-parent-id', $product_id );
 					}
-					break;
+				}
+				break;
+				
+			case 'parents':
+				$parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' );
+				if ( empty( $new_value ) ) {
+					delete_post_meta( $product_id, '_it-exchange-membership-parent-id' );
+					foreach( $parent_ids as $parent_id ) {
+						delete_post_meta( $parent_id, '_it-exchange-membership-child-id', $product_id );
+					}
+				} else {
+					foreach( $parent_ids as $parent_id ) {
+						if ( !in_array( $parent_id, $new_value ) ) {
+							delete_post_meta( $product_id, '_it-exchange-membership-parent-id', $parent_id );
+							delete_post_meta( $parent_id, '_it-exchange-membership-child-id', $product_id );
+						}
+					}
 					
-				case 'parents':
-					$parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' );
 					foreach ( $new_value as $parent_id ) {
 						if ( !in_array( $parent_id, (array)$parent_ids ) )
 							add_post_meta( $product_id, '_it-exchange-membership-parent-id', $parent_id );
@@ -241,9 +243,9 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 						if ( !in_array( $product_id, (array)$child_ids ) )
 							add_post_meta( $parent_id, '_it-exchange-membership-child-id', $product_id );
 					}
-					break;
-				
-			}
+				}
+				break;
+			
 		}
 		return true;
 	}
