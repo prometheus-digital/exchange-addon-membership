@@ -314,7 +314,6 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 	$transaction = it_exchange_get_transaction( $transaction_id );
 	$member_access = $customer->get_customer_meta( 'member_access' );
 	$cancel_subscription = it_exchange_get_session_data( 'cancel_subscription' );
-	
 	foreach ( $cart_object->products as $product ) {
 		if ( it_exchange_product_supports_feature( $product['product_id'], 'membership-content-access-rules' ) ) {
 			//This is a membership product!
@@ -376,8 +375,8 @@ function it_exchange_membership_addon_setup_customer_session() {
 			}
 			$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $member_access );
 			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
-		}
-		$member_diff = array_diff( (array)$member_access, (array)$member_access_session );
+		}	
+		$member_diff = array_diff_assoc( (array)$member_access, (array)$member_access_session );
 		if ( !empty( $member_diff ) ) {
 			it_exchange_update_session_data( 'member_access', $member_access );
 			it_exchange_update_session_data( 'parent_access', $parent_access );
