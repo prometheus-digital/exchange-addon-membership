@@ -420,6 +420,7 @@ function it_exchange_membership_addon_ajax_add_membership_child() {
 		
 	if ( !empty( $_REQUEST['post_id'] ) && !empty( $_REQUEST['product_id'] ) ) {
 		$child_ids = array();
+				
 		if ( !empty( $_REQUEST['child_ids'] ) ) {
 			foreach( $_REQUEST['child_ids'] as $child_id ) {
 				if ( 'it-exchange-membership-child-ids[]' === $child_id['name'] )
@@ -461,7 +462,7 @@ function it_exchange_membership_addon_ajax_add_membership_parent() {
 			
 		$return .= '<ul>';
 		foreach ( $parent_ids as $parent_id ) {
-			$return .= '<li>';
+			$return .= '<li data-parent-id="' . $parent_id . '">';
 			$return .= '<div class="inner-wrapper">' . get_the_title( $parent_id ) . ' <a data-membership-id="' . $parent_id . '" class="it-exchange-membership-addon-delete-membership-parent it-exchange-remove-item">x</a>';
 			$return .= '<input type="hidden" name="it-exchange-membership-parent-ids[]" value="' . $parent_id . '" /></div>';
 			$return .= '</li>';
