@@ -134,10 +134,12 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
   		echo '<div class="it-exchange-membership-parent-ids-list-div">';
 		echo '<ul>';
 		foreach ( $parent_ids as $parent_id ) {
-			echo '<li data-parent-id="' . $parent_id . '">';
-			echo '<div class="inner-wrapper">' . get_the_title( $parent_id ) . ' <a href data-membership-id="' . $parent_id . '" class="it-exchange-membership-addon-delete-membership-parent it-exchange-remove-item">&times;</a>';
-			echo '<input type="hidden" name="it-exchange-membership-parent-ids[]" value="' . $parent_id . '" /></div>';
-			echo '</li>';
+			if ( false !== get_post_status( $parent_id ) ) {
+				echo '<li data-parent-id="' . $parent_id . '">';
+				echo '<div class="inner-wrapper">' . get_the_title( $parent_id ) . ' <a href data-membership-id="' . $parent_id . '" class="it-exchange-membership-addon-delete-membership-parent it-exchange-remove-item">&times;</a>';
+				echo '<input type="hidden" name="it-exchange-membership-parent-ids[]" value="' . $parent_id . '" /></div>';
+				echo '</li>';
+			}
 		}
 		echo '</ul>';
 		echo '</div>';
