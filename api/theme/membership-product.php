@@ -262,14 +262,19 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 					
 					if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
 						$existimg_membership_time = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) );
+						$existing_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
 					} else {
 						$existimg_membership_time = 'forever';
+						$existing_auto_renew = false;
 					}
 					
 					if ( it_exchange_product_has_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
 						$upgrade_membership_time = it_exchange_get_product_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'time' ) );
+						$upgrade_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
+
 					} else {
 						$upgrade_membership_time = 'forever';
+						$upgrade_auto_renew = false;
 					}
 					
 					if ( !( 'forever' === $existimg_membership_time && 'forever' !== $upgrade_membership_time ) ) {
@@ -368,29 +373,38 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								
 							$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
 							
-							//For cancelling, I need to get the subscription ID and payment method
-							//And since I've done all this hard work, I should store the other pertinent information
-							$upgrade_details = it_exchange_get_session_data( 'updowngrade_details' );
-							$upgrade_details[$this->product->ID] = array(
-								'credit'                 => $credit,
-								'free_days'              => $free_days,
-								'old_transaction_method' => $transaction->transaction_method,
-								'old_transaction_id'     => $most_priciest_txn_id,
-							);
-							
-							if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
-								if ( 'on' === it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
-									$upgrade_details[$this->product->ID]['old_subscriber_id'] = $transaction->get_transaction_meta( 'subscriber_id' );
-								}
-							}
-							it_exchange_update_session_data( 'updowngrade_details', $upgrade_details );
-							
 							if ( 0 < $free_days ) {
-								$day_string = __( 'day', 'LION' );
-								if ( 1 < $free_days )
-									$day_string = __( 'days', 'LION' );
-													
-								$result = $options['before_desc'] . sprintf( __( ' %s %s free, then regular price', 'LION' ), $free_days, $day_string ) . $options['after_desc'];								
+								$upgrade_type = false;
+								
+								if ( 'yes' === $upgrade_auto_renew ) {
+									$day_string = __( 'day', 'LION' );
+									if ( 1 < $free_days )
+										$day_string = __( 'days', 'LION' );
+														
+									$result = $options['before_desc'] . sprintf( __( ' %s %s free, then regular price', 'LION' ), $free_days, $day_string ) . $options['after_desc'];
+									$upgrade_type = 'days';
+								} else if ( $credit < $base_price ) {
+									$result = $options['before_desc'] . sprintf( __( ' %s upgrade credit, then regular price', 'LION' ), it_exchange_format_price( $credit )  ) . $options['after_desc'];
+									$upgrade_type = 'credit';
+								}
+								
+								//For cancelling, I need to get the subscription ID and payment method
+								//And since I've done all this hard work, I should store the other pertinent information
+								$upgrade_details = it_exchange_get_session_data( 'updowngrade_details' );
+								$upgrade_details[$this->product->ID] = array(
+									'credit'                 => $credit,
+									'free_days'              => $free_days,
+									'old_transaction_method' => $transaction->transaction_method,
+									'old_transaction_id'     => $most_priciest_txn_id,
+									'upgrade_type'           => $upgrade_type,
+								);
+								
+								if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
+									if ( 'on' === it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
+										$upgrade_details[$this->product->ID]['old_subscriber_id'] = $transaction->get_transaction_meta( 'subscriber_id' );
+									}
+								}
+								it_exchange_update_session_data( 'updowngrade_details', $upgrade_details );
 							} else {
 								//no free days, just upgrade!
 								return;
@@ -469,14 +483,18 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 					
 					if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
 						$existimg_membership_time = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) );
+						$existing_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
 					} else {
 						$existimg_membership_time = 'forever';
+						$existing_auto_renew = false;
 					}
 					
 					if ( it_exchange_product_has_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
 						$upgrade_membership_time = it_exchange_get_product_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'time' ) );
+						$upgrade_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
 					} else {
 						$upgrade_membership_time = 'forever';
+						$upgrade_auto_renew = false;
 					}
 					
 					if ( !( 'forever' === $existimg_membership_time && 'forever' !== $upgrade_membership_time ) ) {
@@ -575,29 +593,38 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								
 							$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
 							
-							//For cancelling, I need to get the subscription ID and payment method
-							//And since I've done all this hard work, I should store the other pertinent information
-							$downgrade_details = it_exchange_get_session_data( 'updowngrade_details' );
-							$downgrade_details[$this->product->ID] = array(
-								'credit'                 => $credit,
-								'free_days'              => $free_days,
-								'old_transaction_method' => $transaction->transaction_method,
-								'old_transaction_id'     => $most_priciest_txn_id,
-							);
-							
-							if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
-								if ( 'on' === it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
-									$downgrade_details[$this->product->ID]['old_subscriber_id'] = $transaction->get_transaction_meta( 'subscriber_id' );
-								}
-							}
-							it_exchange_update_session_data( 'updowngrade_details', $downgrade_details );
-							
 							if ( 0 < $free_days ) {
-								$day_string = __( 'day', 'LION' );
-								if ( 1 < $free_days )
-									$day_string = __( 'days', 'LION' );
-													
-								$result = $options['before_desc'] . sprintf( __( ' %s %s free, then regular price', 'LION' ), $free_days, $day_string ) . $options['after_desc'];								
+								$upgrade_type = false;
+
+								if ( 'yes' === $upgrade_auto_renew ) {
+									$day_string = __( 'day', 'LION' );
+									if ( 1 < $free_days )
+										$day_string = __( 'days', 'LION' );
+														
+									$result = $options['before_desc'] . sprintf( __( ' %s %s free, then regular price', 'LION' ), $free_days, $day_string ) . $options['after_desc'];
+									$upgrade_type = 'days';
+								} else if ( $credit < $base_price ) {
+									$result = $options['before_desc'] . sprintf( __( ' %s downgrade credit, then regular price', 'LION' ), it_exchange_format_price( $credit ) ) . $options['after_desc'];
+									$upgrade_type = 'credit';
+								}
+								
+								//For cancelling, I need to get the subscription ID and payment method
+								//And since I've done all this hard work, I should store the other pertinent information
+								$upgrade_details = it_exchange_get_session_data( 'updowngrade_details' );
+								$upgrade_details[$this->product->ID] = array(
+									'credit'                 => $credit,
+									'free_days'              => $free_days,
+									'old_transaction_method' => $transaction->transaction_method,
+									'old_transaction_id'     => $most_priciest_txn_id,
+									'upgrade_type'           => $upgrade_type,
+								);
+								
+								if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
+									if ( 'on' === it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) ) ) {
+										$upgrade_details[$this->product->ID]['old_subscriber_id'] = $transaction->get_transaction_meta( 'subscriber_id' );
+									}
+								}
+								it_exchange_update_session_data( 'updowngrade_details', $upgrade_details );	
 							} else {
 								//no free days, just downgrade!
 								return;

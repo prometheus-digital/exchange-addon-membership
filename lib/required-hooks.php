@@ -844,81 +844,18 @@ add_filter( 'it_exchange_email_notification_order_table_product_name', 'it_excha
  * @param bool $format Whether or not the price should be formatted 
  * @return string $db_base_price modified, if upgrade price has been set for product
 */
-function it_exchange_get_membership_addon_cart_product_base_price( $db_base_price, $product, $format ) {
-	if ( it_exchange_product_supports_feature( $product->ID, 'membership-hierarchy' )
-		&& it_exchange_product_has_feature( $product->ID, 'membership-hierarchy', array( 'setting' => 'children' ) ) ) {
-		
-		$child_ids = it_exchange_membership_addon_setup_recursive_member_access_array( array( $product->ID ) );
-		
-		if ( !empty( $child_ids ) ) {		
-			$most_priciest = 0;
-			
-			$parent_memberships = it_exchange_get_session_data( 'parent_access' );
-			
-			foreach ( $parent_memberships as $parent_id ) {
-				if ( $parent_id != $product_id && in_array( $parent_id, $child_ids ) ) {
-					$product = it_exchange_get_product( $parent_id );
-					$base_price = it_exchange_get_product_feature( $product->ID, 'base-price' );
-					$db_price = it_exchange_convert_to_database_number( $base_price );
-					if ( $db_price > $most_priciest )
-						$most_priciest = $db_price;
-				}
-			}
-						
-			if ( $most_priciest < $db_product_price ) {
-				$db_base_price -= $most_priciest;
-			}
-			
-		}
-		
-	}
+function it_exchange_get_credit_pricing_cart_product_base_price( $db_base_price, $product, $format ) {
+	$updown_details = it_exchange_get_session_data( 'updowngrade_details' );
 	
+	if ( !empty( $updown_details[$product['product_id']] ) && 'credit' == $updown_details[$product['product_id']]['upgrade_type'] ) {
+		$db_base_price = it_exchange_convert_from_database_number( it_exchange_convert_to_database_number( $db_base_price ) );
+		$db_base_price = $db_base_price - $updown_details[$product['product_id']]['credit'];
+
+		if ( $format ) {
+			$db_base_price = it_exchange_format_price( $db_base_price );
+		}
+	}
+		
 	return $db_base_price;
 }
-//add_filter( 'it_exchange_get_cart_product_base_price', 'it_exchange_get_membership_addon_cart_product_base_price', 10, 3 );
-
-/**
- * Replaces base-price with ugprade price
- *
- * @since 1.0.0
- *
- * @param string $base_price default Base Price
- * @param int $product_id iThemes Exchange Product ID
- * @param array $options Any options being passed through function 
- * @return string $base_price modified, if upgrade pricing has been set for product
-*/
-function it_exchange_membership_addon_get_product_feature_base_price( $base_price, $product_id, $options ) {
-	if ( !is_admin() ) {
-		if ( it_exchange_product_supports_feature( $product_id, 'membership-hierarchy' )
-			&& it_exchange_product_has_feature( $product_id, 'membership-hierarchy', array( 'setting' => 'children' ) ) ) {
-			
-			$child_ids = it_exchange_membership_addon_setup_recursive_member_access_array( array( $product_id ) );
-			
-			if ( !empty( $child_ids ) ) {		
-				$db_product_price = it_exchange_convert_to_database_number( $base_price );
-				$most_priciest = 0;
-				
-				$parent_memberships = it_exchange_get_session_data( 'parent_access' );
-				
-				foreach ( $parent_memberships as $parent_id ) {
-					if ( $parent_id != $product_id && in_array( $parent_id, $child_ids ) ) {
-						$product = it_exchange_get_product( $parent_id );
-						$child_base_price = it_exchange_get_product_feature( $product->ID, 'base-price' );
-						$db_price = it_exchange_convert_to_database_number( $child_base_price );
-						if ( $db_price > $most_priciest )
-							$most_priciest = $db_price;
-					}
-				}
-							
-				if ( $most_priciest < $db_product_price ) {
-					$db_product_price -= $most_priciest;
-					$base_price = it_exchange_convert_from_database_number( $db_product_price );
-				}
-				
-			}
-			
-		}
-	}
-	return $base_price;
-}
-//add_filter( 'it_exchange_get_product_feature_base-price', 'it_exchange_membership_addon_get_product_feature_base_price', 10, 3 );
+add_filter( 'it_exchange_get_cart_product_base_price', 'it_exchange_get_credit_pricing_cart_product_base_price', 10, 3 );
