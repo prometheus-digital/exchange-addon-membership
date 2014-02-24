@@ -65,7 +65,7 @@
 #it-exchange-product-membership-hierarchy ul{margin:0;}
 #it-exchange-product-membership-hierarchy li .inner-wrapper{position:relative;border:1px solid #D7D7D7;padding:1em;}
 #it-exchange-product-membership-hierarchy li li{margin-left:2em;}
-#it-exchange-product-membership-hierarchy li li .inner-wrapper{border-top:0;}
+#it-exchange-product-membership-hierarchy li li .inner-wrapper{margin-top:6px;}
 #it-exchange-product-membership-hierarchy .it-exchange-remove-item{position:absolute;right:0;top:0;}
 #it-exchange-product-membership-hierarchy .it-exchange-membership-hierarchy-add{margin-top:1em;}
 #it-exchange-product-membership-hierarchy .it-exchange-membership-label{margin-top:2em;}
