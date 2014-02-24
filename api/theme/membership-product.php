@@ -220,7 +220,6 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 			'after'        => '',
 			'before_desc'  => '<p class="description">',
 			'after_desc'   => '</p>',
-			'upgrade_desc' => __( 'Upgrade Details:' ,'LION' ),
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
 				
@@ -391,7 +390,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								if ( 1 < $free_days )
 									$day_string = __( 'days', 'LION' );
 													
-								$result = $options['before_desc'] . $options['upgrade_desc'] . sprintf( __( ' %s %s free, then ', 'LION' ), $free_days, $day_string ) . $options['after_desc'];								
+								$result = $options['before_desc'] . sprintf( __( ' %s %s free, then regular price', 'LION' ), $free_days, $day_string ) . $options['after_desc'];								
 							} else {
 								//no free days, just upgrade!
 								return;
@@ -435,7 +434,6 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 			'after'          => '',
 			'before_desc'    => '<p class="description">',
 			'after_desc'     => '</p>',
-			'downgrade_desc' => __( 'Downgrade Details:' ,'LION' ),
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
 				
@@ -599,7 +597,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								if ( 1 < $free_days )
 									$day_string = __( 'days', 'LION' );
 													
-								$result = $options['before_desc'] . $options['downgrade_desc'] . sprintf( __( ' %s %s free, then ', 'LION' ), $free_days, $day_string ) . $options['after_desc'];								
+								$result = $options['before_desc'] . sprintf( __( ' %s %s free, then regular price', 'LION' ), $free_days, $day_string ) . $options['after_desc'];								
 							} else {
 								//no free days, just downgrade!
 								return;
