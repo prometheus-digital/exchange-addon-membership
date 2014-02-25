@@ -315,22 +315,28 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 	$member_access = $customer->get_customer_meta( 'member_access' );
 	$cancel_subscription = it_exchange_get_session_data( 'cancel_subscription' );
 	foreach ( $cart_object->products as $product ) {
-		if ( it_exchange_product_supports_feature( $product['product_id'], 'membership-content-access-rules' ) ) {
+		$product_id = $product['product_id'];
+		if ( it_exchange_product_supports_feature( $product_id, 'membership-content-access-rules' ) ) {
 			//This is a membership product!
-			if ( !in_array( $product['product_id'], (array)$member_access ) ) {
+			if ( !in_array( $product_id, (array)$member_access ) ) {
 				//If this user isn't already a member of this product, add it to their access list
-				$member_access[$transaction_id] = $product['product_id'];
-				$customer->update_customer_meta( 'member_access', $member_access );
+				$member_access[$transaction_id] = $product_id;
 			}
 		}
 		
-		if ( !empty ( $cancel_subscription ) ) {	
-			if ( $product['product_id'] === $cancel_subscription['product_id'] ) {
-				$transaction->update_transaction_meta( 'free_days', $cancel_subscription['free_days'] );
-				$transaction->update_transaction_meta( 'credit', $cancel_subscription['credit'] );
-			}
+		if ( !empty ( $cancel_subscription[$product_id] ) ) {
+			$transaction->update_transaction_meta( 'free_days', $cancel_subscription[$product_id]['free_days'] );
+			$transaction->update_transaction_meta( 'credit', $cancel_subscription[$product_id]['credit'] );
 		}
 	}
+	if ( !empty( $cancel_subscription ) ) {
+		foreach( $cancel_subscription as $cancel_subscription_item ) {
+			$old_transaction_id = $cancel_subscription_item['old_transaction_id'];
+			$old_transaction = it_exchange_get_transaction( $old_transaction_id );
+			$old_transaction->update_status( 'cancelled' );
+		}
+	}
+	$customer->update_customer_meta( 'member_access', $member_access );
 }
 add_action( 'it_exchange_add_transaction_success', 'it_exchange_membership_addon_add_transaction' );
 
@@ -365,10 +371,14 @@ function it_exchange_membership_addon_setup_customer_session() {
 			if ( false === get_transient( 'member_access_check_' . $customer->id ) ) {
 				foreach( $member_access as $txn_id => $product_id ) {
 					$transaction = it_exchange_get_transaction( $txn_id );
-					$subscription_status = $transaction->get_transaction_meta( 'subscriber_status' );
-					//empty means it was never set... which should mean that recurring payments isn't setup
-					if ( !empty( $subscription_status ) && 'active' !== $subscription_status )
+					if ( 'cancelled' === $transaction->get_status() ) {
 						unset( $member_access[$txn_id] );
+					} else {
+						$subscription_status = $transaction->get_transaction_meta( 'subscriber_status' );
+						//empty means it was never set... which should mean that recurring payments isn't setup
+						if ( !empty( $subscription_status ) && 'active' !== $subscription_status )
+							unset( $member_access[$txn_id] );
+					}
 				}
 				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 24 ); //only do it daily
 				$customer->update_customer_meta( 'member_access', $member_access );
