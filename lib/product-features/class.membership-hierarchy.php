@@ -103,7 +103,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 		// Grab the iThemes Exchange Product object from the WP $post object
 		$product = it_exchange_get_product( $post );
         $defaults = it_exchange_get_option( 'addon_membership' );
-		$membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type', 'numberposts' => -1 ) );
+		$membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type', 'numberposts' => -1, 'show_hidden' => true ) );
 		
 		echo '<p>' . __( 'View and edit membership relationships below. You can add child memberships to include the content and files from another membership with this membership. You can also add and remove parent memberships that include this membership.', 'LION' ) . '</p>';
 		

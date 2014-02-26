@@ -258,7 +258,7 @@ function it_exchange_membership_addon_mce_popup_footer() {
                     <div style="padding:15px 15px 0 15px;">
                         <select id="add-membership-id" multiple="multiple" size="5">
                             <?php
-                            $membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type' ) );
+                            $membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type', 'show_hidden' => true ) );
 							foreach ( $membership_products as $membership ) {
 								echo '<option value="' . $membership->ID . '">' . get_the_title( $membership->ID ) . '</option>';
 							}
