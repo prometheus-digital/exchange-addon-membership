@@ -334,6 +334,8 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 			$old_transaction_id = $cancel_subscription_item['old_transaction_id'];
 			$old_transaction = it_exchange_get_transaction( $old_transaction_id );
 			$old_transaction->update_status( 'cancelled' );
+			if ( !empty( $member_access[$old_transaction_id] ) )
+				unset( $member_access[$old_transaction_id] );
 		}
 	}
 	$customer->update_customer_meta( 'member_access', $member_access );
@@ -380,7 +382,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 							unset( $member_access[$txn_id] );
 					}
 				}
-				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 24 ); //only do it daily
+				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 4 ); //only do it every four hours
 				$customer->update_customer_meta( 'member_access', $member_access );
 			}
 			$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $member_access );
