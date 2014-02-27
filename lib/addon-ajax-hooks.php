@@ -178,14 +178,14 @@ function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
 	
 	$return  = '<div class="it-exchange-new-membership-rule-post it-exchange-new-membership-rule">';
 	$return .= '<select class="it-exchange-membership-id" name="it_exchange_membership_id">';
-	$membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type' ) );
+	$membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type', 'numberposts' => -1, 'show_hidden' => true ) );
 	foreach ( $membership_products as $membership ) {
 		$return .= '<option value="' . $membership->ID . '">' . get_the_title( $membership->ID ) . '</option>';
 	}
 	$return .= '</select>';
 	$return .= '<span class="it-exchange-membership-remove-new-rule">&times;</span>';
-	// $return .= '<div class="it-exchange-membership-rule-delay">' . __( 'Delay', 'LION' ) . '</div>';
 	
+	$return .= '<div class="it-exchange-membership-rule-delay">' . __( 'Delay', 'LION' ) . '</div>';
 	$return .= '<div class="it-exchange-membership-drip-rule">';
 	$return .= '<input class="it-exchange-membership-drip-rule-interval" type="number" min="0" value="0" name="it_exchange_membership_drip_interval" />';
 	$return .= '<select class="it-exchange-membership-drip-rule-duration" name="it_exchange_membership_drip_duration">';
@@ -412,3 +412,65 @@ function it_exchange_membership_addon_ajax_update_duration() {
 	die();
 }
 add_action( 'wp_ajax_it-exchange-membership-addon-update-drip-rule-duration', 'it_exchange_membership_addon_ajax_update_duration' );
+
+
+function it_exchange_membership_addon_ajax_add_membership_child() {
+	
+	$return = '';
+		
+	if ( !empty( $_REQUEST['post_id'] ) && !empty( $_REQUEST['product_id'] ) ) {
+		$child_ids = array();
+				
+		if ( !empty( $_REQUEST['child_ids'] ) ) {
+			foreach( $_REQUEST['child_ids'] as $child_id ) {
+				if ( 'it-exchange-membership-child-ids[]' === $child_id['name'] )
+					$child_ids[] = $child_id['value'];
+			}
+		}
+			
+		if ( !in_array( $_REQUEST['product_id'], $child_ids ) )
+			$child_ids[] = $_REQUEST['product_id'];
+			
+		$return = it_exchange_membership_addon_display_membership_hierarchy( $child_ids, array( 'echo' => false ) );
+	}
+
+	die( $return );
+}
+add_action( 'wp_ajax_it-exchange-membership-addon-add-membership-child', 'it_exchange_membership_addon_ajax_add_membership_child' );
+
+/**
+ * AJAX to add new member relatives
+ *
+ * @since 1.0.0
+ * @return void
+*/
+function it_exchange_membership_addon_ajax_add_membership_parent() {
+	
+	$return = '';
+		
+	if ( !empty( $_REQUEST['post_id'] ) && !empty( $_REQUEST['product_id'] ) ) {
+		$parent_ids = array();
+		if ( !empty( $_REQUEST['parent_ids'] ) ) {
+			foreach( $_REQUEST['parent_ids'] as $parent_id ) {
+				if ( 'it-exchange-membership-parent-ids[]' === $parent_id['name'] )
+					$parent_ids[] = $parent_id['value'];
+			}
+		}
+		
+		if ( !in_array( $_REQUEST['product_id'], $parent_ids ) )
+			$parent_ids[] = $_REQUEST['product_id'];
+			
+		$return .= '<ul>';
+		foreach ( $parent_ids as $parent_id ) {
+			$return .= '<li data-parent-id="' . $parent_id . '">';
+			$return .= '<div class="inner-wrapper">' . get_the_title( $parent_id ) . ' <a data-membership-id="' . $parent_id . '" class="it-exchange-membership-addon-delete-membership-parent it-exchange-remove-item">x</a>';
+			$return .= '<input type="hidden" name="it-exchange-membership-parent-ids[]" value="' . $parent_id . '" /></div>';
+			$return .= '</li>';
+		}
+		$return .= '</ul>';
+	}
+	
+	die( $return );
+}
+add_action( 'wp_ajax_it-exchange-membership-addon-add-membership-parent', 'it_exchange_membership_addon_ajax_add_membership_parent' );
+

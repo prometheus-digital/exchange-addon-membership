@@ -258,7 +258,7 @@ function it_exchange_membership_addon_mce_popup_footer() {
                     <div style="padding:15px 15px 0 15px;">
                         <select id="add-membership-id" multiple="multiple" size="5">
                             <?php
-                            $membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type' ) );
+                            $membership_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type', 'show_hidden' => true ) );
 							foreach ( $membership_products as $membership ) {
 								echo '<option value="' . $membership->ID . '">' . get_the_title( $membership->ID ) . '</option>';
 							}
@@ -311,18 +311,34 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 	$cart_object = get_post_meta( $transaction_id, '_it_exchange_cart_object', true );
 	$customer_id = get_post_meta( $transaction_id, '_it_exchange_customer_id', true );
 	$customer = new IT_Exchange_Customer( $customer_id );
+	$transaction = it_exchange_get_transaction( $transaction_id );
 	$member_access = $customer->get_customer_meta( 'member_access' );
-	
+	$cancel_subscription = it_exchange_get_session_data( 'cancel_subscription' );
 	foreach ( $cart_object->products as $product ) {
-		if ( it_exchange_product_supports_feature( $product['product_id'], 'membership-content-access-rules' ) ) {
+		$product_id = $product['product_id'];
+		if ( it_exchange_product_supports_feature( $product_id, 'membership-content-access-rules' ) ) {
 			//This is a membership product!
-			if ( !in_array( $product['product_id'], (array)$member_access ) ) {
+			if ( !in_array( $product_id, (array)$member_access ) ) {
 				//If this user isn't already a member of this product, add it to their access list
-				$member_access[$transaction_id] = $product['product_id'];
-				$customer->update_customer_meta( 'member_access', $member_access );
+				$member_access[$transaction_id] = $product_id;
 			}
 		}
+		
+		if ( !empty ( $cancel_subscription[$product_id] ) ) {
+			$transaction->update_transaction_meta( 'free_days', $cancel_subscription[$product_id]['free_days'] );
+			$transaction->update_transaction_meta( 'credit', $cancel_subscription[$product_id]['credit'] );
+		}
 	}
+	if ( !empty( $cancel_subscription ) ) {
+		foreach( $cancel_subscription as $cancel_subscription_item ) {
+			$old_transaction_id = $cancel_subscription_item['old_transaction_id'];
+			$old_transaction = it_exchange_get_transaction( $old_transaction_id );
+			$old_transaction->update_status( 'cancelled' );
+			if ( !empty( $member_access[$old_transaction_id] ) )
+				unset( $member_access[$old_transaction_id] );
+		}
+	}
+	$customer->update_customer_meta( 'member_access', $member_access );
 }
 add_action( 'it_exchange_add_transaction_success', 'it_exchange_membership_addon_add_transaction' );
 
@@ -348,7 +364,8 @@ add_action( 'it_exchange_add_child_transaction_success', 'it_exchange_membership
 function it_exchange_membership_addon_setup_customer_session() {
 	if ( is_user_logged_in() ) {
 		$user_id = get_current_user_id();
-		$customer = new IT_Exchange_Customer( $user_id );	
+		$parent_access = array();
+		$customer = new IT_Exchange_Customer( $user_id );
 		$member_access = $customer->get_customer_meta( 'member_access' );
 		$member_access_session = it_exchange_get_session_data( 'member_access' );
 		if ( !empty( $member_access )  ) {
@@ -356,23 +373,47 @@ function it_exchange_membership_addon_setup_customer_session() {
 			if ( false === get_transient( 'member_access_check_' . $customer->id ) ) {
 				foreach( $member_access as $txn_id => $product_id ) {
 					$transaction = it_exchange_get_transaction( $txn_id );
-					$subscription_status = $transaction->get_transaction_meta( 'subscriber_status' );
-					//empty means it was never set... which should mean that recurring payments isn't setup
-					if ( !empty( $subscription_status ) && 'active' !== $subscription_status )
+					if ( 'cancelled' === $transaction->get_status() ) {
 						unset( $member_access[$txn_id] );
+					} else {
+						$subscription_status = $transaction->get_transaction_meta( 'subscriber_status' );
+						//empty means it was never set... which should mean that recurring payments isn't setup
+						if ( !empty( $subscription_status ) && 'active' !== $subscription_status )
+							unset( $member_access[$txn_id] );
+					}
 				}
-				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 24 ); //only do it daily
+				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 4 ); //only do it every four hours
 				$customer->update_customer_meta( 'member_access', $member_access );
 			}
-		}
-		$member_diff = array_diff( (array)$member_access, (array)$member_access_session );
-		if ( !empty( $member_diff ) )
+			$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $member_access );
+			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
+		}	
+		$member_diff = array_diff_assoc( (array)$member_access, (array)$member_access_session );
+		if ( !empty( $member_diff ) ) {
 			it_exchange_update_session_data( 'member_access', $member_access );
+			it_exchange_update_session_data( 'parent_access', $parent_access );
+		}
 	} else {
 		it_exchange_clear_session_data( 'member_access' );
+		it_exchange_clear_session_data( 'parent_access' );
 	}
 }
 add_action( 'wp', 'it_exchange_membership_addon_setup_customer_session' );
+
+function it_exchange_membership_addon_update_transaction_subscription_status( $transaction, $subscriber_id, $status ) {
+	if ( !empty( $transaction->customer_id) ) {
+		$customer = it_exchange_get_customer( $transaction->customer_id );
+		if ( !empty( $customer ) ) {
+			$member_access = $customer->get_customer_meta( 'member_access' );
+			if ( 'active' !== $status ) { //we're canceled, suspended, deactivated or something in between...
+				if ( !empty( $member_access[$transaction->ID] ) )
+					unset( $member_access[$transaction->ID] ); //so we remove it
+			}
+			$customer->update_customer_meta( 'member_access', $member_access );
+		}
+	}
+}
+add_action( 'it_exchange_update_transaction_subscription_status', 'it_exchange_membership_addon_update_transaction_subscription_status', 10, 3 );
 
 /**
  * Creates sessions data with logged in customer's membership access rules
@@ -563,7 +604,6 @@ function it_exchange_membership_addon_template_path( $possible_template_paths, $
 }
 add_filter( 'it_exchange_possible_template_paths', 'it_exchange_membership_addon_template_path', 10, 2 );
 
-
 /**
  * Replaces base-price content product element with customer-pricing element, if found
  *
@@ -579,6 +619,21 @@ function it_exchange_memnbership_addon_get_content_product_product_advanced_loop
 	return $parts;
 }
 add_filter( 'it_exchange_get_content_product_product_advanced_loop_elements', 'it_exchange_memnbership_addon_get_content_product_product_advanced_loop_elements' );
+
+/**
+ * Adds upgrade price after base-price content product element, if found
+ *
+ * @since CHANGEME
+ *
+ * @param array $parts Element array for temmplate parts
+ * @return array Modified array with new customer-pricing element (if base-price was found).
+*/
+function it_exchange_memnbership_addon_get_content_product_product_info_loop_elements( $parts ) {
+	array_unshift( $parts, 'upgrade-details' );
+	array_unshift( $parts, 'downgrade-details' );
+	return $parts;
+}
+add_filter( 'it_exchange_get_content_product_product_info_loop_elements', 'it_exchange_memnbership_addon_get_content_product_product_info_loop_elements' );
 
 /*
  * Registers the membership frontend dashboard page in iThemes Exchange
@@ -625,8 +680,8 @@ function it_exchange_get_memberships_page_rewrites( $page ) {
 			}
 
 			$rewrites = array(
-				$account_slug  . '/([^/]+)/' . $slug  . '/([^/]+)'  => 'index.php?' . $account_slug . '=$matches[1]&' . $slug . '=$matches[2]',
-				$account_slug . '/' . $slug  . '/([^/]+)' => 'index.php?' . $account_slug . '=1&' . $slug . '=$matches[1]',
+				$account_slug  . '/([^/]+)/' . $slug  . '/([^/]+)/?$'  => 'index.php?' . $account_slug . '=$matches[1]&' . $slug . '=$matches[2]',
+				$account_slug . '/' . $slug  . '/([^/]+)/?$' => 'index.php?' . $account_slug . '=1&' . $slug . '=$matches[1]',
 			);
 			return $rewrites;
 			break;
@@ -730,7 +785,7 @@ add_filter( 'it_exchange_account_based_pages', 'it_exchange_membership_addon_pag
  * @return array
 */
 function it_exchange_membership_addon_append_to_customer_menu_loop( $nav, $customer ) {
-	$memberships = it_exchange_get_session_data( 'member_access' );
+	$memberships = it_exchange_get_session_data( 'parent_access' );
 	$page_slug = 'memberships';
 	$permalinks = (bool)get_option( 'permalink_structure' );
 		
@@ -790,3 +845,29 @@ function it_exchange_membership_addon_email_notification_order_table_product_nam
 	return $product_name;
 }
 add_filter( 'it_exchange_email_notification_order_table_product_name', 'it_exchange_membership_addon_email_notification_order_table_product_name', 10, 2 );
+
+/**
+ * Replaces base-price with upgrade price
+ *
+ * @since 1.0.0
+ *
+ * @param string $db_base_price default Base Price
+ * @param array $product iThemes Exchange Product
+ * @param bool $format Whether or not the price should be formatted 
+ * @return string $db_base_price modified, if upgrade price has been set for product
+*/
+function it_exchange_get_credit_pricing_cart_product_base_price( $db_base_price, $product, $format ) {
+	$updown_details = it_exchange_get_session_data( 'updowngrade_details' );
+	
+	if ( !empty( $updown_details[$product['product_id']] ) && 'credit' == $updown_details[$product['product_id']]['upgrade_type'] ) {
+		$db_base_price = it_exchange_convert_from_database_number( it_exchange_convert_to_database_number( $db_base_price ) );
+		$db_base_price = $db_base_price - $updown_details[$product['product_id']]['credit'];
+
+		if ( $format ) {
+			$db_base_price = it_exchange_format_price( $db_base_price );
+		}
+	}
+		
+	return $db_base_price;
+}
+add_filter( 'it_exchange_get_cart_product_base_price', 'it_exchange_get_credit_pricing_cart_product_base_price', 10, 3 );

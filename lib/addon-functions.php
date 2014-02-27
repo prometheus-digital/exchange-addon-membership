@@ -273,6 +273,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	
 	$taxonomies = get_object_taxonomies( $post_type );
 	$terms = wp_get_object_terms( $post_id, $taxonomies );
+	
 	foreach( $terms as $term ) {
 		$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
 		if ( !empty( $term_rules ) )
@@ -315,6 +316,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 		foreach ( $rules as $membership_id => $rule ) {
 			$return .= '<div class="it-exchange-membership-restriction-group">';
 			$title = get_the_title( $membership_id );
+			$parents = it_exchange_membership_addon_get_all_the_parents( $membership_id );
 			$restriction_exception = !empty( $restriction_exemptions[$membership_id] ) ? $restriction_exemptions[$membership_id] : array();
 			
 			$return .= '<input type="hidden" name="it_exchange_membership_id" value="' . $membership_id . '">';
@@ -323,6 +325,8 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 				$return .= '<div class="it-exchange-membership-rule-post it-exchange-membership-rule">';
 				$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="post" ' . checked( in_array( 'post', $restriction_exception ), false, false ) . '>';
 				$return .= $title;
+				if ( !empty( $parents ) )
+					$return .= '<p class="description">' . sprintf( __( 'Included in: %s', 'LION' ), join( ', ', array_map( 'get_the_title', $parents ) ) ) . '</p>';
 				$return .= '<span class="it-exchange-membership-remove-rule">&times;</span>';
 				
 				$drip_interval = get_post_meta( $post_id, '_item-content-rule-drip-interval-' . $membership_id, true );				
@@ -562,7 +566,6 @@ function it_exchange_membership_access_rules_sorted_by_selected_type( $membershi
 	}
 	
 	return $sorted_access_rules;
-	
 }
 
 /*
@@ -574,17 +577,174 @@ function it_exchange_membership_access_rules_sorted_by_selected_type( $membershi
  * @return bool
 */
 function it_exchange_membership_cart_contains_membership_product( $cart_products = false ) {
-
 	if ( !$cart_products )
 		$cart_products = it_exchange_get_cart_products();
 	
 	foreach ( $cart_products as $product ) {
-		
 		if ( 'membership-product-type' === it_exchange_get_product_type( $product['product_id'] ) )
 			return true;
-		
 	}
 	
 	return false;
+}
+
+/*
+ * For hierarchical membership types
+ * Finds all the most-parental membership types in the member_access session
+ * Used generally to prevent duplicate content from being printed
+ * in the member's dashboard
+ *
+ * @since CHANGEME
+ *
+ * @param array $membership_products current list of accessible membership products
+ * @return array
+*/
+function it_exchange_membership_addon_setup_most_parent_member_access_array( $membership_products ) {
+	$found_ids = array();
+	$parent_ids = array();
+	foreach( $membership_products as $txn_id => $product_id ) {
+		if ( false !== get_post_status( $product_id ) ) {
+			if ( false !== $found_id = it_exchange_membership_addon_get_most_parent_from_member_access( $product_id, $membership_products ) ) {
+				if ( !in_array( $found_id, $found_ids ) )
+					$found_ids[] = $found_id;
+			}
+		}
+	}
+	foreach( $found_ids as $found_id ) {
+		$txn_keys = array_keys( $membership_products, $found_id );
+		if ( !empty( $txn_keys ) )
+			$txn_id = array_shift( $txn_keys );
+		if ( !empty( $txn_id ) )
+			$parent_ids[$txn_id] = $found_id;
+	}
+	return $parent_ids;
+}
+
+/*
+ * For hierarchical membership types
+ * Get all child membership products and adds it to an array to be used
+ * for generating the member_access session
+ *
+ * @since CHANGEME 
+ *
+ * @param array $membership_products current list of accessible membership products
+ * @param array $product_ids
+ * @return array
+*/
+function it_exchange_membership_addon_setup_recursive_member_access_array( $membership_products, $product_ids = array() ) {
+	foreach( $membership_products as $product_id ) {
+		if ( false !== get_post_status( $product_id ) ) {
+			if ( in_array( $product_id, $product_ids ) )
+				break;
+			
+			$product_ids[] = $product_id;
+			if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
+				$product_ids = it_exchange_membership_addon_setup_recursive_member_access_array( $child_ids, $product_ids );
+			}
+		}
+	}
+	return $product_ids;
+}
+
+/*
+ * Gets the highest level parent from the parent access session for a given product ID
+ *
+ * @since CHANGEME 
+ *
+ * @param int $product_id Membership product to check
+ * @param array $parent_access Parent access session (or other array)
+ * @return array
+*/
+function it_exchange_membership_addon_get_most_parent_from_member_access( $product_id, $parent_access ) {
+	$most_parent = false;
+	if ( $childs_parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' ) ) {
+		foreach( $childs_parent_ids as $parent_id ) {
+			if ( false !== get_post_status( $parent_id ) ) {
+				if ( in_array( $parent_id, $parent_access ) )
+					$most_parent = $parent_id; //potentially the most parent, but we need to keep checking!
+				
+				if ( false !== $found_id = it_exchange_membership_addon_get_most_parent_from_member_access( $parent_id, $parent_access ) )
+					$most_parent = $found_id;
+			}
+		}
+	}
+	if ( !$most_parent && in_array( $product_id, $parent_access ) ) {
+		$most_parent = $product_id;
+	}
+	return $most_parent;
+}
+
+/*
+ * For hierarchical membership types
+ * Prints or returns an HTML formatted list of memberships and their children
+ *
+ * @since CHANGEME 
+ *
+ * @param array $membership_products parent IDs of membership products
+ * @param array $args array of arguments for the function
+ * @return string|null
+*/
+function it_exchange_membership_addon_display_membership_hierarchy( $product_ids, $args = array() ) {
+	$defaults = array(
+		'echo'          => true,
+		'delete'        => true,
+		'hidden_input'  => true,
+	);
+	$args = wp_parse_args( $args, $defaults );
+	extract( $args );
+
+	$output = '';
+	foreach( $product_ids as $product_id ) {
+		if ( false !== get_post_status( $product_id ) ) {
+			$output .= '<ul>';
+			$output .= '<li data-child-id="' . $product_id . '"><div class="inner-wrapper">' . get_the_title( $product_id );
+			
+			if ( $delete )
+				$output .= ' <a href data-membership-id="' . $product_id . '" class="it-exchange-membership-addon-delete-membership-child it-exchange-remove-item">&times;</a>';
+				
+			if ( $hidden_input ) {
+				$output .= ' <input type="hidden" name="it-exchange-membership-child-ids[]" value="' . $product_id . '" />';
+			}
+			
+			$output .= '</div>';
+			
+			if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
+				$output .= it_exchange_membership_addon_display_membership_hierarchy( $child_ids, array( 'echo' => false, 'delete' => false, 'hidden_input' => false ) );
+			}
+			
+			$output .= '</li>';
+			$output .= '</ul>';
+		}
+	}
 	
+	if ( $echo )
+		echo $output;
+	else
+		return $output;
+}
+
+/*
+ * For hierarchical membership types
+ * Returns an array of all the product's parents
+ *
+ * @since CHANGEME 
+ *
+ * @param int $membership_id product ID of membership
+ * @param array $parent_ids array of of current parent_ids
+ * @return array|bool
+*/
+function it_exchange_membership_addon_get_all_the_parents( $membership_id, $parent_ids = array() ) {
+	$parents = it_exchange_get_product_feature( $membership_id, 'membership-hierarchy', array( 'setting' => 'parents' ) );
+	if ( !empty( $parents ) ) {
+		foreach( $parents as $parent_id ) {
+			if ( false !== get_post_status( $parent_id ) ) {
+				$parent_ids[] = $parent_id;
+				if ( false !== $results = it_exchange_membership_addon_get_all_the_parents( $parent_id ) )
+					$parent_ids = array_merge( $parent_ids, $results );
+			}
+		}
+	} else {
+		return false;
+	}
+	return $parent_ids;
 }
