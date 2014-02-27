@@ -64,3 +64,16 @@
 	Bug Fix: Licensing on SSL-enabled sites now works properly.
 1.0.21 - 2014-02-03 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Bug Fix: Licensing on SSL-enabled sites now works properly.
+1.1.0 - 2014-02-27 - Lew Ayotte
+	Membership Upgrades and Downgrades released!
+	Lower transient member access check to 4 hours
+	Remove old transaction ID form member access array on cancel
+	Show hidden membership products on wp-admin screens
+	Changed the way that non-auto-renewing membership upgrade
+	Simple styling change, going with this until we have something better
+	Post edit screen modifications to output included memberships, and re-added Delay label to add restriction output
+	Fix bug, not displaying all membership products over 5 count
+	Added child content to product shortcode view
+	Fixed issue with Memberships pages not displaying properly when set as WP pages.
+	Added child content to product shortcode view
+	Added subscription status updater for cancelling subscription
