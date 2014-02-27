@@ -77,3 +77,5 @@
 	Fixed issue with Memberships pages not displaying properly when set as WP pages.
 	Added child content to product shortcode view
 	Added subscription status updater for cancelling subscription
+1.1.1 - 2014-02-27 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Updating recurring payments price css

@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: iThemes Exchange - Membership Add-on
- * Version: 1.1.0
+ * Version: 1.1.1
  * Description: Adds the membership management to iThemes Exchange
  * Plugin URI: http://ithemes.com/exchange/membership/
  * Author: iThemes
