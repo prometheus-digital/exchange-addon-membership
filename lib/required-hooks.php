@@ -656,7 +656,7 @@ function it_exchange_membership_addon_account_page() {
     );  
     it_exchange_register_page( 'memberships', $options );
 }
-add_action( 'init', 'it_exchange_membership_addon_account_page', 9 );
+add_action( 'it_libraries_loaded', 'it_exchange_membership_addon_account_page', 11 );
 
 /**
  * Returns rewrites for membership frontend dashboard page
