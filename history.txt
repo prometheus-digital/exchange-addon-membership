@@ -79,3 +79,6 @@
 	Added subscription status updater for cancelling subscription
 1.1.1 - 2014-02-27 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Updating recurring payments price css
+1.1.2 - 2014-03-26
+	Switching register pages hook to use it_libraries_loaded instead of init to follow other registration examples
+
