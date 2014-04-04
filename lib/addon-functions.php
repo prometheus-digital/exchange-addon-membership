@@ -637,7 +637,7 @@ function it_exchange_membership_addon_setup_recursive_member_access_array( $memb
 	foreach( $membership_products as $product_id => $txn_id ) {
 		if ( false !== get_post_status( $product_id ) ) {
 			if ( array_key_exists( $product_id, $product_ids ) )
-				break;
+				continue;
 				
 			if ( !$parent_txn_id )
 				$proper_txn_id = $txn_id;
