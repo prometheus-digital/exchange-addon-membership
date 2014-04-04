@@ -386,6 +386,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 				$customer->update_customer_meta( 'member_access', $member_access );
 			}
 			$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $member_access );
+			$member_access = array_flip( $member_access ); // we want the transaction ID to be the value to help us determine child access relations to transaction IDs
 			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
 		}	
 		$member_diff = array_diff_assoc( (array)$member_access, (array)$member_access_session );

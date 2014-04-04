@@ -235,7 +235,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 		if ( it_exchange_product_supports_feature( $this->product->ID, 'membership-hierarchy' )	
 				&& it_exchange_product_has_feature( $this->product->ID, 'membership-hierarchy', array( 'setting' => 'children' ) ) ) {
 				
-			$child_ids = it_exchange_membership_addon_setup_recursive_member_access_array( array( $this->product->ID ) );
+			$child_ids = it_exchange_membership_addon_setup_recursive_member_access_array( array( $this->product->ID => '' ) );
 						
 			if ( !empty( $child_ids ) ) {
 				$base_price = it_exchange_get_product_feature( $this->product->ID, 'base-price' );

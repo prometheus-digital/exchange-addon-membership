@@ -13,8 +13,7 @@
  * located in your theme.
 */
 ?>
-
-<?php if ( it_exchange( 'member-dashboard', 'has-membership-content' ) ) : ?>
+<?php if ( it_exchange( 'member-dashboard', 'supports-membership-content' ) ) : ?>
 	<?php do_action( 'it_exchange_membership_addon_content_memberships_before_membership_content_element' ); ?>
 	<div class="it-exchange-membership-membership-content it-exchange-advanced-item">
 		<p><?php it_exchange( 'member-dashboard', 'membership-content' ); ?></p>

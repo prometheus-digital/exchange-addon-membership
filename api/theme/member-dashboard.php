@@ -108,23 +108,23 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 	 * @return string
 	*/
 	function membership_content( $options=array() ) {
-		
+				
 		if ( empty( $this->_membership_product ) )
 			return false;
+			
+		// Return boolean if has flag was set
+		if ( $options['has'] )
+			return it_exchange_product_has_feature( $this->_membership_product->ID, 'membership-content-access-rules' );
 			
 		// Return boolean if has flag was set
 		if ( $options['supports'] )
 			return it_exchange_product_supports_feature( $this->_membership_product->ID, 'membership-content-access-rules' );
 		
-		// Return boolean if has flag was set
-		if ( $options['has'] )
-			return it_exchange_product_has_feature( $this->_membership_product->ID, 'membership-content-access-rules' );
-		
 		$count = 0;
 		$result = false;
 		$product_id = $this->_membership_product->ID;
 		$parent_title = get_the_title( $product_id );
-		$all_access = it_exchange_membership_addon_setup_recursive_member_access_array( array( $product_id ) );
+		$all_access = it_exchange_membership_addon_setup_recursive_member_access_array( array( $product_id => '' ) );
 		$now = time();
 		
 		if ( !empty( $all_access ) ) {
@@ -141,11 +141,10 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 				'posts_per_grouping' => 5,
 				'child_description'  => '<p class="description">' . sprintf( __( '(Included with %s)', 'LION' ), $parent_title ) . '</p>',
 			);
-			$options      = ITUtility::merge_defaults( $options, $defaults );
+			$options = ITUtility::merge_defaults( $options, $defaults );
 		
-			foreach( $all_access as $product_id ) {
+			foreach( $all_access as $product_id => $ignore ) {
 				$count++;
-									
 				if ( it_exchange_product_supports_feature( $product_id, 'membership-content-access-rules' )	
 						&& it_exchange_product_has_feature( $product_id, 'membership-content-access-rules' ) ) {
 							
@@ -309,9 +308,11 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 												$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
 												$duration = !empty( $duration ) ? $duration : 'days';
 												$member_access = it_exchange_get_session_data( 'member_access' );
-												if ( false !== $key = array_search( $product_id, $member_access ) ) {
-													$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $key ) );
+												if ( !empty( $member_access[$product_id] ) ) {
+
+													$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $member_access[$product_id] ) );
 													$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
+													
 													if ( $dripping < $now )	{
 														$result .= '<li>';	
 														$result .= '<div class="it-exchange-content-group it-exchange-content-single it-exchange-content-available">';
@@ -332,7 +333,7 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 														$result .= '<li>';
 														$result .= '<div class="it-exchange-content-group it-exchange-content-single it-exchange-content-unavailable">';
 														$result .= '	<div class="it-exchange-content-item-icon">';
-														$result .= '		<a class="it-exchange-item-icon" href="' .get_permalink( $post->ID ) . '"></a>';
+														$result .= '		<a class="it-exchange-item-icon" href="#"></a>';
 														$result .= '	</div>';
 														$result .= '	<div class="it-exchange-content-item-info">';
 														$result .= '		<p class="it-exchange-group-content-label">';

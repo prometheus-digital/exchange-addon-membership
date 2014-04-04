@@ -424,7 +424,7 @@ function it_exchange_membership_addon_is_content_restricted() {
 		
 	$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
 	if ( !empty( $restriction_exemptions ) ) {
-		foreach( $member_access as $txn_id => $product_id ) {
+		foreach( $member_access as $product_id => $txn_id ) {
 			if ( array_key_exists( $product_id, $restriction_exemptions ) )
 				$restriction = true; //we don't want restrict yet, not until we know there aren't other memberships that still have access to this content
 			else
@@ -437,7 +437,7 @@ function it_exchange_membership_addon_is_content_restricted() {
 	$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
 	if ( !empty( $post_rules ) ) {
 		if ( empty( $member_access ) ) return true;
-		foreach( $member_access as $txn_id => $product_id ) {
+		foreach( $member_access as $product_id => $txn_id ) {
 			if ( in_array( $product_id, $post_rules ) )
 				return false;	
 		}
@@ -447,7 +447,7 @@ function it_exchange_membership_addon_is_content_restricted() {
 	$post_type_rules = get_option( '_item-content-rule-post-type-' . $post->post_type, array() );	
 	if ( !empty( $post_type_rules ) ) {
 		if ( empty( $member_access ) ) return true;
-		foreach( $member_access as $txn_id => $product_id ) {
+		foreach( $member_access as $product_id => $txn_id ) {
 			if ( !empty( $restriction_exemptions[$product_id] )  )
 				return true;
 			if ( in_array( $product_id, $post_type_rules ) )
@@ -463,7 +463,7 @@ function it_exchange_membership_addon_is_content_restricted() {
 		$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
 		if ( !empty( $term_rules ) ) {
 			if ( empty( $member_access ) ) return true;
-			foreach( $member_access as $txn_id => $product_id ) {
+			foreach( $member_access as $product_id => $txn_id ) {
 				if ( in_array( $product_id, $term_rules ) )
 					return false;	
 			}
@@ -493,9 +493,10 @@ function it_exchange_membership_addon_is_content_dripped() {
 	
 	if ( current_user_can( 'administrator' ) )
 		return false;
-	
+
 	$member_access = it_exchange_get_session_data( 'member_access' );
-	foreach( $member_access as $txn_id => $product_id ) {
+
+	foreach( $member_access as $product_id => $txn_id  ) {
 		$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
 		$interval = !empty( $interval ) ? $interval : 0;
 		$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
@@ -504,6 +505,7 @@ function it_exchange_membership_addon_is_content_dripped() {
 			$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
 			$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
 			$now = time();
+			
 			if ( $dripping < $now )						
 				return false; // we can return here because they should have access to this content with this membership
 			else
@@ -631,15 +633,21 @@ function it_exchange_membership_addon_setup_most_parent_member_access_array( $me
  * @param array $product_ids
  * @return array
 */
-function it_exchange_membership_addon_setup_recursive_member_access_array( $membership_products, $product_ids = array() ) {
-	foreach( $membership_products as $product_id ) {
+function it_exchange_membership_addon_setup_recursive_member_access_array( $membership_products, $product_ids = array(), $parent_txn_id=false ) {
+	foreach( $membership_products as $product_id => $txn_id ) {
 		if ( false !== get_post_status( $product_id ) ) {
-			if ( in_array( $product_id, $product_ids ) )
+			if ( array_key_exists( $product_id, $product_ids ) )
 				break;
-			
-			$product_ids[] = $product_id;
+				
+			if ( !$parent_txn_id )
+				$proper_txn_id = $txn_id;
+			else
+				$proper_txn_id = $parent_txn_id;
+				
+			$product_ids[$product_id] = $proper_txn_id;
 			if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
-				$product_ids = it_exchange_membership_addon_setup_recursive_member_access_array( $child_ids, $product_ids );
+				$child_ids = array_flip( $child_ids ); //we need the child IDs to be the keys
+				$product_ids = it_exchange_membership_addon_setup_recursive_member_access_array( $child_ids, $product_ids, $proper_txn_id );
 			}
 		}
 	}

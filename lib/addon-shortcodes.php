@@ -42,13 +42,13 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 	
 		$result = '';
 		$parent_title = get_the_title( $atts['product_id'] );
-		$all_access = it_exchange_membership_addon_setup_recursive_member_access_array( array( $atts['product_id'] ) );
+		$all_access = it_exchange_membership_addon_setup_recursive_member_access_array( array( $atts['product_id'] => '' ) );
 		$now = time();
 		
 		if ( !empty( $all_access ) ) {
 			$count = 0;
 		
-			foreach( $all_access as $product_id ) {
+			foreach( $all_access as $product_id => $ignore ) {
 				$count++;
 				
 				$rules = it_exchange_get_product_feature( $product_id, 'membership-content-access-rules' );
@@ -270,7 +270,7 @@ function it_exchange_membership_addon_member_content_shortcode( $atts, $content 
 	if ( is_user_logged_in() ) {
 		$member_access = it_exchange_get_session_data( 'member_access' );		
 		if ( !empty( $member_access )  ) {
-			foreach( $member_access as $product_id ) {
+			foreach( $member_access as $product_id => $txn_id ) {
 				if ( in_array( $product_id, $membership_ids ) )
 					return $content;
 			}
