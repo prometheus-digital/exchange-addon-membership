@@ -81,4 +81,9 @@
 	Updating recurring payments price css
 1.1.2 - 2014-03-26
 	Switching register pages hook to use it_libraries_loaded instead of init to follow other registration examples
+1.1.3 - 2014-04-07 - Lew Ayotte
+	Fixed typo causing membership hierarchy function to exit before intended 
+	Fixed drip bug caused by Hierarchical Member Access session changes
+	Fixed bug preventing member content from not appearing in the member
+	dashboard if the parent member has no restricted content
 
