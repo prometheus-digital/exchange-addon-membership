@@ -246,7 +246,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 				$parent_memberships = it_exchange_get_session_data( 'parent_access' );
 				
 				foreach ( $parent_memberships as $txn_id => $parent_id ) {
-					if ( $parent_id != $this->product->ID && in_array( $parent_id, $child_ids ) ) {
+					if ( $parent_id != $this->product->ID && isset( $child_ids[$parent_id] ) ) {
 						$product = it_exchange_get_product( $parent_id );
 						$parent_product_base_price = it_exchange_get_product_feature( $parent_id, 'base-price' );
 						$db_price = it_exchange_convert_to_database_number( $parent_product_base_price );
