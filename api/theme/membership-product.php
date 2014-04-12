@@ -261,10 +261,10 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 				if ( !empty( $most_priciest_txn_id ) ) {
 					
 					if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
-						$existimg_membership_time = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) );
+						$existing_membership_time = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) );
 						$existing_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
 					} else {
-						$existimg_membership_time = 'forever';
+						$existing_membership_time = 'forever';
 						$existing_auto_renew = false;
 					}
 					
@@ -277,7 +277,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						$upgrade_auto_renew = false;
 					}
 					
-					if ( !( 'forever' === $existimg_membership_time && 'forever' !== $upgrade_membership_time ) ) {
+					if ( !( 'forever' === $existing_membership_time && 'forever' !== $upgrade_membership_time ) ) {
 						//forever upgrade to non-forever Products need to be process manually (see notes below)
 						$days_this_year = date_i18n( 'z', mktime( 0,0,0,12,31,date_i18n('Y') ) );
 
@@ -332,7 +332,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								return;
 							}
 						} else {
-							switch( $existimg_membership_time ) {
+							switch( $existing_membership_time ) {
 								case 'monthly':
 									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_monthly_membership', ( $last_payment * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
 									$next_payment_date = strtotime( '+1 Month', strtotime( $transaction->post_date ) );
@@ -376,7 +376,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 							if ( 0 < $free_days ) {
 								$upgrade_type = false;
 								
-								if ( 'yes' === $upgrade_auto_renew ) {
+								if ( 'yes' === $upgrade_auto_renew || 'on' === $upgrade_auto_renew ) {
 									$day_string = __( 'day', 'LION' );
 									if ( 1 < $free_days )
 										$day_string = __( 'days', 'LION' );
@@ -482,10 +482,10 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 				if ( !empty( $most_priciest_txn_id ) ) {
 					
 					if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
-						$existimg_membership_time = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) );
+						$existing_membership_time = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) );
 						$existing_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
 					} else {
-						$existimg_membership_time = 'forever';
+						$existing_membership_time = 'forever';
 						$existing_auto_renew = false;
 					}
 					
@@ -497,7 +497,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						$upgrade_auto_renew = false;
 					}
 					
-					if ( !( 'forever' === $existimg_membership_time && 'forever' !== $upgrade_membership_time ) ) {
+					if ( !( 'forever' === $existing_membership_time && 'forever' !== $upgrade_membership_time ) ) {
 						//forever upgrade to non-forever Products need to be process manually (see notes below)
 						$days_this_year = date_i18n( 'z', mktime( 0,0,0,12,31,date_i18n('Y') ) );
 
@@ -552,7 +552,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								return;
 							}
 						} else {
-							switch( $existimg_membership_time ) {
+							switch( $existing_membership_time ) {
 								case 'monthly':
 									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_monthly_membership', ( $last_payment * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
 									$next_payment_date = strtotime( '+1 Month', strtotime( $transaction->post_date ) );
@@ -596,7 +596,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 							if ( 0 < $free_days ) {
 								$upgrade_type = false;
 
-								if ( 'yes' === $upgrade_auto_renew ) {
+								if ( 'yes' === $upgrade_auto_renew || 'on' === $upgrade_auto_renew ) {
 									$day_string = __( 'day', 'LION' );
 									if ( 1 < $free_days )
 										$day_string = __( 'days', 'LION' );
