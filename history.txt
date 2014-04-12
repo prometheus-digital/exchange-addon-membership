@@ -86,4 +86,6 @@
 	Fixed drip bug caused by Hierarchical Member Access session changes
 	Fixed bug preventing member content from not appearing in the member
 	dashboard if the parent member has no restricted content
-
+1.1.4 - 2014-04-11 - Lew Ayotte, Elise Alley
+	Fixed typo in membership hierarchy auto-renew check
+	Fixed bug in checking child/parent relationships
