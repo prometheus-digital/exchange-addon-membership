@@ -124,6 +124,6 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 		$content .= '<p class="' . $options['class'] . '">' . $options['message'] . '</p>';
 		$content .= $options['after'];
 		
-		return $excerpt;
+		return $content;
 	}
 }

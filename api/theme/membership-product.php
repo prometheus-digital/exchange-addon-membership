@@ -236,7 +236,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 				&& it_exchange_product_has_feature( $this->product->ID, 'membership-hierarchy', array( 'setting' => 'children' ) ) ) {
 				
 			$child_ids = it_exchange_membership_addon_setup_recursive_member_access_array( array( $this->product->ID => '' ) );
-									
+						
 			if ( !empty( $child_ids ) ) {
 				$base_price = it_exchange_get_product_feature( $this->product->ID, 'base-price' );
 				$db_product_price = it_exchange_convert_to_database_number( $base_price );
@@ -244,9 +244,9 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 				$most_priciest_txn_id = 0;
 				
 				$parent_memberships = it_exchange_get_session_data( 'parent_access' );
-								
+				
 				foreach ( $parent_memberships as $txn_id => $parent_id ) {
-					if ( $parent_id != $this->product->ID && isset( $child_ids[$parent_id]  ) ) {
+					if ( $parent_id != $this->product->ID && isset( $child_ids[$parent_id] ) ) {
 						$product = it_exchange_get_product( $parent_id );
 						$parent_product_base_price = it_exchange_get_product_feature( $parent_id, 'base-price' );
 						$db_price = it_exchange_convert_to_database_number( $parent_product_base_price );
