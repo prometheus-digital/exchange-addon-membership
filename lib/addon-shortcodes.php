@@ -272,7 +272,7 @@ function it_exchange_membership_addon_member_content_shortcode( $atts, $content 
 		if ( !empty( $member_access )  ) {
 			foreach( $member_access as $product_id => $txn_id ) {
 				if ( in_array( $product_id, $membership_ids ) )
-					return $content;
+					return do_shortcode( $content );
 			}
 		}
 	} 
