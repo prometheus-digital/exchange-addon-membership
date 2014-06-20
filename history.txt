@@ -89,3 +89,9 @@
 1.1.4 - 2014-04-11 - Lew Ayotte, Elise Alley
 	Fixed typo in membership hierarchy auto-renew check
 	Fixed bug in checking child/parent relationships
+1.1.5 - 2014-06-20 - Lew Ayotte, Elise Alley
+	Better transaction and status verification before granting access to membership content
+	Add login redirect to session if viewing restricted content and not logged in
+	do_shortcode() inside of membership shortcode
+	Fixed typo in restricted excerpt theme API
+
