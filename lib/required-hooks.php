@@ -497,8 +497,13 @@ add_action( 'before_delete_post', 'it_exchange_before_delete_membership_product'
  * @return string
 */
 function it_exchange_membership_addon_content_filter( $content ) {
-	if ( it_exchange_membership_addon_is_content_restricted() )
+	if ( it_exchange_membership_addon_is_content_restricted() ) {
+		if ( is_single() && !is_user_logged_in() ) {
+			global $post;
+			it_exchange_add_session_data( 'login_redirect', get_permalink( $post->ID ) );
+		}
 		return it_exchange_membership_addon_content_restricted_template();
+	}
 	if ( it_exchange_membership_addon_is_content_dripped() )
 		return it_exchange_membership_addon_content_dripped_template();
 	return $content;	
@@ -515,8 +520,13 @@ add_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
  * @return string
 */
 function it_exchange_membership_addon_excerpt_filter( $excerpt ) {
-	if ( it_exchange_membership_addon_is_content_restricted() )
+	if ( it_exchange_membership_addon_is_content_restricted() ) {
+		if ( is_single() && !is_user_logged_in() ) {
+			global $post;
+			it_exchange_add_session_data( 'login_redirect', get_permalink( $post->ID ) );
+		}
 		return it_exchange_membership_addon_excerpt_restricted_template();
+	}
 	if ( it_exchange_membership_addon_is_content_dripped() )
 		return it_exchange_membership_addon_excerpt_dripped_template();
 	return $excerpt;
