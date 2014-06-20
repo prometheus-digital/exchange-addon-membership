@@ -368,12 +368,13 @@ function it_exchange_membership_addon_setup_customer_session() {
 		$customer = new IT_Exchange_Customer( $user_id );
 		$member_access = $customer->get_customer_meta( 'member_access' );
 		$member_access_session = it_exchange_get_session_data( 'member_access' );
+				
 		if ( !empty( $member_access )  ) {
 			//If the transient doesn't exist, verify the membership access subscriber status and reset transient
 			if ( false === get_transient( 'member_access_check_' . $customer->id ) ) {
 				foreach( $member_access as $txn_id => $product_id ) {
 					$transaction = it_exchange_get_transaction( $txn_id );
-					if ( 'cancelled' === $transaction->get_status() ) {
+					if ( empty( $transaction ) || $transaction->ID !== $txn_id || 'cancelled' === $transaction->get_status() || 'refunded' === $transaction->get_status() ) {
 						unset( $member_access[$txn_id] );
 					} else {
 						$subscription_status = $transaction->get_transaction_meta( 'subscriber_status' );
@@ -388,6 +389,9 @@ function it_exchange_membership_addon_setup_customer_session() {
 			$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $member_access );
 			$member_access = array_flip( $member_access ); // we want the transaction ID to be the value to help us determine child access relations to transaction IDs
 			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
+		} else {
+			it_exchange_clear_session_data( 'member_access' );
+			it_exchange_clear_session_data( 'parent_access' );
 		}	
 		$member_diff = array_diff_assoc( (array)$member_access, (array)$member_access_session );
 		if ( !empty( $member_diff ) ) {
