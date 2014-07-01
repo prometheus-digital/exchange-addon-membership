@@ -374,7 +374,15 @@ function it_exchange_membership_addon_setup_customer_session() {
 			if ( false === get_transient( 'member_access_check_' . $customer->id ) ) {
 				foreach( $member_access as $txn_id => $product_id ) {
 					$transaction = it_exchange_get_transaction( $txn_id );
-					if ( empty( $transaction ) || $transaction->ID !== $txn_id || 'cancelled' === $transaction->get_status() || 'refunded' === $transaction->get_status() ) {
+					$transaction_status = $transaction->get_status();
+					if ( empty( $transaction ) 
+						|| $transaction->ID !== $txn_id 
+						|| 'voided' === $transaction_status 
+						|| 'cancelled' === $transaction_status 
+						|| 'reversed' === $transaction_status 
+						|| 'deactivated' === $transaction_status 
+						|| 'failed' === $transaction_status 
+						|| 'refunded' === $transaction_status ) {
 						unset( $member_access[$txn_id] );
 					} else {
 						$subscription_status = $transaction->get_transaction_meta( 'subscriber_status' );
@@ -383,8 +391,18 @@ function it_exchange_membership_addon_setup_customer_session() {
 							unset( $member_access[$txn_id] );
 					}
 				}
+				$customer->update_customer_meta( 'member_access', $member_access ); //Update the member_access customer meta, remove invalids
+				foreach( $member_access as $txn_id => $product_id ) {
+					$transaction = it_exchange_get_transaction( $txn_id );
+					$transaction_status = $transaction->get_status();
+					if ( 'paid' !== $transaction_status 
+						&& 'completed' !== $transaction_status
+						&& 'Completed' !== $transaction_status 
+						&& 'succeeded' !== $transaction_status ) {
+						unset( $member_access[$txn_id] );
+					}
+				}
 				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 4 ); //only do it every four hours
-				$customer->update_customer_meta( 'member_access', $member_access );
 			}
 			$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $member_access );
 			$member_access = array_flip( $member_access ); // we want the transaction ID to be the value to help us determine child access relations to transaction IDs
