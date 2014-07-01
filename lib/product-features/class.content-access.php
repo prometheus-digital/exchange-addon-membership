@@ -105,7 +105,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 
 		// Set the value of the feature for this product
 		$access_rules = it_exchange_get_product_feature( $product->ID, 'membership-content-access-rules' );
-		
 		?>
 		<div class="it-exchange-content-access-header">
 	        <div class="it-exchange-content-access-label-add">
@@ -223,8 +222,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 		
 		$existing_access_rules = it_exchange_get_product_feature( $product_id, 'membership-content-access-rules' );
 		
-		//ITDebug::print_r( $_REQUEST );
-		
 		if ( ! empty( $_REQUEST['it_exchange_content_access_rules'] ) ) {
 			
 			foreach( $_REQUEST['it_exchange_content_access_rules'] as $key => $rule ) {
@@ -272,7 +269,9 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 							}
 							break;
 						
-					} 
+					}
+					
+					do_action( 'it_exchange_membership_addon_update_content_access_rules_options', $product_id, $rule['selected'], $rule['selection'], $rule['term'] );
 					
 				} else if ( isset( $rule['group'] ) && isset( $rule['group_id'] ) ) {
 				
@@ -375,6 +374,8 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 							break;
 						
 					}
+					
+					do_action( 'it_exchange_membership_addon_update_content_access_diff_rules_options', $product_id, $rule['selected'], $rule['selection'], $rule['term'] );
 					
 				}
 				

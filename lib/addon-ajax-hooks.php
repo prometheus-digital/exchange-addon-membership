@@ -148,6 +148,8 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 				break;
 			
 		}
+		
+		$options = apply_filters( 'it_exchange_membership_addon_get_custom_selected_options', $options, $value, $type );
 
 		$return .= '<input type="hidden" value="' . $type . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
 		$return .= '<select class="it-exchange-membership-content-type-term" name="it_exchange_content_access_rules[' . $count . '][term]">';

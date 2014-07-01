@@ -23,7 +23,8 @@
 */
 function it_exchange_membership_addon_get_selections( $selection = 0, $selection_type = NULL, $count ) {
 	
-	$return  = '<div class="it-exchange-content-access-type column"><select class="it-exchange-membership-content-type-selections" name="it_exchange_content_access_rules[' . $count . '][selection]">';
+	$return  = '<div class="it-exchange-content-access-type column">';
+	$return .= '<select class="it-exchange-membership-content-type-selections" name="it_exchange_content_access_rules[' . $count . '][selection]">';
 	$return .= '<option value="">' . __( 'Select Content', 'LION' ) . '</option>';
 	
 	//Posts
@@ -64,9 +65,13 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 			
 		$return .= '<option data-type="taxonomy" value="' . $tax->name . '" ' . $selected . '>' . $tax->label . '</option>';	
 	}	
-	$return .= '</select></div>';
 	
-	return $return;
+	$return .= apply_filters( 'it_exchange_membership_addon_get_selections', '', $selection, $selection_type );
+	
+	$return .= '</select>';
+	$return .= '</div>';
+	
+	return $return	;
 }
 
 /**
@@ -83,9 +88,9 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 
 	$options = '';
 	
-	$selection    = !empty( $rule['selection'] )    ? $rule['selection'] : false;
-	$selected     = !empty( $rule['selected'] )     ? $rule['selected'] : false;
-	$value        = !empty( $rule['term'] )         ? $rule['term'] : false;
+	$selection    = !empty( $rule['selection'] )    ? $rule['selection'] : false; //Content Types (e.g. post_types or taxonomies)
+	$selected     = !empty( $rule['selected'] )     ? $rule['selected'] : false;  //Content Type (e.g. posts post_type, or category taxonomy)
+	$value        = !empty( $rule['term'] )         ? $rule['term'] : false;      //Content (e.g. specific post or category)
 	$group        = isset( $rule['group'] )         ? $rule['group'] : NULL;
 	$group_layout = !empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
 	$group_id     = isset( $rule['group_id'] )      ? $rule['group_id'] : NULL;
@@ -160,6 +165,8 @@ function it_exchange_membership_addon_build_content_rule( $rule, $count, $produc
 				break;
 			
 		}
+		
+		$options = apply_filters( 'it_exchange_membership_addon_get_custom_selected_options', $options, $value, $selected );
 	
 		$return .= '<input type="hidden" value="' . $selected . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
 		$return .= '<select class="it-exchange-membership-content-type-term" name="it_exchange_content_access_rules[' . $count . '][term]">';
@@ -471,7 +478,7 @@ function it_exchange_membership_addon_is_content_restricted() {
 		}
 	}
 	
-	return $restriction;
+	return apply_filters( 'it_exchange_membership_addon_is_content_restricted', $restriction, $member_access );
 }
 
 /**
@@ -512,7 +519,7 @@ function it_exchange_membership_addon_is_content_dripped() {
 				$dripped = true; // we don't want to return here, because other memberships might have access to content sooner
 		}
 	}
-	return $dripped;
+	return apply_filters( 'it_exchange_membership_addon_is_content_dripped', $dripped );
 }
 
 /**
