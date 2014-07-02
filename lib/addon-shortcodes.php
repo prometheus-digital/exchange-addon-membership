@@ -113,6 +113,8 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 							}
 						
 						} else if ( !empty( $selected ) ) {
+						
+							$label = '';
 							
 							switch ( $selected ) {
 								
@@ -143,7 +145,6 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 									break;
 									
 								case 'posts':
-									$label = '';
 									$args = array(
 										'p'         => $value,
 										'post_type' => 'any',
@@ -152,6 +153,8 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 									break;
 								
 							}
+							
+							$restricted_posts = apply_filters( 'it_exchange_membership_addon_membership_content_restricted_posts', $restricted_posts, $selection, $selected, $value );
 							
 							if ( !empty( $restricted_posts ) ) {
 								$result .= $atts['before'];	

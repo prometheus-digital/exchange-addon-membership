@@ -149,6 +149,7 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 						&& it_exchange_product_has_feature( $product_id, 'membership-content-access-rules' ) ) {
 							
 					$access_rules = it_exchange_get_product_feature( $product_id, 'membership-content-access-rules' );
+					
 			
 					// Repeats checks for when flags were not passed.
 					if ( !empty( $access_rules ) ) {
@@ -166,7 +167,7 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 			            $groupings = array();
 			            	
 						foreach ( $access_rules as $rule ) {
-							
+					
 							$more_content_link = '';
 							$restricted_posts = array();
 							$selection    = !empty( $rule['selection'] )    ? $rule['selection'] : false;
@@ -209,6 +210,9 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 								}
 							
 							} else if ( !empty( $selected ) ) {
+							
+								$label = '';
+								$more_content_link = '';
 									
 								switch ( $selected ) {
 									
@@ -250,16 +254,16 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 										break;
 										
 									case 'posts':
-										$label = '';
 										$args = array(
 											'p'         => $value,
 											'post_type' => 'any',
 										);
 										$restricted_posts = get_posts( $args );
-										$more_content_link = '';
 										break;
 									
 								}
+
+								$restricted_posts = apply_filters( 'it_exchange_membership_addon_membership_content_restricted_posts', $restricted_posts, $selection, $selected, $value );
 								
 								if ( !empty( $restricted_posts ) ) {
 							
