@@ -152,7 +152,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 			'before' => '',
 			'after'  => '',
 			'message' => sprintf( $membership_settings['membership-dripped-product-message'], ceil( $earliest_drip / 60 / 60 / 24 ) ),
-			'class'   => 'it-exchange-membership-restricted-excerpt',
+			'class'   => 'it-exchange-membership-restricted-product',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
 		
@@ -160,7 +160,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 		$content .= '<p class="' . $options['class'] . '">' . $options['message'] . '</p>';
 		$content .= $options['after'];
 		
-		return $excerpt;
+		return $content;
 	}
 	
 }
