@@ -234,7 +234,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 							if ( !( $rules = get_post_meta( $rule['term'], '_item-content-rule', true ) ) )
 								$rules = array();
 								
-							if ( !empty( $rule['drip-interval'] ) && !empty( $rule['drip-duration'] ) ) {
+							if ( isset( $rule['drip-interval'] ) && isset( $rule['drip-duration'] ) ) {
 								update_post_meta( $rule['term'], '_item-content-rule-drip-interval-' . $product_id, absint( $rule['drip-interval'] ) );
 								update_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $product_id, $rule['drip-duration'] );
 								unset( $rule['drip-interval'] );
