@@ -22,6 +22,7 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 	public $_tag_map = array(
 		'content' => 'content',
 		'excerpt' => 'excerpt',
+		'product' => 'product',
 	);
 
 	/**
@@ -121,6 +122,29 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 			$content .= '</p>';
 		}
 		
+		$content .= '<p class="' . $options['class'] . '">' . $options['message'] . '</p>';
+		$content .= $options['after'];
+		
+		return $content;
+	}
+
+	/**
+	 * @since 1.0.0
+	 * @return string
+	*/
+	function product( $options=array() ) {
+		global $post;
+		
+		$membership_settings = it_exchange_get_option( 'addon_membership' );
+		$defaults = array(
+			'before' => '',
+			'after'  => '',
+			'message' => $membership_settings['membership-restricted-product-message'],
+			'class'  => 'it-exchange-membership-restricted-product',
+		);
+		$options = ITUtility::merge_defaults( $options, $defaults );
+		
+		$content = $options['before'];
 		$content .= '<p class="' . $options['class'] . '">' . $options['message'] . '</p>';
 		$content .= $options['after'];
 		

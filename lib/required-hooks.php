@@ -556,6 +556,33 @@ function it_exchange_membership_addon_excerpt_filter( $excerpt ) {
 add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
 
 /**
+ * Checks if $product is restriction rules apply, if so, return Membership restricted templates
+ * If not, check if $product drip rules apply, if so, return Membership dripped templates
+ * Otherwise, return $product's $result
+ *
+ * @since CHANGEME
+ * @param string $result
+ * @param array $options
+ * @return string
+*/
+function it_exchange_membership_addon_super_widget_filter( $result, $options ) {
+	global $post;
+	if ( 'it_exchange_prod' === $post->post_type ) {
+		if ( it_exchange_membership_addon_is_product_restricted() ) {
+			ob_start();
+			it_exchange_get_template_part( 'product', 'restricted' );
+			return ob_get_clean();
+		} else if ( it_exchange_membership_addon_is_product_dripped() ) {
+			ob_start();
+			it_exchange_get_template_part( 'product', 'dripped' );
+			return ob_get_clean();
+		}
+	}
+	return $result;
+}
+add_filter( 'it_exchange_theme_api_product_purchase_options', 'it_exchange_membership_addon_super_widget_filter', 10, 2 );
+
+/**
  * Returns Membership content restricted template part
  *
  * @since 1.0.0
@@ -566,7 +593,7 @@ function it_exchange_membership_addon_content_restricted_template() {
 	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
 	ob_start();
 	it_exchange_get_template_part( 'content', 'restricted' );
-	return ob_get_clean();	
+	return ob_get_clean();
 }
 
 /**
@@ -580,7 +607,7 @@ function it_exchange_membership_addon_excerpt_restricted_template() {
 	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
 	ob_start();
 	it_exchange_get_template_part( 'excerpt', 'restricted' );
-	return ob_get_clean();	
+	return ob_get_clean();
 }
 
 /**

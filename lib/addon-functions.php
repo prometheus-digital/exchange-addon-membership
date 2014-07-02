@@ -28,7 +28,7 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 	$return .= '<option value="">' . __( 'Select Content', 'LION' ) . '</option>';
 	
 	//Posts
-	$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download' ) );
+	$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_download' ) );
 	$post_types = get_post_types( array(), 'objects' );
 	
 	foreach ( $post_types as $post_type ) {
@@ -441,14 +441,16 @@ function it_exchange_membership_addon_is_content_restricted() {
 			return true;
 	}
 	
-	$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
-	if ( !empty( $post_rules ) ) {
-		if ( empty( $member_access ) ) return true;
-		foreach( $member_access as $product_id => $txn_id ) {
-			if ( in_array( $product_id, $post_rules ) )
-				return false;	
+	if ( 'it_exchange_prod' !== $post->post_type ) {
+		$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
+		if ( !empty( $post_rules ) ) {
+			if ( empty( $member_access ) ) return true;
+			foreach( $member_access as $product_id => $txn_id ) {
+				if ( in_array( $product_id, $post_rules ) )
+					return false;	
+			}
+			$restriction = true;
 		}
-		$restriction = true;
 	}
 	
 	$post_type_rules = get_option( '_item-content-rule-post-type-' . $post->post_type, array() );	
@@ -482,6 +484,59 @@ function it_exchange_membership_addon_is_content_restricted() {
 }
 
 /**
+ * Checks if current product should be restricted
+ * if admin - false
+ * if member has access - false
+ * if product has rule - true (unless above rule overrides)
+ * if exemption exists - true
+ *
+ * An exemption basically tells the Membership addon that a member who has access to
+ * specific product should not have access to it. For instance, say you have a post in 
+ * a restricted category and you have two membership levels who have access to that category
+ * but you only want that post to be visible to one of the memberships. By adding the
+ * exemption for the other membership, they will no longer have access to that content.
+ *
+ * @since 1.0.0
+ *
+ * @return bool
+*/
+function it_exchange_membership_addon_is_product_restricted() {
+	global $post;
+	$restriction = false;
+	
+	if ( current_user_can( 'administrator' ) )
+		return false;
+	
+	$member_access = it_exchange_get_session_data( 'member_access' );
+		
+	$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
+	if ( !empty( $restriction_exemptions ) ) {
+		foreach( $member_access as $product_id => $txn_id ) {
+			if ( array_key_exists( $product_id, $restriction_exemptions ) )
+				$restriction = true; //we don't want restrict yet, not until we know there aren't other memberships that still have access to this content
+			else
+				continue; //get out of this, we're in a membership that hasn't been exempted
+		}
+		if ( $restriction ) //if it has been restricted, we can return true now
+			return true;
+	}
+	
+	if ( 'it_exchange_prod' === $post->post_type ) {
+		$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
+		if ( !empty( $post_rules ) ) {
+			if ( empty( $member_access ) ) return true;
+			foreach( $member_access as $product_id => $txn_id ) {
+				if ( in_array( $product_id, $post_rules ) )
+					return false;	
+			}
+			$restriction = true;
+		}
+	}
+	
+	return apply_filters( 'it_exchange_membership_addon_is_product_restricted', $restriction, $member_access );
+}
+
+/**
  * Checks if current content should be dripped
  * if admin - false
  * if member has access - check if content is dripped, otherwise false
@@ -501,25 +556,70 @@ function it_exchange_membership_addon_is_content_dripped() {
 	if ( current_user_can( 'administrator' ) )
 		return false;
 
-	$member_access = it_exchange_get_session_data( 'member_access' );
-
-	foreach( $member_access as $product_id => $txn_id  ) {
-		$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
-		$interval = !empty( $interval ) ? $interval : 0;
-		$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
-		$duration = !empty( $duration ) ? $duration : 'days';
-		if ( 0 < $interval ) {
-			$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
-			$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
-			$now = time();
-			
-			if ( $dripping < $now )						
-				return false; // we can return here because they should have access to this content with this membership
-			else
-				$dripped = true; // we don't want to return here, because other memberships might have access to content sooner
+	if ( 'it_exchange_prod' !== $post->post_type ) {
+		$member_access = it_exchange_get_session_data( 'member_access' );
+	
+		foreach( $member_access as $product_id => $txn_id  ) {
+			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
+			$interval = !empty( $interval ) ? $interval : 0;
+			$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
+			$duration = !empty( $duration ) ? $duration : 'days';
+			if ( 0 < $interval ) {
+				$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
+				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
+				$now = time();
+				
+				if ( $dripping < $now )						
+					return false; // we can return here because they should have access to this content with this membership
+				else
+					$dripped = true; // we don't want to return here, because other memberships might have access to content sooner
+			}
 		}
 	}
 	return apply_filters( 'it_exchange_membership_addon_is_content_dripped', $dripped );
+}
+
+/**
+ * Checks if current product should be dripped
+ * if admin - false
+ * if member has access - check if content is dripped, otherwise false
+ * Dripped product is basically published product that you want to arbitrarily delay for
+ * your members. Say you have a class and you want to release 1 class a week to your membership
+ * this will allow you to do that. Simply set your content to the appropriate timeline and new members 
+ * will have access to the classes based on the set schedule.
+ *
+ * @since 1.0.0
+ *
+ * @return bool
+*/
+function it_exchange_membership_addon_is_product_dripped() {
+	global $post;
+	$dripped = false;
+	
+	if ( current_user_can( 'administrator' ) )
+		return false;
+
+	if ( 'it_exchange_prod' === $post->post_type ) {
+		$member_access = it_exchange_get_session_data( 'member_access' );
+	
+		foreach( $member_access as $product_id => $txn_id  ) {
+			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
+			$interval = !empty( $interval ) ? $interval : 0;
+			$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
+			$duration = !empty( $duration ) ? $duration : 'days';
+			if ( 0 < $interval ) {
+				$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
+				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
+				$now = time();
+				
+				if ( $dripping < $now )						
+					return false; // we can return here because they should have access to this content with this membership
+				else
+					$dripped = true; // we don't want to return here, because other memberships might have access to content sooner
+			}
+		}
+	}
+	return apply_filters( 'it_exchange_membership_addon_is_product_dripped', $dripped );
 }
 
 /**

@@ -33,6 +33,8 @@ function it_exchange_membership_addon_default_settings( $values ) {
         'membership-restricted-show-excerpt'    => false,
         'membership-restricted-content-message' => __( 'This content is for members only. Become a member now to get access to this and other awesome members-only content.', 'LION' ),
         'membership-dripped-content-message'    => __( 'This content will be available in %d days.', 'LION' ),
+        'membership-restricted-product-message' => __( 'This product is for members only. Become a member now to get access to this and other awesome members-only product.', 'LION' ),
+        'membership-dripped-product-message'    => __( 'This product will be available in %d days.', 'LION' ),
         'membership-prerequisites-label'        => __( 'Prerequisites', 'LION' ),
         'membership-intended-audience-label'    => __( 'Intended Audience', 'LION' ),
         'membership-objectives-label'           => __( 'Objectives', 'LION' ),
@@ -182,6 +184,37 @@ class IT_Exchange_Membership_Add_On {
 					$form->get_text_area( 'membership-dripped-content-message', array( 'rows' => 10, 'cols' => 30, 'class' => 'large-text' ) );
                 } else {
                     $form->add_text_area( 'membership-dripped-content-message', array( 'rows' => 10, 'cols' => 30, 'class' => 'large-text' ) );
+				}
+				?>
+            </p>
+            <p class="description">
+            <?php 
+            _e( 'Use %d to represent the number of days until the delayed content will be available.', 'LION' ); 
+            ?>
+            </p>
+            <p>
+                <label for="membership-restricted-product-message"><?php _e( 'Restricted Product Message', 'LION' ); ?> <span class="tip" title="<?php _e( 'This message will display when a non-member attempts to access a product that has been restricted.', 'LION' ); ?>">i</span></label>
+                <?php
+                if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
+                    echo wp_editor( $settings['membership-restricted-product-message'], 'membership-restricted-product-message', array( 'textarea_name' => 'it-exchange-add-on-membership-membership-restricted-product-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
+					
+					//We do this for some ITForm trickery... just to add recurring-payments-cancel-body to the used inputs field
+					$form->get_text_area( 'membership-restricted-product-message', array( 'rows' => 10, 'cols' => 30, 'class' => 'large-text' ) );
+                } else {
+                    $form->add_text_area( 'membership-restricted-product-message', array( 'rows' => 10, 'cols' => 30, 'class' => 'large-text' ) );
+				}
+				?>
+            </p>
+            <p>
+                <label for="membership-dripped-product-message"><?php _e( 'Delayed Product Message', 'LION' ); ?> <span class="tip" title="<?php _e( 'This message will appear when a member attempts to access a product that has been delayed.', 'LION' ); ?>">i</span></label>
+                <?php
+                if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
+                    echo wp_editor( $settings['membership-dripped-product-message'], 'membership-dripped-product-message', array( 'textarea_name' => 'it-exchange-add-on-membership-membership-dripped-product-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
+					
+					//We do this for some ITForm trickery... just to add recurring-payments-cancel-body to the used inputs field
+					$form->get_text_area( 'membership-dripped-product-message', array( 'rows' => 10, 'cols' => 30, 'class' => 'large-text' ) );
+                } else {
+                    $form->add_text_area( 'membership-dripped-product-message', array( 'rows' => 10, 'cols' => 30, 'class' => 'large-text' ) );
 				}
 				?>
             </p>
