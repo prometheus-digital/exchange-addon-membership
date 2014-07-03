@@ -374,6 +374,10 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 								
 								}
 									
+							} else {
+								
+								$result .= apply_filters( 'it_exchange_membership_addon_membership_content_dashboard_empty_restricted_posts_result', '', $options, $selection, $selected, $value );
+								
 							}
 							
 							if ( false !== $group_id && !in_array( $group_id, $groupings ) )

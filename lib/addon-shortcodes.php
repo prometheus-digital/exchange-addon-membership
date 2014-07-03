@@ -222,6 +222,10 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 								}
 								
 								$result .= $atts['after'];
+							} else {
+								
+								$result .= apply_filters( 'it_exchange_membership_addon_membership_content_shortcode_empty_restricted_posts_result', '', $atts, $selection, $selected, $value );
+								
 							}
 						
 						}
