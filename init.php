@@ -34,6 +34,11 @@ include( 'lib/addon-functions.php' );
 include( 'lib/addon-shortcodes.php' );
 
 /**
+ * Our own Members table... basic the Users table but just members
+*/
+include( 'lib/addon-member-table.php' );
+
+/**
  * Exchange Add-ons require several hooks in order to work properly. 
  * We've placed them all in one file to help add-on devs identify them more easily
 */

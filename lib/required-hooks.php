@@ -6,6 +6,94 @@
 */
 
 /**
+ * Adds a members table to the Users WP Menu.
+ *
+ * @since CHANGEME
+ *
+ * @return void
+*/
+function it_exchange_membership_addon_admin_menu() {
+
+	$hook = add_submenu_page( 'users.php', 'iThemes Exchange ' . __( 'Members', 'LION' ), __( 'Members', 'LION' ), apply_filters( 'it_exchange_admin_menu_capability', 'activate_plugins' ), 'it-exchange-members-table', 'it_exchange_membership_addon_members_table' );
+	add_action( "load-$hook", 'it_exchange_membership_addon_members_table_add_screen_option' );
+	
+}
+add_action( 'admin_menu', 'it_exchange_membership_addon_admin_menu' );
+
+/**
+ * Add screen options for members_table.
+ *
+ * @since CHANGEME
+ *
+ * @return void
+*/
+function it_exchange_membership_addon_members_table_add_screen_option() {
+	add_screen_option( 'per_page', array('label' => _x( 'Members', 'members per page (screen options)' )) );
+}
+/**
+ * Set screen options for members_table.
+ *
+ * @since CHANGEME
+ *
+ * @return void
+*/
+function it_exchange_membership_addon_members_table_set_screen_option( $status, $option, $value ) {
+    if ( 'users_page_it_exchange_members_table_per_page' == $option ) return $value; 
+    return $status;
+}
+add_filter('set-screen-option', 'it_exchange_membership_addon_members_table_set_screen_option', 10, 3);
+
+/**
+ * Output the members table.
+ *
+ * @since CHANGEME
+ *
+ * @return void
+*/
+function it_exchange_membership_addon_members_table() {
+	
+	if ( ! current_user_can( 'list_users' ) )
+		wp_die( __( 'Cheatin&#8217; uh?' ) );
+	
+	$wp_list_table = new IT_Exchange_Membership_List_Table();
+	$pagenum = $wp_list_table->get_pagenum();
+	$title = __('iThemes Exchange Members');
+	
+	$wp_list_table->prepare_items();
+	$total_pages = $wp_list_table->get_pagination_arg( 'total_pages' );
+	
+	if ( $pagenum > $total_pages && $total_pages > 0 ) {
+		wp_redirect( add_query_arg( 'paged', $total_pages ) );
+		exit;
+	}
+
+	?>
+	<div class="wrap">
+	<h2>
+	<?php
+	echo esc_html( $title );
+	
+	if ( !empty( $usersearch ) ) {
+		printf( '<span class="subtitle">' . __( 'Search results for &#8220;%s&#8221;', 'LION' ) . '</span>', esc_html( $usersearch ) ); 
+	}
+	?>
+	</h2>
+	
+	<?php $wp_list_table->views(); ?>
+	
+	<form id="it-exchange-members-table-form" action="<?php echo add_query_arg( 'page', 'it-exchange-members-table', admin_url( 'users.php' ) ); ?>" method="get">
+	<input type="hidden" name="page" value="it-exchange-members-table" />
+	<?php $wp_list_table->search_box( __( 'Search Members', 'LION' ), 'users' ); ?>
+	
+	<?php $wp_list_table->display(); ?>
+	</form>
+	
+	<br class="clear" />
+	</div>
+	<?php
+}
+
+/**
  * Shows the nag when needed.
  *
  * @since 1.0.0
@@ -95,6 +183,9 @@ function it_exchange_membership_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
 		wp_enqueue_script( 'it-exchange-membership-addon-add-edit-product', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/js/add-edit-product.js', $deps );
 	} else if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
 		wp_enqueue_script( 'it-exchange-membership-addon-add-edit-post', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/js/add-edit-post.js' );
+	} else if ( 'users_page_it-exchange-members-table' === $hook_suffix ) {
+		wp_enqueue_script( 'jquery-ui-tooltip' );
+		wp_enqueue_script( 'it-exchange-dialog' );
 	}
 }
 add_action( 'admin_enqueue_scripts', 'it_exchange_membership_addon_admin_wp_enqueue_scripts' );
