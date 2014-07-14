@@ -94,4 +94,10 @@
 	Add login redirect to session if viewing restricted content and not logged in
 	do_shortcode() inside of membership shortcode
 	Fixed typo in restricted excerpt theme API
-
+1.2.0 - 2014-07-14 - Lew Ayotte, Elise Alley
+	Added Members table to WP Users Menu
+	Added new filters for Membership addons (namely BuddyPress and bbPress)
+	Fixed bug with restricted content not showing up in Member Dashboard (affection BuddyPress and bbPress)
+	Fixed bug when setting drip interval from # to 0
+	Added ability to restrict products to members only, and drip products...
+	Temporarily remove member_access for 'pending' transactions
