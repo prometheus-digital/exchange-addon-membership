@@ -703,7 +703,7 @@ function it_exchange_membership_cart_contains_membership_product( $cart_products
  * Used generally to prevent duplicate content from being printed
  * in the member's dashboard
  *
- * @since CHANGEME
+ * @since 1.2.0
  *
  * @param array $membership_products current list of accessible membership products
  * @return array
@@ -734,7 +734,7 @@ function it_exchange_membership_addon_setup_most_parent_member_access_array( $me
  * Get all child membership products and adds it to an array to be used
  * for generating the member_access session
  *
- * @since CHANGEME 
+ * @since 1.2.0 
  *
  * @param array $membership_products current list of accessible membership products
  * @param array $product_ids
@@ -764,7 +764,7 @@ function it_exchange_membership_addon_setup_recursive_member_access_array( $memb
 /*
  * Gets the highest level parent from the parent access session for a given product ID
  *
- * @since CHANGEME 
+ * @since 1.2.0 
  *
  * @param int $product_id Membership product to check
  * @param array $parent_access Parent access session (or other array)
@@ -793,7 +793,7 @@ function it_exchange_membership_addon_get_most_parent_from_member_access( $produ
  * For hierarchical membership types
  * Prints or returns an HTML formatted list of memberships and their children
  *
- * @since CHANGEME 
+ * @since 1.2.0 
  *
  * @param array $membership_products parent IDs of membership products
  * @param array $args array of arguments for the function
@@ -842,7 +842,7 @@ function it_exchange_membership_addon_display_membership_hierarchy( $product_ids
  * For hierarchical membership types
  * Returns an array of all the product's parents
  *
- * @since CHANGEME 
+ * @since 1.2.0 
  *
  * @param int $membership_id product ID of membership
  * @param array $parent_ids array of of current parent_ids

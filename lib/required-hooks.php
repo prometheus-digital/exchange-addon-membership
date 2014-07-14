@@ -8,7 +8,7 @@
 /**
  * Adds a members table to the Users WP Menu.
  *
- * @since CHANGEME
+ * @since 1.2.0
  *
  * @return void
 */
@@ -23,7 +23,7 @@ add_action( 'admin_menu', 'it_exchange_membership_addon_admin_menu' );
 /**
  * Add screen options for members_table.
  *
- * @since CHANGEME
+ * @since 1.2.0
  *
  * @return void
 */
@@ -33,7 +33,7 @@ function it_exchange_membership_addon_members_table_add_screen_option() {
 /**
  * Set screen options for members_table.
  *
- * @since CHANGEME
+ * @since 1.2.0
  *
  * @return void
 */
@@ -46,7 +46,7 @@ add_filter('set-screen-option', 'it_exchange_membership_addon_members_table_set_
 /**
  * Output the members table.
  *
- * @since CHANGEME
+ * @since 1.2.0
  *
  * @return void
 */
@@ -651,7 +651,7 @@ add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
  * If not, check if $product drip rules apply, if so, return Membership dripped templates
  * Otherwise, return $product's $result
  *
- * @since CHANGEME
+ * @since 1.2.0
  * @param string $result
  * @param array $options
  * @return string
@@ -774,7 +774,7 @@ add_filter( 'it_exchange_get_content_product_product_advanced_loop_elements', 'i
 /**
  * Adds upgrade price after base-price content product element, if found
  *
- * @since CHANGEME
+ * @since 1.2.0
  *
  * @param array $parts Element array for temmplate parts
  * @return array Modified array with new customer-pricing element (if base-price was found).
