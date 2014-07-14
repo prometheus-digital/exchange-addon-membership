@@ -286,22 +286,24 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 					$customer = new IT_Exchange_Customer( $user_object->ID );
 					$member_access = $customer->get_customer_meta( 'member_access' );
 					$memberships = array();
-					foreach( $member_access as $txn_id => $product_id ) {
-						$transaction = it_exchange_get_transaction( $txn_id );
-						$title = get_the_title( $product_id );
-
-						if ( $expires = $transaction->get_transaction_meta( 'subscription_expires_' . $product_id, true ) )
-							$expires = sprintf( __( 'Expires %s', 'LION' ), date_i18n( get_option( 'date_format' ), $expires ) );
-						else
-							$expires = __( 'Forever', 'LION' );
+					if ( !empty( $member_access ) ) {
+						foreach( $member_access as $txn_id => $product_id ) {
+							$transaction = it_exchange_get_transaction( $txn_id );
+							$title = get_the_title( $product_id );
+	
+							if ( $expires = $transaction->get_transaction_meta( 'subscription_expires_' . $product_id, true ) )
+								$expires = sprintf( __( 'Expires %s', 'LION' ), date_i18n( get_option( 'date_format' ), $expires ) );
+							else
+								$expires = __( 'Forever', 'LION' );
+								
+							if ( $transaction->get_transaction_meta( 'subscription_autorenew_' . $product_id, true ) )
+								$autorenew = '(auto-renewing)';
+							else
+								$autorenew = '';
 							
-						if ( $transaction->get_transaction_meta( 'subscription_autorenew_' . $product_id, true ) )
-							$autorenew = '(auto-renewing)';
-						else
-							$autorenew = '';
-						
-						$tip = '<span data-tip-content="' . $expires . ' ' . $autorenew . '" class="it-exchange-tip">i</span>';
-						$memberships[] = $title . ' ' . $tip;
+							$tip = '<span data-tip-content="' . $expires . ' ' . $autorenew . '" class="it-exchange-tip">i</span>';
+							$memberships[] = $title . ' ' . $tip;
+						}
 					}
 					$r .= "<td $attributes>" . join( ', ', $memberships ) . "</td>";
 					break;
@@ -325,33 +327,41 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 
 		return $r;
 	}
-
+	
 	/**
-	 * Generate the table navigation above or below the table
+	 * Display the table
 	 *
-	 * Overriding this function to get rid of the nonce field
-	 * because we don't need it...
-	 *
-	 * @since CHANGME
-	 * @access protected
+	 * @since 3.1.0
+	 * @access public
 	 */
-	protected function display_tablenav( $which ) {
-		//if ( 'top' == $which )
-		//	wp_nonce_field( 'bulk-' . $this->_args['plural'] );
-?>
-	<div class="tablenav <?php echo esc_attr( $which ); ?>">
+	public function display() {
+		$singular = $this->_args['singular'];
+		
+		//$this->display_tablenav( 'top' );
 
-		<div class="alignleft actions bulkactions">
-			<?php $this->bulk_actions(); ?>
-		</div>
-<?php
-		$this->extra_tablenav( $which );
-		$this->pagination( $which );
 ?>
+<table class="wp-list-table <?php echo implode( ' ', $this->get_table_classes() ); ?>">
+	<thead>
+	<tr>
+		<?php $this->print_column_headers(); ?>
+	</tr>
+	</thead>
 
-		<br class="clear" />
-	</div>
+	<tfoot>
+	<tr>
+		<?php $this->print_column_headers( false ); ?>
+	</tr>
+	</tfoot>
+
+	<tbody id="the-list"<?php
+		if ( $singular ) {
+			echo " data-wp-lists='list:$singular'";
+		} ?>>
+		<?php $this->display_rows_or_placeholder(); ?>
+	</tbody>
+</table>
 <?php
+		$this->display_tablenav( 'bottom' );
 	}
 
 }
