@@ -927,6 +927,26 @@ add_filter( 'it_exchange_profile_pages', 'it_exchange_membership_addon_pages' );
 add_filter( 'it_exchange_account_based_pages', 'it_exchange_membership_addon_pages' );
 
 /**
+ * If we're visiting a membership URL and we're not logged in, redirect to the login page, rather than the registration page
+ * because we're assuming that someone visiting a membership page probably already has an account. So this
+ * will reduce confusion to people who think they need to register again.
+ *
+ * @since CHANGEME
+ *
+ * @param string $url current URL to redirect to
+ * @param array $options
+ * @param string $status HTTP Status Code
+ * @return string filtered URL to redirect to
+*/
+function it_exchange_membership_addon_redirect_for_protected_pages_to_login_when_not_logged_in( $url, $options, $status ) {
+	if ( !empty( $options['current-page'] ) && 'memberships' == $options['current-page'] ) {
+		$url = it_exchange_get_page_url( 'login' );
+	}
+	return $url;
+}
+add_filter( 'it_exchange_redirect_for-protected-pages-to-registration-when-not-logged-in', 'it_exchange_membership_addon_redirect_for_protected_pages_to_login_when_not_logged_in', 10, 3 );
+
+/**
  * Adds memberships URLs to customer's menus in the iThemes Exchange account pages
  *
  * @since 1.0.0
