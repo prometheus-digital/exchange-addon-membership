@@ -103,3 +103,5 @@
 	Temporarily remove member_access for 'pending' transactions
 1.2.1 - 2014-07-14 - Lew Ayotte, Elise Alley
 	Fixed bug when trying to override WP List Table class method
+1.2.2 - 2014-07-18 - Lew Ayotte, Elise Alley
+	Filter redirect to registration page if not logged in, to redirect to login page if not logged in, if visiting a memberships page
