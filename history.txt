@@ -105,3 +105,5 @@
 	Fixed bug when trying to override WP List Table class method
 1.2.2 - 2014-07-18 - Lew Ayotte, Elise Alley
 	Filter redirect to registration page if not logged in, to redirect to login page if not logged in, if visiting a memberships page
+1.2.3 - 2014-07-21 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Fix for version compare
