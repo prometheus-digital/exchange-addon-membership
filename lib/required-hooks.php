@@ -541,59 +541,61 @@ function it_exchange_before_delete_membership_product( $post_id ){
 	
 	if ( !empty( $existing_access_rules ) ) {
 		foreach( $existing_access_rules as $rule ) {
-			switch( $rule['selected'] ) {
-				case 'posts':
-					if ( !( $rules = get_post_meta( $rule['term'], '_item-content-rule', true ) ) )
-						$rules = array();
-					
-					delete_post_meta( $rule['term'], '_item-content-rule-drip-interval-' . $post_id );
-					delete_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $post_id );
-					
-					$restriction_exemptions = get_post_meta( $rule['term'], '_item-content-rule-exemptions', true );
-					if ( !empty( $restriction_exemptions ) ) {
-						if ( array_key_exists( $post_id, $restriction_exemptions ) ) {
-							unset( $restriction_exemptions[$post_id] );
-							if ( !empty( $restriction_exemptions ) )
-								update_post_meta( $rule['term'], '_item-content-rule-exemptions', $restriction_exemptions );
-							else
-								delete_post_meta( $rule['term'], '_item-content-rule-exemptions' );
+			if ( !empty( $rule['selected'] ) ) {
+				switch( $rule['selected'] ) {
+					case 'posts':
+						if ( !( $rules = get_post_meta( $rule['term'], '_item-content-rule', true ) ) )
+							$rules = array();
+						
+						delete_post_meta( $rule['term'], '_item-content-rule-drip-interval-' . $post_id );
+						delete_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $post_id );
+						
+						$restriction_exemptions = get_post_meta( $rule['term'], '_item-content-rule-exemptions', true );
+						if ( !empty( $restriction_exemptions ) ) {
+							if ( array_key_exists( $post_id, $restriction_exemptions ) ) {
+								unset( $restriction_exemptions[$post_id] );
+								if ( !empty( $restriction_exemptions ) )
+									update_post_meta( $rule['term'], '_item-content-rule-exemptions', $restriction_exemptions );
+								else
+									delete_post_meta( $rule['term'], '_item-content-rule-exemptions' );
+							}
 						}
-					}
+							
+						if( false !== $key = array_search( $post_id, $rules ) ) {
+							unset( $rules[$key] );
+							if ( empty( $rules ) )
+								delete_post_meta( $rule['term'], '_item-content-rule' );
+							else
+								update_post_meta( $rule['term'], '_item-content-rule', $rules );
+						}
+						break;
 						
-					if( false !== $key = array_search( $post_id, $rules ) ) {
-						unset( $rules[$key] );
-						if ( empty( $rules ) )
-							delete_post_meta( $rule['term'], '_item-content-rule' );
-						else
-							update_post_meta( $rule['term'], '_item-content-rule', $rules );
-					}
-					break;
-					
-				case 'post_types':
-					if ( !( $rules = get_option( '_item-content-rule-post-type-' . $rule['term'] ) ) )
-						$rules = array();
+					case 'post_types':
+						if ( !( $rules = get_option( '_item-content-rule-post-type-' . $rule['term'] ) ) )
+							$rules = array();
+							
+						if( false !== $key = array_search( $post_id, $rules ) ) {
+							unset( $rules[$key] );
+							if ( empty( $rules ) )
+								delete_option( '_item-content-rule-post-type-' . $rule['term'] );
+							else
+								update_option( '_item-content-rule-post-type-' . $rule['term'],  $rules );
+						}
+						break;
 						
-					if( false !== $key = array_search( $post_id, $rules ) ) {
-						unset( $rules[$key] );
-						if ( empty( $rules ) )
-							delete_option( '_item-content-rule-post-type-' . $rule['term'] );
-						else
-							update_option( '_item-content-rule-post-type-' . $rule['term'],  $rules );
-					}
-					break;
-					
-				case 'taxonomy':
-					if ( !( $rules = get_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] ) ) )
-						$rules = array();
-						
-					if( false !==  $key = array_search( $post_id, $rules ) ) {
-						unset( $rules[$key] );
-						if ( empty( $rules ) )
-							delete_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] );
-						else
-							update_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'],  $rules );
-					}
-					break;
+					case 'taxonomy':
+						if ( !( $rules = get_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] ) ) )
+							$rules = array();
+							
+						if( false !==  $key = array_search( $post_id, $rules ) ) {
+							unset( $rules[$key] );
+							if ( empty( $rules ) )
+								delete_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] );
+							else
+								update_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'],  $rules );
+						}
+						break;
+				}	
 			}
 		}
 	}

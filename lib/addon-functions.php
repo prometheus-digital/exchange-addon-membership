@@ -277,7 +277,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	$post_type_rules = get_option( '_item-content-rule-post-type-' . $post_type, array() );
 	$taxonomy_rules = array();
 	$restriction_exemptions = get_post_meta( $post_id, '_item-content-rule-exemptions', true );
-	
+
 	$taxonomies = get_object_taxonomies( $post_type );
 	$terms = wp_get_object_terms( $post_id, $taxonomies );
 	
@@ -290,7 +290,13 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	//Re-order for output!
 	if ( !empty( $post_rules ) ) {
 		foreach( $post_rules as $product_id ) {
-			$rules[$product_id]['post'] = true;
+			if ( false !== get_post_status( $product_id ) ) {
+				$rules[$product_id]['post'] = true;
+			} else {
+				//Something happened and that membership product doesn't exist anymore, but wasn't flushed properly
+				//So we need to flush it now.
+				it_exchange_before_delete_membership_product( $product_id );
+			}
 		}
 	}
 	if ( !empty( $post_type_rules ) ) {
