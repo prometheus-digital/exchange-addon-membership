@@ -487,9 +487,9 @@ function it_exchange_membership_addon_setup_customer_session() {
 					$transaction = it_exchange_get_transaction( $txn_id );
 					$transaction_status = $transaction->get_status();
 					if ( 'paid' !== $transaction_status 
-						&& 'completed' !== $transaction_status
-						&& 'Completed' !== $transaction_status 
-						&& 'succeeded' !== $transaction_status ) {
+						|| 'completed' !== $transaction_status
+						|| 'Completed' !== $transaction_status 
+						|| 'succeeded' !== $transaction_status ) {
 						unset( $member_access[$txn_id] );
 					}
 				}
