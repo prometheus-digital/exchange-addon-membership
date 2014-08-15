@@ -458,6 +458,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 		$parent_access = array();
 		$customer = new IT_Exchange_Customer( $user_id );
 		$member_access = $customer->get_customer_meta( 'member_access' );
+		$member_access_session = it_exchange_get_session_data( 'member_access' );
 
 		if ( !empty( $member_access )  ) {
 			//If the transient doesn't exist, verify the membership access subscriber status and reset transient
@@ -492,8 +493,24 @@ function it_exchange_membership_addon_setup_customer_session() {
 						unset( $member_access[$txn_id] );
 					}
 				}
+				
 				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 4 ); //only do it every four hours
+			} else {
+				$member_diff = array_diff_assoc( (array)$member_access, (array)$member_access_session );
+				if ( !empty( $member_diff ) ) {
+					foreach( $member_access as $txn_id => $product_id ) {
+						$transaction = it_exchange_get_transaction( $txn_id );
+						$transaction_status = $transaction->get_status();
+						if ( 'paid' !== $transaction_status 
+							&& 'completed' !== $transaction_status
+							&& 'Completed' !== $transaction_status 
+							&& 'succeeded' !== $transaction_status ) {
+							unset( $member_access[$txn_id] );
+						}
+					}
+				}
 			}
+			
 			$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $member_access );
 			$member_access = array_flip( $member_access ); // we want the transaction ID to be the value to help us determine child access relations to transaction IDs
 			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
