@@ -114,3 +114,5 @@
 	Update session if member_access is not empty, to prevent parent sessions from being stale
 	Update get_transient() check to accept empty arrays as well as false return variables.
 	Double check if membership product exists when viewing content on wp-admin, if not, run the delete script
+1.2.5.1 - 2014-08-18 - Lew Ayotte, Elise Alley
+	Fixing bug when using empty() on a function return value for some versions of PHP
