@@ -462,7 +462,8 @@ function it_exchange_membership_addon_setup_customer_session() {
 
 		if ( !empty( $member_access )  ) {
 			//If the transient doesn't exist, verify the membership access subscriber status and reset transient
-			if ( empty( get_transient( 'member_access_check_' . $customer->id ) ) ) {
+			$transient = get_transient( 'member_access_check_' . $customer->id );
+			if ( empty( $transient ) ) {
 				foreach( $member_access as $txn_id => $product_id ) {
 					$transaction = it_exchange_get_transaction( $txn_id );
 					$transaction_status = $transaction->get_status();
