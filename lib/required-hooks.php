@@ -490,7 +490,8 @@ function it_exchange_membership_addon_setup_customer_session() {
 					if ( 'paid' !== $transaction_status 
 						&& 'completed' !== $transaction_status
 						&& 'Completed' !== $transaction_status 
-						&& 'succeeded' !== $transaction_status ) {
+						&& 'succeeded' !== $transaction_status 
+						&& '1' !== $transaction_status ) {
 						unset( $member_access[$txn_id] );
 					}
 				}
@@ -505,7 +506,8 @@ function it_exchange_membership_addon_setup_customer_session() {
 						if ( 'paid' !== $transaction_status 
 							&& 'completed' !== $transaction_status
 							&& 'Completed' !== $transaction_status 
-							&& 'succeeded' !== $transaction_status ) {
+							&& 'succeeded' !== $transaction_status 
+							&& '1' !== $transaction_status ) {
 							unset( $member_access[$txn_id] );
 						}
 					}
