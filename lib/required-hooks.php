@@ -486,13 +486,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 				}
 				$customer->update_customer_meta( 'member_access', $member_access ); //Update the member_access customer meta, remove invalids
 				foreach( $member_access as $txn_id => $product_id ) {
-					$transaction = it_exchange_get_transaction( $txn_id );
-					$transaction_status = $transaction->get_status();
-					if ( 'paid' !== $transaction_status 
-						&& 'completed' !== $transaction_status
-						&& 'Completed' !== $transaction_status 
-						&& 'succeeded' !== $transaction_status 
-						&& '1' !== $transaction_status ) {
+					if ( !it_exchange_transaction_is_cleared_for_delivery( $txn_id ) ) {
 						unset( $member_access[$txn_id] );
 					}
 				}
@@ -502,13 +496,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 				$member_diff = array_diff_assoc( (array)$member_access, (array)$member_access_session );
 				if ( !empty( $member_diff ) ) {
 					foreach( $member_access as $txn_id => $product_id ) {
-						$transaction = it_exchange_get_transaction( $txn_id );
-						$transaction_status = $transaction->get_status();
-						if ( 'paid' !== $transaction_status 
-							&& 'completed' !== $transaction_status
-							&& 'Completed' !== $transaction_status 
-							&& 'succeeded' !== $transaction_status 
-							&& '1' !== $transaction_status ) {
+						if ( !it_exchange_transaction_is_cleared_for_delivery( $txn_id ) ) {
 							unset( $member_access[$txn_id] );
 						}
 					}
