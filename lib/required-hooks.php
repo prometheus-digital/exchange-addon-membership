@@ -407,7 +407,8 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 	$cancel_subscription = it_exchange_get_session_data( 'cancel_subscription' );
 	foreach ( $cart_object->products as $product ) {
 		$product_id = $product['product_id'];
-		if ( it_exchange_product_supports_feature( $product_id, 'membership-content-access-rules' ) ) {
+		$product_type = it_exchange_get_product_type( $product_id );
+		if ( 'membership-product-type' === $product_type || it_exchange_product_supports_feature( $product_id, 'membership-content-access-rules' ) ) {
 			//This is a membership product!
 			if ( !in_array( $product_id, (array)$member_access ) ) {
 				//If this user isn't already a member of this product, add it to their access list
