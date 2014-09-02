@@ -116,3 +116,8 @@
 	Double check if membership product exists when viewing content on wp-admin, if not, run the delete script
 1.2.5.1 - 2014-08-18 - Lew Ayotte, Elise Alley
 	Fixing bug when using empty() on a function return value for some versions of PHP
+1.2.6 - 2014-09-02 - Lew Ayotte, Elise Alley
+	Fix bug when $post has not been set yet
+	Fixed bug in dripped content
+	Switched to it_exchange_transaction_is_cleared_for_delivery()... to determine state of membership access
+	Add product ID to member access array if product type is membership...  not just if product type supports access rules
