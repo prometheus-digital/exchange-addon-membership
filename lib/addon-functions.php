@@ -434,56 +434,60 @@ function it_exchange_membership_addon_is_content_restricted() {
 		return false;
 	
 	$member_access = it_exchange_get_session_data( 'member_access' );
-		
-	$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
-	if ( !empty( $restriction_exemptions ) ) {
-		foreach( $member_access as $product_id => $txn_id ) {
-			if ( array_key_exists( $product_id, $restriction_exemptions ) )
-				$restriction = true; //we don't want restrict yet, not until we know there aren't other memberships that still have access to this content
-			else
-				continue; //get out of this, we're in a membership that hasn't been exempted
-		}
-		if ( $restriction ) //if it has been restricted, we can return true now
-			return true;
-	}
 	
-	if ( 'it_exchange_prod' !== $post->post_type ) {
-		$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
-		if ( !empty( $post_rules ) ) {
-			if ( empty( $member_access ) ) return true;
+	if ( !empty( $post ) ) {
+			
+		$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
+		if ( !empty( $restriction_exemptions ) ) {
 			foreach( $member_access as $product_id => $txn_id ) {
-				if ( in_array( $product_id, $post_rules ) )
-					return false;	
+				if ( array_key_exists( $product_id, $restriction_exemptions ) )
+					$restriction = true; //we don't want restrict yet, not until we know there aren't other memberships that still have access to this content
+				else
+					continue; //get out of this, we're in a membership that hasn't been exempted
 			}
-			$restriction = true;
-		}
-	}
-	
-	$post_type_rules = get_option( '_item-content-rule-post-type-' . $post->post_type, array() );	
-	if ( !empty( $post_type_rules ) ) {
-		if ( empty( $member_access ) ) return true;
-		foreach( $member_access as $product_id => $txn_id ) {
-			if ( !empty( $restriction_exemptions[$product_id] )  )
+			if ( $restriction ) //if it has been restricted, we can return true now
 				return true;
-			if ( in_array( $product_id, $post_type_rules ) )
-				return false;	
 		}
-		$restriction = true;
-	}
-	
-	$taxonomy_rules = array();
-	$taxonomies = get_object_taxonomies( $post->post_type );
-	$terms = wp_get_object_terms( $post->ID, $taxonomies );
-	foreach( $terms as $term ) {
-		$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
-		if ( !empty( $term_rules ) ) {
+		
+		if ( 'it_exchange_prod' !== $post->post_type ) {
+			$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
+			if ( !empty( $post_rules ) ) {
+				if ( empty( $member_access ) ) return true;
+				foreach( $member_access as $product_id => $txn_id ) {
+					if ( in_array( $product_id, $post_rules ) )
+						return false;	
+				}
+				$restriction = true;
+			}
+		}
+		
+		$post_type_rules = get_option( '_item-content-rule-post-type-' . $post->post_type, array() );	
+		if ( !empty( $post_type_rules ) ) {
 			if ( empty( $member_access ) ) return true;
 			foreach( $member_access as $product_id => $txn_id ) {
-				if ( in_array( $product_id, $term_rules ) )
+				if ( !empty( $restriction_exemptions[$product_id] )  )
+					return true;
+				if ( in_array( $product_id, $post_type_rules ) )
 					return false;	
 			}
 			$restriction = true;
 		}
+		
+		$taxonomy_rules = array();
+		$taxonomies = get_object_taxonomies( $post->post_type );
+		$terms = wp_get_object_terms( $post->ID, $taxonomies );
+		foreach( $terms as $term ) {
+			$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
+			if ( !empty( $term_rules ) ) {
+				if ( empty( $member_access ) ) return true;
+				foreach( $member_access as $product_id => $txn_id ) {
+					if ( in_array( $product_id, $term_rules ) )
+						return false;	
+				}
+				$restriction = true;
+			}
+		}
+		
 	}
 	
 	return apply_filters( 'it_exchange_membership_addon_is_content_restricted', $restriction, $member_access );
@@ -515,19 +519,19 @@ function it_exchange_membership_addon_is_product_restricted() {
 	
 	$member_access = it_exchange_get_session_data( 'member_access' );
 		
-	$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
-	if ( !empty( $restriction_exemptions ) ) {
-		foreach( $member_access as $product_id => $txn_id ) {
-			if ( array_key_exists( $product_id, $restriction_exemptions ) )
-				$restriction = true; //we don't want restrict yet, not until we know there aren't other memberships that still have access to this content
-			else
-				continue; //get out of this, we're in a membership that hasn't been exempted
+	if ( !empty( $post ) && 'it_exchange_prod' === $post->post_type ) {
+		$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
+		if ( !empty( $restriction_exemptions ) ) {
+			foreach( $member_access as $product_id => $txn_id ) {
+				if ( array_key_exists( $product_id, $restriction_exemptions ) )
+					$restriction = true; //we don't want restrict yet, not until we know there aren't other memberships that still have access to this content
+				else
+					continue; //get out of this, we're in a membership that hasn't been exempted
+			}
+			if ( $restriction ) //if it has been restricted, we can return true now
+				return true;
 		}
-		if ( $restriction ) //if it has been restricted, we can return true now
-			return true;
-	}
 	
-	if ( 'it_exchange_prod' === $post->post_type ) {
 		$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
 		if ( !empty( $post_rules ) ) {
 			if ( empty( $member_access ) ) return true;
@@ -562,9 +566,10 @@ function it_exchange_membership_addon_is_content_dripped() {
 	if ( current_user_can( 'administrator' ) )
 		return false;
 
-	if ( 'it_exchange_prod' !== $post->post_type ) {
-		$member_access = it_exchange_get_session_data( 'member_access' );
+	$member_access = it_exchange_get_session_data( 'member_access' );
 	
+	if ( !empty( $post ) ) {
+
 		foreach( $member_access as $product_id => $txn_id  ) {
 			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
 			$interval = !empty( $interval ) ? $interval : 0;
@@ -581,8 +586,10 @@ function it_exchange_membership_addon_is_content_dripped() {
 					$dripped = true; // we don't want to return here, because other memberships might have access to content sooner
 			}
 		}
+	
 	}
-	return apply_filters( 'it_exchange_membership_addon_is_content_dripped', $dripped );
+
+	return apply_filters( 'it_exchange_membership_addon_is_content_dripped', $dripped, $member_access );
 }
 
 /**
@@ -604,10 +611,10 @@ function it_exchange_membership_addon_is_product_dripped() {
 	
 	if ( current_user_can( 'administrator' ) )
 		return false;
+		
+	$member_access = it_exchange_get_session_data( 'member_access' );
 
-	if ( 'it_exchange_prod' === $post->post_type ) {
-		$member_access = it_exchange_get_session_data( 'member_access' );
-	
+	if ( !empty( $post ) && 'it_exchange_prod' === $post->post_type ) {
 		foreach( $member_access as $product_id => $txn_id  ) {
 			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
 			$interval = !empty( $interval ) ? $interval : 0;
@@ -625,7 +632,7 @@ function it_exchange_membership_addon_is_product_dripped() {
 			}
 		}
 	}
-	return apply_filters( 'it_exchange_membership_addon_is_product_dripped', $dripped );
+	return apply_filters( 'it_exchange_membership_addon_is_product_dripped', $dripped, $member_access );
 }
 
 /**
