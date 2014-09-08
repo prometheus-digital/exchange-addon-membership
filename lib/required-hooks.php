@@ -979,7 +979,7 @@ function it_exchange_membership_addon_append_to_customer_menu_loop( $nav, $custo
 					$class = !empty( $query_var ) && $query_var == $membership_slug ? ' class="current"' : '';
 					
 					if ( $permalinks )
-						$url = it_exchange_get_page_url( $page_slug ) . $membership_slug;
+						$url = trailingslashit( it_exchange_get_page_url( $page_slug ) ) . $membership_slug;
 					else
 						$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
 						
@@ -1013,7 +1013,7 @@ function it_exchange_membership_addon_email_notification_order_table_product_nam
 			$membership_slug = $membership_post->post_name;
 			
 			if ( $permalinks )
-				$url = it_exchange_get_page_url( $page_slug ) . $membership_slug;
+				$url = trailingslashit( it_exchange_get_page_url( $page_slug ) ) . $membership_slug;
 			else
 				$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
 				
