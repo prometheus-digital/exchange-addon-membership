@@ -859,7 +859,7 @@ function it_exchange_membership_addon_register_rewrite_rules( $existing ) {
 	if ( 'wordpress' == it_exchange_get_page_type( 'memberships', true ) ) {
 		$wpid = it_exchange_get_page_wpid( 'memberships' );
 		if ( $wp_page = get_page( $wpid ) )
-			$page_slug = $wp_page->post_name;
+            $page_slug = get_page_uri( $wpid );
 		else
 			$page_slug = 'memberships';
 
