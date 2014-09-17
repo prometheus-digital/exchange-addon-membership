@@ -1,6 +1,6 @@
 [submodule "lib/updater"]
 	path = lib/updater
-	url = git@git.gaarai.com:updater
+	url = git@bitbucket.org:ithemes/updater
 [submodule "bundled-addons/exchange-addon-recurring-payments"]
 	path = bundled-addons/exchange-addon-recurring-payments
-	url = git@git.gaarai.com:exchange-addon-recurring-payments
+	url = git@bitbucket.org:ithemes/exchange-addon-recurring-payments
