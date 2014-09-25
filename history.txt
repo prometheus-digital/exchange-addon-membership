@@ -121,3 +121,7 @@
 	Fixed bug in dripped content
 	Switched to it_exchange_transaction_is_cleared_for_delivery()... to determine state of membership access
 	Add product ID to member access array if product type is membership...  not just if product type supports access rules
+1.2.7 - 2014-09-25 - Lew Ayotte, Elise Alley
+	Fix for Membership pages w/ WP parent pages
+	Adding trailingslashit() to permalinked membership pages
+
