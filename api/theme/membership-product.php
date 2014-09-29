@@ -300,7 +300,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 							$transaction = it_exchange_get_transaction( $most_priciest_txn_id );
 							//We don't know if we're auto-renewing
 							foreach( $transaction->cart_details->products as $key => $product ) {
-								if ( $product['product_id'] === $most_producty->ID ) {
+								if ( (int)$product['product_id'] === (int)$most_producty->ID ) {
 									$last_payment = $product['product_base_price'];
 									break;
 								}
