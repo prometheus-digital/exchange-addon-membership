@@ -126,3 +126,6 @@
 	Adding trailingslashit() to permalinked membership pages
 1.2.8 - 2014-10-01 - Lew Ayotte
 	Fix bug in product IDs when determining prorate amounts
+1.2.9 - 2014-11-14 - Packaging Bot (lib/updater)
+	Enhancement: Reduced caching to allow updates to appear more quickly.
+	Enhancement: Authenticating users now uses the new authentication system.
