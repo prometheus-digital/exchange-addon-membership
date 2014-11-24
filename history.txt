@@ -109,3 +109,28 @@
 	Fix for version compare
 1.2.4 - 2014-07-21 - Lew Ayotte
 	Fix for version compare
+1.2.5 - 2014-08-18 - Lew Ayotte, Elise Alley
+	If transient isn't empty, make sure member_access isn't the same as member_access_session and verify transaction status for offline payments
+	Update session if member_access is not empty, to prevent parent sessions from being stale
+	Update get_transient() check to accept empty arrays as well as false return variables.
+	Double check if membership product exists when viewing content on wp-admin, if not, run the delete script
+1.2.5.1 - 2014-08-18 - Lew Ayotte, Elise Alley
+	Fixing bug when using empty() on a function return value for some versions of PHP
+1.2.6 - 2014-09-02 - Lew Ayotte, Elise Alley
+	Fix bug when $post has not been set yet
+	Fixed bug in dripped content
+	Switched to it_exchange_transaction_is_cleared_for_delivery()... to determine state of membership access
+	Add product ID to member access array if product type is membership...  not just if product type supports access rules
+1.2.7 - 2014-09-25 - Lew Ayotte, Elise Alley
+	Fix for Membership pages w/ WP parent pages
+	Adding trailingslashit() to permalinked membership pages
+1.2.8 - 2014-10-01 - Lew Ayotte
+	Fix bug in product IDs when determining prorate amounts
+1.2.9 - 2014-11-14 - Packaging Bot (lib/updater)
+	Enhancement: Reduced caching to allow updates to appear more quickly.
+	Enhancement: Authenticating users now uses the new authentication system.
+1.2.10 - 2014-11-14 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Enhancement: Reduced caching to allow updates to appear more quickly.
+	Enhancement: Authenticating users now uses the new authentication system.
+1.2.11 - 2014-11-24 - Lew Ayotte
+	Change out .live() calls for .on() calls in JS

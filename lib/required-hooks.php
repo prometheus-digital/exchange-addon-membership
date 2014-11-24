@@ -407,7 +407,8 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 	$cancel_subscription = it_exchange_get_session_data( 'cancel_subscription' );
 	foreach ( $cart_object->products as $product ) {
 		$product_id = $product['product_id'];
-		if ( it_exchange_product_supports_feature( $product_id, 'membership-content-access-rules' ) ) {
+		$product_type = it_exchange_get_product_type( $product_id );
+		if ( 'membership-product-type' === $product_type || it_exchange_product_supports_feature( $product_id, 'membership-content-access-rules' ) ) {
 			//This is a membership product!
 			if ( !in_array( $product_id, (array)$member_access ) ) {
 				//If this user isn't already a member of this product, add it to their access list
@@ -459,10 +460,11 @@ function it_exchange_membership_addon_setup_customer_session() {
 		$customer = new IT_Exchange_Customer( $user_id );
 		$member_access = $customer->get_customer_meta( 'member_access' );
 		$member_access_session = it_exchange_get_session_data( 'member_access' );
-				
+
 		if ( !empty( $member_access )  ) {
 			//If the transient doesn't exist, verify the membership access subscriber status and reset transient
-			if ( false === get_transient( 'member_access_check_' . $customer->id ) ) {
+			$transient = get_transient( 'member_access_check_' . $customer->id );
+			if ( empty( $transient ) ) {
 				foreach( $member_access as $txn_id => $product_id ) {
 					$transaction = it_exchange_get_transaction( $txn_id );
 					$transaction_status = $transaction->get_status();
@@ -484,29 +486,32 @@ function it_exchange_membership_addon_setup_customer_session() {
 				}
 				$customer->update_customer_meta( 'member_access', $member_access ); //Update the member_access customer meta, remove invalids
 				foreach( $member_access as $txn_id => $product_id ) {
-					$transaction = it_exchange_get_transaction( $txn_id );
-					$transaction_status = $transaction->get_status();
-					if ( 'paid' !== $transaction_status 
-						&& 'completed' !== $transaction_status
-						&& 'Completed' !== $transaction_status 
-						&& 'succeeded' !== $transaction_status ) {
+					if ( !it_exchange_transaction_is_cleared_for_delivery( $txn_id ) ) {
 						unset( $member_access[$txn_id] );
 					}
 				}
+				
 				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 4 ); //only do it every four hours
+			} else {
+				$member_diff = array_diff_assoc( (array)$member_access, (array)$member_access_session );
+				if ( !empty( $member_diff ) ) {
+					foreach( $member_access as $txn_id => $product_id ) {
+						if ( !it_exchange_transaction_is_cleared_for_delivery( $txn_id ) ) {
+							unset( $member_access[$txn_id] );
+						}
+					}
+				}
 			}
+			
 			$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $member_access );
 			$member_access = array_flip( $member_access ); // we want the transaction ID to be the value to help us determine child access relations to transaction IDs
 			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
+			it_exchange_update_session_data( 'member_access', $member_access );
+			it_exchange_update_session_data( 'parent_access', $parent_access );
 		} else {
 			it_exchange_clear_session_data( 'member_access' );
 			it_exchange_clear_session_data( 'parent_access' );
 		}	
-		$member_diff = array_diff_assoc( (array)$member_access, (array)$member_access_session );
-		if ( !empty( $member_diff ) ) {
-			it_exchange_update_session_data( 'member_access', $member_access );
-			it_exchange_update_session_data( 'parent_access', $parent_access );
-		}
 	} else {
 		it_exchange_clear_session_data( 'member_access' );
 		it_exchange_clear_session_data( 'parent_access' );
@@ -854,7 +859,7 @@ function it_exchange_membership_addon_register_rewrite_rules( $existing ) {
 	if ( 'wordpress' == it_exchange_get_page_type( 'memberships', true ) ) {
 		$wpid = it_exchange_get_page_wpid( 'memberships' );
 		if ( $wp_page = get_page( $wpid ) )
-			$page_slug = $wp_page->post_name;
+            $page_slug = get_page_uri( $wpid );
 		else
 			$page_slug = 'memberships';
 
@@ -961,7 +966,7 @@ function it_exchange_membership_addon_append_to_customer_menu_loop( $nav, $custo
 	$memberships = it_exchange_get_session_data( 'parent_access' );
 	$page_slug = 'memberships';
 	$permalinks = (bool)get_option( 'permalink_structure' );
-		
+
 	if ( !empty( $memberships ) ) {
 		foreach ( $memberships as $membership_id ) {
 			if ( !empty( $membership_id ) ) {				
@@ -974,7 +979,7 @@ function it_exchange_membership_addon_append_to_customer_menu_loop( $nav, $custo
 					$class = !empty( $query_var ) && $query_var == $membership_slug ? ' class="current"' : '';
 					
 					if ( $permalinks )
-						$url = it_exchange_get_page_url( $page_slug ) . $membership_slug;
+						$url = trailingslashit( it_exchange_get_page_url( $page_slug ) ) . $membership_slug;
 					else
 						$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
 						
@@ -1008,7 +1013,7 @@ function it_exchange_membership_addon_email_notification_order_table_product_nam
 			$membership_slug = $membership_post->post_name;
 			
 			if ( $permalinks )
-				$url = it_exchange_get_page_url( $page_slug ) . $membership_slug;
+				$url = trailingslashit( it_exchange_get_page_url( $page_slug ) ) . $membership_slug;
 			else
 				$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
 				

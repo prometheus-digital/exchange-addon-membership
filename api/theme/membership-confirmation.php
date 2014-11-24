@@ -86,7 +86,7 @@ class IT_Theme_API_Membership_Confirmation implements IT_Theme_API {
 				$membership_slug = $membership_post->post_name;
 				
 				if ( $permalinks )
-					$url = it_exchange_get_page_url( $page_slug ) . $membership_slug;
+					$url = trailingslashit( it_exchange_get_page_url( $page_slug ) ) . $membership_slug;
 				else
 					$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
 					
