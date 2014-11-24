@@ -132,3 +132,5 @@
 1.2.10 - 2014-11-14 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Enhancement: Reduced caching to allow updates to appear more quickly.
 	Enhancement: Authenticating users now uses the new authentication system.
+1.2.11 - 2014-11-24 - Lew Ayotte
+	Change out .live() calls for .on() calls in JS
