@@ -136,3 +136,5 @@
 	Change out .live() calls for .on() calls in JS
 1.2.12 - 2014-11-24 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Change out .live() calls for .on() calls in JS
+1.2.13 - 2014-12-01 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Properly get Customer ID when settings subscription status to 'deactivated'
