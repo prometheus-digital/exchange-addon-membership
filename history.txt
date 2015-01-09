@@ -140,3 +140,5 @@
 	Properly get Customer ID when settings subscription status to 'deactivated'
 1.2.14 - 2014-12-08 - Lew Ayotte
 	Fixing bug in Javascript preventing adding new Child/Parent membership hierarchies
+1.2.15 - 2015-01-09 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Properly get Customer ID when settings subscription status to 'deactivated'
