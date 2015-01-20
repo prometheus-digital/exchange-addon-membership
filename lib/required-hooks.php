@@ -480,7 +480,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 					} else {
 						$subscription_status = $transaction->get_transaction_meta( 'subscriber_status' );
 						//empty means it was never set... which should mean that recurring payments isn't setup
-						if ( !empty( $subscription_status ) && 'active' !== $subscription_status )
+						if ( !empty( $subscription_status ) && 'deactivated' === $subscription_status )
 							unset( $member_access[$txn_id] );
 					}
 				}
