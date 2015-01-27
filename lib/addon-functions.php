@@ -876,3 +876,79 @@ function it_exchange_membership_addon_get_all_the_parents( $membership_id, $pare
 	}
 	return $parent_ids;
 }
+
+/*
+ * For hierarchical membership types
+ * Returns an array of all the product's children
+ *
+ * @since 1.2.16 
+ *
+ * @param int $membership_id product ID of membership
+ * @param array $child_ids array of of current child_ids
+ * @return array|bool
+*/
+function it_exchange_membership_addon_get_all_the_children( $membership_id, $child_ids = array() ) {
+	$children = it_exchange_get_product_feature( $membership_id, 'membership-hierarchy', array( 'setting' => 'children' ) );
+	if ( !empty( $children ) ) {
+		foreach( $children as $child_id ) {
+			if ( false !== get_post_status( $child_id ) ) {
+				$child_ids[] = $child_id;
+				if ( false !== $results = it_exchange_membership_addon_get_all_the_children( $child_id ) )
+					$child_ids = array_merge( $child_ids, $results );
+			}
+		}
+	} else {
+		return false;
+	}
+	return $child_ids;
+}
+
+/*
+ * Gets a customer's memberships
+ *
+ * @since 1.2.16 
+ *
+ * @param int $customer_id Customer's User ID
+ * @return array|bool
+*/
+function it_exchange_membership_addon_get_customer_memberships( $customer_id=false ) {
+	if ( empty( $customer_id ) ) {
+		if ( is_user_logged_in() ) {
+			return it_exchange_get_session_data( 'member_access' );
+		}
+	} else {
+		$customer = new IT_Exchange_Customer( $customer_id );
+		$member_access = $customer->get_customer_meta( 'member_access' );
+		$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
+		return $member_access;
+	}
+	return false;
+}
+
+/*
+ * Gets a customer's memberships
+ *
+ * @since 1.2.16 
+ *
+ * @param int $membership_id Member's Product/Post ID
+ * @param int $customer_id Customer's User ID
+ * @return array|bool
+*/
+function it_exchange_membership_addon_is_customer_member_of( $membership, $customer_id=false ) {
+	$member_access = it_exchange_membership_addon_get_customer_memberships( $customer_id );
+	if ( is_int( $membership ) ) {
+		$membership_id = $membership;
+	} else {
+		$args = array(
+			'name' => $membership,
+			'post_type' => 'it_exchange_pro',
+			'post_status' => 'publish',
+			'numberposts' => 1
+		);
+		$products = get_posts( $args );
+		if ( !empty( $products ) ) {
+			$membership_id = $products[0]->ID;
+		}
+	}
+	return !empty( $member_access[$membership_id] );
+}
