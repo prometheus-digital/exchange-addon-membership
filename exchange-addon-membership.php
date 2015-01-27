@@ -77,9 +77,11 @@ require( dirname( __FILE__ ) . '/lib/updater/load.php' );
  * @since 1.0.0
  */
 function it_exchange_membership_addon_activation() {
-	if ( WP_Filesystem( 'Direct', plugin_dir_path( __FILE__ ) ) ) {
-		copy_dir( plugin_dir_path( __FILE__ ) . 'bundled-addons/', WP_PLUGIN_DIR );
-		add_action( 'activated_plugin', 'it_exchange_membership_addon_activated_bundled_addons', 10, 2 );
+	if ( apply_filters( 'it_exchange_membership_addon_activation', true ) ) {
+		if ( WP_Filesystem( 'Direct', plugin_dir_path( __FILE__ ) ) ) {
+			copy_dir( plugin_dir_path( __FILE__ ) . 'bundled-addons/', WP_PLUGIN_DIR );
+			add_action( 'activated_plugin', 'it_exchange_membership_addon_activated_bundled_addons', 10, 2 );
+		}
 	}
 }
 register_activation_hook( __FILE__, 'it_exchange_membership_addon_activation' );
