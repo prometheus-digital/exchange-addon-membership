@@ -260,24 +260,25 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 				
 				if ( !empty( $most_priciest_txn_id ) ) {
 					
-					if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
-						$existing_membership_time = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) );
-						$existing_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
+					if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'recurring-enabled' ) ) ) {
+						$existing_membership_recurring_enabled = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'recurring-enabled' ) );
+						$existing_membership_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
+						$existing_membership_interval = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'interval' ) );
+						$existing_membership_interval_count = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'interval-count' ) );
 					} else {
-						$existing_membership_time = 'forever';
-						$existing_auto_renew = false;
+						$existing_membership_recurring_enabled = false;
 					}
 					
-					if ( it_exchange_product_has_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
-						$upgrade_membership_time = it_exchange_get_product_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'time' ) );
-						$upgrade_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
-
+					if ( it_exchange_product_has_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'recurring-enabled' ) ) ) {
+						$upgrade_membership_recurring_enabled = it_exchange_get_product_feature( $product->ID, 'recurring-payments', array( 'setting' => 'recurring-enabled' ) );
+						$upgrade_membership_auto_renew = it_exchange_get_product_feature( $product->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
+						$upgrade_membership_interval = it_exchange_get_product_feature( $product->ID, 'recurring-payments', array( 'setting' => 'interval' ) );
+						$upgrade_membership_interval_count = it_exchange_get_product_feature( $product->ID, 'recurring-payments', array( 'setting' => 'interval-count' ) );
 					} else {
-						$upgrade_membership_time = 'forever';
-						$upgrade_auto_renew = false;
+						$upgrade_membership_recurring_enabled = false;
 					}
 					
-					if ( !( 'forever' === $existing_membership_time && 'forever' !== $upgrade_membership_time ) ) {
+					if ( !( !$existing_membership_recurring_enabled && $upgrade_membership_recurring_enabled ) ) {
 						//forever upgrade to non-forever Products need to be process manually (see notes below)
 						$days_this_year = date_i18n( 'z', mktime( 0,0,0,12,31,date_i18n('Y') ) );
 
@@ -332,21 +333,29 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								return;
 							}
 						} else {
-							switch( $existing_membership_time ) {
-								case 'monthly':
-									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_monthly_membership', ( $last_payment * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-									$next_payment_date = strtotime( '+1 Month', strtotime( $transaction->post_date ) );
-									break;
+							if ( $existing_membership_recurring_enabled ) {
+								switch ( $existing_membership_interval ) {
 									
-								case 'yearly':
-									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_yearly_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-									$next_payment_date = strtotime( '+1 Year', strtotime( $transaction->post_date ) );
-									break;
+									case 'year':								
+										$divisor = $days_this_year;
+										break;
+									case 'month':										
+										$divisor = 30;
+										break;
+									case 'week':
+										$divisor = 7;
+										break;
+									case 'day':
+										$divisor = 1;
+										break;
 									
-								case 'forever':
-									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_forever_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-									$next_payment_date = 0;
-									break;
+								}
+								$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_recurring_membership', $last_payment / $divisor / $existing_membership_interval_count, $base_price, $days_this_year, $this->product->ID, $transaction );
+								$next_payment_date = strtotime( '+' . $existing_membership_interval_count . ' ' . $existing_membership_interval, strtotime( $transaction->post_date ) );
+							} else {
+								$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_nonrecurring_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+								$next_payment_date = 0;
+								break;
 							}
 							
 							$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
@@ -356,19 +365,28 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						
 							$credit = $remaining_days * $daily_cost_of_existing_membership;
 								
-							switch( $upgrade_membership_time ) {
-								case 'monthly':
-									$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_monthly_membership', ( $base_price * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-									break;
+							if ( $upgrade_membership_recurring_enabled ) {
+								switch ( $upgrade_membership_interval ) {
 									
-								case 'yearly':
-									$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_yearly_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-									break;
+									case 'year':								
+										$divisor = $days_this_year;
+										break;
+									case 'month':										
+										$divisor = 30;
+										break;
+									case 'week':
+										$divisor = 7;
+										break;
+									case 'day':
+										$divisor = 1;
+										break;
 									
-								case 'forever': //treat a "forever" upgrade as a "year", gives the customer a small discount
-									$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_forever_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-									break;
+								}
+								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_recurring_membership', $base_price / $divisor / $upgrade_membership_interval_count, $base_price, $days_this_year, $this->product->ID, $transaction );
+							} else {
+								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_nonrecurring_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
 							}
+
 							$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
 								
 							$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
@@ -481,23 +499,25 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 				
 				if ( !empty( $most_priciest_txn_id ) ) {
 					
-					if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
-						$existing_membership_time = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'time' ) );
-						$existing_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
+					if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'recurring-enabled' ) ) ) {
+						$existing_membership_recurring_enabled = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'recurring-enabled' ) );
+						$existing_membership_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
+						$existing_membership_interval = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'interval' ) );
+						$existing_membership_interval_count = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'interval-count' ) );
 					} else {
-						$existing_membership_time = 'forever';
-						$existing_auto_renew = false;
+						$existing_membership_recurring_enabled = false;
 					}
 					
-					if ( it_exchange_product_has_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'time' ) ) ) {
-						$upgrade_membership_time = it_exchange_get_product_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'time' ) );
-						$upgrade_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
+					if ( it_exchange_product_has_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'recurring-enabled' ) ) ) {
+						$upgrade_membership_recurring_enabled = it_exchange_get_product_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'recurring-enabled' ) );
+						$upgrade_membership_auto_renew = it_exchange_get_product_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
+						$upgrade_membership_interval = it_exchange_get_product_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'interval' ) );
+						$upgrade_membership_interval_count = it_exchange_get_product_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'interval-count' ) );
 					} else {
-						$upgrade_membership_time = 'forever';
-						$upgrade_auto_renew = false;
+						$upgrade_membership_recurring_enabled = false;
 					}
-					
-					if ( !( 'forever' === $existing_membership_time && 'forever' !== $upgrade_membership_time ) ) {
+										
+					if ( !( !$existing_membership_recurring_enabled && $upgrade_membership_recurring_enabled ) ) {
 						//forever upgrade to non-forever Products need to be process manually (see notes below)
 						$days_this_year = date_i18n( 'z', mktime( 0,0,0,12,31,date_i18n('Y') ) );
 
@@ -552,21 +572,28 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								return;
 							}
 						} else {
-							switch( $existing_membership_time ) {
-								case 'monthly':
-									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_monthly_membership', ( $last_payment * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-									$next_payment_date = strtotime( '+1 Month', strtotime( $transaction->post_date ) );
-									break;
+							if ( $existing_membership_recurring_enabled ) {
+								switch ( $existing_membership_interval ) {
 									
-								case 'yearly':
-									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_yearly_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-									$next_payment_date = strtotime( '+1 Year', strtotime( $transaction->post_date ) );
-									break;
+									case 'year':								
+										$divisor = $days_this_year;
+										break;
+									case 'month':										
+										$divisor = 30;
+										break;
+									case 'week':
+										$divisor = 7;
+										break;
+									case 'day':
+										$divisor = 1;
+										break;
 									
-								case 'forever':
-									$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_forever_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-									$next_payment_date = 0;
-									break;
+								}
+								$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_recurring_membership', $last_payment / $divisor / $existing_membership_interval_count, $base_price, $days_this_year, $this->product->ID, $transaction );
+								$next_payment_date = strtotime( '+' . $existing_membership_interval_count . ' ' . $existing_membership_interval, strtotime( $transaction->post_date ) );
+							} else {
+								$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_nonrecurring_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
+								$next_payment_date = 0;
 							}
 							
 							$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
@@ -575,20 +602,28 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						if ( 0 < $remaining_days ) {
 							
 							$credit = $remaining_days * $daily_cost_of_existing_membership;
-							
-							switch( $upgrade_membership_time ) {
-								case 'monthly':
-									$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_monthly_membership', ( $base_price * 12 ) / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-									break;
+							if ( $upgrade_membership_recurring_enabled ) {
+								switch ( $upgrade_membership_interval ) {
 									
-								case 'yearly':
-									$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_yearly_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-									break;
+									case 'year':								
+										$divisor = $days_this_year;
+										break;
+									case 'month':										
+										$divisor = 30;
+										break;
+									case 'week':
+										$divisor = 7;
+										break;
+									case 'day':
+										$divisor = 1;
+										break;
 									
-								case 'forever': //treat a "forever" upgrade as a "year", gives the customer a small discount
-									$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_to_forever_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-									break;
+								}
+								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_recurring_membership', $base_price / $divisor / $upgrade_membership_interval_count, $base_price, $days_this_year, $this->product->ID, $transaction );
+							} else {
+								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_nonrecurring_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
 							}
+
 							$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
 								
 							$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
