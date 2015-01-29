@@ -276,6 +276,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						$upgrade_membership_interval_count = it_exchange_get_product_feature( $product->ID, 'recurring-payments', array( 'setting' => 'interval-count' ) );
 					} else {
 						$upgrade_membership_recurring_enabled = false;
+						$upgrade_membership_auto_renew = false;
 					}
 					
 					if ( !( !$existing_membership_recurring_enabled && $upgrade_membership_recurring_enabled ) ) {
@@ -394,7 +395,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 							if ( 0 < $free_days ) {
 								$upgrade_type = false;
 								
-								if ( 'yes' === $upgrade_auto_renew || 'on' === $upgrade_auto_renew ) {
+								if ( 'yes' === $upgrade_membership_auto_renew || 'on' === $upgrade_membership_auto_renew ) {
 									$day_string = __( 'day', 'LION' );
 									if ( 1 < $free_days )
 										$day_string = __( 'days', 'LION' );
@@ -515,6 +516,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						$upgrade_membership_interval_count = it_exchange_get_product_feature( $this->product->ID, 'recurring-payments', array( 'setting' => 'interval-count' ) );
 					} else {
 						$upgrade_membership_recurring_enabled = false;
+						$upgrade_membership_auto_renew = false;
 					}
 										
 					if ( !( !$existing_membership_recurring_enabled && $upgrade_membership_recurring_enabled ) ) {
@@ -631,7 +633,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 							if ( 0 < $free_days ) {
 								$upgrade_type = false;
 
-								if ( 'yes' === $upgrade_auto_renew || 'on' === $upgrade_auto_renew ) {
+								if ( 'yes' === $upgrade_membership_auto_renew || 'on' === $upgrade_membership_auto_renew ) {
 									$day_string = __( 'day', 'LION' );
 									if ( 1 < $free_days )
 										$day_string = __( 'days', 'LION' );
