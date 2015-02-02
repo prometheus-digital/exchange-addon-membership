@@ -149,4 +149,5 @@
 	Added functionality to handle the new Recurring Payments updates for upgrade/downgrades
 	Adding a filter to disable the bundle activation function. Used to prevent activation from overwriting developer's git clone.
 	Remove member access ONLY IF status is set to deactivated, all other statuses are acceptable
-
+1.2.18 - 2015-02-02 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Updating for new Recurring Payments options
