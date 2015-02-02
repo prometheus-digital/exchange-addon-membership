@@ -145,3 +145,8 @@
 1.2.16 - 2015-01-15 - Lew Ayotte
 	Added helper function for upcoming Recurring Payments updates
 	Adding helper functions for dev's to easily get memberships from customers
+1.2.17 - 2015-02-02 - Lew Ayotte
+	Added functionality to handle the new Recurring Payments updates for upgrade/downgrades
+	Adding a filter to disable the bundle activation function. Used to prevent activation from overwriting developer's git clone.
+	Remove member access ONLY IF status is set to deactivated, all other statuses are acceptable
+
