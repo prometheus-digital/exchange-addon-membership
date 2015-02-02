@@ -153,3 +153,5 @@
 	Updating for new Recurring Payments options
 1.2.19 - 2015-02-02 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Updated bundled-addons/exchange-addon-recurring-payments to version 1.0.22.1
+1.2.20 - 2015-02-02 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Tagging new version
