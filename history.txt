@@ -151,3 +151,5 @@
 	Remove member access ONLY IF status is set to deactivated, all other statuses are acceptable
 1.2.18 - 2015-02-02 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Updating for new Recurring Payments options
+1.2.19 - 2015-02-02 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Updated bundled-addons/exchange-addon-recurring-payments to version 1.0.22.1
