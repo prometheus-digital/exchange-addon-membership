@@ -356,7 +356,6 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 							} else {
 								$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_nonrecurring_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
 								$next_payment_date = 0;
-								break;
 							}
 							
 							$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
