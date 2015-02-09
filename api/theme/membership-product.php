@@ -323,9 +323,6 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 							$free_days = $transaction->get_transaction_meta( 'free_days' );
 							
 							if ( !empty( $credit ) && !empty( $free_days ) ) {
-								$date_diff = ( $post_date + ( $free_days * 60*60 ) ) - $todays_date;
-								$days = max( floor( $date_diff / (60*60*24) ), 0 );
-							
 								$daily_cost_of_existing_membership = $credit / $free_days;
 								$next_payment_date = strtotime( '+' . $free_days . ' Days', strtotime( $transaction->post_date ) );
 								
@@ -353,15 +350,16 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								}
 								$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_recurring_membership', $last_payment / $divisor / $existing_membership_interval_count, $base_price, $days_this_year, $this->product->ID, $transaction );
 								$next_payment_date = strtotime( '+' . $existing_membership_interval_count . ' ' . $existing_membership_interval, strtotime( $transaction->post_date ) );
+								$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
+							} else if ( !$upgrade_membership_recurring_enabled ) {
+								//This is a forever to forever upgrade
+								$credit = max( $last_payment, 0 );
 							} else {
-								$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_nonrecurring_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-								$next_payment_date = 0;
+								$remaining_days = false;
 							}
-							
-							$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
 						}
 						
-						if ( 0 < $remaining_days ) {
+						if ( !empty( $remaining_days ) ) {
 						
 							$credit = $remaining_days * $daily_cost_of_existing_membership;
 								
@@ -427,7 +425,19 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								//no free days, just upgrade!
 								return;
 							}
-							
+						} else if ( !empty( $credit ) ) {
+							// If we're upgrading from a non-recurring to a non-recurring product, we want to give the
+							// customer a credit for the cost of the existing membership, basically they just need to pay the difference
+							$upgrade_details = it_exchange_get_session_data( 'updowngrade_details' );
+							$upgrade_details[$this->product->ID] = array(
+								'credit'                 => $credit,
+								'free_days'              => 0,
+								'old_transaction_method' => $transaction->transaction_method,
+								'old_transaction_id'     => $most_priciest_txn_id,
+								'upgrade_type'           => 'credit',
+							);
+							it_exchange_update_session_data( 'updowngrade_details', $upgrade_details );
+							$result = $options['before_desc'] . sprintf( __( ' %s upgrade credit will be applied at checkout', 'LION' ), it_exchange_format_price( $credit )  ) . $options['after_desc'];
 						} else {
 							//no free days, just upgrade!
 							return;
@@ -562,9 +572,6 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 							$free_days = $transaction->get_transaction_meta( 'free_days' );
 
 							if ( !empty( $credit ) && !empty( $free_days ) ) {
-								$date_diff = ( $post_date + ( $free_days * 60*60 ) ) - $todays_date;
-								$days = max( floor( $date_diff / (60*60*24) ), 0 );
-								
 								$daily_cost_of_existing_membership = $credit / $free_days;
 								$next_payment_date = strtotime( '+' . $free_days . ' Days', strtotime( $transaction->post_date ) );
 								
@@ -591,16 +598,14 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 									
 								}
 								$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_recurring_membership', $last_payment / $divisor / $existing_membership_interval_count, $base_price, $days_this_year, $this->product->ID, $transaction );
-								$next_payment_date = strtotime( '+' . $existing_membership_interval_count . ' ' . $existing_membership_interval, strtotime( $transaction->post_date ) );
+								$next_payment_date = strtotime( '+' . $existing_membership_interval_count . ' ' . $existing_membership_interval, strtotime( $transaction->post_date ) );							
+								$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
 							} else {
-								$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_to_nonrecurring_membership', $last_payment / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
-								$next_payment_date = 0;
+								$remaining_days = false;
 							}
-							
-							$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
 						}
 						
-						if ( 0 < $remaining_days ) {
+						if ( !empty( $remaining_days ) ) {
 							
 							$credit = $remaining_days * $daily_cost_of_existing_membership;
 							if ( $upgrade_membership_recurring_enabled ) {
