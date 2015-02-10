@@ -136,50 +136,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
                         </div>
                     </div>
                 </div>
-                <?php $count = 0; ?>
-                <?php $group_count = 0; ?>
-                <?php $groupings = array(); ?>
-                <div class="it-exchange-membership-addon-content-access-rules content-access-sortable">
-                <?php
-				if ( !empty( $access_rules ) ) {
-					foreach( $access_rules as $rule ) {
-						$current_grouped_id = isset( $rule['grouped_id'] ) ? $rule['grouped_id'] : false;
-												
-						if ( !empty( $groupings ) && $current_grouped_id !== end( $groupings ) ) {
-						
-							echo '</div></div>'; //this is ending the divs from the group opening in it_exchange_membership_addon_build_content_rule()
-							array_pop( $groupings );
-													
-						} else if ( false === $current_grouped_id && !empty( $groupings ) ) {
-												
-							foreach( $groupings as $group ) {
-								echo '</div></div>'; //this is ending the divs from the group opening in it_exchange_membership_addon_build_content_rule()
-							}
-							$groupings = array();
-							
-						}
-												
-						echo it_exchange_membership_addon_build_content_rule( $rule, $count++, $product->ID );
-						
-						$current_group_id = isset( $rule['group_id'] ) ? $rule['group_id'] : false;
-						
-						if ( false !== $current_group_id && !in_array( $current_group_id, $groupings ) )
-							$groupings[] = $current_group_id;
-						
-						if ( false !== $current_group_id && $group_count >= $current_group_id )
-							$group_count = $rule['group_id'] + 1;
-
-					}
-					
-					if ( !empty( $groupings ) ) {
-						foreach( $groupings as $group ) {
-							echo '</div></div>'; //this is ending the divs from the group opening in it_exchange_membership_addon_build_content_rule()
-						}
-						$groupings = array();
-					}
-				}
-                ?>
-                </div>
+                <?php echo it_exchange_membership_addon_build_content_rules( $access_rules, $product->ID ); ?>
             </div>
             <div class="it-exchange-content-no-rules it-exchange-membership-content-access-add-new-rule <?php echo $hidden_no_rules_class; ?>"><?php _e( 'No content access rules added to this membership yet. <a href="">Add New Rule</a>', 'LION' ); ?></div>
         </div>
@@ -191,10 +148,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
                 <a href class="button"><?php _e( 'Add New Group', 'LION' ); ?></a>
             </div>
         </div>
-		<script type="text/javascript" charset="utf-8">
-            var it_exchange_membership_addon_content_access_iteration = <?php echo $count; ?>;
-            var it_exchange_membership_addon_content_access_group_iteration = <?php echo $group_count; ?>;
-        </script>
 		<?php
 	}
 
