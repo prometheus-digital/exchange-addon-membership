@@ -412,7 +412,7 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 			//This is a membership product!
 			if ( !in_array( $product_id, (array)$member_access ) ) {
 				//If this user isn't already a member of this product, add it to their access list
-				$member_access[$transaction_id] = $product_id;
+				$member_access[$transaction_id][] = $product_id;
 			}
 		}
 		
@@ -480,8 +480,11 @@ function it_exchange_membership_addon_setup_customer_session() {
 					} else {
 						$subscription_status = $transaction->get_transaction_meta( 'subscriber_status' );
 						//empty means it was never set... which should mean that recurring payments isn't setup
-						if ( !empty( $subscription_status ) && 'deactivated' === $subscription_status )
+						if ( !empty( $subscription_status ) && 'deactivated' === $subscription_status ) {
+							//This should never happen unless it is an auto-renewing payment that has been deactivated...
+							//Otherwise we'd have to worry about carts with multiple membership products
 							unset( $member_access[$txn_id] );
+						}
 					}
 				}
 				$customer->update_customer_meta( 'member_access', $member_access ); //Update the member_access customer meta, remove invalids
@@ -504,8 +507,14 @@ function it_exchange_membership_addon_setup_customer_session() {
 			}
 			
 			$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $member_access );
-			$member_access = array_flip( $member_access ); // we want the transaction ID to be the value to help us determine child access relations to transaction IDs
-			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
+			foreach( $member_access as $txn_id => $product_id_array ) {
+				// we want the transaction ID to be the value to help us determine child access relations to transaction IDs
+				// Can't use array_flip because product_id_array is an array -- now :)
+				foreach ( (array) $product_id_array as $product_id ) {
+					$new_member_access[$product_id] = $txn_id;
+				}
+			}
+			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $new_member_access );
 			it_exchange_update_session_data( 'member_access', $member_access );
 			it_exchange_update_session_data( 'parent_access', $parent_access );
 		} else {

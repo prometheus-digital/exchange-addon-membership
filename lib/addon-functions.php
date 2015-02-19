@@ -792,11 +792,13 @@ function it_exchange_membership_cart_contains_membership_product( $cart_products
 function it_exchange_membership_addon_setup_most_parent_member_access_array( $membership_products ) {
 	$found_ids = array();
 	$parent_ids = array();
-	foreach( $membership_products as $txn_id => $product_id ) {
-		if ( false !== get_post_status( $product_id ) ) {
-			if ( false !== $found_id = it_exchange_membership_addon_get_most_parent_from_member_access( $product_id, $membership_products ) ) {
-				if ( !in_array( $found_id, $found_ids ) )
-					$found_ids[] = $found_id;
+	foreach( $membership_products as $txn_id => $product_id_array ) {
+		foreach( (array) $product_id_array as $product_id ) {
+			if ( false !== get_post_status( $product_id ) ) {
+				if ( false !== $found_id = it_exchange_membership_addon_get_most_parent_from_member_access( $product_id, $membership_products ) ) {
+					if ( !in_array( $found_id, $found_ids ) )
+						$found_ids[] = $found_id;
+				}
 			}
 		}
 	}
