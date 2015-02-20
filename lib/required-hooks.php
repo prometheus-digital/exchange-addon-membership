@@ -461,7 +461,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 		$member_access = $customer->get_customer_meta( 'member_access' );
 		$member_access_session = it_exchange_get_session_data( 'member_access' );
 
-		if ( !empty( $member_access )  ) {
+		if ( !empty( $member_access ) || true ) {
 			//If the transient doesn't exist, verify the membership access subscriber status and reset transient
 			$transient = get_transient( 'member_access_check_' . $customer->id );
 			if ( empty( $transient ) ) {
@@ -506,15 +506,15 @@ function it_exchange_membership_addon_setup_customer_session() {
 				}
 			}
 			
-			$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $member_access );
 			foreach( $member_access as $txn_id => $product_id_array ) {
 				// we want the transaction ID to be the value to help us determine child access relations to transaction IDs
 				// Can't use array_flip because product_id_array is an array -- now :)
 				foreach ( (array) $product_id_array as $product_id ) {
-					$new_member_access[$product_id] = $txn_id;
+					$flip_member_access[$product_id] = $txn_id;
 				}
 			}
-			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $new_member_access );
+			$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $flip_member_access );
+			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $flip_member_access );
 			it_exchange_update_session_data( 'member_access', $member_access );
 			it_exchange_update_session_data( 'parent_access', $parent_access );
 		} else {
