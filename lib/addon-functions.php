@@ -792,13 +792,11 @@ function it_exchange_membership_cart_contains_membership_product( $cart_products
 function it_exchange_membership_addon_setup_most_parent_member_access_array( $membership_products ) {
 	$found_ids = array();
 	$parent_ids = array();
-	foreach( $membership_products as $txn_id => $product_id_array ) {
-		foreach( (array) $product_id_array as $product_id ) {
-			if ( false !== get_post_status( $product_id ) ) {
-				if ( false !== $found_id = it_exchange_membership_addon_get_most_parent_from_member_access( $product_id, $membership_products ) ) {
-					if ( !in_array( $found_id, $found_ids ) )
-						$found_ids[] = $found_id;
-				}
+	foreach( $membership_products as $product_id => $txn_id ) {
+		if ( false !== get_post_status( $product_id ) ) {
+			if ( false !== $found_id = it_exchange_membership_addon_get_most_parent_from_member_access( $product_id, $membership_products ) ) {
+				if ( !in_array( $found_id, $found_ids ) )
+					$found_ids[] = $found_id;
 			}
 		}
 	}
@@ -858,7 +856,7 @@ function it_exchange_membership_addon_get_most_parent_from_member_access( $produ
 	if ( $childs_parent_ids = get_post_meta( $product_id, '_it-exchange-membership-parent-id' ) ) {
 		foreach( $childs_parent_ids as $parent_id ) {
 			if ( false !== get_post_status( $parent_id ) ) {
-				if ( in_array( $parent_id, $parent_access ) )
+				if ( array_key_exists( $parent_id, $parent_access ) )
 					$most_parent = $parent_id; //potentially the most parent, but we need to keep checking!
 				
 				if ( false !== $found_id = it_exchange_membership_addon_get_most_parent_from_member_access( $parent_id, $parent_access ) )
@@ -866,7 +864,7 @@ function it_exchange_membership_addon_get_most_parent_from_member_access( $produ
 			}
 		}
 	}
-	if ( !$most_parent && in_array( $product_id, $parent_access ) ) {
+	if ( !$most_parent && array_key_exists( $product_id, $parent_access ) ) {
 		$most_parent = $product_id;
 	}
 	return $most_parent;
