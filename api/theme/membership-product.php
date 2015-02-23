@@ -245,7 +245,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 				
 				$parent_memberships = it_exchange_get_session_data( 'parent_access' );
 				
-				foreach ( $parent_memberships as $txn_id => $parent_id ) {
+				foreach ( $parent_memberships as $parent_id => $txn_id ) {
 					if ( $parent_id != $this->product->ID && isset( $child_ids[$parent_id] ) ) {
 						$product = it_exchange_get_product( $parent_id );
 						$parent_product_base_price = it_exchange_get_product_feature( $parent_id, 'base-price' );
@@ -493,7 +493,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 			
 			$parent_access_session = it_exchange_get_session_data( 'parent_access' );
 			
-			if ( !empty( $parent_access_session ) && !in_array( $this->product->ID, $parent_access_session )
+			if ( !empty( $parent_access_session ) && !array_key_exists( $this->product->ID, $parent_access_session )
 				&& false !== $most_parent = it_exchange_membership_addon_get_most_parent_from_member_access( $this->product->ID, $parent_access_session ) ) {
 				
 				$base_price = it_exchange_get_product_feature( $this->product->ID, 'base-price' );
@@ -501,10 +501,9 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 				$most_priciest = 0;
 				$most_priciest_txn_id = 0;
 				
-				$transaction_ids = array_keys( $parent_access_session, $most_parent );
 				$parent_product_base_price = it_exchange_get_product_feature( $most_parent, 'base-price' );
 				$most_priciest = it_exchange_convert_to_database_number( $parent_product_base_price );
-				$most_priciest_txn_id = array_shift( $transaction_ids );
+				$most_priciest_txn_id = $parent_access_session[$most_parent];
 				$most_producty = it_exchange_get_product( $most_parent );
 				
 				if ( !empty( $most_priciest_txn_id ) ) {
