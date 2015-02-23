@@ -977,7 +977,7 @@ function it_exchange_membership_addon_append_to_customer_menu_loop( $nav, $custo
 	$permalinks = (bool)get_option( 'permalink_structure' );
 
 	if ( !empty( $memberships ) ) {
-		foreach ( $memberships as $membership_id ) {
+		foreach ( $memberships as $membership_id => $txn_id ) {
 			if ( !empty( $membership_id ) ) {				
 				$membership_post = get_post( $membership_id );
 				if ( !empty( $membership_post ) ) {

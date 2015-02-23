@@ -805,7 +805,7 @@ function it_exchange_membership_addon_setup_most_parent_member_access_array( $me
 		if ( !empty( $txn_keys ) )
 			$txn_id = array_shift( $txn_keys );
 		if ( !empty( $txn_id ) )
-			$parent_ids[$txn_id] = $found_id;
+			$parent_ids[$found_id] = $txn_id;
 	}
 	return $parent_ids;
 }
