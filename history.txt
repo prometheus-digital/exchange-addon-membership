@@ -162,3 +162,7 @@
 	Removed some old and unused code
 1.2.23 - 2015-02-25 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Updated bundled-addons/exchange-addon-recurring-payments to version 1.0.24
+1.2.24 - 2015-02-25 - Lew Ayotte, Elise Alley
+	Modifying parent access calculations for last updates, to fix upgrade/downgrades and confirmation/account menus
+	Fix for bug when purchasing multiple membership products in the same cart
+	Caching content-access, to help with products that have a lot of content access rules
