@@ -160,3 +160,5 @@
 1.2.22 - 2015-02-10 - Lew Ayotte, Elise Alley
 	Added upgrade credit for non-recurring to non-recurring upgrades
 	Removed some old and unused code
+1.2.23 - 2015-02-25 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Updated bundled-addons/exchange-addon-recurring-payments to version 1.0.24
