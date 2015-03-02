@@ -166,3 +166,5 @@
 	Modifying parent access calculations for last updates, to fix upgrade/downgrades and confirmation/account menus
 	Fix for bug when purchasing multiple membership products in the same cart
 	Caching content-access, to help with products that have a lot of content access rules
+1.2.25 - 2015-03-02 - Lew Ayotte, Elise Alley
+	Fixing bug when adding new rules to an existing ruleset
