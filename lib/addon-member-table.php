@@ -284,10 +284,18 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 					break;
 				case 'membership':
 					$customer = new IT_Exchange_Customer( $user_object->ID );
+					$flip_member_access = array();
 					$member_access = $customer->get_customer_meta( 'member_access' );
+					foreach( $member_access as $txn_id => $product_id_array ) {
+						// we want the transaction ID to be the value to help us determine child access relations to transaction IDs
+						// Can't use array_flip because product_id_array is an array -- now :)
+						foreach ( (array) $product_id_array as $product_id ) {
+							$flip_member_access[$product_id] = $txn_id;
+						}
+					}
 					$memberships = array();
-					if ( !empty( $member_access ) ) {
-						foreach( $member_access as $txn_id => $product_id ) {
+					if ( !empty( $flip_member_access ) ) {
+						foreach( $flip_member_access as $product_id => $txn_id ) {
 							$transaction = it_exchange_get_transaction( $txn_id );
 							$title = get_the_title( $product_id );
 	
