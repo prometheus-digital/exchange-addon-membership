@@ -168,3 +168,5 @@
 	Caching content-access, to help with products that have a lot of content access rules
 1.2.25 - 2015-03-02 - Lew Ayotte, Elise Alley
 	Fixing bug when adding new rules to an existing ruleset
+1.2.26 - 2015-03-03 - Lew Ayotte, Elise Alley
+	Fix for member table w/ new member access array
