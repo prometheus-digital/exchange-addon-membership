@@ -170,3 +170,5 @@
 	Fixing bug when adding new rules to an existing ruleset
 1.2.26 - 2015-03-03 - Lew Ayotte, Elise Alley
 	Fix for member table w/ new member access array
+1.2.27 - 2015-03-16 - Lew Ayotte, Timothy Jacobs
+	Fix for warning when setting up member access array for customers without memberships access.
