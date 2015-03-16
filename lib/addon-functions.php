@@ -989,8 +989,10 @@ function it_exchange_membership_addon_get_customer_memberships( $customer_id=fal
 	} else {
 		$customer = new IT_Exchange_Customer( $customer_id );
 		$member_access = $customer->get_customer_meta( 'member_access' );
-		$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
-		return $member_access;
+		if ( !empty( $member_access ) ) {
+			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
+			return $member_access;
+		}
 	}
 	return false;
 }
