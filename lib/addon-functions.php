@@ -824,20 +824,22 @@ function it_exchange_membership_addon_setup_most_parent_member_access_array( $me
  * @return array
 */
 function it_exchange_membership_addon_setup_recursive_member_access_array( $membership_products, $product_ids = array(), $parent_txn_id=false ) {
-	foreach( $membership_products as $product_id => $txn_id ) {
-		if ( false !== get_post_status( $product_id ) ) {
-			if ( array_key_exists( $product_id, $product_ids ) )
-				continue;
-				
-			if ( !$parent_txn_id )
-				$proper_txn_id = $txn_id;
-			else
-				$proper_txn_id = $parent_txn_id;
-				
-			$product_ids[$product_id] = $proper_txn_id;
-			if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
-				$child_ids = array_flip( $child_ids ); //we need the child IDs to be the keys
-				$product_ids = it_exchange_membership_addon_setup_recursive_member_access_array( $child_ids, $product_ids, $proper_txn_id );
+	if ( !empty( $membership_products ) ) {
+		foreach( $membership_products as $product_id => $txn_id ) {
+			if ( false !== get_post_status( $product_id ) ) {
+				if ( array_key_exists( $product_id, $product_ids ) )
+					continue;
+					
+				if ( !$parent_txn_id )
+					$proper_txn_id = $txn_id;
+				else
+					$proper_txn_id = $parent_txn_id;
+					
+				$product_ids[$product_id] = $proper_txn_id;
+				if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
+					$child_ids = array_flip( $child_ids ); //we need the child IDs to be the keys
+					$product_ids = it_exchange_membership_addon_setup_recursive_member_access_array( $child_ids, $product_ids, $proper_txn_id );
+				}
 			}
 		}
 	}
