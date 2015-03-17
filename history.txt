@@ -171,4 +171,6 @@
 1.2.26 - 2015-03-03 - Lew Ayotte, Elise Alley
 	Fix for member table w/ new member access array
 1.2.27 - 2015-03-16 - Lew Ayotte, Timothy Jacobs
-	Fix for warning when setting up member access array for customers without memberships access.
+	Fix for warning when setting up member access array for customers without memberships access
+1.2.28 - 2015-03-17 - Lew Ayotte
+	Fix for cancelled subscriptions losing access too early
