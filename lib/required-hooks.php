@@ -426,8 +426,6 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 			$old_transaction_id = $cancel_subscription_item['old_transaction_id'];
 			$old_transaction = it_exchange_get_transaction( $old_transaction_id );
 			$old_transaction->update_status( 'cancelled' );
-			if ( !empty( $member_access[$old_transaction_id] ) )
-				unset( $member_access[$old_transaction_id] );
 		}
 	}
 	$customer->update_customer_meta( 'member_access', $member_access );
@@ -471,7 +469,6 @@ function it_exchange_membership_addon_setup_customer_session() {
 					if ( empty( $transaction ) 
 						|| $transaction->ID !== $txn_id 
 						|| 'voided' === $transaction_status 
-						|| 'cancelled' === $transaction_status 
 						|| 'reversed' === $transaction_status 
 						|| 'deactivated' === $transaction_status 
 						|| 'failed' === $transaction_status 
@@ -533,7 +530,7 @@ function it_exchange_membership_addon_update_transaction_subscription_status( $t
 		$customer = it_exchange_get_customer( $transaction->customer_id );
 		if ( !empty( $customer ) ) {
 			$member_access = $customer->get_customer_meta( 'member_access' );
-			if ( 'active' !== $status ) { //we're canceled, suspended, deactivated or something in between...
+			if ( 'active' !== $status && 'cancelled' !== $status && 'suspended' !== $status ) { //we're deactivated or something in between...
 				if ( !empty( $member_access[$transaction->ID] ) )
 					unset( $member_access[$transaction->ID] ); //so we remove it
 			}
