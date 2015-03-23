@@ -503,6 +503,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 				}
 			}
 			
+			$flip_member_access = array();
 			foreach( $member_access as $txn_id => $product_id_array ) {
 				// we want the transaction ID to be the value to help us determine child access relations to transaction IDs
 				// Can't use array_flip because product_id_array is an array -- now :)
