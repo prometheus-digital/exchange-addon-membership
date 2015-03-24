@@ -174,3 +174,5 @@
 	Fix for warning when setting up member access array for customers without memberships access
 1.2.28 - 2015-03-17 - Lew Ayotte
 	Fix for cancelled subscriptions losing access too early
+1.2.29 - 2015-03-24 - Lew Ayotte
+	Predefined missing variable in case it is never set for member access
