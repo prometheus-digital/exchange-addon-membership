@@ -284,36 +284,38 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 					break;
 				case 'membership':
 					$customer = new IT_Exchange_Customer( $user_object->ID );
-					$flip_member_access = array();
 					$member_access = $customer->get_customer_meta( 'member_access' );
-					foreach( $member_access as $txn_id => $product_id_array ) {
-						// we want the transaction ID to be the value to help us determine child access relations to transaction IDs
-						// Can't use array_flip because product_id_array is an array -- now :)
-						foreach ( (array) $product_id_array as $product_id ) {
-							$flip_member_access[$product_id] = $txn_id;
+					if ( !empty( $member_access ) ) {
+						$flip_member_access = array();
+						foreach( $member_access as $txn_id => $product_id_array ) {
+							// we want the transaction ID to be the value to help us determine child access relations to transaction IDs
+							// Can't use array_flip because product_id_array is an array -- now :)
+								foreach ( (array) $product_id_array as $product_id ) {
+								$flip_member_access[$product_id] = $txn_id;
+							}
 						}
-					}
-					$memberships = array();
-					if ( !empty( $flip_member_access ) ) {
-						foreach( $flip_member_access as $product_id => $txn_id ) {
-							$transaction = it_exchange_get_transaction( $txn_id );
-							$title = get_the_title( $product_id );
-	
-							if ( $expires = $transaction->get_transaction_meta( 'subscription_expires_' . $product_id, true ) )
-								$expires = sprintf( __( 'Expires %s', 'LION' ), date_i18n( get_option( 'date_format' ), $expires ) );
-							else
-								$expires = __( 'Forever', 'LION' );
+						$memberships = array();
+						if ( !empty( $flip_member_access ) ) {
+							foreach( $flip_member_access as $product_id => $txn_id ) {
+								$transaction = it_exchange_get_transaction( $txn_id );
+								$title = get_the_title( $product_id );
+		
+								if ( $expires = $transaction->get_transaction_meta( 'subscription_expires_' . $product_id, true ) )
+									$expires = sprintf( __( 'Expires %s', 'LION' ), date_i18n( get_option( 'date_format' ), $expires ) );
+								else
+									$expires = __( 'Forever', 'LION' );
+									
+								if ( $transaction->get_transaction_meta( 'subscription_autorenew_' . $product_id, true ) )
+									$autorenew = '(auto-renewing)';
+								else
+									$autorenew = '';
 								
-							if ( $transaction->get_transaction_meta( 'subscription_autorenew_' . $product_id, true ) )
-								$autorenew = '(auto-renewing)';
-							else
-								$autorenew = '';
-							
-							$tip = '<span data-tip-content="' . $expires . ' ' . $autorenew . '" class="it-exchange-tip">i</span>';
-							$memberships[] = $title . ' ' . $tip;
+								$tip = '<span data-tip-content="' . $expires . ' ' . $autorenew . '" class="it-exchange-tip">i</span>';
+								$memberships[] = $title . ' ' . $tip;
+							}
 						}
+						$r .= "<td $attributes>" . join( ', ', $memberships ) . "</td>";
 					}
-					$r .= "<td $attributes>" . join( ', ', $memberships ) . "</td>";
 					break;
 				default:
 					$r .= "<td $attributes>";
