@@ -176,3 +176,5 @@
 	Fix for cancelled subscriptions losing access too early
 1.2.29 - 2015-03-24 - Lew Ayotte
 	Predefined missing variable in case it is never set for member access
+1.2.30 - 2015-30-30 - Lew Ayotte
+	Fixed bug when checking member access for non members
