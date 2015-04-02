@@ -178,3 +178,6 @@
 	Predefined missing variable in case it is never set for member access
 1.2.30 - 2015-30-30 - Lew Ayotte
 	Fixed bug when checking member access for non members
+1.2.31 - 2015-04-02 - Lew Ayotte
+	Prevent AJAX/CRON (bug) from attempting to create member access
+	Added split term hook for 4.2 prep
