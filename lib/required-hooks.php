@@ -452,76 +452,82 @@ add_action( 'it_exchange_add_child_transaction_success', 'it_exchange_membership
  * @return void
 */
 function it_exchange_membership_addon_setup_customer_session() {
-	if ( is_user_logged_in() ) {
-		$user_id = get_current_user_id();
-		$parent_access = array();
-		$customer = new IT_Exchange_Customer( $user_id );
-		$member_access = $customer->get_customer_meta( 'member_access' );
-		$member_access_session = it_exchange_get_session_data( 'member_access' );
-
-		if ( !empty( $member_access ) ) {
-			//If the transient doesn't exist, verify the membership access subscriber status and reset transient
-			$transient = get_transient( 'member_access_check_' . $customer->id );
-			if ( empty( $transient ) ) {
-				foreach( $member_access as $txn_id => $product_id ) {
-					$transaction = it_exchange_get_transaction( $txn_id );
-					$transaction_status = $transaction->get_status();
-					if ( empty( $transaction ) 
-						|| $transaction->ID !== $txn_id 
-						|| 'voided' === $transaction_status 
-						|| 'reversed' === $transaction_status 
-						|| 'deactivated' === $transaction_status 
-						|| 'failed' === $transaction_status 
-						|| 'refunded' === $transaction_status ) {
-						unset( $member_access[$txn_id] );
-					} else {
-						$subscription_status = $transaction->get_transaction_meta( 'subscriber_status' );
-						//empty means it was never set... which should mean that recurring payments isn't setup
-						if ( !empty( $subscription_status ) && 'deactivated' === $subscription_status ) {
-							//This should never happen unless it is an auto-renewing payment that has been deactivated...
-							//Otherwise we'd have to worry about carts with multiple membership products
+	if ( !defined( 'DOING_AJAX' ) || !DOING_AJAX || !defined( 'DOING_CRON' ) || !DOING_CRON ) {
+		if ( is_user_logged_in() ) {
+			$user_id = get_current_user_id();
+			$parent_access = array();
+			$customer = new IT_Exchange_Customer( $user_id );
+			$member_access = $customer->get_customer_meta( 'member_access' );
+			$member_access_session = it_exchange_get_session_data( 'member_access' );
+	
+			if ( !empty( $member_access ) ) {
+				//If the transient doesn't exist, verify the membership access subscriber status and reset transient
+				$transient = get_transient( 'member_access_check_' . $customer->id );
+				if ( empty( $transient ) ) {
+					foreach( $member_access as $txn_id => $product_id ) {
+						$transaction = it_exchange_get_transaction( $txn_id );
+						$transaction_status = $transaction->get_status();
+						if ( empty( $transaction ) 
+							|| $transaction->ID !== $txn_id 
+							|| 'voided' === $transaction_status 
+							|| 'reversed' === $transaction_status 
+							|| 'deactivated' === $transaction_status 
+							|| 'failed' === $transaction_status 
+							|| 'refunded' === $transaction_status ) {
 							unset( $member_access[$txn_id] );
+						} else {
+							$subscription_status = $transaction->get_transaction_meta( 'subscriber_status' );
+							//empty means it was never set... which should mean that recurring payments isn't setup
+							if ( !empty( $subscription_status ) && 'deactivated' === $subscription_status ) {
+								//This should never happen unless it is an auto-renewing payment that has been deactivated...
+								//Otherwise we'd have to worry about carts with multiple membership products
+								unset( $member_access[$txn_id] );
+							}
 						}
 					}
-				}
-				$customer->update_customer_meta( 'member_access', $member_access ); //Update the member_access customer meta, remove invalids
-				foreach( $member_access as $txn_id => $product_id ) {
-					if ( !it_exchange_transaction_is_cleared_for_delivery( $txn_id ) ) {
-						unset( $member_access[$txn_id] );
-					}
-				}
-				
-				set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 4 ); //only do it every four hours
-			} else {
-				$member_diff = array_diff_assoc( (array)$member_access, (array)$member_access_session );
-				if ( !empty( $member_diff ) ) {
+					$customer->update_customer_meta( 'member_access', $member_access ); //Update the member_access customer meta, remove invalids
 					foreach( $member_access as $txn_id => $product_id ) {
 						if ( !it_exchange_transaction_is_cleared_for_delivery( $txn_id ) ) {
 							unset( $member_access[$txn_id] );
 						}
 					}
+					
+					set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 4 ); //only do it every four hours
+				} else {
+					$member_diff = array_diff_assoc( (array)$member_access, (array)$member_access_session );
+					if ( !empty( $member_diff ) ) {
+						foreach( $member_access as $txn_id => $product_id ) {
+							if ( !it_exchange_transaction_is_cleared_for_delivery( $txn_id ) ) {
+								unset( $member_access[$txn_id] );
+							}
+						}
+					}
 				}
-			}
-			
-			$flip_member_access = array();
-			foreach( $member_access as $txn_id => $product_id_array ) {
-				// we want the transaction ID to be the value to help us determine child access relations to transaction IDs
-				// Can't use array_flip because product_id_array is an array -- now :)
-				foreach ( (array) $product_id_array as $product_id ) {
-					$flip_member_access[$product_id] = $txn_id;
+				
+				$flip_member_access = array();
+				foreach( $member_access as $txn_id => $product_id_array ) {
+					// we want the transaction ID to be the value to help us determine child access relations to transaction IDs
+					// Can't use array_flip because product_id_array is an array -- now :)
+					foreach ( (array) $product_id_array as $product_id ) {
+						$flip_member_access[$product_id] = $txn_id;
+					}
 				}
-			}
-			$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $flip_member_access );
-			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $flip_member_access );
-			it_exchange_update_session_data( 'member_access', $member_access );
-			it_exchange_update_session_data( 'parent_access', $parent_access );
+				$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $flip_member_access );
+				if ( !empty( $member_access ) ) {
+					it_exchange_update_session_data( 'member_access', $member_access );
+				}
+				$parent_access = it_exchange_membership_addon_setup_most_parent_member_access_array( $flip_member_access );
+				if ( !empty( $parent_access ) ) {
+					it_exchange_update_session_data( 'parent_access', $parent_access );
+				}
+			} else {
+				it_exchange_clear_session_data( 'member_access' );
+				it_exchange_clear_session_data( 'parent_access' );
+			}	
 		} else {
 			it_exchange_clear_session_data( 'member_access' );
 			it_exchange_clear_session_data( 'parent_access' );
-		}	
-	} else {
-		it_exchange_clear_session_data( 'member_access' );
-		it_exchange_clear_session_data( 'parent_access' );
+		}
 	}
 }
 add_action( 'wp', 'it_exchange_membership_addon_setup_customer_session' );
@@ -1041,7 +1047,7 @@ add_filter( 'it_exchange_email_notification_order_table_product_name', 'it_excha
  * @param bool $format Whether or not the price should be formatted 
  * @return string $db_base_price modified, if upgrade price has been set for product
 */
-function it_exchange_get_credit_pricing_cart_product_base_price( $db_base_price, $product, $format ) {
+function it_exchange_membership_addon_get_credit_pricing_cart_product_base_price( $db_base_price, $product, $format ) {
 	$updown_details = it_exchange_get_session_data( 'updowngrade_details' );
 	
 	if ( !empty( $updown_details[$product['product_id']] ) && 'credit' == $updown_details[$product['product_id']]['upgrade_type'] ) {
@@ -1055,4 +1061,24 @@ function it_exchange_get_credit_pricing_cart_product_base_price( $db_base_price,
 		
 	return $db_base_price;
 }
-add_filter( 'it_exchange_get_cart_product_base_price', 'it_exchange_get_credit_pricing_cart_product_base_price', 10, 3 );
+add_filter( 'it_exchange_get_cart_product_base_price', 'it_exchange_membership_addon_get_credit_pricing_cart_product_base_price', 10, 3 );
+
+/**
+ * Replaces base-price with upgrade price
+ *
+ * @since CHANGEME
+ *
+ * @param int $old_term_id Old Term ID
+ * @param int $new_term_id New Term ID
+ * @param int $term_taxonomy_id Taxonomy ID for Term
+ * @param string  $taxonomy Taxonomy Slug for Term
+ * @return string $db_base_price modified, if upgrade price has been set for product
+*/
+function it_exchange_membership_addon_split_shared_term( $old_term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
+	$term_rules = get_option( '_item-content-rule-tax-' . $taxonomy . '-' . $old_term_id, array() );
+	if ( !empty( $term_rules ) ) {
+		delete_option( '_item-content-rule-tax-' . $taxonomy . '-' . $old_term_id );
+		update_option( '_item-content-rule-tax-' . $taxonomy . '-' . $new_term_id, $term_rules );
+	}
+}
+add_action( 'split_shared_term', 'it_exchange_membership_addon_split_shared_term', 10, 4 );
