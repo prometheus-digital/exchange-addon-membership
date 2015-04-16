@@ -63,7 +63,7 @@ function it_exchange_membership_addon_members_table() {
 	$total_pages = $wp_list_table->get_pagination_arg( 'total_pages' );
 	
 	if ( $pagenum > $total_pages && $total_pages > 0 ) {
-		wp_redirect( add_query_arg( 'paged', $total_pages ) );
+		wp_redirect( esc_url( add_query_arg( 'paged', $total_pages ) ) );
 		exit;
 	}
 
@@ -81,7 +81,7 @@ function it_exchange_membership_addon_members_table() {
 	
 	<?php $wp_list_table->views(); ?>
 	
-	<form id="it-exchange-members-table-form" action="<?php echo add_query_arg( 'page', 'it-exchange-members-table', admin_url( 'users.php' ) ); ?>" method="get">
+	<form id="it-exchange-members-table-form" action="<?php echo esc_url( add_query_arg( 'page', 'it-exchange-members-table', admin_url( 'users.php' ) ) ); ?>" method="get">
 	<input type="hidden" name="page" value="it-exchange-members-table" />
 	<?php $wp_list_table->search_box( __( 'Search Members', 'LION' ), 'users' ); ?>
 	
@@ -922,9 +922,9 @@ function it_exchange_get_membership_page_urls( $page ) {
 	}
 
 	if ( $permalinks )
-		return trailingslashit( $base . $slug );
+		return trailingslashit( esc_url( $base . $slug ) );
 	else
-		return add_query_arg( $slug, '', $base );
+		return esc_url( add_query_arg( $slug, '', $base ) );
 }
 
 /**

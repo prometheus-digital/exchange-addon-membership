@@ -130,8 +130,7 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 	public function get_views() {
 		global $membership;
 		
-		$base_url = add_query_arg( 'page', 'it-exchange-members-table', admin_url( 'users.php' ) );
-		$url = $base_url;
+		$url = add_query_arg( 'page', 'it-exchange-members-table', admin_url( 'users.php' ) );
 		$class = empty($membership) ? ' class="current"' : '';
 		
 		$membership_links = array();
