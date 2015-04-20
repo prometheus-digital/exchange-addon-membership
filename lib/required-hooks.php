@@ -63,7 +63,7 @@ function it_exchange_membership_addon_members_table() {
 	$total_pages = $wp_list_table->get_pagination_arg( 'total_pages' );
 	
 	if ( $pagenum > $total_pages && $total_pages > 0 ) {
-		wp_redirect( esc_url( add_query_arg( 'paged', $total_pages ) ) );
+		wp_redirect( esc_url_raw( add_query_arg( 'paged', $total_pages ) ) );
 		exit;
 	}
 
