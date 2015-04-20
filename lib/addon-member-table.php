@@ -314,6 +314,8 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 							}
 						}
 						$r .= "<td $attributes>" . join( ', ', $memberships ) . "</td>";
+					} else {
+						$r .= "<td $attributes>&nbsp;</td>";
 					}
 					break;
 				default:
