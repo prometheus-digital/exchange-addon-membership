@@ -1094,6 +1094,6 @@ add_action( 'split_shared_term', 'it_exchange_membership_addon_split_shared_term
 function it_exchange_membership_addon_duplicate_product_addon_default_product_meta_invalid_keys( $keys ) {
 	$keys[] = '_item-content-rule';
 	$keys[] = '_item-content-rule-exemptions';
-	return $keys
+	return $keys;
 }
 add_filter( 'it_exchange_duplicate_product_addon_default_product_meta_invalid_keys', 'it_exchange_membership_addon_duplicate_product_addon_default_product_meta_invalid_keys' );
