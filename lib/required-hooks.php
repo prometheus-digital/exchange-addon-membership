@@ -1082,3 +1082,18 @@ function it_exchange_membership_addon_split_shared_term( $old_term_id, $new_term
 	}
 }
 add_action( 'split_shared_term', 'it_exchange_membership_addon_split_shared_term', 10, 4 );
+
+/**
+ * Add Membership Keys that should not be duplicated for a product
+ *
+ * @since CHANGEME
+ *
+ * @param array $keys Keys that should not be duplicated
+ * @return array $keys Keys that should not be duplicated
+*/
+function it_exchange_membership_addon_duplicate_product_addon_default_product_meta_invalid_keys( $keys ) {
+	$keys[] = '_item-content-rule';
+	$keys[] = '_item-content-rule-exemptions';
+	return $keys
+}
+add_filter( 'it_exchange_duplicate_product_addon_default_product_meta_invalid_keys', 'it_exchange_membership_addon_duplicate_product_addon_default_product_meta_invalid_keys' );
