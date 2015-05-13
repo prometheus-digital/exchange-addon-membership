@@ -191,3 +191,5 @@
 	Compatibility Fix: Updated plugin and theme update data format to match changes in WordPress 4.2.
 1.3.4 - 2015-05-13 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Fixes for Recurring Payments bugs
+1.3.5 - 2015-05-12 - Lew Ayotte
+	Don't duplicate membership rules on duplicate product
