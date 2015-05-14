@@ -193,3 +193,5 @@
 	Fixes for Recurring Payments bugs
 1.3.5 - 2015-05-12 - Lew Ayotte
 	Don't duplicate membership rules on duplicate product
+1.3.6 - 2015-05-14 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Fix for quantity bug when auto-renew was enabled, but recurring was disabled
