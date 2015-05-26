@@ -77,11 +77,15 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 }
 
 function it_exchange_membership_addon_build_content_rules( $rules, $product_id ) {
+	$options = '';
     $count = 0;
     $group_count = 0;
     $groupings = array();
 	$post_types = get_post_types( array(), 'objects' );
 	$taxonomies = get_taxonomies( array( 'public' => true ), 'objects' );
+	$cache = new stdClass();
+	$cache->posts = new stdClass();
+	$cache->terms = new stdClass();
 	
 	$return = '<div class="it-exchange-membership-addon-content-access-rules content-access-sortable">';
     
@@ -89,7 +93,6 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 	    
 		foreach( $rules as $rule ) {
 			
-			$options = '';
 			$current_grouped_id = isset( $rule['grouped_id'] ) ? $rule['grouped_id'] : false;
 									
 			if ( !empty( $groupings ) && $current_grouped_id !== end( $groupings ) ) {
@@ -158,22 +161,11 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 				switch( $selected ) {
 					
 					case 'posts':
-						$cached_posts = get_transient( 'ite_membership_posts' );
-						if ( empty( $cached_posts[$selection] ) ) {
-							$posts = get_posts( array( 'post_type' => $selection, 'posts_per_page' => -1 ) );
-							$recache_posts = true;
-						} else {
-							$posts = $cached_posts[$selection];
-							$recache_posts = false;
+						if ( empty( $cache->posts->$selection ) ) {
+							$cache->posts->$selection = get_posts( array( 'post_type' => $selection, 'posts_per_page' => -1 ) );
 						}
-						foreach ( $posts as $post ) {
-							$options .= '<option value="' . $post->ID . '" ' . selected( $post->ID, $value, false ) . '>' . apply_filters( 'the_title', $post->post_title, $post->ID ) . '</option>';
-							if ( $recache_posts ) {
-								$cached_posts[$selection][] = (object)array( 'ID' => $post->ID, 'post_title' => $post->post_title );
-							}
-						}
-						if ( $recache_posts ) {
-							set_transient( 'ite_membership_posts', $cached_posts, 60*60 );
+						foreach ( $cache->posts->$selection as $post ) {
+							$options .= '<option value="' . $post->ID . '" ' . selected( $post->ID, $value, false ) . '>' . get_the_title( $post->ID ) . '</option>';	
 						}
 						break;
 					
@@ -188,22 +180,11 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 						break;
 					
 					case 'taxonomy':
-						$recache_terms = false;
-						$cached_terms = get_transient( 'ite_membership_terms' );
-						if ( empty( $cached_terms[$selection] ) ) {
-							$terms = get_terms( $selection, array( 'hide_empty' => false ) );
-							$recache_terms = true;
-						} else {
-							$terms = $cached_terms[$selection];
+						if ( empty( $cache->terms->$selection ) ) {
+							$cache->terms->$selection = get_terms( $selection, array( 'hide_empty' => false ) );
 						}
-						foreach ( $terms as $term ) {
+						foreach ( $cache->terms->$selection as $term ) {
 							$options .= '<option value="' . $term->term_id . '"' . selected( $term->term_id, $value, false ) . '>' . $term->name . '</option>';	
-							if ( $recache_terms ) {
-								$cached_terms[$selection][] = (object)array( 'term_id' => $term->term_id, 'name' => $term->name );
-							}
-						}
-						if ( $recache_terms ) {
-							set_transient( 'ite_membership_terms', $cached_terms, 60*60 );
 						}
 						break;
 					
@@ -256,8 +237,6 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 			
 			if ( false !== $current_group_id && $group_count >= $current_group_id )
 				$group_count = $rule['group_id'] + 1;
-			
-			$count++;
 	
 		}
 		
