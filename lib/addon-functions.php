@@ -753,8 +753,11 @@ function it_exchange_membership_cart_contains_membership_product( $cart_products
 		$cart_products = it_exchange_get_cart_products();
 	
 	foreach ( $cart_products as $product ) {
-		if ( 'membership-product-type' === it_exchange_get_product_type( $product['product_id'] ) )
-			return true;
+		if ( !empty( $product['product_id'] ) ) {
+			if ( 'membership-product-type' === it_exchange_get_product_type( $product['product_id'] ) ) {
+				return true;
+			}
+		}
 	}
 	
 	return false;
