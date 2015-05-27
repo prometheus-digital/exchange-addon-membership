@@ -77,7 +77,6 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 }
 
 function it_exchange_membership_addon_build_content_rules( $rules, $product_id ) {
-	$options = '';
     $count = 0;
     $group_count = 0;
     $groupings = array();
@@ -92,6 +91,8 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
     if ( !empty( $rules ) ) {
 	    
 		foreach( $rules as $rule ) {
+
+			$options = '';
 			
 			$current_grouped_id = isset( $rule['grouped_id'] ) ? $rule['grouped_id'] : false;
 									
