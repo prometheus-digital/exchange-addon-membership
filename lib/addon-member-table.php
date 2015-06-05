@@ -297,16 +297,23 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 							foreach( $flip_member_access as $product_id => $txn_id ) {
 								$transaction = it_exchange_get_transaction( $txn_id );
 								$title = get_the_title( $product_id );
-		
-								if ( $expires = $transaction->get_transaction_meta( 'subscription_expires_' . $product_id, true ) )
+								$expired = false;
+								$autorenew = '';
+
+								if ( $expires = $transaction->get_transaction_meta( 'subscription_expired_' . $product_id, true ) ) {
+									$expires = sprintf( __( 'Expired %s', 'LION' ), date_i18n( get_option( 'date_format' ), $expires ) );
+									$expired = true;
+								} else if ( $expires = $transaction->get_transaction_meta( 'subscription_expires_' . $product_id, true ) ) {
 									$expires = sprintf( __( 'Expires %s', 'LION' ), date_i18n( get_option( 'date_format' ), $expires ) );
-								else
+								} else {
 									$expires = __( 'Forever', 'LION' );
-									
-								if ( $transaction->get_transaction_meta( 'subscription_autorenew_' . $product_id, true ) )
-									$autorenew = '(auto-renewing)';
-								else
-									$autorenew = '';
+								}
+								
+								if ( !$expired ) {										
+									if ( $transaction->get_transaction_meta( 'subscription_autorenew_' . $product_id, true ) ) {
+										$autorenew = '(auto-renewing)';
+									}
+								}
 								
 								$tip = '<span data-tip-content="' . $expires . ' ' . $autorenew . '" class="it-exchange-tip">i</span>';
 								$memberships[] = $title . ' ' . $tip;
