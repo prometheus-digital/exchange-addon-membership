@@ -224,7 +224,6 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 		$user_object->filter = 'display';
 		$email = $user_object->user_email;
 		$avatar = get_avatar( $user_object->ID, 32 );
-		$customer = it_exchange_get_customer( $user_object );
 
 		// Check if the user for this row is editable
 		if ( current_user_can( 'list_users' ) ) {
