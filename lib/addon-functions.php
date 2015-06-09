@@ -238,6 +238,8 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 			
 			if ( false !== $current_group_id && $group_count >= $current_group_id )
 				$group_count = $rule['group_id'] + 1;
+				
+			$count++;
 			
 		}
 		
