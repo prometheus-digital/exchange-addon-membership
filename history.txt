@@ -200,3 +200,5 @@
 	Removing unnecessary code
 	Check to make sure product_id exists in product before grabbing the product
 	Fixing caching output
+1.4.1 - 2015-06-09 - Lew Ayotte, Elise Alley
+	Fixing row count in Content Access
