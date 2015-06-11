@@ -123,7 +123,7 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 		switch( $type ) {
 			
 			case 'posts':
-				$posts = get_posts( array( 'post_type' => $value, 'posts_per_page' => -1 ) );
+				$posts = get_posts( array( 'post_type' => $value, 'posts_per_page' => -1, 'post_status' => 'any' ) );
 				foreach ( $posts as $post ) {
 					$options .= '<option value="' . $post->ID . '">' . $post->post_title . '</option>';	
 				}

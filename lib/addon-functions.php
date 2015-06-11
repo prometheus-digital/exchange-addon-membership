@@ -163,7 +163,7 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 					
 					case 'posts':
 						if ( empty( $cache->posts->$selection ) ) {
-							$cache->posts->$selection = get_posts( array( 'post_type' => $selection, 'posts_per_page' => -1 ) );
+							$cache->posts->$selection = get_posts( array( 'post_type' => $selection, 'posts_per_page' => -1, 'post_status' => 'any' ) );
 						}
 						foreach ( $cache->posts->$selection as $post ) {
 							$options .= '<option value="' . $post->ID . '" ' . selected( $post->ID, $value, false ) . '>' . get_the_title( $post->ID ) . '</option>';	
