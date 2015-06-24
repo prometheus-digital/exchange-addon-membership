@@ -65,7 +65,8 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 			'number' => $users_per_page,
 			'offset' => ( $paged-1 ) * $users_per_page,
 			'search' => $usersearch,
-			'fields' => 'all_with_meta'
+			'fields' => 'all_with_meta',
+			'post_status' => 'any'
 		);
 		
 		if ( !empty( $membership ) ) {
