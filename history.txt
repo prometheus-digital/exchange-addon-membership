@@ -207,4 +207,6 @@
 1.5.0 - 2015-06-30 - Lew Ayotte, Elise Alley
 	Display all memberships in members table
 	When getting content access, get any post_status, not just published -- incase of a delete error
-	Recurring Payments updates 
+	Recurring Payments updates
+1.5.1 - 2015-06-30 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Only limit autorenewing product quantity changes to membership products
