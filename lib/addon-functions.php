@@ -698,15 +698,19 @@ function it_exchange_membership_addon_is_product_dripped() {
 function it_exchange_membership_addon_get_current_membership() {
 	$page_slug = it_exchange_get_page_slug( 'memberships', true );
 	if ( $membership_slug = get_query_var( $page_slug ) ) {
-		$args = array(
-		  'name' => $membership_slug,
-		  'post_type' => 'it_exchange_prod',
-		  'post_status' => 'publish',
-		  'numberposts' => 1
-		);
-		$posts = get_posts( $args );
-		foreach( $posts as $post ) { //should only be one
-			return it_exchange_get_product( $post );
+		if ( 'itememberships' === $membership_slug ) {
+			return 'itememberships';
+		} else {
+			$args = array(
+			  'name' => $membership_slug,
+			  'post_type' => 'it_exchange_prod',
+			  'post_status' => 'publish',
+			  'numberposts' => 1
+			);
+			$posts = get_posts( $args );
+			foreach( $posts as $post ) { //should only be one
+				return it_exchange_get_product( $post );
+			}
 		}
 	}
 	return false;

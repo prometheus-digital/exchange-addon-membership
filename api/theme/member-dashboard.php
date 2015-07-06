@@ -70,8 +70,9 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 	*/
 	function welcome_message( $options=array() ) {
 		
-		if ( empty( $this->_membership_product ) )
+		if ( empty( $this->_membership_product ) || empty( $this->_membership_product->ID ) ) {
 			return false;
+		}
 		
 		// Return boolean if has flag was set
 		if ( $options['supports'] )
@@ -108,17 +109,34 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 	 * @return string
 	*/
 	function membership_content( $options=array() ) {
+		
+		if ( !empty( $this->_membership_product ) && 'itememberships' === $this->_membership_product ) {
+			if ( $options['has'] ) {
+				return true;
+			}
+			if ( $options['supports'] ) {
+				return true;
+			}
+
+			$result  = '<ul>';
+			$result .= it_exchange_membership_addon_append_to_customer_menu_loop();
+			$result .= '</ul>';
+			return $result;
+		}
 				
-		if ( empty( $this->_membership_product ) )
+		if ( empty( $this->_membership_product ) || empty( $this->_membership_product->ID ) ) {
 			return false;
+		}
 			
 		// Return boolean if has flag was set
-		if ( $options['has'] )
+		if ( $options['has'] ) {
 			return it_exchange_product_has_feature( $this->_membership_product->ID, 'membership-content-access-rules' );
-			
+		}
+		
 		// Return boolean if has flag was set
-		if ( $options['supports'] )
+		if ( $options['supports'] ) {
 			return it_exchange_product_supports_feature( $this->_membership_product->ID, 'membership-content-access-rules' );
+		}
 		
 		$count = 0;
 		$result = false;
@@ -149,7 +167,6 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 						&& it_exchange_product_has_feature( $product_id, 'membership-content-access-rules' ) ) {
 							
 					$access_rules = it_exchange_get_product_feature( $product_id, 'membership-content-access-rules' );
-					
 			
 					// Repeats checks for when flags were not passed.
 					if ( !empty( $access_rules ) ) {

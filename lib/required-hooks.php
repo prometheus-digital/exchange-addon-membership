@@ -839,9 +839,9 @@ add_action( 'it_libraries_loaded', 'it_exchange_membership_addon_account_page', 
  * @return mixed array|false
 */
 function it_exchange_get_memberships_page_rewrites( $page ) {
-	$slug = it_exchange_get_page_slug( $page );
 	switch( $page ) {
 		case 'memberships' :
+			$slug = it_exchange_get_page_slug( $page );
 			$account_slug = it_exchange_get_page_slug( 'account' );
 
 			// If we're using WP as acount page type, add the WP slug to rewrites and return.
@@ -853,6 +853,8 @@ function it_exchange_get_memberships_page_rewrites( $page ) {
 			$rewrites = array(
 				$account_slug  . '/([^/]+)/' . $slug  . '/([^/]+)/?$'  => 'index.php?' . $account_slug . '=$matches[1]&' . $slug . '=$matches[2]',
 				$account_slug . '/' . $slug  . '/([^/]+)/?$' => 'index.php?' . $account_slug . '=1&' . $slug . '=$matches[1]',
+				$account_slug  . '/([^/]+)/' . $slug  . '/?$'  => 'index.php?' . $account_slug . '=$matches[1]&' . $slug . '=itememberships',
+				$account_slug . '/' . $slug  . '/?$' => 'index.php?' . $account_slug . '=' . $slug . '&' . $slug . '=itememberships',
 			);
 			return $rewrites;
 			break;
@@ -876,7 +878,10 @@ function it_exchange_membership_addon_register_rewrite_rules( $existing ) {
 		else
 			$page_slug = 'memberships';
 
-		$rewrite = array( $page_slug . '/([^/]+)/?$' => 'index.php?pagename=' . $page_slug . '&' . $page_slug . '=$matches[1]' );
+		$rewrite = array( 
+			$page_slug . '/([^/]+)/?$' => 'index.php?pagename=' . $page_slug . '&' . $page_slug . '=$matches[1]',
+			$page_slug . '/?$' => 'index.php?pagename=' . $page_slug . '&' . $page_slug . '=itememberships'
+		);
 		$existing = array_merge( $rewrite, $existing );
 	}
 	return $existing;
@@ -920,7 +925,7 @@ function it_exchange_get_membership_page_urls( $page ) {
 			$base = add_query_arg( array( $account_slug => $account_name ), $base );
 		}
 	}
-
+	
 	if ( $permalinks )
 		return trailingslashit( esc_url( $base . $slug ) );
 	else
@@ -975,7 +980,7 @@ add_filter( 'it_exchange_redirect_for-protected-pages-to-registration-when-not-l
  * @param object $customer current Customer
  * @return array
 */
-function it_exchange_membership_addon_append_to_customer_menu_loop( $nav, $customer ) {
+function it_exchange_membership_addon_append_to_customer_menu_loop( $nav='', $customer=false ) {
 	$memberships = it_exchange_get_session_data( 'parent_access' );
 	$page_slug = 'memberships';
 	$permalinks = (bool)get_option( 'permalink_structure' );
@@ -1097,3 +1102,17 @@ function it_exchange_membership_addon_duplicate_product_addon_default_product_me
 	return $keys;
 }
 add_filter( 'it_exchange_duplicate_product_addon_default_product_meta_invalid_keys', 'it_exchange_membership_addon_duplicate_product_addon_default_product_meta_invalid_keys' );
+
+/**
+ * Add Membership pages to account based pages list
+ *
+ * @since CHANGEME
+ *
+ * @param array $account_based_pages Array of account based pages
+ * @return array $account_based_pages Array of account based pages
+*/
+function it_exchange_membership_addon_account_based_pages( $account_based_pages ) {
+	$account_based_pages[] = 'memberships';
+	return $account_based_pages;
+}
+add_filter( 'it_exchange_account_based_pages', 'it_exchange_membership_addon_account_based_pages' );
