@@ -210,3 +210,5 @@
 	Recurring Payments updates
 1.5.1 - 2015-06-30 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Only limit autorenewing product quantity changes to membership products
+1.5.2 - 2015-07-07 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Adding new variable to email notification and action hook to help with email shortcodes
