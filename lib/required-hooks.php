@@ -854,7 +854,7 @@ function it_exchange_get_memberships_page_rewrites( $page ) {
 				$account_slug  . '/([^/]+)/' . $slug  . '/([^/]+)/?$'  => 'index.php?' . $account_slug . '=$matches[1]&' . $slug . '=$matches[2]',
 				$account_slug . '/' . $slug  . '/([^/]+)/?$' => 'index.php?' . $account_slug . '=1&' . $slug . '=$matches[1]',
 				$account_slug  . '/([^/]+)/' . $slug  . '/?$'  => 'index.php?' . $account_slug . '=$matches[1]&' . $slug . '=itememberships',
-				$account_slug . '/' . $slug  . '/?$' => 'index.php?' . $account_slug . '=' . $slug . '&' . $slug . '=itememberships',
+				$account_slug . '/' . $slug  . '/?$' => 'index.php?' . $account_slug . '=1&' . $slug . '=itememberships',
 			);
 			return $rewrites;
 			break;
