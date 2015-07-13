@@ -6,6 +6,37 @@
 */
 
 /**
+ * Shows the nag when needed.
+ *
+ * @since 1.0.0
+ *
+ * @return void
+*/
+function it_exchange_membership_addon_show_permlink_update_nag() {
+	$version = get_option( 'it-exchange-membership-addon-version', true );
+	if ( version_compare( $version, '1.6.0', '<' ) ) { //Updated membership redirect rules in 1.6.0
+		if ( !empty( $_GET['flush-rewrite-rules'] ) ) {						
+			flush_rewrite_rules();
+			update_option( 'it-exchange-membership-addon-version', ITE_MEMBERSHIP_PLUGIN_VERSION );
+		} else {
+        ?>
+        <div id="it-exchange-add-on-permalink-nag" class="it-exchange-nag">
+            <?php printf( __( 'The latest version of iThemes Exchange Membership requires you to reset your WordPress permalinks. %sClick here to reset your permalinks%s', 'LION' ), '<a href="' . add_query_arg( 'flush-rewrite-rules', 1 ) . '">', '</a>' ); ?>
+        </div>
+        <script type="text/javascript">
+            jQuery( document ).ready( function() {
+                if ( jQuery( '.wrap > h2' ).length == '1' ) {
+                    jQuery("#it-exchange-add-on-permalink-nag").insertAfter('.wrap > h2').addClass( 'after-h2' );
+                }
+            });
+        </script>
+        <?php
+	    }
+    }
+}
+add_action( 'admin_notices', 'it_exchange_membership_addon_show_permlink_update_nag' );
+
+/**
  * Adds a members table to the Users WP Menu.
  *
  * @since 1.2.0

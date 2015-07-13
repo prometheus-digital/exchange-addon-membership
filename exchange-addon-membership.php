@@ -20,22 +20,6 @@ define( 'ITE_MEMBERSHIP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ITE_MEMBERSHIP_PLUGIN_VERSION', '1.6.0' );
 
 /**
- * Setup the plugin 
- *
- * @uses update_option()
- * @since 1.6.0
- * @return void
-*/
-function it_exchange_membership_addon_loaded() {
-	$version = get_option( 'it-exchange-membership-addon-version', true );
-	if ( version_compare( $version, '1.6.0', '<' ) ) { //Updated membership redirect rules in 1.6.0
-		update_option( '_it-exchange-flush-rewrites', true );
-	}
-	update_option( 'it-exchange-membership-addon-version', ITE_MEMBERSHIP_PLUGIN_VERSION );
-}
-add_action( 'it_exchange_loaded', 'it_exchange_membership_addon_loaded' );
-
-/**
  * This registers our plugin as a membership addon
  *
  * @since 1.0.0
@@ -100,6 +84,7 @@ function it_exchange_membership_addon_activation() {
 			add_action( 'activated_plugin', 'it_exchange_membership_addon_activated_bundled_addons', 10, 2 );
 		}
 	}
+	update_option( 'it-exchange-membership-addon-version', ITE_MEMBERSHIP_PLUGIN_VERSION );
 }
 register_activation_hook( __FILE__, 'it_exchange_membership_addon_activation' );
 
