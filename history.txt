@@ -214,3 +214,5 @@
 	Adding new variable to email notification and action hook to help with email shortcodes
 1.5.3 - 2015-07-14 - Packaging Bot (lib/updater)
 	Enhancement: Updated link to iThemes support.
+1.5.4 - 2015-07-14 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Enhancement: Updated link to iThemes support.
