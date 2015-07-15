@@ -216,3 +216,7 @@
 	Enhancement: Updated link to iThemes support.
 1.5.4 - 2015-07-14 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Enhancement: Updated link to iThemes support.
+1.6.0 - 2015-07-15 - Lew Ayotte
+	Adding memberships page template
+	Bug fix for redirecting to memberships page
+	Perform rewrite flush when updating to versiom 1.6.0
