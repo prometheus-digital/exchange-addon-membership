@@ -222,4 +222,5 @@
 	Perform rewrite flush when updating to versiom 1.6.0
 1.6.1 - 2015-07-16 - Lew Ayotte 
     Updates for Updater and Recurring Payments submodules 
-
+1.7.0 - 2015-07-27 - Lew Ayotte
+	Fix member access shortcode to display more than 5 membership products
