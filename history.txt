@@ -224,3 +224,5 @@
     Updates for Updater and Recurring Payments submodules 
 1.7.0 - 2015-07-27 - Lew Ayotte
 	Fix member access shortcode to display more than 5 membership products
+1.7.1 - 2015-07-27 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Adding functionality to show recurring payment labels on customer pricing
