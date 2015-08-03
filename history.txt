@@ -226,3 +226,5 @@
 	Fix member access shortcode to display more than 5 membership products
 1.7.1 - 2015-07-27 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Adding functionality to show recurring payment labels on customer pricing
+1.7.2 - 2015-08-03 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Fixing daily, weekly, monthly, yearly labels
