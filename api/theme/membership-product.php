@@ -279,6 +279,10 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						$upgrade_membership_auto_renew = false;
 					}
 					
+					if ( empty( $existing_membership_interval_count ) ) {
+						return;	
+					}
+					
 					if ( !( !$existing_membership_recurring_enabled && $upgrade_membership_recurring_enabled ) ) {
 						//forever upgrade to non-forever Products need to be process manually (see notes below)
 						$days_this_year = date_i18n( 'z', mktime( 0,0,0,12,31,date_i18n('Y') ) );
@@ -384,8 +388,12 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 							} else {
 								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_nonrecurring_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
 							}
-
-							$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
+							
+							if ( empty( $daily_cost_of_upgrade_membership ) ) {
+								$free_days = 0;
+							} else {
+								$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
+							}
 								
 							$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
 							
@@ -526,6 +534,10 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						$upgrade_membership_recurring_enabled = false;
 						$upgrade_membership_auto_renew = false;
 					}
+					
+					if ( empty( $existing_membership_interval_count ) ) {
+						return;	
+					}
 										
 					if ( !( !$existing_membership_recurring_enabled && $upgrade_membership_recurring_enabled ) ) {
 						//forever upgrade to non-forever Products need to be process manually (see notes below)
@@ -629,8 +641,12 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								$daily_cost_of_upgrade_membership = apply_filters( 'daily_cost_of_upgrade_nonrecurring_membership', $base_price / $days_this_year, $base_price, $days_this_year, $this->product->ID, $transaction );
 							}
 
-							$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
-								
+							if ( empty( $daily_cost_of_upgrade_membership ) ) {
+								$free_days = 0;
+							} else {
+								$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
+							}
+							
 							$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
 							
 							if ( 0 < $free_days ) {
