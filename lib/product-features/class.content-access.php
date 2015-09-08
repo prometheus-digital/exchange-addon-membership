@@ -197,6 +197,18 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 							}
 								
 							if ( !in_array( $product_id, $rules ) ) {
+
+								/**
+								 * Fires when a post of any type is added to the protection rules.
+								 *
+								 * @since 1.9
+								 *
+								 * @param int   $product_id
+								 * @param int   $post_id
+								 * @param array $rule
+								 */
+								do_action( 'it_exchange_membership_add_post_rule', $product_id, $rule['term'], $rule );
+
 								$rules[] = $product_id;
 								update_post_meta( $rule['term'], '_item-content-rule', $rules );
 							}
@@ -207,6 +219,18 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 								$rules = array();
 	
 							if ( !in_array( $product_id, $rules ) ) {
+
+								/**
+								 * Fires when a post type is added to the protection rules.
+								 *
+								 * @since 1.0
+								 *
+								 * @param int    $product_id
+								 * @param string $post_type
+								 * @param array $rule
+								 */
+								do_action( 'it_exchange_membership_add_post_type_rule', $product_id, $rule['term'], $rule );
+
 								$rules[] = $product_id;
 								update_option( '_item-content-rule-post-type-' . $rule['term'],  $rules );
 							}
@@ -217,6 +241,18 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 								$rules = array();
 								
 							if ( !in_array( $product_id, $rules ) ) {
+
+								/**
+								 * Fires when a term is added to the protection rules.
+								 *
+								 * @since 1.0
+								 *
+								 * @param int   $product_id
+								 * @param int   $term_id
+								 * @param array $rule
+								 */
+								do_action( 'it_exchange_membership_add_taxonomy_rule', $product_id, $rule['term'], $rule );
+
 								$rules[] = $product_id;
 								update_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'],  $rules );
 							}
@@ -292,6 +328,18 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 								$rules = array();
 								
 							if( false !== $key = array_search( $product_id, $rules ) ) {
+
+								/**
+								 * Fires when a post of any type is removed from the protection rules.
+								 *
+								 * @since 1.9
+								 *
+								 * @param int   $product_id
+								 * @param int   $post_id
+								 * @param array $rule
+								 */
+								do_action( 'it_exchange_membership_remove_post_rule', $product_id, $rule['term'], $rule );
+
 								unset( $rules[$key] );
 								if ( empty( $rules ) )
 									delete_post_meta(  $rule['term'], '_item-content-rule' );
@@ -305,6 +353,18 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 								$rules = array();
 								
 							if( false !== $key = array_search( $product_id, $rules ) ) {
+
+								/**
+								 * Fires when a post type is removed from the protection rules.
+								 *
+								 * @since 1.0
+								 *
+								 * @param int    $product_id
+								 * @param string $post_type
+								 * @param array $rule
+								 */
+								do_action( 'it_exchange_membership_remove_post_type_rule', $product_id, $rule['term'], $rule );
+
 								unset( $rules[$key] );
 								if ( empty( $rules ) )
 									delete_option( '_item-content-rule-post-type-' . $rule['term'] );
@@ -318,6 +378,18 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 								$rules = array();
 								
 							if( false !==  $key = array_search( $product_id, $rules ) ) {
+
+								/**
+								 * Fires when a term is removed from the protection rules.
+								 *
+								 * @since 1.0
+								 *
+								 * @param int   $product_id
+								 * @param int   $term_id
+								 * @param array $rule
+								 */
+								do_action( 'it_exchange_membership_remove_taxonomy_rule', $product_id, $rule['term'], $rule );
+
 								unset( $rules[$key] );
 								if ( empty( $rules ) )
 									delete_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] );
