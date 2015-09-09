@@ -230,3 +230,5 @@
 	Fixing daily, weekly, monthly, yearly labels
 1.8.0 - 2015-08-31 - Lew Ayotte
 	Fixing possible divide by zero errors
+1.9.0 - 2015-09-09 - Timothy B. Jacobs (Iron Bound Design)
+	Add hooks when a membership rules are added and removed
