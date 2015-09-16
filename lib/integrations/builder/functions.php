@@ -6,7 +6,7 @@
 */
 
 /**
- * Builder theme callback to determine if this a checkout view
+ * Builder theme callback to determine if this a membership view
  *
  * @package IT_Exchange_Addon_Membership
  * @since CHANGEME
@@ -14,6 +14,17 @@
 */
 function it_exchange_is_membership_addon_builder_view() {
     return it_exchange_is_page( 'membership' );
+}
+
+/**
+ * Builder theme callback to determine if this a memberships view
+ *
+ * @package IT_Exchange_Addon_Membership
+ * @since CHANGEME
+ * @author Lew Ayotte
+*/
+function it_exchange_is_memberships_addon_builder_view() {
+    return it_exchange_is_page( 'memberships' );
 }
 
 /**
@@ -27,9 +38,14 @@ function it_exchange_is_membership_addon_builder_view() {
 function it_exchange_membership_addon_add_new_builder_views( $views ) {
 	$exchange_views = array(
 		'it_exchange_is_membership_addon_builder_view' => array(
-			'name'        => _x( 'Exchange - Membership', 'view', 'LION' ),
+			'name'        => _x( 'Exchange - Membership', 'view', 'it-l10n-exchange-addon-membership' ),
 			'priority'    => '20',
-			'description' => __( 'The Exchange customer\'s membership account page.', 'LION' ),
+			'description' => __( 'The Exchange customer\'s membership account page.', 'it-l10n-exchange-addon-membership' ),
+		),
+		'it_exchange_is_memberships_addon_builder_view' => array(
+			'name'        => _x( 'Exchange - Memberships', 'view', 'it-l10n-exchange-addon-membership' ),
+			'priority'    => '20',
+			'description' => __( 'The Exchange customer\'s memberships account page.', 'it-l10n-exchange-addon-membership' ),
 		),
 	);
 	
