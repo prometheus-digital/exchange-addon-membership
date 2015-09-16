@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: iThemes Exchange - Membership Add-on
- * Version: 1.9.0
+ * Version: 1.10.0
  * Description: Adds the membership management to iThemes Exchange
  * Plugin URI: http://ithemes.com/exchange/membership/
  * Author: iThemes
@@ -17,7 +17,7 @@
 */
 
 define( 'ITE_MEMBERSHIP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
-define( 'ITE_MEMBERSHIP_PLUGIN_VERSION', '1.9.0' );
+define( 'ITE_MEMBERSHIP_PLUGIN_VERSION', '1.10.0' );
 
 /**
  * This registers our plugin as a membership addon
