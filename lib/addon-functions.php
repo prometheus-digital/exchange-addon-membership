@@ -480,7 +480,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 function it_exchange_membership_addon_is_content_restricted() {
 	global $post;
 	$restriction = false;
-	
+		
 	if ( current_user_can( 'administrator' ) )
 		return false;
 	

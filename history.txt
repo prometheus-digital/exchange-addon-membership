@@ -234,3 +234,5 @@
 	Add hooks when a membership rules are added and removed
 1.10.0 - 2015-09-16 - Lew Ayotte, Elise Alley
 	Updating Builder intergrations for Memberships page
+1.11.0 - 2015-09-21 - Lew Ayotte, Elise Alley
+	Removing login_redirect setup in session data because the session probably doesn't exists if the user isn't logged in
