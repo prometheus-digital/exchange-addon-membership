@@ -236,3 +236,5 @@
 	Updating Builder intergrations for Memberships page
 1.11.0 - 2015-09-21 - Lew Ayotte, Elise Alley
 	Removing login_redirect setup in session data because the session probably doesn't exists if the user isn't logged in
+1.10.1 - 2015-09-23 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Updating Updater script
