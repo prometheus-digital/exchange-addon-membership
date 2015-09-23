@@ -67,16 +67,18 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 		if ( $membership_settings['membership-restricted-show-excerpt'] ) {
 			if ( !empty( $post->post_excerpt ) ) {
 				$excerpt = $post->post_excerpt;
-			} else {
+			} else if ( !empty( $post->post_content ) ) {
 				$excerpt = $post->post_content;
                 $excerpt = str_replace(']]>', ']]&gt;', $excerpt);
                 $excerpt_length = apply_filters('excerpt_length', 55);
                 $excerpt_more = apply_filters('excerpt_more', ' ' . '[&hellip;]');
                 $excerpt = wp_trim_words( $excerpt, $excerpt_length, $excerpt_more );
 			}
-			
-			$excerpt = wp_trim_excerpt( $excerpt );
-		
+			if ( !empty( $excerpt ) ) {
+				$excerpt = wp_trim_excerpt( $excerpt );
+			} else {
+				$excerpt = '';
+			}
 			$content .= '<p class="it-exchange-membership-content-excerpt">';
 			$content .= $excerpt;
 			$content .= '</p>';
@@ -107,16 +109,18 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 		if ( $membership_settings['membership-restricted-show-excerpt'] ) {
 			if ( !empty( $post->post_excerpt ) ) {
 				$excerpt = $post->post_excerpt;
-			} else {
+			} else if ( !empty( $post->post_content ) ) {
 				$excerpt = $post->post_content;
                 $excerpt = str_replace(']]>', ']]&gt;', $excerpt);
                 $excerpt_length = apply_filters('excerpt_length', 55);
                 $excerpt_more = apply_filters('excerpt_more', ' ' . '[&hellip;]');
                 $excerpt = wp_trim_words( $excerpt, $excerpt_length, $excerpt_more );
 			}
-			
-			$excerpt = wp_trim_excerpt( $excerpt );
-		
+			if ( !empty( $excerpt ) ) {
+				$excerpt = wp_trim_excerpt( $excerpt );
+			} else {
+				$excerpt = '';
+			}
 			$content .= '<p class="it-exchange-membership-content-excerpt">';
 			$content .= $excerpt;
 			$content .= '</p>';
