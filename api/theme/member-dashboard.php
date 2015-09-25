@@ -244,7 +244,8 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 													'field' => 'id',
 													'terms' => $value
 												)
-											)
+											),
+											'post_type' => 'any',
 										);
 										$restricted_posts = get_posts( $args );
 										$more_content_link = get_term_link( $term, $selection );
