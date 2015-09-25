@@ -238,3 +238,5 @@
 	Removing login_redirect setup in session data because the session probably doesn't exists if the user isn't logged in
 1.10.1 - 2015-09-23 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Updating Updater script
+1.11.0 - 2015-09-25 - Lew Ayotte, Elise Alley
+	Fix bug where certain posts wouldn't show in the member dashbaord if the posts were in a customer post type but restricted by a taxonomy
