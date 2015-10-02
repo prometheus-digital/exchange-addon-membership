@@ -489,39 +489,43 @@ function it_exchange_membership_addon_is_content_restricted() {
 	if ( !empty( $post ) ) {
 			
 		$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
-		if ( !empty( $restriction_exemptions ) ) {
-			foreach( $member_access as $product_id => $txn_id ) {
-				if ( array_key_exists( $product_id, $restriction_exemptions ) )
-					$restriction = true; //we don't want restrict yet, not until we know there aren't other memberships that still have access to this content
-				else
-					continue; //get out of this, we're in a membership that hasn't been exempted
-			}
-			if ( $restriction ) //if it has been restricted, we can return true now
-				return true;
-		}
 		
 		if ( 'it_exchange_prod' !== $post->post_type ) {
 			$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
 			if ( !empty( $post_rules ) ) {
-				if ( empty( $member_access ) ) return true;
-				foreach( $member_access as $product_id => $txn_id ) {
-					if ( in_array( $product_id, $post_rules ) )
-						return false;	
+				if ( !empty( $member_access ) ) {
+					foreach( $member_access as $product_id => $txn_id ) {
+						if ( in_array( $product_id, $post_rules ) ) {
+							return false;
+						}
+					}
 				}
-				$restriction = true;
+				foreach( $post_rules as $product_id ) {
+					if ( !empty( $restriction_exemptions[$product_id] ) && in_array( $post->post_type, $restriction_exemptions[$product_id] ) ) {
+						$restriction = false;
+					} else {
+						$restriction = true;
+					}
+				}
 			}
 		}
 		
-		$post_type_rules = get_option( '_item-content-rule-post-type-' . $post->post_type, array() );	
+		$post_type_rules = get_option( '_item-content-rule-post-type-' . $post->post_type, array() );
 		if ( !empty( $post_type_rules ) ) {
-			if ( empty( $member_access ) ) return true;
-			foreach( $member_access as $product_id => $txn_id ) {
-				if ( !empty( $restriction_exemptions[$product_id] )  )
-					return true;
-				if ( in_array( $product_id, $post_type_rules ) )
-					return false;	
+			if ( !empty( $member_access ) ) {
+				foreach( $member_access as $product_id => $txn_id ) {
+					if ( in_array( $product_id, $post_type_rules ) ) {
+						return false;
+					}
+				}
 			}
-			$restriction = true;
+			foreach( $post_type_rules as $product_id ) {
+				if ( !empty( $restriction_exemptions[$product_id] ) && in_array( $post->post_type, $restriction_exemptions[$product_id] ) ) {
+					$restriction = false;
+				} else {
+					$restriction = true;
+				}
+			}
 		}
 		
 		$taxonomy_rules = array();
@@ -530,12 +534,19 @@ function it_exchange_membership_addon_is_content_restricted() {
 		foreach( $terms as $term ) {
 			$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
 			if ( !empty( $term_rules ) ) {
-				if ( empty( $member_access ) ) return true;
-				foreach( $member_access as $product_id => $txn_id ) {
-					if ( in_array( $product_id, $term_rules ) )
-						return false;	
+				if ( !empty( $member_access ) ) {
+					foreach( $member_access as $product_id => $txn_id ) {
+						if ( in_array( $product_id, $term_rules ) )
+							return false;	
+					}
 				}
-				$restriction = true;
+				foreach( $term_rules as $product_id ) {
+					if ( !empty( $restriction_exemptions[$product_id] ) && in_array( sprintf( 'taxonomy|%s|%d', $term->taxonomy,  $term->term_id ), $restriction_exemptions[$product_id] ) ) {
+						$restriction = false;
+					} else {
+						$restriction = true;
+					}
+				}
 			}
 		}
 		
@@ -572,25 +583,22 @@ function it_exchange_membership_addon_is_product_restricted() {
 		
 	if ( !empty( $post ) && 'it_exchange_prod' === $post->post_type ) {
 		$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
-		if ( !empty( $restriction_exemptions ) ) {
-			foreach( $member_access as $product_id => $txn_id ) {
-				if ( array_key_exists( $product_id, $restriction_exemptions ) )
-					$restriction = true; //we don't want restrict yet, not until we know there aren't other memberships that still have access to this content
-				else
-					continue; //get out of this, we're in a membership that hasn't been exempted
-			}
-			if ( $restriction ) //if it has been restricted, we can return true now
-				return true;
-		}
 	
 		$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
 		if ( !empty( $post_rules ) ) {
-			if ( empty( $member_access ) ) return true;
-			foreach( $member_access as $product_id => $txn_id ) {
-				if ( in_array( $product_id, $post_rules ) )
-					return false;	
+			if ( !empty( $member_access ) ) {
+				foreach( $member_access as $product_id => $txn_id ) {
+					if ( in_array( $product_id, $post_rules ) )
+						return false;	
+				}
 			}
-			$restriction = true;
+			foreach( $post_rules as $product_id ) {
+				if ( !empty( $restriction_exemptions[$product_id] ) && in_array( $post->post_type, $restriction_exemptions[$product_id] ) ) {
+					$restriction = false;
+				} else {
+					$restriction = true;
+				}
+			}
 		}
 	}
 	
