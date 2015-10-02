@@ -520,7 +520,7 @@ function it_exchange_membership_addon_is_content_restricted() {
 				}
 			}
 			foreach( $post_type_rules as $product_id ) {
-				if ( !empty( $restriction_exemptions[$product_id] ) && in_array( $post->post_type, $restriction_exemptions[$product_id] ) ) {
+				if ( !empty( $restriction_exemptions[$product_id] ) && in_array( 'posttype', $restriction_exemptions[$product_id] ) ) {
 					$restriction = false;
 				} else {
 					$restriction = true;
