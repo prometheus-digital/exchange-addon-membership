@@ -242,3 +242,5 @@
 	Fix bug where certain posts wouldn't show in the member dashbaord if the posts were in a customer post type but restricted by a taxonomy
 1.12.0 - 2015-10-06 - Lew Ayotte, Elise Alley
 	Fix bug causing content exemptions to not work properly
+1.13.0 - 2015-10-12 - Lew Ayotte, Elise Alley
+	Fix for rare bug when trying t get transaction meta form empty transactions
