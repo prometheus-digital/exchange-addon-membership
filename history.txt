@@ -244,3 +244,5 @@
 	Fix bug causing content exemptions to not work properly
 1.13.0 - 2015-10-12 - Lew Ayotte, Elise Alley
 	Fix for rare bug when trying t get transaction meta form empty transactions
+1.14.0 - 2015-10-23 - Lew Ayotte, Elise Alley
+	Adding a new check to customer sessions setup for transaction objects
