@@ -497,8 +497,12 @@ function it_exchange_membership_addon_setup_customer_session() {
 				if ( empty( $transient ) ) {
 					foreach( $member_access as $txn_id => $product_id ) {
 						$transaction = it_exchange_get_transaction( $txn_id );
-						$transaction_status = $transaction->get_status();
-						if ( empty( $transaction ) 
+						if ( !empty( $transaction ) ) {
+							$transaction_status = $transaction->get_status();
+						} else {
+							$transaction_status = 'failed';
+						}
+						if ( empty( $transaction ) || empty( $transaction->ID )
 							|| $transaction->ID !== $txn_id 
 							|| 'voided' === $transaction_status 
 							|| 'reversed' === $transaction_status 
