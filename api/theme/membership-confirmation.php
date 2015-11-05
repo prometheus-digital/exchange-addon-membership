@@ -37,8 +37,19 @@ class IT_Theme_API_Membership_Confirmation implements IT_Theme_API {
 	 *
 	 * @return void
 	*/
-	function IT_Theme_API_Membership_Confirmation() {
+	function __construct() {
 		$this->_transaction_product               = empty( $GLOBALS['it_exchange']['transaction_product'] ) ? false : $GLOBALS['it_exchange']['transaction_product'];
+	}
+
+	/**
+	 * Deprecated Constructor
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	*/
+	function IT_Theme_API_Membership_Confirmation() {
+		self::__construct();
 	}
 
 	/**

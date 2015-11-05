@@ -15,7 +15,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 	 * @since 1.1.0
 	 * @return void
 	*/
-	function IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy() {
+	function __construct() {
 		if ( is_admin() ) {
 			add_action( 'load-post-new.php', array( $this, 'init_feature_metaboxes' ) );
 			add_action( 'load-post.php', array( $this, 'init_feature_metaboxes' ) );
@@ -26,6 +26,16 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy {
 		add_filter( 'it_exchange_get_product_feature_membership-hierarchy', array( $this, 'get_feature' ), 9, 3 );
 		add_filter( 'it_exchange_product_has_feature_membership-hierarchy', array( $this, 'product_has_feature') , 9, 3 );
 		add_filter( 'it_exchange_product_supports_feature_membership-hierarchy', array( $this, 'product_supports_feature') , 9, 2 );
+	}
+
+	/**
+	 * Deprecated Constructor. Registers hooks
+	 *
+	 * @since 1.1.0
+	 * @return void
+	*/
+	function IT_Exchange_Addon_Membership_Product_Feature_Membership_Hierarchy() {
+		self::__construct();
 	}
 
 	/**

@@ -41,9 +41,20 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	 *
 	 * @return void
 	*/
-	function IT_Theme_API_Membership_Product() {
+	function __construct() {
 		// Set the current global product as a property
 		$this->product = empty( $GLOBALS['it_exchange']['product'] ) ? false : $GLOBALS['it_exchange']['product'];
+	}
+
+	/**
+	 * Deprecated Constructor
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	*/
+	function IT_Theme_API_Membership_Product() {
+		self::__construct();
 	}
 
 	/**
