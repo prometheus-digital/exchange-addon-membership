@@ -248,3 +248,5 @@
 	Adding a new check to customer sessions setup for transaction objects
 1.15.0 - 2015-11-05 - Lew Ayotte
 	PHP7 Updates
+1.15.1 - 2015-11-05 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	PHP7 Updates
