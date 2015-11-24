@@ -299,16 +299,16 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 								$transaction = it_exchange_get_transaction( $txn_id );
 								
 								if ( !empty( $transaction ) ) {
-									$transaction_status = $transaction->get_status();
+									$transaction_status = strtolower( $transaction->get_status() );
 								} else {
 									$transaction_status = 'failed';
 								}
 								
-								if ( !empty( $transaction ) || 'voided' === $transaction_status 
-									|| 'reversed' === $transaction_status 
-									|| 'deactivated' === $transaction_status 
-									|| 'failed' === $transaction_status 
-									|| 'refunded' === $transaction_status ) {
+								if ( !empty( $transaction ) && 'voided' !== $transaction_status 
+									&& 'reversed' !== $transaction_status 
+									&& 'deactivated' !== $transaction_status 
+									&& 'failed' !== $transaction_status 
+									&& 'refunded' !== $transaction_status ) {
 									$title = get_the_title( $product_id );
 									$expired = false;
 									$autorenew = '';
