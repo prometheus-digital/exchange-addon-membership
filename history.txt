@@ -255,3 +255,6 @@
 	Better transaction status checks for membership access
 	Add support for the sw-shortcode feature type
 	Don't show voided, reversed, deactivated, failed, or refunded membership transactions in membership table
+1.16.1 - 2015-11-30 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Set min=0 for recurs every... input
+	Remove 'Recurring Payments has moved' notice
