@@ -258,3 +258,5 @@
 1.16.1 - 2015-11-30 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Set min=0 for recurs every... input
 	Remove 'Recurring Payments has moved' notice
+1.16.2 - 2015-12-01 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Fixing typo in min='0'
