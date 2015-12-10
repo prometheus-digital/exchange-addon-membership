@@ -65,10 +65,19 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 		global $post;
 		
 		$membership_settings = it_exchange_get_option( 'addon_membership' );
+		
+		//Suhosin Fix
+		if ( !empty( $membership_settings['restricted-content-message'] ) ) {
+			$message = $membership_settings['restricted-content-message'];
+		} else {
+			$message = $membership_settings['membership-restricted-content-message'];
+		}
+		//End Suhosin Fix
+		
 		$defaults = array(
 			'before' => '',
 			'after'  => '',
-			'message' => $membership_settings['membership-restricted-content-message'],
+			'message' => $message,
 			'class'  => 'it-exchange-membership-restricted-content',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
@@ -107,10 +116,19 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 	*/
 	function excerpt( $options=array() ) {
 		$membership_settings = it_exchange_get_option( 'addon_membership' );
+		
+		//Suhosin Fix
+		if ( !empty( $membership_settings['restricted-content-message'] ) ) {
+			$message = $membership_settings['restricted-content-message'];
+		} else {
+			$message = $membership_settings['membership-restricted-content-message'];
+		}
+		//End Suhosin Fix
+		
 		$defaults = array(
 			'before'  => '',
 			'after'   => '',
-			'message' => $membership_settings['membership-restricted-content-message'],
+			'message' => $message,
 			'class'   => 'it-exchange-membership-restricted-excerpt',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
@@ -151,10 +169,19 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 		global $post;
 		
 		$membership_settings = it_exchange_get_option( 'addon_membership' );
+		
+		//Suhosin Fix
+		if ( !empty( $membership_settings['restricted-product-message'] ) ) {
+			$message = $membership_settings['restricted-product-message'];
+		} else {
+			$message = $membership_settings['membership-restricted-product-message'];
+		}
+		//End Suhosin Fix
+		
 		$defaults = array(
 			'before' => '',
 			'after'  => '',
-			'message' => $membership_settings['membership-restricted-product-message'],
+			'message' => $message,
 			'class'  => 'it-exchange-membership-restricted-product',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );

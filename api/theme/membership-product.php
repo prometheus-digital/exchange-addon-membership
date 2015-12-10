@@ -247,7 +247,8 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 				&& it_exchange_product_has_feature( $this->product->ID, 'membership-hierarchy', array( 'setting' => 'children' ) ) ) {
 				
 			$child_ids = it_exchange_membership_addon_setup_recursive_member_access_array( array( $this->product->ID => '' ) );
-						
+				ITUtility::print_r( $child_ids );
+									
 			if ( !empty( $child_ids ) ) {
 				$base_price = it_exchange_get_product_feature( $this->product->ID, 'base-price' );
 				$db_product_price = it_exchange_convert_to_database_number( $base_price );
@@ -291,10 +292,10 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 					}
 					
 					if ( empty( $existing_membership_interval_count ) ) {
-						return;	
+					//	return;	
 					}
 					
-					if ( !( !$existing_membership_recurring_enabled && $upgrade_membership_recurring_enabled ) ) {
+					if ( $upgrade_membership_recurring_enabled ) {
 						//forever upgrade to non-forever Products need to be process manually (see notes below)
 						$days_this_year = date_i18n( 'z', mktime( 0,0,0,12,31,date_i18n('Y') ) );
 
@@ -463,14 +464,25 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						}
 						
 					} else {
-						//If the existing membership is forever and they're wanting to upgrade
-						//to a recurring membership, we cannot give them any upgrade options
-						//they will need to purchase the recurring membership and ask for a credit from
-						//the store owner.
-						//
-						//The reason for this is that it is too complicated to determine the "daily" cost
-						//of a "forever" membership.
-						return;
+					
+						$transaction = it_exchange_get_transaction( $most_priciest_txn_id );
+						$credit = it_exchange_convert_from_database_number( $most_priciest );
+						$result = $options['before_desc'] . sprintf( __( ' %s upgrade credit applied at checkout', 'LION' ), it_exchange_format_price( $credit )  ) . $options['after_desc'];
+						$upgrade_type = 'credit';
+						
+						//For cancelling, I need to get the subscription ID and payment method
+						//And since I've done all this hard work, I should store the other pertinent information
+						$upgrade_details = it_exchange_get_session_data( 'updowngrade_details' );
+						$upgrade_details[$this->product->ID] = array(
+							'credit'                 => $credit,
+							'free_days'              => 0,
+							'old_transaction_method' => $transaction->transaction_method,
+							'old_transaction_id'     => $most_priciest_txn_id,
+							'upgrade_type'           => $upgrade_type,
+						);
+						
+						it_exchange_update_session_data( 'updowngrade_details', $upgrade_details );
+
 					}
 					
 				}
