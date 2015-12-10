@@ -295,7 +295,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 					//	return;	
 					}
 					
-					if ( $upgrade_membership_recurring_enabled ) {
+					if ( $existing_membership_recurring_enabled && $upgrade_membership_recurring_enabled ) {
 						//forever upgrade to non-forever Products need to be process manually (see notes below)
 						$days_this_year = date_i18n( 'z', mktime( 0,0,0,12,31,date_i18n('Y') ) );
 
@@ -462,8 +462,8 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 							//no free days, just upgrade!
 							return;
 						}
-						
-					} else {
+					
+					} else if ( !$existing_membership_recurring_enabled && !$existing_membership_recurring_enabled ) {
 					
 						$transaction = it_exchange_get_transaction( $most_priciest_txn_id );
 						$credit = it_exchange_convert_from_database_number( $most_priciest );
@@ -483,6 +483,8 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						
 						it_exchange_update_session_data( 'updowngrade_details', $upgrade_details );
 
+					} else {
+						return;
 					}
 					
 				}
