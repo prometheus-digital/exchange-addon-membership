@@ -498,7 +498,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 					foreach( $member_access as $txn_id => $product_id ) {
 						$transaction = it_exchange_get_transaction( $txn_id );
 						if ( !empty( $transaction ) ) {
-							$transaction_status = $transaction->get_status();
+							$transaction_status = strtolower( $transaction->get_status() );
 						} else {
 							$transaction_status = 'failed';
 						}

@@ -46,11 +46,22 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 	 *
 	 * @return void
 	*/
-	function IT_Theme_API_Member_Dashboard() {
+	function __construct() {
 		if ( is_user_logged_in() )
 			$this->_customer = it_exchange_get_current_customer();
 			
 		$this->_membership_product = it_exchange_membership_addon_get_current_membership();
+	}
+
+	/**
+	 * Deprecated Constructor
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	*/
+	function IT_Theme_API_Member_Dashboard() {
+		self::__construct();
 	}
 
 	/**

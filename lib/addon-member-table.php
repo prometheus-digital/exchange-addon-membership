@@ -236,7 +236,7 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 
 			if ( current_user_can( 'edit_user',  $user_object->ID ) ) {
 				$edit = "<strong><a href=\"$edit_link\">$user_object->user_login</a></strong><br />";
-				$actions['edit'] = '<a href="' . $edit_link . '">' . __( 'Edit' ) . '</a>';
+				$actions['edit'] = '<a href="' . $edit_link . '">' . __( 'Edit', 'LION' ) . '</a>';
 			} else {
 				$edit = "<strong>$user_object->user_login</strong><br />";
 			}
@@ -279,7 +279,7 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 					$r .= "<td $attributes>$user_object->first_name $user_object->last_name</td>";
 					break;
 				case 'email':
-					$r .= "<td $attributes><a href='mailto:$email' title='" . esc_attr( sprintf( __( 'E-mail: %s' ), $email ) ) . "'>$email</a></td>";
+					$r .= "<td $attributes><a href='mailto:$email' title='" . esc_attr( sprintf( __( 'E-mail: %s', 'LION' ), $email ) ) . "'>$email</a></td>";
 					break;
 				case 'membership':
 					$customer = new IT_Exchange_Customer( $user_object->ID );
@@ -297,10 +297,25 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 						if ( !empty( $flip_member_access ) ) {
 							foreach( $flip_member_access as $product_id => $txn_id ) {
 								$transaction = it_exchange_get_transaction( $txn_id );
+								
 								if ( !empty( $transaction ) ) {
+									$transaction_status = strtolower( $transaction->get_status() );
+								} else {
+									$transaction_status = 'failed';
+								}
+								
+								if ( !empty( $transaction ) && 'voided' !== $transaction_status 
+									&& 'reversed' !== $transaction_status 
+									&& 'deactivated' !== $transaction_status 
+									&& 'failed' !== $transaction_status 
+									&& 'refunded' !== $transaction_status ) {
 									$title = get_the_title( $product_id );
 									$expired = false;
 									$autorenew = '';
+									
+									if ( empty( $title ) ) {
+										$title = sprintf( __( 'Missing Membership (%s)', 'LION' ), $product_id );
+									}
 	
 									if ( $expires = $transaction->get_transaction_meta( 'subscription_expired_' . $product_id, true ) ) {
 										$expires = sprintf( __( 'Expired %s', 'LION' ), date_i18n( get_option( 'date_format' ), $expires ) );

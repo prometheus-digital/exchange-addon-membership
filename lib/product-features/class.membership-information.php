@@ -15,7 +15,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 	 * @since 1.1.0
 	 * @return void
 	*/
-	function IT_Exchange_Addon_Membership_Product_Feature_Membership_Information() {
+	function __construct() {
 		if ( is_admin() ) {
 			add_action( 'load-post-new.php', array( $this, 'init_feature_metaboxes' ) );
 			add_action( 'load-post.php', array( $this, 'init_feature_metaboxes' ) );
@@ -26,6 +26,16 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 		add_filter( 'it_exchange_get_product_feature_membership-information', array( $this, 'get_feature' ), 9, 3 );
 		add_filter( 'it_exchange_product_has_feature_membership-information', array( $this, 'product_has_feature') , 9, 3 );
 		add_filter( 'it_exchange_product_supports_feature_membership-information', array( $this, 'product_supports_feature') , 9, 2 );
+	}
+
+	/**
+	 * Deprecated Constructor. Registers hooks
+	 *
+	 * @since 1.1.0
+	 * @return void
+	*/
+	function IT_Exchange_Addon_Membership_Product_Feature_Membership_Information() {
+		self::__construct();
 	}
 
 	/**
