@@ -628,10 +628,16 @@ function it_exchange_membership_addon_is_product_restricted( $post = null ) {
  *
  * @since 1.0.0
  *
+ * @param WP_Post $post
+ *
  * @return bool
 */
-function it_exchange_membership_addon_is_content_dripped() {
-	global $post;
+function it_exchange_membership_addon_is_content_dripped( $post = null ) {
+
+	if ( ! $post ) {
+		global $post;
+	}
+
 	$dripped = false;
 	
 	if ( current_user_can( 'administrator' ) )
@@ -674,10 +680,16 @@ function it_exchange_membership_addon_is_content_dripped() {
  *
  * @since 1.0.0
  *
+ * @param WP_Post $post
+ *
  * @return bool
 */
-function it_exchange_membership_addon_is_product_dripped() {
-	global $post;
+function it_exchange_membership_addon_is_product_dripped( $post = null ) {
+
+	if ( ! $post ) {
+		global $post;
+	}
+
 	$dripped = false;
 	
 	if ( current_user_can( 'administrator' ) )
