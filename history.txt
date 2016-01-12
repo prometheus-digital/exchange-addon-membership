@@ -260,3 +260,6 @@
 	Remove 'Recurring Payments has moved' notice
 1.16.2 - 2015-12-01 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Fixing typo in min='0'
+1.16.3 - 2016-01-12 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Tweak: Display reccurring price label in products table
+	Tweak: Add old status to update subscription status hook
