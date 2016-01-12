@@ -263,3 +263,9 @@
 1.16.3 - 2016-01-12 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Tweak: Display reccurring price label in products table
 	Tweak: Add old status to update subscription status hook
+1.16.4 – 2016-01-12 - Lew Ayotte, Timothy Jacobs
+	Add: Support for checking restrictions or drip against a post
+	Tweak: Apply upgrade credits for forever to forever products
+	Tweak: Add class to membership dashboard links
+	Fix: Suhosin compat
+
