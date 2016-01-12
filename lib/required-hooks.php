@@ -1022,8 +1022,14 @@ function it_exchange_membership_addon_append_to_customer_menu_loop( $nav='', $cu
 					$membership_slug = $membership_post->post_name;
 					
 					$query_var = get_query_var( 'memberships' );
-					
-					$class = !empty( $query_var ) && $query_var == $membership_slug ? ' class="current"' : '';
+
+					$class = 'it-exchange-membership-page-link';
+
+					if ( ! empty( $query_var ) && $query_var == $membership_slug ) {
+						$class .= ' current';
+					}
+
+					$class = " class=\"$class\"";
 					
 					if ( $permalinks )
 						$url = trailingslashit( it_exchange_get_page_url( $page_slug ) ) . $membership_slug;

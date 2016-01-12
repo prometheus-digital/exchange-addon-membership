@@ -81,10 +81,18 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 			}
 		}
 		
+		//Suhosin Fix
+		if ( !empty( $membership_settings['dripped-content-message'] ) ) {
+			$message = $membership_settings['dripped-content-message'];
+		} else {
+			$message = $membership_settings['membership-dripped-content-message'];
+		}
+		//End Suhosin Fix
+		
 		$defaults = array(
 			'before' => '',
 			'after'  => '',
-			'message' => sprintf( $membership_settings['membership-dripped-content-message'], ceil( $earliest_drip / 60 / 60 / 24 ) ),
+			'message' => sprintf( $message, ceil( $earliest_drip / 60 / 60 / 24 ) ),
 			'class'  => 'it-exchange-membership-restricted-content',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
@@ -120,10 +128,18 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 			}
 		}
 		
+		//Suhosin Fix
+		if ( !empty( $membership_settings['dripped-content-message'] ) ) {
+			$message = $membership_settings['dripped-content-message'];
+		} else {
+			$message = $membership_settings['membership-dripped-content-message'];
+		}
+		//End Suhosin Fix
+		
 		$defaults = array(
 			'before' => '',
 			'after'  => '',
-			'message' => sprintf( $membership_settings['membership-dripped-content-message'], ceil( $earliest_drip / 60 / 60 / 24 ) ),
+			'message' => sprintf( $message, ceil( $earliest_drip / 60 / 60 / 24 ) ),
 			'class'   => 'it-exchange-membership-restricted-excerpt',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );
@@ -159,10 +175,18 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 			}
 		}
 		
+		//Suhosin Fix
+		if ( !empty( $membership_settings['dripped-product-message'] ) ) {
+			$message = $membership_settings['dripped-product-message'];
+		} else {
+			$message = $membership_settings['membership-dripped-product-message'];
+		}
+		//End Suhosin Fix
+		
 		$defaults = array(
 			'before' => '',
 			'after'  => '',
-			'message' => sprintf( $membership_settings['membership-dripped-product-message'], ceil( $earliest_drip / 60 / 60 / 24 ) ),
+			'message' => sprintf( $message, ceil( $earliest_drip / 60 / 60 / 24 ) ),
 			'class'   => 'it-exchange-membership-restricted-product',
 		);
 		$options = ITUtility::merge_defaults( $options, $defaults );

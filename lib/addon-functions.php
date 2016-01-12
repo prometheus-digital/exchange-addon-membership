@@ -475,10 +475,16 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
  *
  * @since 1.0.0
  *
+ * @param WP_Post $post
+ *
  * @return bool
 */
-function it_exchange_membership_addon_is_content_restricted() {
-	global $post;
+function it_exchange_membership_addon_is_content_restricted( $post = null ) {
+
+	if ( ! $post ) {
+		global $post;
+	}
+
 	$restriction = false;
 		
 	if ( current_user_can( 'administrator' ) )
@@ -570,10 +576,16 @@ function it_exchange_membership_addon_is_content_restricted() {
  *
  * @since 1.0.0
  *
+ * @param WP_Post $post
+ *
  * @return bool
 */
-function it_exchange_membership_addon_is_product_restricted() {
-	global $post;
+function it_exchange_membership_addon_is_product_restricted( $post = null ) {
+
+	if ( ! $post ) {
+		global $post;
+	}
+
 	$restriction = false;
 	
 	if ( current_user_can( 'administrator' ) )
@@ -616,10 +628,16 @@ function it_exchange_membership_addon_is_product_restricted() {
  *
  * @since 1.0.0
  *
+ * @param WP_Post $post
+ *
  * @return bool
 */
-function it_exchange_membership_addon_is_content_dripped() {
-	global $post;
+function it_exchange_membership_addon_is_content_dripped( $post = null ) {
+
+	if ( ! $post ) {
+		global $post;
+	}
+
 	$dripped = false;
 	
 	if ( current_user_can( 'administrator' ) )
@@ -662,10 +680,16 @@ function it_exchange_membership_addon_is_content_dripped() {
  *
  * @since 1.0.0
  *
+ * @param WP_Post $post
+ *
  * @return bool
 */
-function it_exchange_membership_addon_is_product_dripped() {
-	global $post;
+function it_exchange_membership_addon_is_product_dripped( $post = null ) {
+
+	if ( ! $post ) {
+		global $post;
+	}
+
 	$dripped = false;
 	
 	if ( current_user_can( 'administrator' ) )
