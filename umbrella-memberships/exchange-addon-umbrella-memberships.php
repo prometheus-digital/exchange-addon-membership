@@ -10,11 +10,6 @@ namespace ITEGMS;
 class Plugin {
 
 	/**
-	 * Version of this plugin.
-	 */
-	const VERSION = '1.0.3';
-
-	/**
 	 * Translation Slug.
 	 */
 	const SLUG = 'ibd-exchange-addon-itegms';
@@ -23,11 +18,6 @@ class Plugin {
 	 * Exchange add-on slug.
 	 */
 	const ADD_ON = 'umbrella-memberships';
-
-	/**
-	 * Product ID.
-	 */
-	const ID = 1433;
 
 	/**
 	 * @var string
@@ -40,6 +30,11 @@ class Plugin {
 	static $url;
 
 	/**
+	 * @var string
+	 */
+	static $version;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.0
@@ -48,9 +43,9 @@ class Plugin {
 
 		self::$dir = plugin_dir_path( __FILE__ );
 		self::$url = plugin_dir_url( __FILE__ );
+		self::$version = ITE_MEMBERSHIP_PLUGIN_VERSION;
 
 		register_activation_hook( __FILE__, array( $this, 'activate' ) );
-		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
 
 		add_action( 'it_exchange_register_addons', array( $this, 'register' ) );
 
@@ -63,12 +58,12 @@ class Plugin {
 	/**
 	 * Run the upgrade routine if necessary.
 	 *
-	 * @since 1.9
+	 * @since 1.0
 	 */
 	public static function upgrade() {
 		$current_version = get_option( 'itegms_version', 0.1 );
 
-		if ( $current_version != self::VERSION ) {
+		if ( $current_version != self::$version ) {
 
 			/**
 			 * Runs when the version upgrades.
@@ -78,9 +73,9 @@ class Plugin {
 			 * @param string $current_version
 			 * @param string $new_version
 			 */
-			do_action( 'itegms_upgrade', self::VERSION, $current_version );
+			do_action( 'itegms_upgrade', self::$version, $current_version );
 
-			update_option( 'itegms_version', self::VERSION );
+			update_option( 'itegms_version', self::$version );
 		}
 	}
 
@@ -117,18 +112,11 @@ class Plugin {
 	 *
 	 * @since 1.0
 	 */
-	public function activate() {
+	public static function activate() {
 
-		update_option( 'itegms_initial_version', self::VERSION );
+		update_option( 'itegms_initial_version', self::$version );
 
 		wp_schedule_event( strtotime( 'Tomorrow 4AM' ), 'daily', 'itegms_daily_cron' );
-	}
-
-	/**
-	 * The deactivation hook.
-	 */
-	public function deactivate() {
-
 	}
 
 	/**
@@ -137,8 +125,8 @@ class Plugin {
 	 * @since 1.0
 	 */
 	public function scripts() {
-		wp_register_style( 'itegms-account-page', self::$url . 'assets/css/itegms-account-page.css', array(), self::VERSION );
-		wp_register_script( 'itegms-account-page', self::$url . 'assets/js/itegms-account-page.js', array( 'jquery' ), self::VERSION );
+		wp_register_style( 'itegms-account-page', self::$url . 'assets/css/itegms-account-page.css', array(), self::$version );
+		wp_register_script( 'itegms-account-page', self::$url . 'assets/js/itegms-account-page.js', array( 'jquery' ), self::$version );
 	}
 
 	/**
