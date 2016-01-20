@@ -2,9 +2,9 @@
 /**
  * Purchase related functions.
  *
- * @author      Iron Bound Designs
+ * @author      iThemes
  * @since       1.0
- * @copyright   2015 (c) Iron Bound Designs.
+ * @copyright   2015 (c) Iron Bound Designs, 2016 iThemes.
  * @license     GPLv2
  */
 

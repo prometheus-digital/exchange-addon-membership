@@ -2,9 +2,9 @@
 /**
  *
  *
- * @author      Iron Bound Designs
+ * @author      iThemes
  * @since       ?
- * @copyright   2015 (c) Iron Bound Designs.
+ * @copyright   2015 (c) Iron Bound Designs, 2016 iThemes.
  * @license     GPLv2
  */
 
