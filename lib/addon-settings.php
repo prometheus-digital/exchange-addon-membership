@@ -169,7 +169,7 @@ class IT_Exchange_Membership_Add_On {
         <?php
     }
 
-    function get_membership_form_table( $form, $settings = array() ) {
+    function get_membership_form_table( ITForm $form, $settings = array() ) {
 
 		global $wp_version;
 
@@ -191,7 +191,7 @@ class IT_Exchange_Membership_Add_On {
                 <label for="membership-restricted-content-message"><?php _e( 'Restricted Content Message', 'LION' ); ?> <span class="tip" title="<?php _e( 'This message will display when a non-member attempts to access content that has been restricted.', 'LION' ); ?>">i</span></label>
                 <?php
                 if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
-                    echo wp_editor( $settings['restricted-content-message'], 'restricted-content-message', array( 'textarea_name' => 'it-exchange-add-on-membership-membership-restricted-content-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
+                    wp_editor( $settings['restricted-content-message'], 'restricted-content-message', array( 'textarea_name' => 'it-exchange-add-on-membership-restricted-content-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
 					
 					//We do this for some ITForm trickery... just to add recurring-payments-cancel-body to the used inputs field
 					$form->get_text_area( 'restricted-content-message', array( 'rows' => 10, 'cols' => 30, 'class' => 'large-text' ) );
@@ -204,7 +204,7 @@ class IT_Exchange_Membership_Add_On {
                 <label for="membership-dripped-content-message"><?php _e( 'Delayed Content Message', 'LION' ); ?> <span class="tip" title="<?php _e( 'This message will appear when a member attempts to access content that has been delayed.', 'LION' ); ?>">i</span></label>
                 <?php
                 if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
-                    echo wp_editor( $settings['dripped-content-message'], 'dripped-content-message', array( 'textarea_name' => 'it-exchange-add-on-membership-membership-dripped-content-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
+                    wp_editor( $settings['dripped-content-message'], 'dripped-content-message', array( 'textarea_name' => 'it-exchange-add-on-membership-dripped-content-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
 					
 					//We do this for some ITForm trickery... just to add recurring-payments-cancel-body to the used inputs field
 					$form->get_text_area( 'dripped-content-message', array( 'rows' => 10, 'cols' => 30, 'class' => 'large-text' ) );
@@ -222,7 +222,7 @@ class IT_Exchange_Membership_Add_On {
                 <label for="membership-restricted-product-message"><?php _e( 'Restricted Product Message', 'LION' ); ?> <span class="tip" title="<?php _e( 'This message will display when a non-member attempts to access a product that has been restricted.', 'LION' ); ?>">i</span></label>
                 <?php
                 if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
-                    echo wp_editor( $settings['restricted-product-message'], 'restricted-product-message', array( 'textarea_name' => 'it-exchange-add-on-membership-membership-restricted-product-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
+                    wp_editor( $settings['restricted-product-message'], 'restricted-product-message', array( 'textarea_name' => 'it-exchange-add-on-membership-restricted-product-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
 					
 					//We do this for some ITForm trickery... just to add recurring-payments-cancel-body to the used inputs field
 					$form->get_text_area( 'restricted-product-message', array( 'rows' => 10, 'cols' => 30, 'class' => 'large-text' ) );
@@ -235,7 +235,7 @@ class IT_Exchange_Membership_Add_On {
                 <label for="membership-dripped-product-message"><?php _e( 'Delayed Product Message', 'LION' ); ?> <span class="tip" title="<?php _e( 'This message will appear when a member attempts to access a product that has been delayed.', 'LION' ); ?>">i</span></label>
                 <?php
                 if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
-                    echo wp_editor( $settings['dripped-product-message'], 'dripped-product-message', array( 'textarea_name' => 'it-exchange-add-on-membership-membership-dripped-product-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
+                    wp_editor( $settings['dripped-product-message'], 'dripped-product-message', array( 'textarea_name' => 'it-exchange-add-on-membership-dripped-product-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
 					
 					//We do this for some ITForm trickery... just to add recurring-payments-cancel-body to the used inputs field
 					$form->get_text_area( 'dripped-product-message', array( 'rows' => 10, 'cols' => 30, 'class' => 'large-text' ) );
@@ -310,7 +310,10 @@ class IT_Exchange_Membership_Add_On {
      * Returns string of errors if anything is invalid
      *
      * @since 1.0.0
-     * @return void
+     *
+     * @param array $values
+     *
+     * @return array
     */
     public function get_form_errors( $values ) {
 
