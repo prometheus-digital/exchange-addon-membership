@@ -244,7 +244,7 @@ class Emails {
 		$to      = $rel->get_member()->wp_user;
 		$manager = Factory::make( 'itegms-invitation' );
 		$message = Settings::get( 'invitation' );
-		$subject = sprintf( __( 'You\'ve been given access to %1$s by %2$s', Plugin::SLUG ),
+		$subject = sprintf( __( 'You\'ve been given access to %1$s by %2$s', 'LION' ),
 			$rel->get_purchase()->get_membership()->post_title,
 			$rel->get_purchase()->get_customer()->wp_user->first_name
 		);
@@ -290,7 +290,7 @@ class Emails {
 		$to      = $rel->get_member()->wp_user;
 		$manager = Factory::make( 'itegms-invitation-new-user' );
 		$message = Settings::get( 'invitation-new-user' );
-		$subject = sprintf( __( 'You\'ve been given access to %1$s by %2$s', Plugin::SLUG ),
+		$subject = sprintf( __( 'You\'ve been given access to %1$s by %2$s', 'LION' ),
 			$rel->get_purchase()->get_membership()->post_title,
 			$rel->get_purchase()->get_customer()->wp_user->first_name );
 
@@ -337,7 +337,7 @@ class Emails {
 		$to      = $rel->get_member()->wp_user;
 		$manager = Factory::make( 'itegms-removed' );
 		$message = Settings::get( 'removed' );
-		$subject = sprintf( __( 'Your access to %1$s has been revoked by %2$s', Plugin::SLUG ),
+		$subject = sprintf( __( 'Your access to %1$s has been revoked by %2$s', 'LION' ),
 			$rel->get_purchase()->get_membership()->post_title,
 			$rel->get_purchase()->get_customer()->wp_user->first_name );
 
@@ -381,7 +381,7 @@ class Emails {
 		$to      = $rel->get_member()->wp_user;
 		$manager = Factory::make( 'itegms-expired' );
 		$message = Settings::get( 'expired' );
-		$subject = sprintf( __( 'Your access to %1$s has expired.', Plugin::SLUG ),
+		$subject = sprintf( __( 'Your access to %1$s has expired.', 'LION' ),
 			$rel->get_purchase()->get_membership()->post_title );
 
 		/**

@@ -317,7 +317,7 @@ class Hooks {
 		// todo: double check protocol
 		$link = "<a href='mailto:{$payer->wp_user->user_email}'>$name</a>";
 
-		$text = sprintf( __( 'This membership is paid for by %1$s.', Plugin::SLUG ),
+		$text = sprintf( __( 'This membership is paid for by %1$s.', 'LION' ),
 			$link );
 
 		/**
@@ -430,7 +430,7 @@ class Hooks {
 		$cid = $payee->id;
 
 		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], "itegms-save-{$cid}-members" ) ) {
-			it_exchange_add_message( 'error', __( "Request expired. Please try again.", Plugin::SLUG ) );
+			it_exchange_add_message( 'error', __( "Request expired. Please try again.", 'LION' ) );
 
 			return;
 		}
@@ -457,7 +457,7 @@ class Hooks {
 				// if either an email address or name is missing for a single member record
 
 				if ( ! $name_and_email_required ) {
-					it_exchange_add_message( 'error', __( "Member name and email are required.", Plugin::SLUG ) );
+					it_exchange_add_message( 'error', __( "Member name and email are required.", 'LION' ) );
 
 					$name_and_email_required = true;
 				}
@@ -525,7 +525,7 @@ class Hooks {
 		}
 
 		if ( ! it_exchange_has_messages( 'error' ) ) {
-			it_exchange_add_message( 'notice', __( "Members Updated.", Plugin::SLUG ) );
+			it_exchange_add_message( 'notice', __( "Members Updated.", 'LION' ) );
 		}
 	}
 

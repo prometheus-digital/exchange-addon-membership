@@ -25,8 +25,8 @@ class Umbrella_Membership extends \IT_Exchange_Product_Feature_Abstract {
 	public function __construct() {
 		$args = array(
 			'slug'          => 'umbrella-membership',
-			'description'   => __( "Allow for customers to purchase a multi-seat membership.", Plugin::SLUG ),
-			'metabox_title' => __( "Umbrella Memberships", Plugin::SLUG ),
+			'description'   => __( "Allow for customers to purchase a multi-seat membership.", 'LION' ),
+			'metabox_title' => __( "Umbrella Memberships", 'LION' ),
 			'product_types' => array( 'membership-product-type' )
 		);
 

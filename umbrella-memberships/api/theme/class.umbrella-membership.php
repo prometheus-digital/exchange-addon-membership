@@ -100,7 +100,7 @@ class IT_Theme_API_Umbrella_Membership implements IT_Theme_API {
 
 		$defaults = array(
 			'format' => 'html',
-			'label'  => __( "Seats", \ITEGMS\Plugin::SLUG )
+			'label'  => __( "Seats", 'LION' )
 		);
 		$options  = ITUTility::merge_defaults( $options, $defaults );
 
@@ -174,7 +174,7 @@ class IT_Theme_API_Umbrella_Membership implements IT_Theme_API {
 
 			$warning = _n( "Warning: You have more one member than membership seats available. Please purchase a larger membership plan.",
 				"Warning: You have %d more members than membership seats available. Please purchase a larger membership plan.",
-				$members - $seats, \ITEGMS\Plugin::SLUG );
+				$members - $seats, 'LION' );
 
 			$warning = sprintf( $warning, $members - $seats );
 
@@ -199,11 +199,11 @@ class IT_Theme_API_Umbrella_Membership implements IT_Theme_API {
 
 		$html .= "<form method='POST' action='{$url}' class='itegms-member-form'>";
 
-		$html .= '<h4>' . __( "Members", \ITEGMS\Plugin::SLUG ) . '</h4>';
+		$html .= '<h4>' . __( "Members", 'LION' ) . '</h4>';
 
-		$description = __( "To add a member, simply input their name and email address in the list below.", \ITEGMS\Plugin::SLUG );
-		$description .= ' ' . __( "To remove a member, simply press the &times; next to their name in the list below.", \ITEGMS\Plugin::SLUG );
-		$description .= ' ' . __( "Be sure to save your changes using the 'Save Members' button at the bottom of the list.", ITEGMS\Plugin::SLUG );
+		$description = __( "To add a member, simply input their name and email address in the list below.", 'LION' );
+		$description .= ' ' . __( "To remove a member, simply press the &times; next to their name in the list below.", 'LION' );
+		$description .= ' ' . __( "Be sure to save your changes using the 'Save Members' button at the bottom of the list.", 'LION' );
 
 		/**
 		 * Filters the description displayed above the members table
@@ -232,7 +232,7 @@ class IT_Theme_API_Umbrella_Membership implements IT_Theme_API {
 
 		$html .= $this->generate_pagination( $per_page );
 
-		$label = __( "Save Members", \ITEGMS\Plugin::SLUG );
+		$label = __( "Save Members", 'LION' );
 		$html .= "<input type=\"submit\" name='itegms-save-members' value=\"$label\">";
 
 		$html .= '</div>';
@@ -309,7 +309,7 @@ class IT_Theme_API_Umbrella_Membership implements IT_Theme_API {
 		$html .= '<div class="itegms-member-name">';
 
 		$html .= "<label for='itegms-member-{$i}-name'>";
-		$html .= sprintf( __( "Member %d Name", \ITEGMS\Plugin::SLUG ), $i + 1 );
+		$html .= sprintf( __( "Member %d Name", 'LION' ), $i + 1 );
 		$html .= "</label>";
 
 		if ( isset( $this->relationships[ $i ] ) ) {
@@ -328,7 +328,7 @@ class IT_Theme_API_Umbrella_Membership implements IT_Theme_API {
 		$html .= '<div class="itegms-member-email">';
 
 		$html .= "<label for='itegms-member-{$i}-email'>";
-		$html .= sprintf( __( "Member %d Email", \ITEGMS\Plugin::SLUG ), $i + 1 );
+		$html .= sprintf( __( "Member %d Email", 'LION' ), $i + 1 );
 		$html .= "</label>";
 
 		if ( isset( $this->relationships[ $i ] ) ) {
@@ -344,11 +344,11 @@ class IT_Theme_API_Umbrella_Membership implements IT_Theme_API {
 
 		$html .= '</div>';
 
-		$title = __( "Remove", \ITEGMS\Plugin::SLUG );
+		$title = __( "Remove", 'LION' );
 		$html .= '<div class="itegms-remove-member-container">';
 		$html .= '<label>&nbsp;</label>';
 
-		$delete = sprintf( __( "Delete Member %d", \ITEGMS\Plugin::SLUG ), $i );
+		$delete = sprintf( __( "Delete Member %d", 'LION' ), $i );
 
 		$html .= "<a href=\"javascript:\" aria-label='$delete' class='itegms-remove-member' data-id=\"$i\" title=\"$title\">&times;</a>";
 		$html .= '</div>';

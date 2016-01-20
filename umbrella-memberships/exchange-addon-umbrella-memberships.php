@@ -51,8 +51,6 @@ class Plugin {
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'scripts' ) );
-
-		add_action( 'plugins_loaded', array( $this, 'translations' ) );
 	}
 
 	/**
@@ -86,11 +84,11 @@ class Plugin {
 	 */
 	public function register() {
 
-		$desc = __( 'Sell umbrella memberships with iThemes Exchange.', Plugin::SLUG );
-		$desc .= ' ' . __( "Allows for one customer to pay and manage memberships for multiple users.", Plugin::SLUG );
+		$desc = __( 'Sell umbrella memberships with iThemes Exchange.', 'LION' );
+		$desc .= ' ' . __( "Allows for one customer to pay and manage memberships for multiple users.", 'LION' );
 
 		$options = array(
-			'name'              => __( 'Umbrella Memberships', Plugin::SLUG ),
+			'name'              => __( 'Umbrella Memberships', 'LION' ),
 			'description'       => $desc,
 			'author'            => 'iThemes',
 			'author_url'        => 'https://ithemes.com/exchange/membership',
@@ -100,7 +98,7 @@ class Plugin {
 			'settings-callback' => array( 'ITEGMS\Settings', 'display' ),
 			'basename'          => plugin_basename( __FILE__ ),
 			'labels'            => array(
-				'singular_name' => __( 'Umbrella Membership', Plugin::SLUG ),
+				'singular_name' => __( 'Umbrella Membership', 'LION' ),
 			)
 		);
 
@@ -127,15 +125,6 @@ class Plugin {
 	public function scripts() {
 		wp_register_style( 'itegms-account-page', self::$url . 'assets/css/itegms-account-page.css', array(), self::$version );
 		wp_register_script( 'itegms-account-page', self::$url . 'assets/js/itegms-account-page.js', array( 'jquery' ), self::$version );
-	}
-
-	/**
-	 * Load translations.
-	 *
-	 * @since 1.0
-	 */
-	public function translations() {
-		load_plugin_textdomain( Plugin::SLUG, false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 	}
 }
 

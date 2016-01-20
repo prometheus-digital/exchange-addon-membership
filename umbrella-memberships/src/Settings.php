@@ -256,7 +256,7 @@ TAG;
 		}
 		?>
 		<div class="wrap">
-			<h2><?php _e( 'Umbrella Membership Settings', Plugin::SLUG ); ?></h2>
+			<h2><?php _e( 'Umbrella Membership Settings', 'LION' ); ?></h2>
 
 			<?php do_action( 'it_exchange_' . self::SHORT . '_settings_page_top' ); ?>
 			<?php do_action( 'it_exchange_addon_settings_page_top' ); ?>
@@ -267,7 +267,7 @@ TAG;
 
 			<p class="submit">
 				<?php $form->add_submit( 'submit', array(
-					'value' => __( 'Save Changes', Plugin::SLUG ),
+					'value' => __( 'Save Changes', 'LION' ),
 					'class' => 'button button-primary button-large'
 				) ); ?>
 			</p>
@@ -299,22 +299,22 @@ TAG;
 
 		<div class="it-exchange-addon-settings it-exchange-<?php echo esc_attr( self::SHORT ); ?>-addon-settings">
 
-			<h3><?php _e( "General", Plugin::SLUG ); ?></h3>
+			<h3><?php _e( "General", 'LION' ); ?></h3>
 
 			<div class="invitation-container">
-				<label for="invitation"><?php _e( "Invitation Email", Plugin::SLUG ); ?></label>
+				<label for="invitation"><?php _e( "Invitation Email", 'LION' ); ?></label>
 
-				<p class="description"><?php _e( "Email sent to members when they're invited to an umbrella membership.", Plugin::SLUG ); ?></p>
+				<p class="description"><?php _e( "Email sent to members when they're invited to an umbrella membership.", 'LION' ); ?></p>
 
 				<?php
 				$editor = new Editor( Factory::make( 'itegms-invitation' ), array(
-					'mustSelectItem'    => __( "You must select an item", Plugin::SLUG ),
-					'selectTemplateTag' => __( "Select Template Tag", Plugin::SLUG ),
-					'templateTag'       => __( "Template Tag", Plugin::SLUG ),
-					'selectATag'        => __( "Select a tag", Plugin::SLUG ),
-					'insertTag'         => __( "Insert", Plugin::SLUG ),
-					'cancel'            => __( "Cancel", Plugin::SLUG ),
-					'insertTemplateTag' => __( "Insert Template Tag", Plugin::SLUG )
+					'mustSelectItem'    => __( "You must select an item", 'LION' ),
+					'selectTemplateTag' => __( "Select Template Tag", 'LION' ),
+					'templateTag'       => __( "Template Tag", 'LION' ),
+					'selectATag'        => __( "Select a tag", 'LION' ),
+					'insertTag'         => __( "Insert", 'LION' ),
+					'cancel'            => __( "Cancel", 'LION' ),
+					'insertTemplateTag' => __( "Insert Template Tag", 'LION' )
 				) );
 
 				$editor->thickbox();
@@ -338,22 +338,22 @@ TAG;
 
 			<div class="invitation-new-user-container">
 				<label for="invitation-new-user">
-					<?php _e( "Invitation & New User Email", Plugin::SLUG ); ?>
+					<?php _e( "Invitation & New User Email", 'LION' ); ?>
 				</label>
 
 				<p class="description">
-					<?php _e( "Email sent to members when they're invited to an umbrella membership and have had an account created for them.", Plugin::SLUG ); ?>
+					<?php _e( "Email sent to members when they're invited to an umbrella membership and have had an account created for them.", 'LION' ); ?>
 				</p>
 
 				<?php
 				$editor = new Editor( Factory::make( 'itegms-invitation-new-user' ), array(
-					'mustSelectItem'    => __( "You must select an item", Plugin::SLUG ),
-					'selectTemplateTag' => __( "Select Template Tag", Plugin::SLUG ),
-					'templateTag'       => __( "Template Tag", Plugin::SLUG ),
-					'selectATag'        => __( "Select a tag", Plugin::SLUG ),
-					'insertTag'         => __( "Insert", Plugin::SLUG ),
-					'cancel'            => __( "Cancel", Plugin::SLUG ),
-					'insertTemplateTag' => __( "Insert Template Tag", Plugin::SLUG )
+					'mustSelectItem'    => __( "You must select an item", 'LION' ),
+					'selectTemplateTag' => __( "Select Template Tag", 'LION' ),
+					'templateTag'       => __( "Template Tag", 'LION' ),
+					'selectATag'        => __( "Select a tag", 'LION' ),
+					'insertTag'         => __( "Insert", 'LION' ),
+					'cancel'            => __( "Cancel", 'LION' ),
+					'insertTemplateTag' => __( "Insert Template Tag", 'LION' )
 				) );
 
 				$editor->thickbox();
@@ -376,19 +376,19 @@ TAG;
 			</div>
 
 			<div class="removed-container">
-				<label for="removed"><?php _e( "Removed Email", Plugin::SLUG ); ?></label>
+				<label for="removed"><?php _e( "Removed Email", 'LION' ); ?></label>
 
-				<p class="description"><?php _e( "Email sent to members when they're removed from an umbrella membership.", Plugin::SLUG ); ?></p>
+				<p class="description"><?php _e( "Email sent to members when they're removed from an umbrella membership.", 'LION' ); ?></p>
 
 				<?php
 				$editor = new Editor( Factory::make( 'itegms-removed' ), array(
-					'mustSelectItem'    => __( "You must select an item", Plugin::SLUG ),
-					'selectTemplateTag' => __( "Select Template Tag", Plugin::SLUG ),
-					'templateTag'       => __( "Template Tag", Plugin::SLUG ),
-					'selectATag'        => __( "Select a tag", Plugin::SLUG ),
-					'insertTag'         => __( "Insert", Plugin::SLUG ),
-					'cancel'            => __( "Cancel", Plugin::SLUG ),
-					'insertTemplateTag' => __( "Insert Template Tag", Plugin::SLUG )
+					'mustSelectItem'    => __( "You must select an item", 'LION' ),
+					'selectTemplateTag' => __( "Select Template Tag", 'LION' ),
+					'templateTag'       => __( "Template Tag", 'LION' ),
+					'selectATag'        => __( "Select a tag", 'LION' ),
+					'insertTag'         => __( "Insert", 'LION' ),
+					'cancel'            => __( "Cancel", 'LION' ),
+					'insertTemplateTag' => __( "Insert Template Tag", 'LION' )
 				) );
 
 				$editor->thickbox();
@@ -411,19 +411,19 @@ TAG;
 			</div>
 
 			<div class="expired-container">
-				<label for="expired"><?php _e( "Expired Email", Plugin::SLUG ); ?></label>
+				<label for="expired"><?php _e( "Expired Email", 'LION' ); ?></label>
 
-				<p class="description"><?php _e( "Email sent to members when their membership has expired.", Plugin::SLUG ); ?></p>
+				<p class="description"><?php _e( "Email sent to members when their membership has expired.", 'LION' ); ?></p>
 
 				<?php
 				$editor = new Editor( Factory::make( 'itegms-expired' ), array(
-					'mustSelectItem'    => __( "You must select an item", Plugin::SLUG ),
-					'selectTemplateTag' => __( "Select Template Tag", Plugin::SLUG ),
-					'templateTag'       => __( "Template Tag", Plugin::SLUG ),
-					'selectATag'        => __( "Select a tag", Plugin::SLUG ),
-					'insertTag'         => __( "Insert", Plugin::SLUG ),
-					'cancel'            => __( "Cancel", Plugin::SLUG ),
-					'insertTemplateTag' => __( "Insert Template Tag", Plugin::SLUG )
+					'mustSelectItem'    => __( "You must select an item", 'LION' ),
+					'selectTemplateTag' => __( "Select Template Tag", 'LION' ),
+					'templateTag'       => __( "Template Tag", 'LION' ),
+					'selectATag'        => __( "Select a tag", 'LION' ),
+					'insertTag'         => __( "Insert", 'LION' ),
+					'cancel'            => __( "Cancel", 'LION' ),
+					'insertTemplateTag' => __( "Insert Template Tag", 'LION' )
 				) );
 
 				$editor->thickbox();
@@ -479,7 +479,7 @@ TAG;
 		$new_values = wp_parse_args( \ITForm::get_post_data(), $defaults );
 		// Check nonce
 		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'it-exchange-' . self::SHORT . '-settings' ) ) {
-			$this->error_message = __( 'Error. Please try again', Plugin::SLUG );
+			$this->error_message = __( 'Error. Please try again', 'LION' );
 
 			return;
 		}
@@ -496,12 +496,12 @@ TAG;
 			$this->get_form_errors( $new_values, $defaults ), $new_values );
 
 		if ( ! $errors && it_exchange_save_option( 'addon_' . self::SHORT, $new_values ) ) {
-			$this->status_message = __( 'Settings saved.', Plugin::SLUG );
+			$this->status_message = __( 'Settings saved.', 'LION' );
 		} else if ( $errors ) {
 			$errors              = implode( '<br />', $errors );
 			$this->error_message = $errors;
 		} else {
-			$this->error_message = __( 'Settings not saved.', Plugin::SLUG );
+			$this->error_message = __( 'Settings not saved.', 'LION' );
 		}
 	}
 

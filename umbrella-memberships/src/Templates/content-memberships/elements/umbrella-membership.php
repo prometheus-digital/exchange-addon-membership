@@ -16,7 +16,7 @@
 
 	<?php do_action( 'it_exchange_umbrella_memberships_begin_wrap' ); ?>
 
-	<h3><?php _e( "Umbrella Membership Info", \ITEGMS\Plugin::SLUG ); ?></h3>
+	<h3><?php _e( "Umbrella Membership Info", 'LION' ); ?></h3>
 
 	<?php it_exchange( 'umbrella-membership', 'seats' ); ?>
 
