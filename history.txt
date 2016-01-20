@@ -271,4 +271,6 @@
 1.16.5 - 2016-01-20 - Elise Alley, Timothy Jacobs
 	Add: Notice if running a PHP version less than 5.3
 	Fix: Unable to save Membership restriction messages
+1.16.6 - 2016-01-20 - Timothy Jacobs
+	Fix: Version notice
 
