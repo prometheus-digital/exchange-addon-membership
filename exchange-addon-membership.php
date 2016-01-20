@@ -88,10 +88,6 @@ function it_exchange_membership_addon_activation() {
 		}
 	}
 	update_option( 'it-exchange-membership-addon-version', ITE_MEMBERSHIP_PLUGIN_VERSION );
-
-	if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
-		update_option( 'it-exchange-membership-php-version-nag', true );
-	}
 }
 register_activation_hook( __FILE__, 'it_exchange_membership_addon_activation' );
 

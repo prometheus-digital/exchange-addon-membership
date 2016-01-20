@@ -46,10 +46,10 @@ function it_exchange_membership_show_php_version_nag() {
 	if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
 
 		if ( isset( $_GET['dismiss-php-version-nag'] ) ) {
-			delete_option( 'it-exchange-membership-php-version-nag' );
+			update_option( 'it-exchange-membership-php-version-nag', false );
 		}
 
-		$show = get_option( 'it-exchange-membership-php-version-nag', false );
+		$show = get_option( 'it-exchange-membership-php-version-nag', true );
 
 		if ( ! $show ) {
 			return;
