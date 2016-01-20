@@ -44,12 +44,28 @@ add_action( 'admin_notices', 'it_exchange_membership_addon_show_permlink_update_
 function it_exchange_membership_show_php_version_nag() {
 
 	if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
+
+		update_option( 'it-exchange-membership-php-version-nag', true );
+
+		if ( isset( $_GET['dismiss-php-version-nag'] ) ) {
+			delete_option( 'it-exchange-membership-php-version-nag' );
+		}
+
+		$show = get_option( 'it-exchange-membership-php-version-nag', false );
+
+		if ( ! $show ) {
+			return;
+		}
+
+		$dismiss_url = add_query_arg( 'dismiss-php-version-nag', true );
+
 		?>
         <div id="it-exchange-add-on-php-version-nag" class="it-exchange-nag">
             <?php printf( __(
 	            'The next versions of Membership will require PHP version 5.3 for certain features. You are currently running version %s. Please contact your host to upgrade your PHP version.',
 	            'LION' ), PHP_VERSION
             ); ?>
+	        <a class="dismiss btn" href="<?php echo esc_url( $dismiss_url ); ?>">&times;</a>
         </div>
         <script type="text/javascript">
             jQuery( document ).ready( function() {
