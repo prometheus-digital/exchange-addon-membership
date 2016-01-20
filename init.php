@@ -63,3 +63,20 @@ include( 'lib/integrations/builder/init.php' );
  * New Product Features added by the Exchange Membership Add-on.
 */
 require( 'lib/product-features/load.php' );
+
+$current_version = get_option( 'exchange_mmebership_version', '1.17.0' );
+
+if ( $current_version != ITE_MEMBERSHIP_PLUGIN_VERSION ) {
+
+	/**
+	 * Runs when the version upgrades.
+	 *
+	 * @since 1.17.0
+	 *
+	 * @param string $current_version
+	 * @param string $new_version
+	 */
+	do_action( 'it_exchange_addon_membership_upgrade', $current_version, ITE_MEMBERSHIP_PLUGIN_VERSION );
+
+	update_option( 'exchange_mmebership_version', ITE_MEMBERSHIP_PLUGIN_VERSION );
+}

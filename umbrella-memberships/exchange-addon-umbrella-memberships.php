@@ -71,7 +71,7 @@ class Plugin {
 			 * @param string $current_version
 			 * @param string $new_version
 			 */
-			do_action( 'itegms_upgrade', self::$version, $current_version );
+			do_action( 'itegms_upgrade', $current_version, self::$version );
 
 			update_option( 'itegms_version', self::$version );
 		}
