@@ -37,6 +37,34 @@ function it_exchange_membership_addon_show_permlink_update_nag() {
 add_action( 'admin_notices', 'it_exchange_membership_addon_show_permlink_update_nag' );
 
 /**
+ * Show a nag about PHP version 5.3 requirement.
+ *
+ * @since 1.16.5
+ */
+function it_exchange_membership_show_php_version_nag() {
+
+	if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
+		?>
+        <div id="it-exchange-add-on-php-version-nag" class="it-exchange-nag">
+            <?php printf( __(
+	            'The next versions of Membership will require PHP version 5.3 for certain features. You are currently running version %s. Please contact your host to upgrade your PHP version.',
+	            'LION' ), PHP_VERSION
+            ); ?>
+        </div>
+        <script type="text/javascript">
+            jQuery( document ).ready( function() {
+                if ( jQuery( '.wrap > h2' ).length == '1' ) {
+                    jQuery("#it-exchange-add-on-php-version-nag").insertAfter('.wrap > h2').addClass( 'after-h2' );
+                }
+            });
+        </script>
+        <?php
+	}
+}
+
+add_action( 'admin_notices', 'it_exchange_membership_show_php_version_nag' );
+
+/**
  * Adds a members table to the Users WP Menu.
  *
  * @since 1.2.0
