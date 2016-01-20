@@ -92,8 +92,8 @@ class Plugin {
 		$options = array(
 			'name'              => __( 'Umbrella Memberships', Plugin::SLUG ),
 			'description'       => $desc,
-			'author'            => 'Iron Bound Designs',
-			'author_url'        => 'https://www.ironbounddesigns.com',
+			'author'            => 'iThemes',
+			'author_url'        => 'https://ithemes.com/exchange/membership',
 			'file'              => dirname( __FILE__ ) . '/init.php',
 			'icon'              => self::$url . 'assets/img/icon-50.png',
 			'category'          => 'other',
