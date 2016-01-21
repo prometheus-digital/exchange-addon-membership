@@ -77,15 +77,7 @@ class Hooks {
 			'save_members_list'
 		) );
 
-		add_filter( 'get_user_metadata', array(
-			__CLASS__,
-			'override_member_access'
-		), 10, 4 );
-
-		add_filter( 'update_user_metadata', array(
-			__CLASS__,
-			'remove_added_member_access'
-		), 10, 5 );
+		add_filter( 'it_exchange_get_customer_memberships', array( __CLASS__, 'override_customer_memberships' ), 10, 2 );
 
 		add_action( 'it_exchange_recurring_payments_addon_update_transaction_subscriber_status', array(
 			__CLASS__,
@@ -530,46 +522,35 @@ class Hooks {
 	}
 
 	/**
-	 * Override the member access data.
+	 * Override the customer's memberships.
 	 *
-	 * @since 1.0
+	 * @since 1.17.0
 	 *
-	 * @param mixed  $data
-	 * @param int    $object_id
-	 * @param string $meta_key
-	 * @param bool   $single
+	 * @param array|bool $memberships
+	 * @param int|bool   $user_id
 	 *
-	 * @return mixed
+	 * @return array
 	 */
-	public static function override_member_access( $data, $object_id, $meta_key, $single ) {
+	public static function override_customer_memberships( $memberships, $user_id ) {
 
-		if ( ! is_null( $data ) ) {
-			return $data;
-		}
-
-		if ( $meta_key !== '_it_exchange_customer_member_access' ) {
-			return $data;
+		if ( ! $user_id ) {
+			return $memberships;
 		}
 
 		$query = new Relationship_Query( array(
-			'member' => $object_id
+			'member' => $user_id
 		) );
 
 		/** @var Relationship[] $umbrella_memberships */
 		$umbrella_memberships = $query->get_results();
 
 		if ( empty( $umbrella_memberships ) ) {
-			return $data;
+			return $memberships;
 		}
 
-		// remove our filter to prevent loops
-		remove_filter( 'get_user_metadata', array(
-			__CLASS__,
-			'override_member_access'
-		) );
-
-		// retrieve the original data
-		$original = get_user_meta( $object_id, $meta_key, $single );
+		if ( ! is_array( $memberships ) ) {
+			$memberships = array();
+		}
 
 		foreach ( $umbrella_memberships as $membership ) {
 
@@ -580,73 +561,10 @@ class Hooks {
 			$tid = $membership->get_purchase()->get_transaction()->ID;
 			$pid = $membership->get_purchase()->get_membership()->ID;
 
-			$original[ $tid ][] = $pid;
+			$memberships[ $pid ] = $tid;
 		}
 
-		// remove our filter to prevent loops
-		add_filter( 'get_user_metadata', array(
-			__CLASS__,
-			'override_member_access'
-		), 10, 4 );
-
-		return array( $original );
-	}
-
-	/**
-	 * When the member access user meta is updated,
-	 * remove our umbrella memberships.
-	 *
-	 * @since 1.0
-	 *
-	 * @param bool   $res
-	 * @param int    $object_id
-	 * @param string $meta_key
-	 * @param mixed  $meta_value
-	 * @param mixed  $prev_value
-	 *
-	 * @return bool
-	 */
-	public static function remove_added_member_access( $res, $object_id, $meta_key, $meta_value, $prev_value ) {
-
-		if ( $meta_key !== '_it_exchange_customer_member_access' ) {
-			return $res;
-		}
-
-		if ( empty( $meta_value ) ) {
-			return $res;
-		}
-
-		$query = new Relationship_Query( array(
-			'member' => $object_id
-		) );
-
-		/** @var Relationship[] $umbrella_memberships */
-		$umbrella_memberships = $query->get_results();
-
-		if ( empty( $umbrella_memberships ) ) {
-			return $res;
-		}
-
-		// remove our filter to prevent loops
-		remove_filter( 'update_user_metadata', array(
-			__CLASS__,
-			'remove_added_member_access'
-		) );
-
-		foreach ( $umbrella_memberships as $membership ) {
-			unset( $meta_value[ $membership->get_purchase()->get_transaction()->ID ] );
-		}
-
-		// perform the update
-		$res = update_user_meta( $object_id, $meta_key, $meta_value, $prev_value );
-
-		// remove our filter to prevent loops
-		add_filter( 'update_user_metadata', array(
-			__CLASS__,
-			'remove_added_member_access'
-		), 10, 5 );
-
-		return $res;
+		return $memberships;
 	}
 
 	/**

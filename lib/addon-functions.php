@@ -491,7 +491,7 @@ function it_exchange_membership_addon_is_content_restricted( $post = null ) {
 		return false;
 	
 	$member_access = it_exchange_membership_addon_get_customer_memberships();
-	
+
 	if ( !empty( $post ) ) {
 			
 		$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
@@ -998,7 +998,7 @@ function it_exchange_membership_addon_get_all_the_children( $membership_id, $chi
 /**
  * Gets a customer's memberships.
  *
- * This is an array of transaction IDs mapped to an array of product IDs.
+ * This is an array of product IDs mapped to transaction IDs.
  *
  * @since 1.2.16 
  *
@@ -1006,9 +1006,9 @@ function it_exchange_membership_addon_get_all_the_children( $membership_id, $chi
  *
  * @return array|bool
 */
-function it_exchange_membership_addon_get_customer_memberships( $customer_id=false ) {
+function it_exchange_membership_addon_get_customer_memberships( $customer_id = false ) {
 
-	$memberships = false;
+	$memberships = array();
 
 	if ( empty( $customer_id ) ) {
 		if ( is_user_logged_in() ) {
