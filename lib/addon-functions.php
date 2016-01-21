@@ -490,7 +490,7 @@ function it_exchange_membership_addon_is_content_restricted( $post = null ) {
 	if ( current_user_can( 'administrator' ) )
 		return false;
 	
-	$member_access = it_exchange_get_session_data( 'member_access' );
+	$member_access = it_exchange_membership_addon_get_customer_memberships();
 	
 	if ( !empty( $post ) ) {
 			
@@ -590,8 +590,8 @@ function it_exchange_membership_addon_is_product_restricted( $post = null ) {
 	
 	if ( current_user_can( 'administrator' ) )
 		return false;
-	
-	$member_access = it_exchange_get_session_data( 'member_access' );
+
+	$member_access = it_exchange_membership_addon_get_customer_memberships();
 		
 	if ( !empty( $post ) && 'it_exchange_prod' === $post->post_type ) {
 		$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
@@ -643,7 +643,7 @@ function it_exchange_membership_addon_is_content_dripped( $post = null ) {
 	if ( current_user_can( 'administrator' ) )
 		return false;
 
-	$member_access = it_exchange_get_session_data( 'member_access' );
+	$member_access = it_exchange_membership_addon_get_customer_memberships();
 	
 	if ( !empty( $post ) ) {
 
@@ -694,8 +694,8 @@ function it_exchange_membership_addon_is_product_dripped( $post = null ) {
 	
 	if ( current_user_can( 'administrator' ) )
 		return false;
-		
-	$member_access = it_exchange_get_session_data( 'member_access' );
+
+	$member_access = it_exchange_membership_addon_get_customer_memberships();
 
 	if ( !empty( $post ) && 'it_exchange_prod' === $post->post_type ) {
 		foreach( $member_access as $product_id => $txn_id  ) {
