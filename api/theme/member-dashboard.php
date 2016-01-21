@@ -340,7 +340,7 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 											if ( 0 < $interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true ) ) {
 												$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
 												$duration = !empty( $duration ) ? $duration : 'days';
-												$member_access = it_exchange_get_session_data( 'member_access' );
+												$member_access = it_exchange_membership_addon_get_customer_memberships();
 												if ( !empty( $member_access[$product_id] ) ) {
 
 													$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $member_access[$product_id] ) );

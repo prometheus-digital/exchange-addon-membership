@@ -67,7 +67,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 		$now = time();
 		$membership_settings = it_exchange_get_option( 'addon_membership' );
 		
-		$member_access = it_exchange_get_session_data( 'member_access' );
+		$member_access = it_exchange_membership_addon_get_customer_memberships();
 		foreach( $member_access as $product_id => $txn_id ) {
 			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
 			$interval = !empty( $interval ) ? $interval : 0;
@@ -114,7 +114,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 		$now = time();
 		$membership_settings = it_exchange_get_option( 'addon_membership' );
 		
-		$member_access = it_exchange_get_session_data( 'member_access' );
+		$member_access = it_exchange_membership_addon_get_customer_memberships();
 		foreach( $member_access as $product_id => $txn_id ) {
 			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
 			$interval = !empty( $interval ) ? $interval : 0;
@@ -161,7 +161,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 		$now = time();
 		$membership_settings = it_exchange_get_option( 'addon_membership' );
 		
-		$member_access = it_exchange_get_session_data( 'member_access' );
+		$member_access = it_exchange_membership_addon_get_customer_memberships();
 		foreach( $member_access as $product_id => $txn_id ) {
 			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
 			$interval = !empty( $interval ) ? $interval : 0;

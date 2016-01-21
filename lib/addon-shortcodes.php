@@ -275,7 +275,7 @@ function it_exchange_membership_addon_member_content_shortcode( $atts, $content 
 	$membership_ids = explode( ',', $membership_ids );
 	
 	if ( is_user_logged_in() ) {
-		$member_access = it_exchange_get_session_data( 'member_access' );		
+		$member_access = it_exchange_membership_addon_get_customer_memberships();
 		if ( !empty( $member_access )  ) {
 			foreach( $member_access as $product_id => $txn_id ) {
 				if ( in_array( $product_id, $membership_ids ) )

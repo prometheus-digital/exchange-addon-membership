@@ -531,7 +531,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 			$parent_access = array();
 			$customer = new IT_Exchange_Customer( $user_id );
 			$member_access = $customer->get_customer_meta( 'member_access' );
-			$member_access_session = it_exchange_get_session_data( 'member_access' );
+			$member_access_session = it_exchange_membership_addon_get_customer_memberships();
 	
 			if ( !empty( $member_access ) ) {
 				//If the transient doesn't exist, verify the membership access subscriber status and reset transient
