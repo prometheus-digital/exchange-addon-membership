@@ -995,28 +995,45 @@ function it_exchange_membership_addon_get_all_the_children( $membership_id, $chi
 	return $child_ids;
 }
 
-/*
- * Gets a customer's memberships
+/**
+ * Gets a customer's memberships.
+ *
+ * This is an array of transaction IDs mapped to an array of product IDs.
  *
  * @since 1.2.16 
  *
- * @param int $customer_id Customer's User ID
+ * @param int|bool $customer_id Customer's User ID
+ *
  * @return array|bool
 */
 function it_exchange_membership_addon_get_customer_memberships( $customer_id=false ) {
+
+	$memberships = false;
+
 	if ( empty( $customer_id ) ) {
 		if ( is_user_logged_in() ) {
-			return it_exchange_get_session_data( 'member_access' );
+			$customer_id = it_exchange_get_current_customer_id();
+			$memberships = it_exchange_get_session_data( 'member_access' );
 		}
 	} else {
 		$customer = new IT_Exchange_Customer( $customer_id );
 		$member_access = $customer->get_customer_meta( 'member_access' );
 		if ( !empty( $member_access ) ) {
-			$member_access = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
-			return $member_access;
+			$memberships = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
 		}
 	}
-	return false;
+
+	/**
+	 * Filter the Memberships a customer has access to.
+	 *
+	 * @since 1.17.0
+	 *
+	 * @param array|bool $memberships
+	 * @param int        $customer_id
+	 */
+	$memberships = apply_filters( 'it_exchange_get_customer_memberships', $memberships, $customer_id );
+
+	return $memberships;
 }
 
 /*
