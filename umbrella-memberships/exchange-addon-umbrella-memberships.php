@@ -41,8 +41,8 @@ class Plugin {
 	 */
 	public function __construct() {
 
-		self::$dir = plugin_dir_path( __FILE__ );
-		self::$url = plugin_dir_url( __FILE__ );
+		self::$dir     = plugin_dir_path( __FILE__ );
+		self::$url     = plugin_dir_url( __FILE__ );
 		self::$version = ITE_MEMBERSHIP_PLUGIN_VERSION;
 
 		register_activation_hook( __FILE__, array( $this, 'activate' ) );
@@ -99,10 +99,22 @@ class Plugin {
 			'basename'          => plugin_basename( __FILE__ ),
 			'labels'            => array(
 				'singular_name' => __( 'Umbrella Membership', 'LION' ),
+			),
+			'options'           => array(
+				'auto-enable' => false
 			)
 		);
 
 		it_exchange_register_addon( self::ADD_ON, $options );
+
+		add_filter( 'it_exchange_redirect_on_disable_3rd_party_addon', function ( $url, $addon ) {
+
+			if ( $addon === self::ADD_ON ) {
+				$url = false;
+			}
+
+			return $url;
+		}, 10, 2 );
 	}
 
 	/**
