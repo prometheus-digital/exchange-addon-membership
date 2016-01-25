@@ -107,9 +107,11 @@ class Plugin {
 
 		it_exchange_register_addon( self::ADD_ON, $options );
 
-		add_filter( 'it_exchange_redirect_on_disable_3rd_party_addon', function ( $url, $addon ) {
+		$our_slug = self::ADD_ON;
 
-			if ( $addon === self::ADD_ON ) {
+		add_filter( 'it_exchange_redirect_on_disable_3rd_party_addon', function ( $url, $addon ) use ( $our_slug ) {
+
+			if ( $addon === $our_slug ) {
 				$url = false;
 			}
 
