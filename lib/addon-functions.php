@@ -31,12 +31,14 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 	
 	//Posts
 	$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_download' ) );
-	$post_types = empty( $post_types ) ? get_post_types( array(), 'objects' ) : $post_types;
+	$post_types = empty( $post_types ) ? get_post_types( array( 'public' => true ), 'objects' ) : $post_types;
 	
 	foreach ( $post_types as $post_type ) {
-		if ( in_array( $post_type->name, $hidden_post_types ) ) 
+
+		if ( in_array( $post_type->name, $hidden_post_types ) ) {
 			continue;
-			
+		}
+
 		if ( 'posts' === $selection_type && $post_type->name === $selection )
 			$selected = 'selected="selected"';
 		else
@@ -76,11 +78,21 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 	return $return	;
 }
 
+/**
+ * Build the content rules restriction HTML.
+ *
+ * @since 1.0
+ *
+ * @param array $rules
+ * @param int $product_id
+ *
+ * @return string
+ */
 function it_exchange_membership_addon_build_content_rules( $rules, $product_id ) {
     $count = 0;
     $group_count = 0;
     $groupings = array();
-	$post_types = get_post_types( array(), 'objects' );
+	$post_types = get_post_types( array( 'public' => true ), 'objects' );
 	$taxonomies = get_taxonomies( array( 'public' => true ), 'objects' );
 	$cache = new stdClass();
 	$cache->posts = new stdClass();
@@ -175,7 +187,7 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 							if ( in_array( $post_type->name, $hidden_post_types ) ) 
 								continue;
 								
-							$options .= '<option value="' . $post_type->name . '" ' . selected( $post_type->name, $value, false ) . '>' . $post_type->label . '</option>';	
+							$options .= '<option value="' . $post_type->name . '" ' . selected( $post_type->name, $value, false ) . '>' . $post_type->label . '</option>';
 						}
 						break;
 					
@@ -268,10 +280,11 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
  *
  * @param array $rule A Memberships rule
  * @param int $count current row count, used for JavaScript/AJAX
- * @param int $product_id Memberhip's product ID
+ * @param int|bool $product_id Memberhip's product ID
+ *
  * @return string HTML output of drip rule div
 */
-function it_exchange_membership_addon_build_drip_rules( $rule = false, $count, $product_id = false ) {
+function it_exchange_membership_addon_build_drip_rules( $rule = array(), $count, $product_id = false ) {
 	
 	$return = '';
 
@@ -747,16 +760,17 @@ function it_exchange_membership_addon_get_current_membership() {
 	return false;
 }
 
-/*
+/**
  * Returns membership access rules sorted by selected type
  *
  * @since 1.0.0
  *
  * @param int $membership_product_id
  * @param bool $exclude_exempted (optional) argument to exclude exemptions from access rules (true by default)
+ *
  * @return array
 */
-function it_exchange_membership_access_rules_sorted_by_selected_type( $membership_product_id, $exclude_exempted=true ) {
+function it_exchange_membership_access_rules_sorted_by_selected_type( $membership_product_id, $exclude_exempted = true ) {
 	$access_rules = it_exchange_get_product_feature( $membership_product_id, 'membership-content-access-rules' );
 	$sorted_access_rules = array();
 	
@@ -777,12 +791,13 @@ function it_exchange_membership_access_rules_sorted_by_selected_type( $membershi
 	return $sorted_access_rules;
 }
 
-/*
+/**
  * Returns true if product in cart is a membership product
  *
  * @since 1.0.0 
  *
- * @param object cart
+ * @param object|bool $cart_products
+ *
  * @return bool
 */
 function it_exchange_membership_cart_contains_membership_product( $cart_products = false ) {
@@ -800,7 +815,7 @@ function it_exchange_membership_cart_contains_membership_product( $cart_products
 	return false;
 }
 
-/*
+/**
  * For hierarchical membership types
  * Finds all the most-parental membership types in the member_access session
  * Used generally to prevent duplicate content from being printed
@@ -809,6 +824,7 @@ function it_exchange_membership_cart_contains_membership_product( $cart_products
  * @since 1.2.0
  *
  * @param array $membership_products current list of accessible membership products
+ *
  * @return array
 */
 function it_exchange_membership_addon_setup_most_parent_member_access_array( $membership_products ) {
@@ -832,15 +848,17 @@ function it_exchange_membership_addon_setup_most_parent_member_access_array( $me
 	return $parent_ids;
 }
 
-/*
+/**
  * For hierarchical membership types
  * Get all child membership products and adds it to an array to be used
  * for generating the member_access session
  *
  * @since 1.2.0 
  *
- * @param array $membership_products current list of accessible membership products
- * @param array $product_ids
+ * @param array    $membership_products current list of accessible membership products
+ * @param array    $product_ids
+ * @param int|bool $parent_txn_id
+ *
  * @return array
 */
 function it_exchange_membership_addon_setup_recursive_member_access_array( $membership_products, $product_ids = array(), $parent_txn_id=false ) {
@@ -866,13 +884,14 @@ function it_exchange_membership_addon_setup_recursive_member_access_array( $memb
 	return $product_ids;
 }
 
-/*
+/**
  * Gets the highest level parent from the parent access session for a given product ID
  *
  * @since 1.2.0 
  *
  * @param int $product_id Membership product to check
  * @param array $parent_access Parent access session (or other array)
+ *
  * @return array
 */
 function it_exchange_membership_addon_get_most_parent_from_member_access( $product_id, $parent_access ) {
@@ -894,14 +913,15 @@ function it_exchange_membership_addon_get_most_parent_from_member_access( $produ
 	return $most_parent;
 }
 
-/*
+/**
  * For hierarchical membership types
  * Prints or returns an HTML formatted list of memberships and their children
  *
  * @since 1.2.0 
  *
- * @param array $membership_products parent IDs of membership products
+ * @param array $product_ids Parent IDs of membership products
  * @param array $args array of arguments for the function
+ *
  * @return string|null
 */
 function it_exchange_membership_addon_display_membership_hierarchy( $product_ids, $args = array() ) {
@@ -943,7 +963,7 @@ function it_exchange_membership_addon_display_membership_hierarchy( $product_ids
 		return $output;
 }
 
-/*
+/**
  * For hierarchical membership types
  * Returns an array of all the product's parents
  *
@@ -951,6 +971,7 @@ function it_exchange_membership_addon_display_membership_hierarchy( $product_ids
  *
  * @param int $membership_id product ID of membership
  * @param array $parent_ids array of of current parent_ids
+ *
  * @return array|bool
 */
 function it_exchange_membership_addon_get_all_the_parents( $membership_id, $parent_ids = array() ) {
@@ -969,7 +990,7 @@ function it_exchange_membership_addon_get_all_the_parents( $membership_id, $pare
 	return $parent_ids;
 }
 
-/*
+/**
  * For hierarchical membership types
  * Returns an array of all the product's children
  *
@@ -977,6 +998,7 @@ function it_exchange_membership_addon_get_all_the_parents( $membership_id, $pare
  *
  * @param int $membership_id product ID of membership
  * @param array $child_ids array of of current child_ids
+ *
  * @return array|bool
 */
 function it_exchange_membership_addon_get_all_the_children( $membership_id, $child_ids = array() ) {
@@ -1036,17 +1058,19 @@ function it_exchange_membership_addon_get_customer_memberships( $customer_id = f
 	return $memberships;
 }
 
-/*
+/**
  * Gets a customer's memberships
  *
  * @since 1.2.16 
  *
- * @param int $membership_id Member's Product/Post ID
- * @param int $customer_id Customer's User ID
+ * @param int $membership Member's Product/Post ID
+ * @param int|bool $customer_id Customer's User ID
+ *
  * @return array|bool
 */
-function it_exchange_membership_addon_is_customer_member_of( $membership, $customer_id=false ) {
+function it_exchange_membership_addon_is_customer_member_of( $membership, $customer_id = false ) {
 	$member_access = it_exchange_membership_addon_get_customer_memberships( $customer_id );
+
 	if ( is_int( $membership ) ) {
 		$membership_id = $membership;
 	} else {
@@ -1059,7 +1083,10 @@ function it_exchange_membership_addon_is_customer_member_of( $membership, $custo
 		$products = get_posts( $args );
 		if ( !empty( $products ) ) {
 			$membership_id = $products[0]->ID;
+		} else {
+			return false;
 		}
 	}
+
 	return !empty( $member_access[$membership_id] );
 }
