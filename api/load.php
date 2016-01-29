@@ -6,9 +6,10 @@
  * @since 1.0.0
 */
 
-if ( is_admin() ) {
-	// Admin only
-} else {
+if ( ! is_admin() ) {
+
 	// Frontend only
 	include( 'theme.php' );
 }
+
+require_once dirname( __FILE__ ) . '/memberships.php';
