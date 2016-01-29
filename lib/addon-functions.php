@@ -24,15 +24,15 @@
  * @return string HTML output of selections row div
 */
 function it_exchange_membership_addon_get_selections( $selection = 0, $selection_type = NULL, $count, $post_types = NULL, $taxonomies = NULL ) {
-	
+
 	$return  = '<div class="it-exchange-content-access-type column">';
 	$return .= '<select class="it-exchange-membership-content-type-selections" name="it_exchange_content_access_rules[' . $count . '][selection]">';
 	$return .= '<option value="">' . __( 'Select Content', 'LION' ) . '</option>';
-	
+
 	//Posts
 	$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_download' ) );
 	$post_types = empty( $post_types ) ? get_post_types( array( 'public' => true ), 'objects' ) : $post_types;
-	
+
 	foreach ( $post_types as $post_type ) {
 
 		if ( in_array( $post_type->name, $hidden_post_types ) ) {
@@ -43,38 +43,38 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 			$selected = 'selected="selected"';
 		else
 			$selected = '';
-			
-		$return .= '<option data-type="posts" value="' . $post_type->name . '" ' . $selected . '>' . $post_type->label . '</option>';	
+
+		$return .= '<option data-type="posts" value="' . $post_type->name . '" ' . $selected . '>' . $post_type->label . '</option>';
 	}
-	
+
 	//Post Types
 	if ( 'post_types' === $selection_type && 'post_type' === $selection )
 		$selected = 'selected="selected"';
 	else
 		$selected = '';
-		
+
 	$return .= '<option data-type="post_types" value="post_type" ' . $selected . '>' . __( 'Post Types', 'LION' ) . '</option>';
-	
+
 	//Taxonomies
 	$taxonomies = empty( $taxonomies ) ? get_taxonomies( array( 'public' => true ), 'objects' ) : $taxonomies;
 	foreach ( $taxonomies as $tax ) {
 		// we want to skip post format taxonomies, not really needed here
 		if ( 'post_format' === $tax->name )
 			continue;
-			
+
 		if ( 'taxonomy' === $selection_type && $tax->name === $selection )
 			$selected = 'selected="selected"';
 		else
 			$selected = '';
-			
-		$return .= '<option data-type="taxonomy" value="' . $tax->name . '" ' . $selected . '>' . $tax->label . '</option>';	
-	}	
-	
+
+		$return .= '<option data-type="taxonomy" value="' . $tax->name . '" ' . $selected . '>' . $tax->label . '</option>';
+	}
+
 	$return .= apply_filters( 'it_exchange_membership_addon_get_selections', '', $selection, $selection_type );
-	
+
 	$return .= '</select>';
 	$return .= '</div>';
-	
+
 	return $return	;
 }
 
@@ -97,30 +97,30 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 	$cache = new stdClass();
 	$cache->posts = new stdClass();
 	$cache->terms = new stdClass();
-	
+
 	$return = '<div class="it-exchange-membership-addon-content-access-rules content-access-sortable">';
-    
+
     if ( !empty( $rules ) ) {
-	    
+
 		foreach( $rules as $rule ) {
 			$options = '';
-			
+
 			$current_grouped_id = isset( $rule['grouped_id'] ) ? $rule['grouped_id'] : false;
-									
+
 			if ( !empty( $groupings ) && $current_grouped_id !== end( $groupings ) ) {
-			
+
 				$return .= '</div></div>'; //this is ending the divs from the group opening in it_exchange_membership_addon_build_content_rule()
 				array_pop( $groupings );
-										
+
 			} else if ( false === $current_grouped_id && !empty( $groupings ) ) {
-									
+
 				foreach( $groupings as $group ) {
 					$return .= '</div></div>'; //this is ending the divs from the group opening in it_exchange_membership_addon_build_content_rule()
 				}
 				$groupings = array();
-				
+
 			}
-										
+
 			$selection    = !empty( $rule['selection'] )    ? $rule['selection'] : false; //Content Types (e.g. post_types or taxonomies)
 			$selected     = !empty( $rule['selected'] )     ? $rule['selected'] : false;  //Content Type (e.g. posts post_type, or category taxonomy)
 			$value        = !empty( $rule['term'] )         ? $rule['term'] : false;      //Content (e.g. specific post or category)
@@ -128,96 +128,96 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 			$group_layout = !empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
 			$group_id     = isset( $rule['group_id'] )      ? $rule['group_id'] : NULL;
 			$grouped_id   = isset( $rule['grouped_id'] )    ? $rule['grouped_id'] : NULL;
-			
+
 			if ( isset( $group ) && isset( $group_id ) )
 				$group_class = 'it-exchange-membership-addon-content-access-group';
 			else
 				$group_class = '';
-		
+
 			$return .= '<div class="it-exchange-membership-addon-content-access-rule ' . $group_class . ' columns-wrapper" data-count="' . $count . '">';
 			$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>';
-		
+
 			if ( isset( $group_id ) ) {
-									
+
 				$return .= '<input type="text" name="it_exchange_content_access_rules[' . $count . '][group]" value="' . $group . '" />';
 				$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="' . $group_id  . '" />';
-				
+
 				$return .= '<div class="group-layout-options">';
 				$return .= '<span class="group-layout ' . ( 'grid' === $group_layout ? 'active-group-layout' : '' ) . '" data-type="grid">grid</span><span class="group-layout ' . ( 'list' === $group_layout ? 'active-group-layout' : '' ) . '" data-type="list">list</span>';
 				$return .= '<input type="hidden" class="group-layout-input" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="' . $group_layout . '" />';
 				$return .= '</div>';
-				
+
 				$return .= '<div class="it-exchange-membership-addon-group-action-wrapper">';
 				$return .= '<div class="it-exchange-membership-addon-group-action">ACTION</div>';
 				$return .= '<div class="it-exchange-membership-addon-group-actions">';
 				$return .= '	<div class="it-exchange-membership-addon-ungroup-content-access-group column">';
 				$return .= '		<a href="#">' . __( 'Ungroup', 'LION' ) . '</a>';
-				$return .= '	</div>';		
+				$return .= '	</div>';
 				$return .= '	<div class="it-exchange-membership-addon-remove-content-access-group column">';
 				$return .= '		<a href="#">' . __( 'Delete Group', 'LION' ) . '</a>';
 				$return .= '	</div>';
 				$return .= '</div>';
 				$return .= '</div>';
-				
+
 				$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][grouped_id]" value="' . $grouped_id . '" />';
-				
+
 				$return .= '<div class="columns-wrapper it-exchange-membership-content-access-group-content content-access-sortable" data-group-id="' . $group_id . '">';
 				//we don't want to end the <div> yet, because the next bunch of rules are grouped under this
 				//we only want to end the <div> when a new group_id is set
 				//or the div above
-							
+
 			} else {
-				
+
 				$return .= it_exchange_membership_addon_get_selections( $selection, $selected, $count, $post_types, $taxonomies );
 				$return .= '<div class="it-exchange-content-access-content column col-6-12"><div class="it-exchange-membership-content-type-terms">';
 				switch( $selected ) {
-					
+
 					case 'posts':
 						if ( empty( $cache->posts->$selection ) ) {
 							$cache->posts->$selection = get_posts( array( 'post_type' => $selection, 'posts_per_page' => -1, 'post_status' => 'any' ) );
 						}
 						foreach ( $cache->posts->$selection as $post ) {
-							$options .= '<option value="' . $post->ID . '" ' . selected( $post->ID, $value, false ) . '>' . get_the_title( $post->ID ) . '</option>';	
+							$options .= '<option value="' . $post->ID . '" ' . selected( $post->ID, $value, false ) . '>' . get_the_title( $post->ID ) . '</option>';
 						}
 						break;
-					
+
 					case 'post_types':
 						$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download', 'page' ) );
 						foreach ( $post_types as $post_type ) {
-							if ( in_array( $post_type->name, $hidden_post_types ) ) 
+							if ( in_array( $post_type->name, $hidden_post_types ) )
 								continue;
-								
+
 							$options .= '<option value="' . $post_type->name . '" ' . selected( $post_type->name, $value, false ) . '>' . $post_type->label . '</option>';
 						}
 						break;
-					
+
 					case 'taxonomy':
 						if ( empty( $cache->terms->$selection ) ) {
 							$cache->terms->$selection = get_terms( $selection, array( 'hide_empty' => false ) );
 						}
 						foreach ( $cache->terms->$selection as $term ) {
-							$options .= '<option value="' . $term->term_id . '"' . selected( $term->term_id, $value, false ) . '>' . $term->name . '</option>';	
+							$options .= '<option value="' . $term->term_id . '"' . selected( $term->term_id, $value, false ) . '>' . $term->name . '</option>';
 						}
 						break;
-					
+
 				}
-				
+
 				$options = apply_filters( 'it_exchange_membership_addon_get_custom_selected_options', $options, $value, $selected );
-			
+
 				$return .= '<input type="hidden" value="' . $selected . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
 				$return .= '<select class="it-exchange-membership-content-type-term" name="it_exchange_content_access_rules[' . $count . '][term]">';
 				$return .= $options;
 				$return .= '</select>';
-						
+
 				if ( 'post_types' === $selected || 'taxonomy' === $selected ) {
 					$return .= '<div class="group-layout-options">';
 					$return .= '<span class="group-layout ' . ( 'grid' === $group_layout ? 'active-group-layout' : '' ) . '" data-type="grid">grid</span><span class="group-layout ' . ( 'list' === $group_layout ? 'active-group-layout' : '' ) . '" data-type="list">list</span>';
 					$return .= '<input type="hidden" class="group-layout-input" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="' . $group_layout . '" />';
 					$return .= '</div>';
 				}
-				
+
 				$return .= '</div></div>';
-				
+
 				if ( 'posts' === $selected ) {
 					$drip_hidden = ''; $unavail_hidden = 'hidden';
 				} else {
@@ -228,48 +228,48 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 				$return .= it_exchange_membership_addon_build_drip_rules( $rule, $count , $product_id );
 				$return .= '</div>';
 				$return .= '<div class="it-exchange-content-access-delay-unavailable ' . $unavail_hidden . '">';
-				$return .= __( 'Available for single posts or pages', 'LION' );	
+				$return .= __( 'Available for single posts or pages', 'LION' );
 				$return .= '</div>';
 				$return .= '</div>';
-				
+
 				$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-3_4-12">';
-				$return .= '<a href="#">×</a>';	
+				$return .= '<a href="#">×</a>';
 				$return .= '</div>';
-				
+
 				$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][grouped_id]" value="' . $grouped_id . '" />';
-				
-				
+
+
 				$return .= '</div>';
 			}
-			
+
 			$current_group_id = isset( $rule['group_id'] ) ? $rule['group_id'] : false;
-			
+
 			if ( false !== $current_group_id && !in_array( $current_group_id, $groupings ) )
 				$groupings[] = $current_group_id;
-			
+
 			if ( false !== $current_group_id && $group_count >= $current_group_id )
 				$group_count = $rule['group_id'] + 1;
-				
+
 			$count++;
-			
+
 		}
-		
+
 		if ( !empty( $groupings ) ) {
 			foreach( $groupings as $group ) {
 				$return .= '</div></div>'; //this is ending the divs from the group opening in it_exchange_membership_addon_build_content_rule()
 			}
 			$groupings = array();
 		}
-	
+
 	}
-	
+
 	$return .= '</div>';
-	
+
 	$return .= '<script type="text/javascript" charset="utf-8">';
 	$return .= '	var it_exchange_membership_addon_content_access_iteration = ' . $count . ';';
 	$return .= '	var it_exchange_membership_addon_content_access_group_iteration = ' . $group_count . ';';
 	$return .= '</script>';
-	
+
 	return $return;
 }
 
@@ -285,14 +285,14 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
  * @return string HTML output of drip rule div
 */
 function it_exchange_membership_addon_build_drip_rules( $rule = array(), $count, $product_id = false ) {
-	
+
 	$return = '';
 
 	if ( !empty( $product_id ) && !empty( $rule['selected'] ) && 'posts' === $rule['selected'] && !empty( $rule['term'] ) )
 		$drip_interval = get_post_meta( $rule['term'], '_item-content-rule-drip-interval-' . $product_id, true );
 	else
 		$drip_interval = 0;
-		
+
 	if ( 0 < $drip_interval ) {
 		$drip_duration = get_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $product_id, true );
 		$drip_duration = !empty( $drip_duration ) ? $drip_duration : 'days';
@@ -300,7 +300,7 @@ function it_exchange_membership_addon_build_drip_rules( $rule = array(), $count,
 		$drip_interval = 0;
 		$drip_duration = 'days';
 	}
-	
+
 	$return  .= '<input type="number" min="0" value="' . $drip_interval . '" name="it_exchange_content_access_rules[' . $count . '][drip-interval]" />';
 	$return .= '<select class="it-exchange-membership-content-drip-duration" name="it_exchange_content_access_rules[' . $count . '][drip-duration]">';
 	$durations = array(
@@ -314,7 +314,7 @@ function it_exchange_membership_addon_build_drip_rules( $rule = array(), $count,
 		$return .= '<option value="' . $key . '"' . selected( $key, $drip_duration, false ) . '>' . $string . '</option>';
 	}
 	$return .= '</select>';
-	
+
 	return $return;
 }
 
@@ -327,12 +327,12 @@ function it_exchange_membership_addon_build_drip_rules( $rule = array(), $count,
  * @return string HTML output of drip rule div
 */
 function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
-	
+
 	$return = '';
 	$rules = array();
-	
+
 	$post_type = get_post_type( $post_id );
-	
+
 	/*
 	* Use get_post_meta() to retrieve an existing value
 	* from the database and use the value for the form.
@@ -344,13 +344,13 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 
 	$taxonomies = get_object_taxonomies( $post_type );
 	$terms = wp_get_object_terms( $post_id, $taxonomies );
-	
+
 	foreach( $terms as $term ) {
 		$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
 		if ( !empty( $term_rules ) )
 			$taxonomy_rules[$term->taxonomy][$term->term_id]  = array_merge( $taxonomy_rules, $term_rules );
 	}
-		
+
 	//Re-order for output!
 	if ( !empty( $post_rules ) ) {
 		foreach( $post_rules as $product_id ) {
@@ -384,20 +384,20 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 				}
 			}
 		}
-	}	
-	
+	}
+
 	$return .= '<div class="it-exchange-membership-restrictions">';
-	
+
 	if ( !empty( $rules ) ) {
-			
+
 		foreach ( $rules as $membership_id => $rule ) {
 			$return .= '<div class="it-exchange-membership-restriction-group">';
 			$title = get_the_title( $membership_id );
 			$parents = it_exchange_membership_addon_get_all_the_parents( $membership_id );
 			$restriction_exception = !empty( $restriction_exemptions[$membership_id] ) ? $restriction_exemptions[$membership_id] : array();
-			
+
 			$return .= '<input type="hidden" name="it_exchange_membership_id" value="' . $membership_id . '">';
-			
+
 			if ( !empty( $rule['post'] ) && true === $rule['post'] ) {
 				$return .= '<div class="it-exchange-membership-rule-post it-exchange-membership-rule">';
 				$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="post" ' . checked( in_array( 'post', $restriction_exception ), false, false ) . '>';
@@ -405,15 +405,15 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 				if ( !empty( $parents ) )
 					$return .= '<p class="description">' . sprintf( __( 'Included in: %s', 'LION' ), join( ', ', array_map( 'get_the_title', $parents ) ) ) . '</p>';
 				$return .= '<span class="it-exchange-membership-remove-rule">&times;</span>';
-				
-				$drip_interval = get_post_meta( $post_id, '_item-content-rule-drip-interval-' . $membership_id, true );				
-				
+
+				$drip_interval = get_post_meta( $post_id, '_item-content-rule-drip-interval-' . $membership_id, true );
+
 				if ( 0 < $drip_interval ) {
 					$drip_duration = get_post_meta( $post_id, '_item-content-rule-drip-duration-' . $membership_id, true );
 					$drip_duration = !empty( $drip_duration ) ? $drip_duration : 'days';
-					
+
 					if ( !empty( $drip_interval ) && !empty( $drip_duration ) ) {
-					
+
 						$return .= '<div class="it-exchange-membership-rule-delay">' . __( 'Delay', 'LION' ) . '</div>';
 						$return .= '<div class="it-exchange-membership-drip-rule">';
 						$return .= '<input class="it-exchange-membership-drip-rule-interval" type="number" min="0" value="' . $drip_interval . '" name="it_exchange_membership_drip_interval" />';
@@ -430,14 +430,14 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 						}
 						$return .= '</select>';
 						$return .= '</div>';
-					
+
 					}
 
 				}
-				
+
 				$return .= '</div>';
 			}
-			
+
 			if ( !empty( $rule['post_type'] ) ) {
 				$return .= '<div class="it-exchange-membership-rule-post-type it-exchange-membership-rule">';
 				$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="posttype" ' . checked( in_array( 'posttype', $restriction_exception ), false, false ) . '>';
@@ -445,7 +445,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 				$return .= '<div class="it-exchange-membership-rule-description">' . $rule['post_type'] . '</div>';
 				$return .= '</div>';
 			}
-			
+
 			if ( !empty( $rule['taxonomy'] ) ) {
 				foreach ( $rule['taxonomy'] as $taxonomy ) {
 					foreach( $rules[$product_id][$taxonomy]['term_ids'] as $term_id ) {
@@ -460,17 +460,17 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 			}
 			$return .= '</div>';
 		}
-	
+
 	} else {
-	
+
 		$return .= '<div class="it-exchange-membership-no-restrictions">' . __( 'No membership restrictions for this content.', 'LION' ) . '</div>';
-		
+
 	}
-	
+
 	$return .= '</div>';
-	
+
 	return $return;
-	
+
 }
 
 /**
@@ -481,7 +481,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
  * if exemption exists - true
  *
  * An exemption basically tells the Membership addon that a member who has access to
- * specific content should not have access to it. For instance, say you have a post in 
+ * specific content should not have access to it. For instance, say you have a post in
  * a restricted category and you have two membership levels who have access to that category
  * but you only want that post to be visible to one of the memberships. By adding the
  * exemption for the other membership, they will no longer have access to that content.
@@ -499,16 +499,16 @@ function it_exchange_membership_addon_is_content_restricted( $post = null ) {
 	}
 
 	$restriction = false;
-		
+
 	if ( current_user_can( 'administrator' ) )
 		return false;
-	
+
 	$member_access = it_exchange_membership_addon_get_customer_memberships();
 
 	if ( !empty( $post ) ) {
-			
+
 		$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
-		
+
 		if ( 'it_exchange_prod' !== $post->post_type ) {
 			$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
 			if ( !empty( $post_rules ) ) {
@@ -528,7 +528,7 @@ function it_exchange_membership_addon_is_content_restricted( $post = null ) {
 				}
 			}
 		}
-		
+
 		$post_type_rules = get_option( '_item-content-rule-post-type-' . $post->post_type, array() );
 		if ( !empty( $post_type_rules ) ) {
 			if ( !empty( $member_access ) ) {
@@ -546,7 +546,7 @@ function it_exchange_membership_addon_is_content_restricted( $post = null ) {
 				}
 			}
 		}
-		
+
 		$taxonomy_rules = array();
 		$taxonomies = get_object_taxonomies( $post->post_type );
 		$terms = wp_get_object_terms( $post->ID, $taxonomies );
@@ -556,7 +556,7 @@ function it_exchange_membership_addon_is_content_restricted( $post = null ) {
 				if ( !empty( $member_access ) ) {
 					foreach( $member_access as $product_id => $txn_id ) {
 						if ( in_array( $product_id, $term_rules ) )
-							return false;	
+							return false;
 					}
 				}
 				foreach( $term_rules as $product_id ) {
@@ -568,9 +568,9 @@ function it_exchange_membership_addon_is_content_restricted( $post = null ) {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	return apply_filters( 'it_exchange_membership_addon_is_content_restricted', $restriction, $member_access );
 }
 
@@ -582,7 +582,7 @@ function it_exchange_membership_addon_is_content_restricted( $post = null ) {
  * if exemption exists - true
  *
  * An exemption basically tells the Membership addon that a member who has access to
- * specific product should not have access to it. For instance, say you have a post in 
+ * specific product should not have access to it. For instance, say you have a post in
  * a restricted category and you have two membership levels who have access to that category
  * but you only want that post to be visible to one of the memberships. By adding the
  * exemption for the other membership, they will no longer have access to that content.
@@ -600,21 +600,21 @@ function it_exchange_membership_addon_is_product_restricted( $post = null ) {
 	}
 
 	$restriction = false;
-	
+
 	if ( current_user_can( 'administrator' ) )
 		return false;
 
 	$member_access = it_exchange_membership_addon_get_customer_memberships();
-		
+
 	if ( !empty( $post ) && 'it_exchange_prod' === $post->post_type ) {
 		$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
-	
+
 		$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
 		if ( !empty( $post_rules ) ) {
 			if ( !empty( $member_access ) ) {
 				foreach( $member_access as $product_id => $txn_id ) {
 					if ( in_array( $product_id, $post_rules ) )
-						return false;	
+						return false;
 				}
 			}
 			foreach( $post_rules as $product_id ) {
@@ -626,7 +626,7 @@ function it_exchange_membership_addon_is_product_restricted( $post = null ) {
 			}
 		}
 	}
-	
+
 	return apply_filters( 'it_exchange_membership_addon_is_product_restricted', $restriction, $member_access );
 }
 
@@ -636,7 +636,7 @@ function it_exchange_membership_addon_is_product_restricted( $post = null ) {
  * if member has access - check if content is dripped, otherwise false
  * Dripped content is basically published content that you want to arbitrarily delay for
  * your members. Say you have a class and you want to release 1 class a week to your membership
- * this will allow you to do that. Simply set your content to the appropriate timeline and new members 
+ * this will allow you to do that. Simply set your content to the appropriate timeline and new members
  * will have access to the classes based on the set schedule.
  *
  * @since 1.0.0
@@ -652,12 +652,12 @@ function it_exchange_membership_addon_is_content_dripped( $post = null ) {
 	}
 
 	$dripped = false;
-	
+
 	if ( current_user_can( 'administrator' ) )
 		return false;
 
 	$member_access = it_exchange_membership_addon_get_customer_memberships();
-	
+
 	if ( !empty( $post ) ) {
 
 		foreach( $member_access as $product_id => $txn_id  ) {
@@ -669,14 +669,14 @@ function it_exchange_membership_addon_is_content_dripped( $post = null ) {
 				$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
 				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
 				$now = time();
-				
-				if ( $dripping < $now )						
+
+				if ( $dripping < $now )
 					return false; // we can return here because they should have access to this content with this membership
 				else
 					$dripped = true; // we don't want to return here, because other memberships might have access to content sooner
 			}
 		}
-	
+
 	}
 
 	return apply_filters( 'it_exchange_membership_addon_is_content_dripped', $dripped, $member_access );
@@ -688,7 +688,7 @@ function it_exchange_membership_addon_is_content_dripped( $post = null ) {
  * if member has access - check if content is dripped, otherwise false
  * Dripped product is basically published product that you want to arbitrarily delay for
  * your members. Say you have a class and you want to release 1 class a week to your membership
- * this will allow you to do that. Simply set your content to the appropriate timeline and new members 
+ * this will allow you to do that. Simply set your content to the appropriate timeline and new members
  * will have access to the classes based on the set schedule.
  *
  * @since 1.0.0
@@ -704,7 +704,7 @@ function it_exchange_membership_addon_is_product_dripped( $post = null ) {
 	}
 
 	$dripped = false;
-	
+
 	if ( current_user_can( 'administrator' ) )
 		return false;
 
@@ -720,8 +720,8 @@ function it_exchange_membership_addon_is_product_dripped( $post = null ) {
 				$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
 				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
 				$now = time();
-				
-				if ( $dripping < $now )						
+
+				if ( $dripping < $now )
 					return false; // we can return here because they should have access to this content with this membership
 				else
 					$dripped = true; // we don't want to return here, because other memberships might have access to content sooner
@@ -773,9 +773,9 @@ function it_exchange_membership_addon_get_current_membership() {
 function it_exchange_membership_access_rules_sorted_by_selected_type( $membership_product_id, $exclude_exempted = true ) {
 	$access_rules = it_exchange_get_product_feature( $membership_product_id, 'membership-content-access-rules' );
 	$sorted_access_rules = array();
-	
+
 	foreach( $access_rules as $rule ) {
-		if ( $exclude_exempted && 'posts' === $rule['selected'] ) {		
+		if ( $exclude_exempted && 'posts' === $rule['selected'] ) {
 			$restriction_exemptions = get_post_meta( $rule['term'], '_item-content-rule-exemptions', true );
 			if ( !empty( $restriction_exemptions ) ) {
 				if ( array_key_exists( $membership_product_id, $restriction_exemptions ) )
@@ -787,14 +787,14 @@ function it_exchange_membership_access_rules_sorted_by_selected_type( $membershi
 			'term' => $rule['term'],
 		);
 	}
-	
+
 	return $sorted_access_rules;
 }
 
 /**
  * Returns true if product in cart is a membership product
  *
- * @since 1.0.0 
+ * @since 1.0.0
  *
  * @param object|bool $cart_products
  *
@@ -803,7 +803,7 @@ function it_exchange_membership_access_rules_sorted_by_selected_type( $membershi
 function it_exchange_membership_cart_contains_membership_product( $cart_products = false ) {
 	if ( !$cart_products )
 		$cart_products = it_exchange_get_cart_products();
-	
+
 	foreach ( $cart_products as $product ) {
 		if ( !empty( $product['product_id'] ) ) {
 			if ( 'membership-product-type' === it_exchange_get_product_type( $product['product_id'] ) ) {
@@ -811,7 +811,7 @@ function it_exchange_membership_cart_contains_membership_product( $cart_products
 			}
 		}
 	}
-	
+
 	return false;
 }
 
@@ -853,7 +853,7 @@ function it_exchange_membership_addon_setup_most_parent_member_access_array( $me
  * Get all child membership products and adds it to an array to be used
  * for generating the member_access session
  *
- * @since 1.2.0 
+ * @since 1.2.0
  *
  * @param array    $membership_products current list of accessible membership products
  * @param array    $product_ids
@@ -867,12 +867,12 @@ function it_exchange_membership_addon_setup_recursive_member_access_array( $memb
 			if ( false !== get_post_status( $product_id ) ) {
 				if ( array_key_exists( $product_id, $product_ids ) )
 					continue;
-					
+
 				if ( !$parent_txn_id )
 					$proper_txn_id = $txn_id;
 				else
 					$proper_txn_id = $parent_txn_id;
-					
+
 				$product_ids[$product_id] = $proper_txn_id;
 				if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
 					$child_ids = array_flip( $child_ids ); //we need the child IDs to be the keys
@@ -887,7 +887,7 @@ function it_exchange_membership_addon_setup_recursive_member_access_array( $memb
 /**
  * Gets the highest level parent from the parent access session for a given product ID
  *
- * @since 1.2.0 
+ * @since 1.2.0
  *
  * @param int $product_id Membership product to check
  * @param array $parent_access Parent access session (or other array)
@@ -901,7 +901,7 @@ function it_exchange_membership_addon_get_most_parent_from_member_access( $produ
 			if ( false !== get_post_status( $parent_id ) ) {
 				if ( array_key_exists( $parent_id, $parent_access ) )
 					$most_parent = $parent_id; //potentially the most parent, but we need to keep checking!
-				
+
 				if ( false !== $found_id = it_exchange_membership_addon_get_most_parent_from_member_access( $parent_id, $parent_access ) )
 					$most_parent = $found_id;
 			}
@@ -917,7 +917,7 @@ function it_exchange_membership_addon_get_most_parent_from_member_access( $produ
  * For hierarchical membership types
  * Prints or returns an HTML formatted list of memberships and their children
  *
- * @since 1.2.0 
+ * @since 1.2.0
  *
  * @param array $product_ids Parent IDs of membership products
  * @param array $args array of arguments for the function
@@ -938,25 +938,25 @@ function it_exchange_membership_addon_display_membership_hierarchy( $product_ids
 		if ( false !== get_post_status( $product_id ) ) {
 			$output .= '<ul>';
 			$output .= '<li data-child-id="' . $product_id . '"><div class="inner-wrapper">' . get_the_title( $product_id );
-			
+
 			if ( $delete )
 				$output .= ' <a href data-membership-id="' . $product_id . '" class="it-exchange-membership-addon-delete-membership-child it-exchange-remove-item">&times;</a>';
-				
+
 			if ( $hidden_input ) {
 				$output .= ' <input type="hidden" name="it-exchange-membership-child-ids[]" value="' . $product_id . '" />';
 			}
-			
+
 			$output .= '</div>';
-			
+
 			if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
 				$output .= it_exchange_membership_addon_display_membership_hierarchy( $child_ids, array( 'echo' => false, 'delete' => false, 'hidden_input' => false ) );
 			}
-			
+
 			$output .= '</li>';
 			$output .= '</ul>';
 		}
 	}
-	
+
 	if ( $echo )
 		echo $output;
 	else
@@ -967,7 +967,7 @@ function it_exchange_membership_addon_display_membership_hierarchy( $product_ids
  * For hierarchical membership types
  * Returns an array of all the product's parents
  *
- * @since 1.2.0 
+ * @since 1.2.0
  *
  * @param int $membership_id product ID of membership
  * @param array $parent_ids array of of current parent_ids
@@ -994,7 +994,7 @@ function it_exchange_membership_addon_get_all_the_parents( $membership_id, $pare
  * For hierarchical membership types
  * Returns an array of all the product's children
  *
- * @since 1.2.16 
+ * @since 1.2.16
  *
  * @param int $membership_id product ID of membership
  * @param array $child_ids array of of current child_ids
@@ -1022,7 +1022,7 @@ function it_exchange_membership_addon_get_all_the_children( $membership_id, $chi
  *
  * This is an array of product IDs mapped to transaction IDs.
  *
- * @since 1.2.16 
+ * @since 1.2.16
  *
  * @param int|bool $customer_id Customer's User ID
  *
@@ -1061,7 +1061,7 @@ function it_exchange_membership_addon_get_customer_memberships( $customer_id = f
 /**
  * Gets a customer's memberships
  *
- * @since 1.2.16 
+ * @since 1.2.16
  *
  * @param int $membership Member's Product/Post ID
  * @param int|bool $customer_id Customer's User ID
@@ -1089,4 +1089,34 @@ function it_exchange_membership_addon_is_customer_member_of( $membership, $custo
 	}
 
 	return !empty( $member_access[$membership_id] );
+}
+
+/**
+ * Check if a customer is eligible for a trial.
+ *
+ * By default, a customer cannot signup for a trial if they are current members of the product,
+ * or any other in the hierarchy.
+ *
+ * @since 1.17
+ *
+ * @param IT_Exchange_Product       $membership
+ * @param IT_Exchange_Customer|null $customer
+ *
+ * @return bool
+ */
+function it_exchange_is_customer_eligible_for_trial( IT_Exchange_Product $membership, IT_Exchange_Customer $customer = null ) {
+
+	$membership_id = (int) $membership->ID;
+
+	$member_access = it_exchange_membership_addon_get_customer_memberships( $customer ? $customer->id : false );
+	$children      = (array) it_exchange_membership_addon_get_all_the_children( $membership_id );
+	$parents       = (array) it_exchange_membership_addon_get_all_the_parents( $membership_id );
+
+	foreach ( $member_access as $prod_id => $txn_id ) {
+		if ( $prod_id === $membership_id || in_array( $prod_id, $children ) || in_array( $prod_id, $parents ) ) {
+			return false;
+		}
+	}
+
+	return true;
 }
