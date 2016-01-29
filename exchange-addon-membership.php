@@ -27,6 +27,9 @@ define( 'ITE_MEMBERSHIP_PLUGIN_VERSION', '1.16.5' );
  * @return void
 */
 function it_exchange_register_membership_addon() {
+
+	require_once dirname( __FILE__ ) . '/lib/class.membership.php';
+
 	$options = array(
 		'name'              => __( 'Membership', 'LION' ),
 		'description'       => __( 'Add Memberships levels to your customers.', 'LION' ),
@@ -43,6 +46,9 @@ function it_exchange_register_membership_addon() {
 		'settings-callback' => 'it_exchange_membership_addon_settings_callback',
 		'supports' => array(
 			'sw-shortcode' => true
+		),
+		'options' => array(
+			'class' => 'IT_Exchange_Membership'
 		)
 	);
 	it_exchange_register_addon( 'membership-product-type', $options );
