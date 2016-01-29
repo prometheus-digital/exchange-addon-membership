@@ -1121,8 +1121,6 @@ function it_exchange_is_customer_eligible_for_trial( IT_Exchange_Product $member
 
 	$member_access = it_exchange_membership_addon_get_customer_memberships( $customer ? $customer->id : false );
 
-	error_log(print_r($member_access, true));
-
 	$children      = (array) it_exchange_membership_addon_get_all_the_children( $membership_id );
 	$parents       = (array) it_exchange_membership_addon_get_all_the_parents( $membership_id );
 
