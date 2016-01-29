@@ -131,7 +131,7 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 			
 			case 'post_types':
 				$hidden_post_types = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array( 'attachment', 'revision', 'nav_menu_item', 'it_exchange_tran', 'it_exchange_coupon', 'it_exchange_prod', 'it_exchange_download', 'page' ) );
-				$post_types = get_post_types( array(), 'objects' );
+				$post_types = get_post_types( array( 'public' => true ), 'objects' );
 				foreach ( $post_types as $post_type ) {
 					if ( in_array( $post_type->name, $hidden_post_types ) ) 
 						continue;
