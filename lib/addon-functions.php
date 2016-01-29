@@ -1041,7 +1041,18 @@ function it_exchange_membership_addon_get_customer_memberships( $customer_id = f
 		$customer = new IT_Exchange_Customer( $customer_id );
 		$member_access = $customer->get_customer_meta( 'member_access' );
 		if ( !empty( $member_access ) ) {
-			$memberships = it_exchange_membership_addon_setup_recursive_member_access_array( $member_access );
+
+			$flip_member_access = array();
+
+			foreach( $member_access as $txn_id => $product_id_array ) {
+				// we want the transaction ID to be the value to help us determine child access relations to transaction IDs
+				// Can't use array_flip because product_id_array is an array -- now :)
+				foreach ( (array) $product_id_array as $product_id ) {
+					$flip_member_access[$product_id] = $txn_id;
+				}
+			}
+
+			$memberships = it_exchange_membership_addon_setup_recursive_member_access_array( $flip_member_access );
 		}
 	}
 
@@ -1109,6 +1120,9 @@ function it_exchange_is_customer_eligible_for_trial( IT_Exchange_Product $member
 	$membership_id = (int) $membership->ID;
 
 	$member_access = it_exchange_membership_addon_get_customer_memberships( $customer ? $customer->id : false );
+
+	error_log(print_r($member_access, true));
+
 	$children      = (array) it_exchange_membership_addon_get_all_the_children( $membership_id );
 	$parents       = (array) it_exchange_membership_addon_get_all_the_parents( $membership_id );
 
