@@ -12,13 +12,6 @@
 interface IT_Exchange_Membership_Content_RuleInterface {
 
 	/**
-	 * IT_Exchange_Membership_Content_RuleInterface constructor.
-	 *
-	 * @param IT_Exchange_Membership $membership
-	 */
-	public function __construct( IT_Exchange_Membership $membership );
-
-	/**
 	 * Evaluate the rule.
 	 *
 	 * @since 1.18
@@ -33,24 +26,15 @@ interface IT_Exchange_Membership_Content_RuleInterface {
 	/**
 	 * Get HTML to render the necessary form fields.
 	 *
-	 * @since 1.18
+	 * @since    1.18
 	 *
 	 * @param string $context Context to preface field name attributes.
+	 * @param array  $data
 	 *
 	 * @return string
+	 * @internal param IT_Exchange_Membership|null $membership
 	 */
-	public function get_field_html( $context );
-
-	/**
-	 * Save the fields.
-	 *
-	 * @since 1.18
-	 *
-	 * @param array $data
-	 *
-	 * @return array
-	 */
-	public function save( $data );
+	public function get_field_html( $context, array $data = array() );
 
 	/**
 	 * String representation of this rule.
@@ -62,4 +46,46 @@ interface IT_Exchange_Membership_Content_RuleInterface {
 	 * @return string
 	 */
 	public function __toString();
+
+	/**
+	 * Check if tis content type is groupable.
+	 *
+	 * @since 1.18
+	 *
+	 * @return bool
+	 */
+	public function is_groupable();
+
+	/**
+	 * Get the value this content rule instance represents.
+	 *
+	 * This is used to build the content access type dropdown.
+	 *
+	 * @since 1.18
+	 *
+	 * @return string
+	 */
+	public function get_value();
+
+	/**
+	 * Get the label this content rule instance represents.
+	 *
+	 * This is used to build the content access type dropdown.
+	 *
+	 * @since 1.18
+	 *
+	 * @return string
+	 */
+	public function get_label();
+
+	/**
+	 * Get the type of this restriction.
+	 *
+	 * @since 1.18
+	 *
+	 * @param bool $label
+	 *
+	 * @return string
+	 */
+	public function get_type( $label = false );
 }
