@@ -174,6 +174,8 @@ add_action( 'wp_ajax_it-exchange-membership-addon-content-type-terms', 'it_excha
  */
 function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
 
+	$post = get_post( $_POST['ID'] );
+
 	$return = '<div class="it-exchange-new-membership-rule-post it-exchange-new-membership-rule">';
 	$return .= '<select class="it-exchange-membership-id" name="it_exchange_membership_id">';
 	$membership_products = it_exchange_get_products( array(
@@ -189,19 +191,8 @@ function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
 
 	$return .= '<div class="it-exchange-membership-rule-delay">' . __( 'Delay', 'LION' ) . '</div>';
 	$return .= '<div class="it-exchange-membership-drip-rule">';
-	$return .= '<input class="it-exchange-membership-drip-rule-interval" type="number" min="0" value="0" name="it_exchange_membership_drip_interval" />';
-	$return .= '<select class="it-exchange-membership-drip-rule-duration" name="it_exchange_membership_drip_duration">';
-	$durations = array(
-		'days'   => __( 'Days', 'LION' ),
-		'weeks'  => __( 'Weeks', 'LION' ),
-		'months' => __( 'Months', 'LION' ),
-		'years'  => __( 'Years', 'LION' ),
-	);
-	$durations = apply_filters( 'it-exchange-membership-drip-durations', $durations );
-	foreach ( $durations as $key => $string ) {
-		$return .= '<option value="' . $key . '"' . selected( $key, apply_filters( 'it-exchange-membership-default-selected-drip-duration', 'days' ), false ) . '>' . $string . '</option>';
-	}
-	$return .= '</select>';
+	$delay = new IT_Exchange_Membership_Delay_Rule_Drip( $post );
+	$return .= $delay->get_field_html( 'new' );
 	$return .= '</div>';
 
 	$return .= '<div class="it-exchange-add-new-restriction-ok-button">';
@@ -454,6 +445,28 @@ function it_exchange_membership_addon_ajax_modify_restrictions_exemptions() {
 add_action( 'wp_ajax_it-exchange-membership-addon-modify-restrictions-exemptions', 'it_exchange_membership_addon_ajax_modify_restrictions_exemptions' );
 
 /**
+ * AJAX to update the drip rule.
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function it_exchange_membership_addon_ajax_update_drip_rule() {
+
+	if ( ! empty( $_REQUEST['post'] ) && ! empty( $_REQUEST['membership'] ) && ! empty( $_REQUEST['changes'] ) ) {
+		$post       = get_post( $_REQUEST['post'] );
+		$membership = it_exchange_get_product( $_REQUEST['membership'] );
+		$changes    = $_REQUEST['changes'];
+
+		$drip = new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
+		$drip->save( $changes );
+	}
+
+	die();
+}
+
+add_action( 'wp_ajax_it-exchange-membership-update-drip-rule', 'it_exchange_membership_addon_ajax_update_drip_rule' );
+
+/**
  * AJAX to update drips interval
  *
  * @since 1.0.0
@@ -461,19 +474,22 @@ add_action( 'wp_ajax_it-exchange-membership-addon-modify-restrictions-exemptions
  */
 function it_exchange_membership_addon_ajax_update_interval() {
 
-	$return = '';
-
 	if ( ! empty( $_REQUEST['post_id'] ) && ! empty( $_REQUEST['membership_id'] ) && isset( $_REQUEST['interval'] ) ) {
-		$post_id       = $_REQUEST['post_id'];
-		$membership_id = $_REQUEST['membership_id'];
-		$interval      = $_REQUEST['interval'];
-		update_post_meta( $post_id, '_item-content-rule-drip-interval-' . $membership_id, absint( $interval ) );
+		$post       = get_post( $_REQUEST['post_id'] );
+		$membership = it_exchange_get_product( $_REQUEST['membership_id'] );
+		$interval   = $_REQUEST['interval'];
+
+		$drip = new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
+		$drip->save( array(
+			'interval' => $interval
+		) );
 	}
 
 	die();
 }
 
 add_action( 'wp_ajax_it-exchange-membership-addon-update-drip-rule-interval', 'it_exchange_membership_addon_ajax_update_interval' );
+
 
 /**
  * AJAX to update drips duration
@@ -483,13 +499,15 @@ add_action( 'wp_ajax_it-exchange-membership-addon-update-drip-rule-interval', 'i
  */
 function it_exchange_membership_addon_ajax_update_duration() {
 
-	$return = '';
-
 	if ( ! empty( $_REQUEST['post_id'] ) && ! empty( $_REQUEST['membership_id'] ) && ! empty( $_REQUEST['duration'] ) ) {
-		$post_id       = $_REQUEST['post_id'];
-		$membership_id = $_REQUEST['membership_id'];
-		$duration      = $_REQUEST['duration'];
-		update_post_meta( $post_id, '_item-content-rule-drip-duration-' . $membership_id, $duration );
+		$post       = get_post( $_REQUEST['post_id'] );
+		$membership = it_exchange_get_product( $_REQUEST['membership_id'] );
+		$duration   = $_REQUEST['duration'];
+
+		$drip = new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
+		$drip->save( array(
+			'duration' => $duration
+		) );
 	}
 
 	die();

@@ -1,27 +1,26 @@
 <?php
 /**
- * Contains rule interface.
+ * Membership rule interface.
  *
  * @since   1.18
  * @license GPLv2
  */
 
 /**
- * Interface IT_Exchange_Membership_Content_RuleInterface
+ * Interface IT_Exchange_Membership_RuleInterface
  */
-interface IT_Exchange_Membership_Content_RuleInterface {
-
+interface IT_Exchange_Membership_RuleInterface {
 	/**
 	 * Evaluate the rule.
 	 *
 	 * @since 1.18
 	 *
-	 * @param WP_Post                  $post
 	 * @param IT_Exchange_Subscription $subscription
+	 * @param WP_Post                  $post
 	 *
 	 * @return bool True if readable
 	 */
-	public function evaluate( WP_Post $post, IT_Exchange_Subscription $subscription );
+	public function evaluate( IT_Exchange_Subscription $subscription, WP_Post $post );
 
 	/**
 	 * Get HTML to render the necessary form fields.
@@ -32,7 +31,7 @@ interface IT_Exchange_Membership_Content_RuleInterface {
 	 *
 	 * @return string
 	 */
-	public function get_field_html( $context);
+	public function get_field_html( $context );
 
 	/**
 	 * String representation of this rule.
@@ -44,37 +43,6 @@ interface IT_Exchange_Membership_Content_RuleInterface {
 	 * @return string
 	 */
 	public function __toString();
-
-	/**
-	 * Check if tis content type is groupable.
-	 *
-	 * @since 1.18
-	 *
-	 * @return bool
-	 */
-	public function is_groupable();
-
-	/**
-	 * Get the value this content rule instance represents.
-	 *
-	 * This is used to build the content access type dropdown.
-	 *
-	 * @since 1.18
-	 *
-	 * @return string
-	 */
-	public function get_value();
-
-	/**
-	 * Get the label this content rule instance represents.
-	 *
-	 * This is used to build the content access type dropdown.
-	 *
-	 * @since 1.18
-	 *
-	 * @return string
-	 */
-	public function get_label();
 
 	/**
 	 * Get the type of this restriction.

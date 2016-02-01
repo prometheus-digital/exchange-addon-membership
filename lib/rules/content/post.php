@@ -48,12 +48,12 @@ class IT_Exchange_Membership_Content_Rule_Post implements IT_Exchange_Membership
 	 *
 	 * @since 1.18
 	 *
-	 * @param WP_Post                  $post
 	 * @param IT_Exchange_Subscription $subscription
+	 * @param WP_Post                  $post
 	 *
 	 * @return bool True if readable
 	 */
-	public function evaluate( WP_Post $post, IT_Exchange_Subscription $subscription ) {
+	public function evaluate( IT_Exchange_Subscription $subscription, WP_Post $post ) {
 		// TODO: Implement evaluate() method.
 	}
 

@@ -323,6 +323,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	$rules = array();
 
 	$post_type = get_post_type( $post_id );
+	$post = get_post( $post_id );
 
 	/*
 	* Use get_post_meta() to retrieve an existing value
@@ -382,6 +383,9 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	if ( !empty( $rules ) ) {
 
 		foreach ( $rules as $membership_id => $rule ) {
+
+			$membership = it_exchange_get_product( $membership_id );
+
 			$return .= '<div class="it-exchange-membership-restriction-group">';
 			$title = get_the_title( $membership_id );
 			$parents = it_exchange_membership_addon_get_all_the_parents( $membership_id );
@@ -407,19 +411,8 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 
 						$return .= '<div class="it-exchange-membership-rule-delay">' . __( 'Delay', 'LION' ) . '</div>';
 						$return .= '<div class="it-exchange-membership-drip-rule">';
-						$return .= '<input class="it-exchange-membership-drip-rule-interval" type="number" min="0" value="' . $drip_interval . '" name="it_exchange_membership_drip_interval" />';
-						$return .= '<select class="it-exchange-membership-drip-rule-duration" name="it_exchange_membership_drip_duration">';
-						$durations = array(
-							'days'   => __( 'Days', 'LION' ),
-							'weeks'  => __( 'Weeks', 'LION' ),
-							'months' => __( 'Months', 'LION' ),
-							'years'  => __( 'Years', 'LION' ),
-						);
-						$durations = apply_filters( 'it-exchange-membership-drip-durations', $durations );
-						foreach( $durations as $key => $string ) {
-							$return .= '<option value="' . $key . '"' . selected( $key, $drip_duration, false ) . '>' . $string . '</option>';
-						}
-						$return .= '</select>';
+						$delay_rule = new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
+						$return .= $delay_rule->get_field_html( $membership_id );
 						$return .= '</div>';
 
 					}

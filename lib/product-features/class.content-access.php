@@ -176,12 +176,16 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 		
 		// Abort if we don't have a product ID
 		$product_id = empty( $_POST['ID'] ) ? false : $_POST['ID'];
-		if ( ! $product_id )
+
+		if ( ! $product_id ) {
 			return;
+		}
 
 		// Abort if this product type doesn't support this feature 
 		if ( ! it_exchange_product_type_supports_feature( $product_type, 'membership-content-access-rules' ) )
 			return;
+
+		$membership = it_exchange_get_product( $product_id );
 		
 		$existing_access_rules = it_exchange_get_product_feature( $product_id, 'membership-content-access-rules' );
 		
@@ -198,8 +202,20 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 								$rules = array();
 								
 							if ( isset( $rule['drip-interval'] ) && isset( $rule['drip-duration'] ) ) {
-								update_post_meta( $rule['term'], '_item-content-rule-drip-interval-' . $product_id, absint( $rule['drip-interval'] ) );
-								update_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $product_id, $rule['drip-duration'] );
+
+								$post = get_post( $rule['term'] );
+
+								$drip = new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
+
+								try {
+									$drip->save( array(
+										'interval' => absint( $rule['drip-interval'] ),
+										'duration' => $rule['drip-duration']
+									) );
+								} catch ( InvalidArgumentException $e ) {
+									it_exchange_add_message( 'error', $e->getMessage() );
+								}
+
 								unset( $rule['drip-interval'] );
 								unset( $rule['drip-duration'] );
 								unset( $_REQUEST['it_exchange_content_access_rules'][$key]['drip-interval'] );

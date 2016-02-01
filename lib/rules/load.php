@@ -7,6 +7,11 @@
  */
 
 require_once dirname( __FILE__ ) . '/interface.php';
+
+require_once dirname( __FILE__ ) . '/content/interface.php';
 require_once dirname( __FILE__ ) . '/content/post-type.php';
 require_once dirname( __FILE__ ) . '/content/post.php';
 require_once dirname( __FILE__ ) . '/content/term.php';
+
+require_once dirname( __FILE__ ) . '/delay/interface.php';
+require_once dirname( __FILE__ ) . '/delay/drip.php';
