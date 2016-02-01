@@ -12,6 +12,20 @@
 class IT_Exchange_Membership_Content_Rule_Post_Type implements IT_Exchange_Membership_Content_RuleInterface {
 
 	/**
+	 * @var array
+	 */
+	private $data;
+
+	/**
+	 * IT_Exchange_Membership_Content_Rule_Post_Type constructor.
+	 *
+	 * @param array $data
+	 */
+	public function __construct( array $data = array() ) {
+		$this->data = $data;
+	}
+
+	/**
 	 * Check if tis content type is groupable.
 	 *
 	 * @since 1.18
@@ -43,12 +57,11 @@ class IT_Exchange_Membership_Content_Rule_Post_Type implements IT_Exchange_Membe
 	 *
 	 * @param string $context Context to preface field name attributes.
 	 *
-	 * @param array  $data
-	 *
 	 * @return string
-	 * @internal param IT_Exchange_Membership|null $membership
 	 */
-	public function get_field_html( $context, array $data = array() ) {
+	public function get_field_html( $context ) {
+
+		$data = $this->data;
 
 		$hidden = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array(
 			'attachment',
@@ -58,7 +71,7 @@ class IT_Exchange_Membership_Content_Rule_Post_Type implements IT_Exchange_Membe
 		) );
 
 		$post_types = get_post_types( array( 'public' => true ), 'objects' );
-		$selected = empty( $data['term'] ) ? false : $data['term'];
+		$selected   = empty( $data['term'] ) ? false : $data['term'];
 
 		ob_start();
 		?>

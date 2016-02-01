@@ -17,12 +17,19 @@ class IT_Exchange_Membership_Content_Rule_Term implements IT_Exchange_Membership
 	private $taxonomy;
 
 	/**
+	 * @var array
+	 */
+	private $data;
+
+	/**
 	 * IT_Exchange_Membership_Content_Rule_Post constructor.
 	 *
 	 * @param string $taxonomy
+	 * @param array  $data
 	 */
-	public function __construct( $taxonomy ) {
+	public function __construct( $taxonomy, array $data = array() ) {
 		$this->taxonomy = $taxonomy;
+		$this->data     = $data;
 	}
 
 	/**
@@ -56,14 +63,15 @@ class IT_Exchange_Membership_Content_Rule_Term implements IT_Exchange_Membership
 	 * @since    1.18
 	 *
 	 * @param string $context Context to preface field name attributes.
-	 * @param array  $data
 	 *
 	 * @return string
 	 */
-	public function get_field_html( $context, array $data = array() ) {
+	public function get_field_html( $context ) {
+
+		$data = $this->data;
 
 		/** @var WP_Term[] $terms */
-		$terms = get_terms( $this->taxonomy, array( 'hide_empty' => false ) );
+		$terms    = get_terms( $this->taxonomy, array( 'hide_empty' => false ) );
 		$selected = empty( $data['term'] ) ? false : $data['term'];
 
 		ob_start();

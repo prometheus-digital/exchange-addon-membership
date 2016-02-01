@@ -17,12 +17,19 @@ class IT_Exchange_Membership_Content_Rule_Post implements IT_Exchange_Membership
 	private $post_type;
 
 	/**
+	 * @var array
+	 */
+	private $data;
+
+	/**
 	 * IT_Exchange_Membership_Content_Rule_Post constructor.
 	 *
 	 * @param string $post_type
+	 * @param array  $data
 	 */
-	public function __construct( $post_type ) {
+	public function __construct( $post_type, array $data = array() ) {
 		$this->post_type = $post_type;
+		$this->data = $data;
 	}
 
 	/**
@@ -56,13 +63,15 @@ class IT_Exchange_Membership_Content_Rule_Post implements IT_Exchange_Membership
 	 * @since    1.18
 	 *
 	 * @param string $context Context to preface field name attributes.
-	 * @param array  $data
 	 *
 	 * @return string
 	 */
-	public function get_field_html( $context, array $data = array() ) {
+	public function get_field_html( $context ) {
+
+		$data = $this->data;
 
 		$posts = get_posts( array( 'post_type' => $this->post_type, 'posts_per_page' => - 1, 'post_status' => 'any' ) );
+
 		$selected = empty( $data['term'] ) ? false : $data['term'];
 
 		ob_start();

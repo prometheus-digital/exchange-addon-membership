@@ -29,12 +29,10 @@ interface IT_Exchange_Membership_Content_RuleInterface {
 	 * @since    1.18
 	 *
 	 * @param string $context Context to preface field name attributes.
-	 * @param array  $data
 	 *
 	 * @return string
-	 * @internal param IT_Exchange_Membership|null $membership
 	 */
-	public function get_field_html( $context, array $data = array() );
+	public function get_field_html( $context);
 
 	/**
 	 * String representation of this rule.

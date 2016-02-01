@@ -173,22 +173,22 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 				switch ( $selected ) {
 
 					case 'posts':
-						$rule_obj = new IT_Exchange_Membership_Content_Rule_Post( $selection );
+						$rule_obj = new IT_Exchange_Membership_Content_Rule_Post( $selection, $rule );
 						break;
 
 					case 'post_types':
-						$rule_obj = new IT_Exchange_Membership_Content_Rule_Post_Type();
+						$rule_obj = new IT_Exchange_Membership_Content_Rule_Post_Type( $rule );
 						break;
 
 					case 'taxonomy':
-						$rule_obj = new IT_Exchange_Membership_Content_Rule_Term( $selection );
+						$rule_obj = new IT_Exchange_Membership_Content_Rule_Term( $selection, $rule );
 						break;
 				}
 
 				$return .= '<input type="hidden" value="' . $selected . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
 
 				if ( isset( $rule_obj ) ) {
-					$return .= $rule_obj->get_field_html( "it_exchange_content_access_rules[$count]", $rule );
+					$return .= $rule_obj->get_field_html( "it_exchange_content_access_rules[$count]" );
 
 					if ( $rule_obj->is_groupable() && false ) {
 						$return .= '<div class="group-layout-options">';
