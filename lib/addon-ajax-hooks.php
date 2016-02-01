@@ -445,10 +445,14 @@ function it_exchange_membership_addon_ajax_modify_restrictions_exemptions() {
 add_action( 'wp_ajax_it-exchange-membership-addon-modify-restrictions-exemptions', 'it_exchange_membership_addon_ajax_modify_restrictions_exemptions' );
 
 /**
- * AJAX to update the drip rule.
+ * AJAX callback to update a drip rule.
  *
- * @since 1.0.0
- * @return void
+ * Passes:
+ *  - $post       The post ID of the content
+ *  - $membership The membership ID for dripping
+ *  - $changes    Array of changes to be saved. Keyed with 'interval', and 'duration'.
+ *
+ * @since 1.18
  */
 function it_exchange_membership_addon_ajax_update_drip_rule() {
 
@@ -465,56 +469,6 @@ function it_exchange_membership_addon_ajax_update_drip_rule() {
 }
 
 add_action( 'wp_ajax_it-exchange-membership-update-drip-rule', 'it_exchange_membership_addon_ajax_update_drip_rule' );
-
-/**
- * AJAX to update drips interval
- *
- * @since 1.0.0
- * @return void
- */
-function it_exchange_membership_addon_ajax_update_interval() {
-
-	if ( ! empty( $_REQUEST['post_id'] ) && ! empty( $_REQUEST['membership_id'] ) && isset( $_REQUEST['interval'] ) ) {
-		$post       = get_post( $_REQUEST['post_id'] );
-		$membership = it_exchange_get_product( $_REQUEST['membership_id'] );
-		$interval   = $_REQUEST['interval'];
-
-		$drip = new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
-		$drip->save( array(
-			'interval' => $interval
-		) );
-	}
-
-	die();
-}
-
-add_action( 'wp_ajax_it-exchange-membership-addon-update-drip-rule-interval', 'it_exchange_membership_addon_ajax_update_interval' );
-
-
-/**
- * AJAX to update drips duration
- *
- * @since 1.0.0
- * @return void
- */
-function it_exchange_membership_addon_ajax_update_duration() {
-
-	if ( ! empty( $_REQUEST['post_id'] ) && ! empty( $_REQUEST['membership_id'] ) && ! empty( $_REQUEST['duration'] ) ) {
-		$post       = get_post( $_REQUEST['post_id'] );
-		$membership = it_exchange_get_product( $_REQUEST['membership_id'] );
-		$duration   = $_REQUEST['duration'];
-
-		$drip = new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
-		$drip->save( array(
-			'duration' => $duration
-		) );
-	}
-
-	die();
-}
-
-add_action( 'wp_ajax_it-exchange-membership-addon-update-drip-rule-duration', 'it_exchange_membership_addon_ajax_update_duration' );
-
 
 function it_exchange_membership_addon_ajax_add_membership_child() {
 

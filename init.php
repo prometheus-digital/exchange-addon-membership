@@ -64,6 +64,8 @@ include( 'lib/integrations/builder/init.php' );
  */
 require( 'lib/product-features/load.php' );
 
+require_once( dirname( __FILE__ ) . '/lib/deprecated.php' );
+
 require_once( dirname( __FILE__ ) . '/lib/rules/load.php' );
 
 $current_version = get_option( 'exchange_mmebership_version', '1.17.0' );
