@@ -1,0 +1,117 @@
+[
+    {
+        "name": "ironbound/cache",
+        "version": "v1.0.1",
+        "version_normalized": "1.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/iron-bound-designs/IronBound-Cache.git",
+            "reference": "6f706e7dd0d1cfa1a153dbd6de79e2db99fe0589"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/iron-bound-designs/IronBound-Cache/zipball/6f706e7dd0d1cfa1a153dbd6de79e2db99fe0589",
+            "reference": "6f706e7dd0d1cfa1a153dbd6de79e2db99fe0589",
+            "shasum": ""
+        },
+        "time": "2015-10-05 05:36:49",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "IronBound\\Cache\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Iron Bound Designs",
+                "email": "info@ironbounddesigns.com"
+            }
+        ],
+        "description": "Provides wrappers for WordPress' object cache to make storing and retrieving models easier."
+    },
+    {
+        "name": "ironbound/db",
+        "version": "v1.1",
+        "version_normalized": "1.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/iron-bound-designs/IronBound-DB.git",
+            "reference": "c4eeeee21fb8b1185cc23728cbcc913139347c2c"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/iron-bound-designs/IronBound-DB/zipball/c4eeeee21fb8b1185cc23728cbcc913139347c2c",
+            "reference": "c4eeeee21fb8b1185cc23728cbcc913139347c2c",
+            "shasum": ""
+        },
+        "require": {
+            "ironbound/cache": "^1.0.0",
+            "php": ">=5.3.0"
+        },
+        "time": "2015-10-14 02:12:10",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "IronBound\\DB\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Iron Bound Designs",
+                "email": "info@ironbounddesigns.com"
+            }
+        ],
+        "description": "Provides models and custom query objects for custom database tables in WordPress."
+    },
+    {
+        "name": "ironbound/wp-notifications",
+        "version": "v1.0.1",
+        "version_normalized": "1.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/iron-bound-designs/wp-notifications.git",
+            "reference": "645dc2a1b5690102767db8dc81741ee66d1a2bff"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/iron-bound-designs/wp-notifications/zipball/645dc2a1b5690102767db8dc81741ee66d1a2bff",
+            "reference": "645dc2a1b5690102767db8dc81741ee66d1a2bff",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "suggest": {
+            "mandrill/mandrill": "Allows for sending notifications via Mandrill"
+        },
+        "time": "2015-10-05 05:58:41",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "IronBound\\WP_Notifications\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Iron Bound Designs",
+                "email": "info@ironbounddesigns.com"
+            }
+        ],
+        "description": "Drop in framework for sending notifications in WordPress."
+    }
+]
