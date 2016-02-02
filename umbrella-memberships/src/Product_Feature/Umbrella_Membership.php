@@ -68,7 +68,7 @@ class Umbrella_Membership extends \IT_Exchange_Product_Feature_Abstract {
 			return;
 		}
 
-		$data = $_POST['itegms'];
+		$data = isset( $_POST['itegms'] ) ? $_POST['itegms'] : array();
 
 		$data['enable'] = isset( $data['enable'] ) ? it_exchange_str_true( $data['enable'] ) : false;
 
