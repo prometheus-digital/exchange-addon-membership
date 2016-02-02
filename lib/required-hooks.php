@@ -531,7 +531,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 			$parent_access = array();
 			$customer = new IT_Exchange_Customer( $user_id );
 			$member_access = $customer->get_customer_meta( 'member_access' );
-			$member_access_session = it_exchange_get_session_data( 'member_access' );
+			$member_access_session = it_exchange_membership_addon_get_customer_memberships();
 	
 			if ( !empty( $member_access ) ) {
 				//If the transient doesn't exist, verify the membership access subscriber status and reset transient
@@ -1051,8 +1051,11 @@ add_filter( 'it_exchange_redirect_for-protected-pages-to-registration-when-not-l
  * @param object $customer current Customer
  * @return array
 */
-function it_exchange_membership_addon_append_to_customer_menu_loop( $nav='', $customer=false ) {
-	$memberships = it_exchange_get_session_data( 'parent_access' );
+function it_exchange_membership_addon_append_to_customer_menu_loop( $nav='' ) {
+
+	$memberships = it_exchange_membership_addon_get_customer_memberships();
+	$memberships = it_exchange_membership_addon_setup_most_parent_member_access_array( $memberships );
+
 	$page_slug = 'memberships';
 	$permalinks = (bool)get_option( 'permalink_structure' );
 

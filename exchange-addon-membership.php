@@ -110,3 +110,8 @@ function it_exchange_membership_addon_activated_bundled_addons( $plugin, $networ
 		}
 	}
 }
+
+if ( file_exists( dirname( __FILE__ ) . '/vendor/autoload.php' ) && version_compare( PHP_VERSION, '5.3', '>=' ) ) {
+	require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+	require_once dirname( __FILE__ ) . '/umbrella-memberships/load.php';
+}
