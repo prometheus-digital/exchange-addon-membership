@@ -273,4 +273,6 @@
 	Fix: Unable to save Membership restriction messages
 1.16.6 - 2016-01-20 - Timothy Jacobs
 	Fix: Version notice
+1.17.0 - 2016-02-02 - Timothy Jacobs, Elise Alley
+	Add: Umbrella Memberships
 
