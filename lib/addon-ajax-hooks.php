@@ -375,67 +375,50 @@ add_action( 'wp_ajax_it-exchange-membership-addon-add-new-rule-to-post', 'it_exc
  */
 function it_exchange_membership_addon_ajax_modify_restrictions_exemptions() {
 
-	$return = '';
-
-	if ( ! empty( $_REQUEST['post_id'] ) && ! empty( $_REQUEST['membership_id'] ) && ! empty( $_REQUEST['exemption'] ) && ! empty( $_REQUEST['checked'] ) ) {
+	if ( ! empty( $_REQUEST['post_id'] ) && ! empty( $_REQUEST['membership_id'] ) && ! empty( $_REQUEST['rule_data'] ) && ! empty( $_REQUEST['checked'] ) ) {
 		$post_id       = $_REQUEST['post_id'];
 		$membership_id = $_REQUEST['membership_id'];
-		$exemption     = $_REQUEST['exemption'];
+		$type          = $_REQUEST['type'];
 		$checked       = $_REQUEST['checked'];
+		$post          = get_post( $post_id );
+		$membership    = it_exchange_get_product( $membership_id );
+		$rule_data     = (array) $_REQUEST['rule_data'];
+
+		$factory = new IT_Exchange_Membership_Rule_Factory();
+
+		$rule = $factory->make_content_rule( $type, $rule_data, $membership );
+		$rule->set_post_exempt( $post, $membership, $checked === 'false' );
+
+		if ( $type === 'taxonomy' ) {
+			$exemption = "taxonomy|{$rule->get_selection()}|{$rule->get_term()}";
+		} else {
+			$exemption = $rule->get_term();
+		}
 
 		if ( 'false' === $checked ) {
-			//add to exemptions
-			if ( ! ( $exemptions = get_post_meta( $post_id, '_item-content-rule-exemptions', true ) ) ) {
-				$exemptions = array();
-			}
 
-			if ( ! in_array( $exemption, $exemptions[ $membership_id ] ) ) {
-
-				/**
-				 * Fires when an exemption is added to the protection rules.
-				 *
-				 * @since 1.0
-				 *
-				 * @param int    $membership_id
-				 * @param int    $post_id
-				 * @param string $exemption
-				 */
-				do_action( 'it_exchange_membership_add_exemption', $membership_id, $post_id, $exemption );
-
-				$exemptions[ $membership_id ][] = $exemption;
-				update_post_meta( $post_id, '_item-content-rule-exemptions', $exemptions );
-			}
+			/**
+			 * Fires when an exemption is added to the protection rules.
+			 *
+			 * @since 1.9
+			 *
+			 * @param int    $membership_id
+			 * @param int    $post_id
+			 * @param string $exemption
+			 */
+			do_action( 'it_exchange_membership_add_exemption', $membership_id, $post_id, $exemption );
 		} else {
-			//remove from exemptions
-			if ( ! ( $exemptions = get_post_meta( $post_id, '_item-content-rule-exemptions', true ) ) ) {
-				$exemptions = array();
-			}
 
-			if ( ! empty( $exemptions[ $membership_id ] ) ) {
-				if ( ( $key = array_search( $exemption, $exemptions[ $membership_id ] ) ) !== false ) {
-
-					/**
-					 * Fires when an exemption is removed from the protection rules.
-					 *
-					 * @since 1.0
-					 *
-					 * @param int    $membership_id
-					 * @param int    $post_id
-					 * @param string $exemption
-					 */
-					do_action( 'it_exchange_membership_remove_exemption', $membership_id, $post_id, $exemption );
-
-					unset( $exemptions[ $membership_id ][ $key ] );
-					if ( empty( $exemptions[ $membership_id ][ $key ] ) ) {
-						unset( $exemptions[ $membership_id ] );
-					}
-					if ( empty( $exemptions ) ) {
-						delete_post_meta( $post_id, '_item-content-rule-exemptions' );
-					} else {
-						update_post_meta( $post_id, '_item-content-rule-exemptions', $exemptions );
-					}
-				}
-			}
+			/**
+			 * Fires when an exemption is removed from the protection rules.
+			 *
+			 * @since 1.9
+			 *
+			 * @param int    $membership_id
+			 * @param int    $post_id
+			 * @param string $exemption
+			 */
+			do_action( 'it_exchange_membership_remove_exemption', $membership_id, $post_id, $exemption );
 		}
 	}
 

@@ -46,9 +46,9 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 
 		/** @var IT_Exchange_Membership_Content_RuleInterface $rule */
 		foreach ( $rules as $rule ) {
-			$selected = selected( $rule->get_value(), $selection, false );
-			$return .= "<option value='{$rule->get_value()}' data-type='{$rule->get_type()}' $selected>";
-			$return .= $rule->get_label();
+			$selected = selected( $rule->get_selection(), $selection, false );
+			$return .= "<option value='{$rule->get_selection()}' data-type='{$rule->get_type()}' $selected>";
+			$return .= $rule->get_selection( true );
 			$return .= "</option>";
 		}
 
@@ -63,9 +63,9 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 
 		foreach ( $other as $rule ) {
 
-			$selected = selected( $rule->get_value(), $selection, false );
-			$return .= "<option value='{$rule->get_value()}' data-type='{$rule->get_type()}' $selected>";
-			$return .= $rule->get_label();
+			$selected = selected( $rule->get_selection( false ), $selection, false );
+			$return .= "<option value='{$rule->get_selection(false)}' data-type='{$rule->get_type()}' $selected>";
+			$return .= $rule->get_selection( true );
 			$return .= "</option>";
 		}
 	}
@@ -329,8 +329,6 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	$return = '';
 	$post   = get_post( $post_id );
 
-	$exemptions = get_post_meta( $post_id, '_item-content-rule-exemptions', true );
-
 	$return .= '<div class="it-exchange-membership-restrictions">';
 
 	$factory     = new IT_Exchange_Membership_Rule_Factory();
@@ -342,26 +340,30 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 
 		ob_start();
 
-		foreach ( $memberships as $membership => $membership_rules ) {
+		foreach ( $memberships as $membership_id => $membership_rules ) {
 			?>
 			<div class="it-exchange-membership-restriction-group">
-				<input type="hidden" name="it_exchange_membership_id" value="<?php echo $membership; ?>">
+				<input type="hidden" name="it_exchange_membership_id" value="<?php echo $membership_id; ?>">
 
-				<?php foreach ( $membership_rules as $rule ): /** @var $rule IT_Exchange_Membership_Content_RuleInterface */ ?>
+				<?php foreach ( $membership_rules as $rule ):
+					/** @var $rule IT_Exchange_Membership_Content_RuleInterface */
 
-					<?php $parents = it_exchange_membership_addon_get_all_the_parents( $membership ); ?>
-					<?php $exemption = ! empty( $exemptions[ $membership ] ) ? $exemptions[ $membership ] : array(); ?>
-					<?php $type = $rule->get_type(); ?>
+					$parents    = it_exchange_membership_addon_get_all_the_parents( $membership_id );
+					$membership = it_exchange_get_product( $membership_id );
+					$type       = $rule->get_type();
+					$exempt     = $rule->is_post_exempt( $post, $membership );
+					?>
 
 					<div class="it-exchange-membership-rule it-exchange-membership-rule-<?php echo $type; ?>">
 
-						<label class="screen-reader-text" for="it-exchange-restriction-exemption-<?php echo $membership . $type; ?>">
+						<label class="screen-reader-text" for="it-exchange-restriction-exemption-<?php echo $membership_id . $type; ?>">
 							<?php _e( 'Is this content exempt from the normal restriction rule.', 'LION' ); ?>
 						</label>
-						<input id="it-exchange-restriction-exemption-<?php echo $membership . $type; ?>" class="it-exchange-restriction-exemptions"
-						       type="checkbox" name="restriction-exemptions[]" value="<?php echo $type; ?>" <?php checked( in_array( $type, $exemption ), false ); ?>>
+						<input id="it-exchange-restriction-exemption-<?php echo $membership_id . $type; ?>" class="it-exchange-restriction-exemptions"
+						       type="checkbox" name="restriction-exemptions[]" value="<?php echo $type; ?>" data-term="<?php echo $rule->get_term(); ?>"
+						       data-selection="<?php echo $rule->get_selection(); ?>" <?php checked( ! $exempt ); ?>>
 
-						<?php echo get_the_title( $membership ); ?>
+						<?php echo get_the_title( $membership_id ); ?>
 
 						<?php if ( ! empty( $parents ) ) : ?>
 							<p class="description"><?php printf( __( 'Included in: %s', 'LION' ), join( ', ', array_map( 'get_the_title', $parents ) ) ); ?></p>
@@ -374,7 +376,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 						<?php foreach ( $rule->get_delay_rules() as $delay_rule ): ?>
 							<div class="it-exchange-membership-rule-delay"><?php _e( 'Delay', 'LION' ); ?></div>
 							<div class="it-exchange-membership-<?php echo $delay_rule->get_type(); ?>-rule">
-								<?php echo $delay_rule->get_field_html( $membership ); ?>
+								<?php echo $delay_rule->get_field_html( $membership_id ); ?>
 							</div>
 						<?php endforeach; ?>
 

@@ -12,20 +12,6 @@
 class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membership_AbstractContent_Rule {
 
 	/**
-	 * @var array
-	 */
-	private $data;
-
-	/**
-	 * IT_Exchange_Membership_Content_Rule_Post_Type constructor.
-	 *
-	 * @param array $data
-	 */
-	public function __construct( array $data = array() ) {
-		$this->data = $data;
-	}
-
-	/**
 	 * Check if tis content type is groupable.
 	 *
 	 * @since 1.18
@@ -60,7 +46,7 @@ class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membersh
 	 * @return bool
 	 */
 	public function matches_post( WP_Post $post ) {
-		return $this->data['term'] === get_post_type( $post );
+		return $this->get_term() === get_post_type( $post );
 	}
 
 	/**
@@ -78,7 +64,6 @@ class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membersh
 
 		$hidden = apply_filters( 'it_exchange_membership_addon_hidden_post_types', array(
 			'attachment',
-			'nav_menu_item',
 			'it_exchange_prod',
 			'page'
 		) );
@@ -93,7 +78,7 @@ class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membersh
 			<?php _e( 'Select a post type to hide.', 'LION' ); ?>
 		</label>
 
-		<select class="it-exchange-membership-content-type-term" id="<?php echo $context; ?>-post-types" name="<?php echo $context; ?>[term]">
+		<select class="it-exchange-membership-content-type-post-type" id="<?php echo $context; ?>-post-types" name="<?php echo $context; ?>[term]">
 
 			<?php foreach ( $post_types as $post_type ): ?>
 				<?php if ( ! in_array( $post_type->name, $hidden ) ): ?>
@@ -130,23 +115,12 @@ class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membersh
 	 *
 	 * @since 1.18
 	 *
-	 * @return string
-	 */
-	public function get_value() {
-		return 'post_type';
-	}
-
-	/**
-	 * Get the label this content rule instance represents.
-	 *
-	 * This is used to build the content access type dropdown.
-	 *
-	 * @since 1.18
+	 * @param bool $label
 	 *
 	 * @return string
 	 */
-	public function get_label() {
-		return __( 'Post Type', 'LION' );
+	public function get_selection( $label = false ) {
+		return $label ? __( 'Post Type', 'LION' ) : 'post_type';
 	}
 
 	/**
@@ -172,6 +146,6 @@ class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membersh
 	 * @return string
 	 */
 	public function get_short_description() {
-		return get_post_type( $this->data['term'] )->label;
+		return get_post_type_object( $this->data['term'] )->label;
 	}
 }

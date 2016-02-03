@@ -17,19 +17,15 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 	private $post_type;
 
 	/**
-	 * @var array
-	 */
-	private $data;
-
-	/**
 	 * IT_Exchange_Membership_Content_Rule_Post constructor.
 	 *
 	 * @param string $post_type
 	 * @param array  $data
 	 */
 	public function __construct( $post_type, array $data = array() ) {
+		parent::__construct( $data );
+
 		$this->post_type = $post_type;
-		$this->data      = $data;
 	}
 
 	/**
@@ -67,7 +63,7 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 	 * @return bool
 	 */
 	public function matches_post( WP_Post $post ) {
-		return $this->data['term'] == $post->ID;
+		return $this->get_term() == $post->ID;
 	}
 
 	/**
@@ -94,7 +90,7 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 			<?php _e( 'Select a post to restrict.', 'LION' ); ?>
 		</label>
 
-		<select class="it-exchange-membership-content-type-term" id="<?php echo $context; ?>-post" name="<?php echo $context; ?>[term]">
+		<select class="it-exchange-membership-content-type-post" id="<?php echo $context; ?>-post" name="<?php echo $context; ?>[term]">
 
 			<?php foreach ( $posts as $post ): ?>
 				<option value="<?php echo $post->ID; ?>" <?php selected( $post->ID, $selected ); ?>>
@@ -129,23 +125,12 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 	 *
 	 * @since 1.18
 	 *
-	 * @return string
-	 */
-	public function get_value() {
-		return $this->post_type;
-	}
-
-	/**
-	 * Get the label this content rule instance represents.
-	 *
-	 * This is used to build the content access type dropdown.
-	 *
-	 * @since 1.18
+	 * @param bool $label
 	 *
 	 * @return string
 	 */
-	public function get_label() {
-		return get_post_type_object( $this->post_type )->label;
+	public function get_selection( $label = false ) {
+		return $label ? get_post_type_object( $this->post_type )->label : $this->post_type;
 	}
 
 	/**

@@ -17,19 +17,15 @@ class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_Ab
 	private $taxonomy;
 
 	/**
-	 * @var array
-	 */
-	private $data;
-
-	/**
 	 * IT_Exchange_Membership_Content_Rule_Post constructor.
 	 *
 	 * @param string $taxonomy
 	 * @param array  $data
 	 */
 	public function __construct( $taxonomy, array $data = array() ) {
+		parent::__construct( $data );
+
 		$this->taxonomy = $taxonomy;
-		$this->data     = $data;
 	}
 
 	/**
@@ -70,7 +66,7 @@ class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_Ab
 
 		$terms = wp_get_object_terms( $post->ID, get_object_taxonomies( get_post_type( $post ) ), array( 'fields' => 'ids' ) );
 
-		return in_array( $this->data['term'], $terms );
+		return in_array( $this->get_term(), $terms );
 	}
 
 	/**
@@ -132,23 +128,12 @@ class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_Ab
 	 *
 	 * @since 1.18
 	 *
-	 * @return string
-	 */
-	public function get_value() {
-		return $this->taxonomy;
-	}
-
-	/**
-	 * Get the label this content rule instance represents.
-	 *
-	 * This is used to build the content access type dropdown.
-	 *
-	 * @since 1.18
+	 * @param bool $label
 	 *
 	 * @return string
 	 */
-	public function get_label() {
-		return get_taxonomy( $this->taxonomy )->label;
+	public function get_selection( $label = false ) {
+		return $label ? get_taxonomy( $this->taxonomy )->label : $this->taxonomy;
 	}
 
 	/**
@@ -174,6 +159,6 @@ class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_Ab
 	 * @return string
 	 */
 	public function get_short_description() {
-		return sprintf( "%s '%s'", $this->get_label(), get_term( $this->data['term'] )->name );
+		return sprintf( "%s '%s'", $this->get_selection( true ), get_term( $this->data['term'] )->name );
 	}
 }
