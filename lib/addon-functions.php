@@ -327,138 +327,65 @@ function it_exchange_membership_addon_build_drip_rules( $rule = array(), $count,
 function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 
 	$return = '';
-	$rules  = array();
+	$post   = get_post( $post_id );
 
-	$post_type = get_post_type( $post_id );
-	$post      = get_post( $post_id );
-
-	/*
-	* Use get_post_meta() to retrieve an existing value
-	* from the database and use the value for the form.
-	*/
-	$post_rules             = get_post_meta( $post_id, '_item-content-rule', true );
-	$post_type_rules        = get_option( '_item-content-rule-post-type-' . $post_type, array() );
-	$taxonomy_rules         = array();
-	$restriction_exemptions = get_post_meta( $post_id, '_item-content-rule-exemptions', true );
-
-	$taxonomies = get_object_taxonomies( $post_type );
-	$terms      = wp_get_object_terms( $post_id, $taxonomies );
-
-	foreach ( $terms as $term ) {
-		$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
-		if ( ! empty( $term_rules ) ) {
-			$taxonomy_rules[ $term->taxonomy ][ $term->term_id ] = array_merge( $taxonomy_rules, $term_rules );
-		}
-	}
-
-	//Re-order for output!
-	if ( ! empty( $post_rules ) ) {
-		foreach ( $post_rules as $product_id ) {
-			if ( false !== get_post_status( $product_id ) ) {
-				$rules[ $product_id ]['post'] = true;
-			} else {
-				//Something happened and that membership product doesn't exist anymore, but wasn't flushed properly
-				//So we need to flush it now.
-				it_exchange_before_delete_membership_product( $product_id );
-			}
-		}
-	}
-	if ( ! empty( $post_type_rules ) ) {
-		foreach ( $post_type_rules as $product_id ) {
-			$post_type = get_post_type_object( $post_type );
-			if ( ! empty( $post_type->labels->singular_name ) ) {
-				$name = $post_type->labels->singular_name;
-			} else if ( ! empty( $post_type->labels->name ) ) {
-				$name = $post_type->labels->name;
-			} else {
-				$name = $post_type->label;
-			}
-			$rules[ $product_id ]['post_type'] = $post_type->labels->singular_name;
-		}
-	}
-	if ( ! empty( $taxonomy_rules ) ) {
-		foreach ( $taxonomy_rules as $taxonomy => $term_rules ) {
-			foreach ( $term_rules as $term_id => $product_ids ) {
-				foreach ( $product_ids as $product_id ) {
-					$rules[ $product_id ]['taxonomy'][]              = $taxonomy;
-					$rules[ $product_id ][ $taxonomy ]['term_ids'][] = $term_id;
-				}
-			}
-		}
-	}
+	$exemptions = get_post_meta( $post_id, '_item-content-rule-exemptions', true );
 
 	$return .= '<div class="it-exchange-membership-restrictions">';
 
-	if ( ! empty( $rules ) ) {
+	$factory     = new IT_Exchange_Membership_Rule_Factory();
+	$memberships = $factory->make_all_for_post( $post );
 
-		foreach ( $rules as $membership_id => $rule ) {
-
-			$membership = it_exchange_get_product( $membership_id );
-
-			$return .= '<div class="it-exchange-membership-restriction-group">';
-			$title                 = get_the_title( $membership_id );
-			$parents               = it_exchange_membership_addon_get_all_the_parents( $membership_id );
-			$restriction_exception = ! empty( $restriction_exemptions[ $membership_id ] ) ? $restriction_exemptions[ $membership_id ] : array();
-
-			$return .= '<input type="hidden" name="it_exchange_membership_id" value="' . $membership_id . '">';
-
-			if ( ! empty( $rule['post'] ) && true === $rule['post'] ) {
-				$return .= '<div class="it-exchange-membership-rule-post it-exchange-membership-rule">';
-				$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="post" ' . checked( in_array( 'post', $restriction_exception ), false, false ) . '>';
-				$return .= $title;
-				if ( ! empty( $parents ) ) {
-					$return .= '<p class="description">' . sprintf( __( 'Included in: %s', 'LION' ), join( ', ', array_map( 'get_the_title', $parents ) ) ) . '</p>';
-				}
-				$return .= '<span class="it-exchange-membership-remove-rule">&times;</span>';
-
-				$drip_interval = get_post_meta( $post_id, '_item-content-rule-drip-interval-' . $membership_id, true );
-
-				if ( 0 < $drip_interval ) {
-					$drip_duration = get_post_meta( $post_id, '_item-content-rule-drip-duration-' . $membership_id, true );
-					$drip_duration = ! empty( $drip_duration ) ? $drip_duration : 'days';
-
-					if ( ! empty( $drip_interval ) && ! empty( $drip_duration ) ) {
-
-						$return .= '<div class="it-exchange-membership-rule-delay">' . __( 'Delay', 'LION' ) . '</div>';
-						$return .= '<div class="it-exchange-membership-drip-rule">';
-						$delay_rule = new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
-						$return .= $delay_rule->get_field_html( $membership_id );
-						$return .= '</div>';
-
-					}
-
-				}
-
-				$return .= '</div>';
-			}
-
-			if ( ! empty( $rule['post_type'] ) ) {
-				$return .= '<div class="it-exchange-membership-rule-post-type it-exchange-membership-rule">';
-				$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="posttype" ' . checked( in_array( 'posttype', $restriction_exception ), false, false ) . '>';
-				$return .= $title;
-				$return .= '<div class="it-exchange-membership-rule-description">' . $rule['post_type'] . '</div>';
-				$return .= '</div>';
-			}
-
-			if ( ! empty( $rule['taxonomy'] ) ) {
-				foreach ( $rule['taxonomy'] as $taxonomy ) {
-					foreach ( $rules[ $product_id ][ $taxonomy ]['term_ids'] as $term_id ) {
-						$term = get_term_by( 'id', $term_id, $taxonomy );
-						$return .= '<div class="it-exchange-membership-rule-post-type it-exchange-membership-rule">';
-						$return .= '<input class="it-exchange-restriction-exceptions" type="checkbox" name="restriction-exceptions[]" value="taxonomy|' . $taxonomy . '|' . $term_id . '" ' . checked( in_array( 'taxonomy|' . $taxonomy . '|' . $term_id, $restriction_exception ), false, false ) . '>';
-						$return .= $title;
-						$return .= '<div class="it-exchange-membership-rule-description">' . ucwords( $taxonomy ) . ' "' . $term->name . '"</div>';
-						$return .= '</div>';
-					}
-				}
-			}
-			$return .= '</div>';
-		}
-
+	if ( empty( $memberships ) ) {
+		$return .= '<div class="it-exchange-membership-no-restrictions">' . __( 'No membership restrictions for this content.', 'LION' ) . '</div>';
 	} else {
 
-		$return .= '<div class="it-exchange-membership-no-restrictions">' . __( 'No membership restrictions for this content.', 'LION' ) . '</div>';
+		ob_start();
 
+		foreach ( $memberships as $membership => $membership_rules ) {
+			?>
+			<div class="it-exchange-membership-restriction-group">
+				<input type="hidden" name="it_exchange_membership_id" value="<?php echo $membership; ?>">
+
+				<?php foreach ( $membership_rules as $rule ): /** @var $rule IT_Exchange_Membership_Content_RuleInterface */ ?>
+
+					<?php $parents = it_exchange_membership_addon_get_all_the_parents( $membership ); ?>
+					<?php $exemption = ! empty( $exemptions[ $membership ] ) ? $exemptions[ $membership ] : array(); ?>
+					<?php $type = $rule->get_type(); ?>
+
+					<div class="it-exchange-membership-rule it-exchange-membership-rule-<?php echo $type; ?>">
+
+						<label class="screen-reader-text" for="it-exchange-restriction-exemption-<?php echo $membership . $type; ?>">
+							<?php _e( 'Is this content exempt from the normal restriction rule.', 'LION' ); ?>
+						</label>
+						<input id="it-exchange-restriction-exemption-<?php echo $membership . $type; ?>" class="it-exchange-restriction-exemptions"
+						       type="checkbox" name="restriction-exemptions[]" value="<?php echo $type; ?>" <?php checked( in_array( $type, $exemption ), false ); ?>>
+
+						<?php echo get_the_title( $membership ); ?>
+
+						<?php if ( ! empty( $parents ) ) : ?>
+							<p class="description"><?php printf( __( 'Included in: %s', 'LION' ), join( ', ', array_map( 'get_the_title', $parents ) ) ); ?></p>
+						<?php endif; ?>
+
+						<span class="it-exchange-membership-remove-rule">&times;</span>
+
+						<div class="it-exchange-membership-rule-description"><?php echo $rule->get_short_description(); ?></div>
+
+						<?php foreach ( $rule->get_delay_rules() as $delay_rule ): ?>
+							<div class="it-exchange-membership-rule-delay"><?php _e( 'Delay', 'LION' ); ?></div>
+							<div class="it-exchange-membership-<?php echo $delay_rule->get_type(); ?>-rule">
+								<?php echo $delay_rule->get_field_html( $membership ); ?>
+							</div>
+						<?php endforeach; ?>
+
+					</div>
+
+				<?php endforeach; ?>
+			</div>
+			<?php
+		}
+
+		$return .= ob_get_clean();
 	}
 
 	$return .= '</div>';
@@ -748,9 +675,10 @@ function it_exchange_membership_addon_display_membership_hierarchy( $product_ids
 			$output .= '</div>';
 
 			if ( $child_ids = get_post_meta( $product_id, '_it-exchange-membership-child-id' ) ) {
-				$output .= it_exchange_membership_addon_display_membership_hierarchy( $child_ids, array( 'echo'         => false,
-				                                                                                         'delete'       => false,
-				                                                                                         'hidden_input' => false
+				$output .= it_exchange_membership_addon_display_membership_hierarchy( $child_ids, array(
+					'echo'         => false,
+					'delete'       => false,
+					'hidden_input' => false
 				) );
 			}
 

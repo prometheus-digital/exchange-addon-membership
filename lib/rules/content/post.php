@@ -9,7 +9,7 @@
 /**
  * Class IT_Exchange_Membership_Content_Rule_Post
  */
-class IT_Exchange_Membership_Content_Rule_Post implements IT_Exchange_Membership_Content_RuleInterface {
+class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_AbstractContent_Rule {
 
 	/**
 	 * @var string
@@ -29,7 +29,7 @@ class IT_Exchange_Membership_Content_Rule_Post implements IT_Exchange_Membership
 	 */
 	public function __construct( $post_type, array $data = array() ) {
 		$this->post_type = $post_type;
-		$this->data = $data;
+		$this->data      = $data;
 	}
 
 	/**
@@ -55,6 +55,19 @@ class IT_Exchange_Membership_Content_Rule_Post implements IT_Exchange_Membership
 	 */
 	public function evaluate( IT_Exchange_Subscription $subscription, WP_Post $post ) {
 		// TODO: Implement evaluate() method.
+	}
+
+	/**
+	 * Check if this content rule matches a post.
+	 *
+	 * @since 1.18
+	 *
+	 * @param WP_Post $post
+	 *
+	 * @return bool
+	 */
+	public function matches_post( WP_Post $post ) {
+		return $this->data['term'] == $post->ID;
 	}
 
 	/**
@@ -146,5 +159,18 @@ class IT_Exchange_Membership_Content_Rule_Post implements IT_Exchange_Membership
 	 */
 	public function get_type( $label = false ) {
 		return $label ? __( 'Post Types', 'LION' ) : 'posts';
+	}
+
+	/**
+	 * Get the short description for this rule.
+	 *
+	 * Ex. Category "Protected"
+	 *
+	 * @since 1.18
+	 *
+	 * @return string
+	 */
+	public function get_short_description() {
+		return '';
 	}
 }
