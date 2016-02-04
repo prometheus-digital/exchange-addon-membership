@@ -1051,8 +1051,11 @@ add_filter( 'it_exchange_redirect_for-protected-pages-to-registration-when-not-l
  * @param object $customer current Customer
  * @return array
 */
-function it_exchange_membership_addon_append_to_customer_menu_loop( $nav='', $customer=false ) {
-	$memberships = it_exchange_get_session_data( 'parent_access' );
+function it_exchange_membership_addon_append_to_customer_menu_loop( $nav='' ) {
+
+	$memberships = it_exchange_membership_addon_get_customer_memberships();
+	$memberships = it_exchange_membership_addon_setup_most_parent_member_access_array( $memberships );
+
 	$page_slug = 'memberships';
 	$permalinks = (bool)get_option( 'permalink_structure' );
 

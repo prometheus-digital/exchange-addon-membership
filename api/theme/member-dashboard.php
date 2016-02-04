@@ -43,8 +43,6 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 	 * Constructor
 	 *
 	 * @since 1.0.0
-	 *
-	 * @return void
 	*/
 	function __construct() {
 		if ( is_user_logged_in() )
