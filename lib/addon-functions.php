@@ -98,6 +98,8 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 	$cache->posts = new stdClass();
 	$cache->terms = new stdClass();
 
+	$factory = new IT_Exchange_Membership_Rule_Factory();
+
 	$return = '<div class="it-exchange-membership-addon-content-access-rules content-access-sortable">';
 
 	if ( ! empty( $rules ) ) {
@@ -172,24 +174,11 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 				$return .= it_exchange_membership_addon_get_selections( $selection, $selected, $count, $post_types, $taxonomies );
 				$return .= '<div class="it-exchange-content-access-content column col-6-12"><div class="it-exchange-membership-content-type-terms">';
 
-				switch ( $selected ) {
-
-					case 'posts':
-						$rule_obj = new IT_Exchange_Membership_Content_Rule_Post( $selection, $rule );
-						break;
-
-					case 'post_types':
-						$rule_obj = new IT_Exchange_Membership_Content_Rule_Post_Type( $rule );
-						break;
-
-					case 'taxonomy':
-						$rule_obj = new IT_Exchange_Membership_Content_Rule_Term( $selection, $rule );
-						break;
-				}
+				$rule_obj = $factory->make_content_rule($selected, $rule, it_exchange_get_product( $product_id ) );
 
 				$return .= '<input type="hidden" value="' . $selected . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
 
-				if ( isset( $rule_obj ) ) {
+				if ( ! empty( $rule_obj ) ) {
 					$return .= $rule_obj->get_field_html( "it_exchange_content_access_rules[$count]" );
 
 					if ( $rule_obj->is_groupable() && false ) {
@@ -331,58 +320,53 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 
 	$return .= '<div class="it-exchange-membership-restrictions">';
 
-	$factory     = new IT_Exchange_Membership_Rule_Factory();
-	$memberships = $factory->make_all_for_post( $post );
+	$factory = new IT_Exchange_Membership_Rule_Factory();
+	$rules   = $factory->make_all_for_post( $post );
 
-	if ( empty( $memberships ) ) {
+	if ( empty( $rules ) ) {
 		$return .= '<div class="it-exchange-membership-no-restrictions">' . __( 'No membership restrictions for this content.', 'LION' ) . '</div>';
 	} else {
 
 		ob_start();
 
-		foreach ( $memberships as $membership_id => $membership_rules ) {
+		foreach ( $rules as $rule ) {
 			?>
 			<div class="it-exchange-membership-restriction-group">
-				<input type="hidden" name="it_exchange_membership_id" value="<?php echo $membership_id; ?>">
+				<input type="hidden" name="it_exchange_membership_id" value="<?php echo $rule->get_membership()->ID; ?>">
 
-				<?php foreach ( $membership_rules as $rule ):
-					/** @var $rule IT_Exchange_Membership_Content_RuleInterface */
+				<?php
+				$membership_id = $rule->get_membership()->ID;
+				$parents       = it_exchange_membership_addon_get_all_the_parents( $membership_id );
+				$type          = $rule->get_type();
+				$exempt        = $rule->is_post_exempt( $post );
+				?>
 
-					$parents    = it_exchange_membership_addon_get_all_the_parents( $membership_id );
-					$membership = it_exchange_get_product( $membership_id );
-					$type       = $rule->get_type();
-					$exempt     = $rule->is_post_exempt( $post, $membership );
-					?>
+				<div class="it-exchange-membership-rule it-exchange-membership-rule-<?php echo $type; ?>">
 
-					<div class="it-exchange-membership-rule it-exchange-membership-rule-<?php echo $type; ?>">
+					<label class="screen-reader-text" for="it-exchange-restriction-exemption-<?php echo $membership_id . $type; ?>">
+						<?php _e( 'Is this content exempt from the normal restriction rule.', 'LION' ); ?>
+					</label>
+					<input id="it-exchange-restriction-exemption-<?php echo $membership_id . $type; ?>" class="it-exchange-restriction-exemptions"
+					       type="checkbox" name="restriction-exemptions[]" value="<?php echo $type; ?>" data-term="<?php echo $rule->get_term(); ?>"
+					       data-selection="<?php echo $rule->get_selection(); ?>" <?php checked( ! $exempt ); ?>>
 
-						<label class="screen-reader-text" for="it-exchange-restriction-exemption-<?php echo $membership_id . $type; ?>">
-							<?php _e( 'Is this content exempt from the normal restriction rule.', 'LION' ); ?>
-						</label>
-						<input id="it-exchange-restriction-exemption-<?php echo $membership_id . $type; ?>" class="it-exchange-restriction-exemptions"
-						       type="checkbox" name="restriction-exemptions[]" value="<?php echo $type; ?>" data-term="<?php echo $rule->get_term(); ?>"
-						       data-selection="<?php echo $rule->get_selection(); ?>" <?php checked( ! $exempt ); ?>>
+					<?php echo get_the_title( $membership_id ); ?>
 
-						<?php echo get_the_title( $membership_id ); ?>
+					<?php if ( ! empty( $parents ) ) : ?>
+						<p class="description"><?php printf( __( 'Included in: %s', 'LION' ), join( ', ', array_map( 'get_the_title', $parents ) ) ); ?></p>
+					<?php endif; ?>
 
-						<?php if ( ! empty( $parents ) ) : ?>
-							<p class="description"><?php printf( __( 'Included in: %s', 'LION' ), join( ', ', array_map( 'get_the_title', $parents ) ) ); ?></p>
-						<?php endif; ?>
+					<span class="it-exchange-membership-remove-rule">&times;</span>
 
-						<span class="it-exchange-membership-remove-rule">&times;</span>
+					<div class="it-exchange-membership-rule-description"><?php echo $rule->get_short_description(); ?></div>
 
-						<div class="it-exchange-membership-rule-description"><?php echo $rule->get_short_description(); ?></div>
-
-						<?php foreach ( $rule->get_delay_rules() as $delay_rule ): ?>
-							<div class="it-exchange-membership-rule-delay"><?php _e( 'Delay', 'LION' ); ?></div>
-							<div class="it-exchange-membership-<?php echo $delay_rule->get_type(); ?>-rule">
-								<?php echo $delay_rule->get_field_html( $membership_id ); ?>
-							</div>
-						<?php endforeach; ?>
-
-					</div>
-
-				<?php endforeach; ?>
+					<?php foreach ( $rule->get_delay_rules() as $delay_rule ): ?>
+						<div class="it-exchange-membership-rule-delay"><?php _e( 'Delay', 'LION' ); ?></div>
+						<div class="it-exchange-membership-<?php echo $delay_rule->get_type(); ?>-rule">
+							<?php echo $delay_rule->get_field_html( $membership_id ); ?>
+						</div>
+					<?php endforeach; ?>
+				</div>
 			</div>
 			<?php
 		}

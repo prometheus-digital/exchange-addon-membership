@@ -122,31 +122,22 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 		$count   = $_REQUEST['count'];
 		$options = '';
 
-		switch ( $type ) {
+		$data = array(
+			'selection' => $value
+		);
 
-			case 'posts':
-				$rule = new IT_Exchange_Membership_Content_Rule_Post( $value );
-				break;
+		$factory = new IT_Exchange_Membership_Rule_Factory();
+		$rule    = $factory->make_content_rule( $type, $data );
 
-			case 'post_types':
+		if ( ! $rule ) {
+			$options = apply_filters( 'it_exchange_membership_addon_get_custom_selected_options', $options, $value, $type );
 
-				$rule = new IT_Exchange_Membership_Content_Rule_Post_Type();
-				break;
+			$return .= '<input type="hidden" value="' . $type . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
+			$return .= '<select class="it-exchange-membership-content-type-term" name="it_exchange_content_access_rules[' . $count . '][term]">';
+			$return .= $options;
+			$return .= '</select>';
 
-			case 'taxonomy':
-				$rule = new IT_Exchange_Membership_Content_Rule_Term( $value );
-				break;
-
-			default:
-				$options = apply_filters( 'it_exchange_membership_addon_get_custom_selected_options', $options, $value, $type );
-
-				$return .= '<input type="hidden" value="' . $type . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
-				$return .= '<select class="it-exchange-membership-content-type-term" name="it_exchange_content_access_rules[' . $count . '][term]">';
-				$return .= $options;
-				$return .= '</select>';
-
-				die( $return );
-
+			die( $return );
 		}
 
 		$return .= '<input type="hidden" value="' . $type . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
@@ -387,7 +378,7 @@ function it_exchange_membership_addon_ajax_modify_restrictions_exemptions() {
 		$factory = new IT_Exchange_Membership_Rule_Factory();
 
 		$rule = $factory->make_content_rule( $type, $rule_data, $membership );
-		$rule->set_post_exempt( $post, $membership, $checked === 'false' );
+		$rule->set_post_exempt( $post, $checked === 'false' );
 
 		if ( $type === 'taxonomy' ) {
 			$exemption = "taxonomy|{$rule->get_selection()}|{$rule->get_term()}";

@@ -17,6 +17,11 @@ abstract class IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchang
 	private $delay_rules = array();
 
 	/**
+	 * @var IT_Exchange_Membership
+	 */
+	private $membership;
+
+	/**
 	 * @var array
 	 */
 	protected $data = array();
@@ -24,10 +29,12 @@ abstract class IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchang
 	/**
 	 * IT_Exchange_Membership_AbstractContent_Rule constructor.
 	 *
-	 * @param array $data
+	 * @param IT_Exchange_Membership $membership
+	 * @param array                  $data
 	 */
-	public function __construct( array $data = array() ) {
-		$this->data = $data;
+	public function __construct( IT_Exchange_Membership $membership = null, array $data = array() ) {
+		$this->membership = $membership;
+		$this->data       = $data;
 	}
 
 	/**
@@ -67,14 +74,7 @@ abstract class IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchang
 	 * @return bool True if readable
 	 */
 	public function evaluate( IT_Exchange_Subscription $subscription, WP_Post $post ) {
-
-		foreach ( $this->get_delay_rules() as $delay_rule ) {
-			if ( ! $delay_rule->evaluate( $subscription, $post ) ) {
-				return false;
-			}
-		}
-
-		return true;
+		return ! $this->is_post_exempt( $post );
 	}
 
 	/**
@@ -84,13 +84,12 @@ abstract class IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchang
 	 *
 	 * @since 1.18
 	 *
-	 * @param WP_Post                $post
-	 * @param IT_Exchange_Membership $membership
+	 * @param WP_Post $post
 	 *
 	 * @return bool
 	 */
-	public function is_post_exempt( WP_Post $post, IT_Exchange_Membership $membership ) {
-		return (bool) get_post_meta( $post->ID, $this->get_exemption_meta_key( $membership ), true );
+	public function is_post_exempt( WP_Post $post ) {
+		return (bool) get_post_meta( $post->ID, $this->get_exemption_meta_key(), true );
 	}
 
 	/**
@@ -98,12 +97,11 @@ abstract class IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchang
 	 *
 	 * @since 1.18
 	 *
-	 * @param WP_Post                $post
-	 * @param IT_Exchange_Membership $membership
-	 * @param bool                   $exempt
+	 * @param WP_Post $post
+	 * @param bool    $exempt
 	 */
-	public function set_post_exempt( WP_Post $post, IT_Exchange_Membership $membership, $exempt = true ) {
-		update_post_meta( $post->ID, $this->get_exemption_meta_key( $membership ), (bool) $exempt );
+	public function set_post_exempt( WP_Post $post, $exempt = true ) {
+		update_post_meta( $post->ID, $this->get_exemption_meta_key(), (bool) $exempt );
 	}
 
 	/**
@@ -111,12 +109,10 @@ abstract class IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchang
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership $membership
-	 *
 	 * @return string
 	 */
-	protected function get_exemption_meta_key( IT_Exchange_Membership $membership ) {
-		return "_rule-exemption-{$this->get_type()}-{$this->get_term()}-{$membership->ID}";
+	protected function get_exemption_meta_key() {
+		return "_rule-exemption-{$this->get_type()}-{$this->get_term()}-{$this->get_membership()->ID}";
 	}
 
 	/**
@@ -130,5 +126,16 @@ abstract class IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchang
 	 */
 	public function get_term() {
 		return isset( $this->data['term'] ) ? $this->data['term'] : null;
+	}
+
+	/**
+	 * Get this rule's membership.
+	 *
+	 * @since 1.18
+	 *
+	 * @return IT_Exchange_Membership|null
+	 */
+	public function get_membership() {
+		return $this->membership;
 	}
 }

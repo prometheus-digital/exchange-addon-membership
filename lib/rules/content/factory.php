@@ -23,7 +23,7 @@ class IT_Exchange_Membership_Rule_Factory {
 	 *
 	 * @param WP_Post $post
 	 *
-	 * @return array
+	 * @return IT_Exchange_Membership_Content_RuleInterface[]
 	 */
 	public function make_all_for_post( WP_Post $post ) {
 
@@ -37,12 +37,10 @@ class IT_Exchange_Membership_Rule_Factory {
 		$this->post = $post;
 
 		foreach ( $memberships as $membership ) {
-
-			$membership_rules = $this->make_all_for_membership( it_exchange_get_product( $membership ) );
-			$membership_rules = array_filter( $membership_rules, array( $this, '_filter' ) );
-
-			$rules[ $membership ] = $membership_rules;
+			$rules = array_merge( $rules, $this->make_all_for_membership( it_exchange_get_product( $membership ) ) );
 		}
+
+		$rules = array_filter( $rules, array( $this, '_filter' ) );
 
 		$this->post = null;
 
@@ -104,18 +102,21 @@ class IT_Exchange_Membership_Rule_Factory {
 	 *
 	 * @return IT_Exchange_Membership_Content_RuleInterface
 	 */
-	public function make_content_rule( $type, $data, IT_Exchange_Membership $membership ) {
+	public function make_content_rule( $type, $data, IT_Exchange_Membership $membership = null ) {
 
 		switch ( $type ) {
 			case 'posts':
-				$rule = new IT_Exchange_Membership_Content_Rule_Post( $data['selection'], $data );
-				$this->attach_delay_rules( $rule, $membership, get_post( $data['term'] ) );
+				$rule = new IT_Exchange_Membership_Content_Rule_Post( $data['selection'], $membership, $data );
+
+				if ( isset( $data['term'] ) ) {
+					$this->attach_delay_rules( $rule, $membership, get_post( $data['term'] ) );
+				}
 
 				return $rule;
 			case 'post_types':
-				return new IT_Exchange_Membership_Content_Rule_Post_Type( $data );
+				return new IT_Exchange_Membership_Content_Rule_Post_Type( $membership, $data );
 			case 'taxonomy':
-				return new IT_Exchange_Membership_Content_Rule_Term( $data['selection'], $data );
+				return new IT_Exchange_Membership_Content_Rule_Term( $data['selection'], $membership, $data );
 			default:
 
 				/**
@@ -126,8 +127,9 @@ class IT_Exchange_Membership_Rule_Factory {
 				 * @param IT_Exchange_Membership_Content_RuleInterface $rule
 				 * @param string                                       $type
 				 * @param array                                        $data
+				 * @param IT_Exchange_Membership                       $membership
 				 */
-				$rule = apply_filters( 'it_exchange_membership_rule_factory_make_rule', null, $type, $data );
+				$rule = apply_filters( 'it_exchange_membership_rule_factory_make_rule', null, $type, $data, $membership );
 
 				if ( $rule && ! $rule instanceof IT_Exchange_Membership_Content_RuleInterface ) {
 					throw new UnexpectedValueException( 'Invalid class type for new rule.' );

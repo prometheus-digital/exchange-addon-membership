@@ -27,84 +27,21 @@
  */
 function it_exchange_membership_addon_is_content_restricted( $post = null ) {
 
+	if ( current_user_can( 'administrator' ) ) {
+		return false;
+	}
+
 	if ( ! $post ) {
 		global $post;
 	}
 
-	$restriction = false;
+	$evaluator    = new IT_Exchange_Membership_Rule_Evaluator_Service( new IT_Exchange_Membership_Rule_Factory() );
+	$customer     = it_exchange_get_current_customer();
+	$failed_rules = $evaluator->evaluate( $post, $customer ? $customer : null );
 
-	if ( current_user_can( 'administrator' ) )
-		return false;
+	$memberships = it_exchange_membership_addon_get_customer_memberships();
 
-	$member_access = it_exchange_membership_addon_get_customer_memberships();
-
-	if ( !empty( $post ) ) {
-
-		$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
-
-		if ( 'it_exchange_prod' !== $post->post_type ) {
-			$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
-			if ( !empty( $post_rules ) ) {
-				if ( !empty( $member_access ) ) {
-					foreach( $member_access as $product_id => $txn_id ) {
-						if ( in_array( $product_id, $post_rules ) ) {
-							return false;
-						}
-					}
-				}
-				foreach( $post_rules as $product_id ) {
-					if ( !empty( $restriction_exemptions[$product_id] ) && in_array( $post->post_type, $restriction_exemptions[$product_id] ) ) {
-						$restriction = false;
-					} else {
-						$restriction = true;
-					}
-				}
-			}
-		}
-
-		$post_type_rules = get_option( '_item-content-rule-post-type-' . $post->post_type, array() );
-		if ( !empty( $post_type_rules ) ) {
-			if ( !empty( $member_access ) ) {
-				foreach( $member_access as $product_id => $txn_id ) {
-					if ( in_array( $product_id, $post_type_rules ) ) {
-						return false;
-					}
-				}
-			}
-			foreach( $post_type_rules as $product_id ) {
-				if ( !empty( $restriction_exemptions[$product_id] ) && in_array( 'posttype', $restriction_exemptions[$product_id] ) ) {
-					$restriction = false;
-				} else {
-					$restriction = true;
-				}
-			}
-		}
-
-		$taxonomy_rules = array();
-		$taxonomies = get_object_taxonomies( $post->post_type );
-		$terms = wp_get_object_terms( $post->ID, $taxonomies );
-		foreach( $terms as $term ) {
-			$term_rules = get_option( '_item-content-rule-tax-' . $term->taxonomy . '-' . $term->term_id, array() );
-			if ( !empty( $term_rules ) ) {
-				if ( !empty( $member_access ) ) {
-					foreach( $member_access as $product_id => $txn_id ) {
-						if ( in_array( $product_id, $term_rules ) )
-							return false;
-					}
-				}
-				foreach( $term_rules as $product_id ) {
-					if ( !empty( $restriction_exemptions[$product_id] ) && in_array( sprintf( 'taxonomy|%s|%d', $term->taxonomy,  $term->term_id ), $restriction_exemptions[$product_id] ) ) {
-						$restriction = false;
-					} else {
-						$restriction = true;
-					}
-				}
-			}
-		}
-
-	}
-
-	return apply_filters( 'it_exchange_membership_addon_is_content_restricted', $restriction, $member_access );
+	return apply_filters( 'it_exchange_membership_addon_is_content_restricted', ! empty( $failed_rules ), $memberships );
 }
 
 /**
@@ -134,24 +71,26 @@ function it_exchange_membership_addon_is_product_restricted( $post = null ) {
 
 	$restriction = false;
 
-	if ( current_user_can( 'administrator' ) )
+	if ( current_user_can( 'administrator' ) ) {
 		return false;
+	}
 
 	$member_access = it_exchange_membership_addon_get_customer_memberships();
 
-	if ( !empty( $post ) && 'it_exchange_prod' === $post->post_type ) {
+	if ( ! empty( $post ) && 'it_exchange_prod' === $post->post_type ) {
 		$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
 
 		$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
-		if ( !empty( $post_rules ) ) {
-			if ( !empty( $member_access ) ) {
-				foreach( $member_access as $product_id => $txn_id ) {
-					if ( in_array( $product_id, $post_rules ) )
+		if ( ! empty( $post_rules ) ) {
+			if ( ! empty( $member_access ) ) {
+				foreach ( $member_access as $product_id => $txn_id ) {
+					if ( in_array( $product_id, $post_rules ) ) {
 						return false;
+					}
 				}
 			}
-			foreach( $post_rules as $product_id ) {
-				if ( !empty( $restriction_exemptions[$product_id] ) && in_array( $post->post_type, $restriction_exemptions[$product_id] ) ) {
+			foreach ( $post_rules as $product_id ) {
+				if ( ! empty( $restriction_exemptions[ $product_id ] ) && in_array( $post->post_type, $restriction_exemptions[ $product_id ] ) ) {
 					$restriction = false;
 				} else {
 					$restriction = true;
@@ -184,35 +123,21 @@ function it_exchange_membership_addon_is_content_dripped( $post = null ) {
 		global $post;
 	}
 
-	$dripped = false;
-
-	if ( current_user_can( 'administrator' ) )
+	if ( current_user_can( 'administrator' ) ) {
 		return false;
-
-	$member_access = it_exchange_membership_addon_get_customer_memberships();
-
-	if ( !empty( $post ) ) {
-
-		foreach( $member_access as $product_id => $txn_id  ) {
-			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
-			$interval = !empty( $interval ) ? $interval : 0;
-			$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
-			$duration = !empty( $duration ) ? $duration : 'days';
-			if ( 0 < $interval ) {
-				$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
-				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
-				$now = time();
-
-				if ( $dripping < $now )
-					return false; // we can return here because they should have access to this content with this membership
-				else
-					$dripped = true; // we don't want to return here, because other memberships might have access to content sooner
-			}
-		}
-
 	}
 
-	return apply_filters( 'it_exchange_membership_addon_is_content_dripped', $dripped, $member_access );
+	$evaluator = new IT_Exchange_Membership_Rule_Evaluator_Service( new IT_Exchange_Membership_Rule_Factory() );
+	$customer  = it_exchange_get_current_customer();
+
+	if ( ! $customer ) {
+		return false;
+	}
+
+	$failed_rules = $evaluator->evaluate_drip( $post, $customer );
+	$memberships  = it_exchange_membership_addon_get_customer_memberships();
+
+	return apply_filters( 'it_exchange_membership_addon_is_content_dripped', ! empty( $failed_rules ), $memberships );
 }
 
 /**
@@ -238,31 +163,36 @@ function it_exchange_membership_addon_is_product_dripped( $post = null ) {
 
 	$dripped = false;
 
-	if ( current_user_can( 'administrator' ) )
+	if ( current_user_can( 'administrator' ) ) {
 		return false;
+	}
 
 	$member_access = it_exchange_membership_addon_get_customer_memberships();
 
-	if ( !empty( $post ) && 'it_exchange_prod' === $post->post_type ) {
-		foreach( $member_access as $product_id => $txn_id  ) {
+	if ( ! empty( $post ) && 'it_exchange_prod' === $post->post_type ) {
+		foreach ( $member_access as $product_id => $txn_id ) {
 			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
-			$interval = !empty( $interval ) ? $interval : 0;
+			$interval = ! empty( $interval ) ? $interval : 0;
 			$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
-			$duration = !empty( $duration ) ? $duration : 'days';
+			$duration = ! empty( $duration ) ? $duration : 'days';
 			if ( 0 < $interval ) {
 				$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
-				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time );
-				$now = time();
+				$dripping      = strtotime( $interval . ' ' . $duration, $purchase_time );
+				$now           = time();
 
-				if ( $dripping < $now )
-					return false; // we can return here because they should have access to this content with this membership
-				else
-					$dripped = true; // we don't want to return here, because other memberships might have access to content sooner
+				if ( $dripping < $now ) {
+					return false;
+				} // we can return here because they should have access to this content with this membership
+				else {
+					$dripped = true;
+				} // we don't want to return here, because other memberships might have access to content sooner
 			}
 		}
 	}
+
 	return apply_filters( 'it_exchange_membership_addon_is_product_dripped', $dripped, $member_access );
 }
+
 /**
  * Gets a customer's memberships.
  *
@@ -284,17 +214,17 @@ function it_exchange_membership_addon_get_customer_memberships( $customer_id = f
 			$memberships = it_exchange_get_session_data( 'member_access' );
 		}
 	} else {
-		$customer = new IT_Exchange_Customer( $customer_id );
+		$customer      = new IT_Exchange_Customer( $customer_id );
 		$member_access = $customer->get_customer_meta( 'member_access' );
-		if ( !empty( $member_access ) ) {
+		if ( ! empty( $member_access ) ) {
 
 			$flip_member_access = array();
 
-			foreach( $member_access as $txn_id => $product_id_array ) {
+			foreach ( $member_access as $txn_id => $product_id_array ) {
 				// we want the transaction ID to be the value to help us determine child access relations to transaction IDs
 				// Can't use array_flip because product_id_array is an array -- now :)
 				foreach ( (array) $product_id_array as $product_id ) {
-					$flip_member_access[$product_id] = $txn_id;
+					$flip_member_access[ $product_id ] = $txn_id;
 				}
 			}
 
@@ -316,11 +246,28 @@ function it_exchange_membership_addon_get_customer_memberships( $customer_id = f
 }
 
 /**
+ * Get a customer's membership subscriptions.
+ *
+ * @since 1.18
+ *
+ * @param IT_Exchange_Customer|null $customer
+ *
+ * @return IT_Exchange_Subscription[]
+ */
+function it_exchange_get_customer_membership_subscriptions( IT_Exchange_Customer $customer = null ) {
+
+	$memberships  = it_exchange_membership_addon_get_customer_memberships( $customer ? $customer->ID : false );
+	$transactions = array_unique( array_values( $memberships ) );
+
+	return array_map( 'it_exchange_get_subscription', array_map( 'it_exchange_get_transaction', $transactions ) );
+}
+
+/**
  * Gets a customer's memberships
  *
  * @since 1.2.16
  *
- * @param int $membership Member's Product/Post ID
+ * @param int      $membership  Member's Product/Post ID
  * @param int|bool $customer_id Customer's User ID
  *
  * @return array|bool
@@ -331,21 +278,21 @@ function it_exchange_membership_addon_is_customer_member_of( $membership, $custo
 	if ( is_int( $membership ) ) {
 		$membership_id = $membership;
 	} else {
-		$args = array(
-			'name' => $membership,
-			'post_type' => 'it_exchange_pro',
+		$args     = array(
+			'name'        => $membership,
+			'post_type'   => 'it_exchange_pro',
 			'post_status' => 'publish',
 			'numberposts' => 1
 		);
 		$products = get_posts( $args );
-		if ( !empty( $products ) ) {
+		if ( ! empty( $products ) ) {
 			$membership_id = $products[0]->ID;
 		} else {
 			return false;
 		}
 	}
 
-	return !empty( $member_access[$membership_id] );
+	return ! empty( $member_access[ $membership_id ] );
 }
 
 /**
@@ -367,8 +314,8 @@ function it_exchange_is_customer_eligible_for_trial( IT_Exchange_Product $member
 
 	$member_access = it_exchange_membership_addon_get_customer_memberships( $customer ? $customer->id : false );
 
-	$children      = (array) it_exchange_membership_addon_get_all_the_children( $membership_id );
-	$parents       = (array) it_exchange_membership_addon_get_all_the_parents( $membership_id );
+	$children = (array) it_exchange_membership_addon_get_all_the_children( $membership_id );
+	$parents  = (array) it_exchange_membership_addon_get_all_the_parents( $membership_id );
 
 	foreach ( $member_access as $prod_id => $txn_id ) {
 		if ( $prod_id === $membership_id || in_array( $prod_id, $children ) || in_array( $prod_id, $parents ) ) {

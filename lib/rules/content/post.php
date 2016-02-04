@@ -19,11 +19,12 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 	/**
 	 * IT_Exchange_Membership_Content_Rule_Post constructor.
 	 *
-	 * @param string $post_type
-	 * @param array  $data
+	 * @param string                 $post_type
+	 * @param IT_Exchange_Membership $membership
+	 * @param array                  $data
 	 */
-	public function __construct( $post_type, array $data = array() ) {
-		parent::__construct( $data );
+	public function __construct( $post_type, IT_Exchange_Membership $membership = null, array $data = array() ) {
+		parent::__construct( $membership, $data );
 
 		$this->post_type = $post_type;
 	}
@@ -37,20 +38,6 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 	 */
 	public function is_groupable() {
 		return false;
-	}
-
-	/**
-	 * Evaluate the rule.
-	 *
-	 * @since 1.18
-	 *
-	 * @param IT_Exchange_Subscription $subscription
-	 * @param WP_Post                  $post
-	 *
-	 * @return bool True if readable
-	 */
-	public function evaluate( IT_Exchange_Subscription $subscription, WP_Post $post ) {
-		// TODO: Implement evaluate() method.
 	}
 
 	/**

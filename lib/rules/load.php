@@ -7,6 +7,7 @@
  */
 
 require_once dirname( __FILE__ ) . '/interface.php';
+require_once dirname( __FILE__ ) . '/evaluator.php';
 
 require_once dirname( __FILE__ ) . '/content/factory.php';
 require_once dirname( __FILE__ ) . '/content/interface.php';

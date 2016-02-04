@@ -70,7 +70,11 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 	 * @return bool True if readable
 	 */
 	public function evaluate( IT_Exchange_Subscription $subscription, WP_Post $post = null ) {
-		// TODO: Implement evaluate() method.
+
+		$start_time = (int) $subscription->get_start_date()->format( 'U' );
+		$drip_time  = strtotime( $this->interval . ' ' . $this->duration, $start_time );
+
+		return $drip_time < time();
 	}
 
 	/**

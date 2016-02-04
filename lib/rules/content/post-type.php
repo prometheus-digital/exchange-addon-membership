@@ -23,20 +23,6 @@ class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membersh
 	}
 
 	/**
-	 * Evaluate the rule.
-	 *
-	 * @since 1.18
-	 *
-	 * @param IT_Exchange_Subscription $subscription
-	 * @param WP_Post                  $post
-	 *
-	 * @return bool True if readable
-	 */
-	public function evaluate( IT_Exchange_Subscription $subscription, WP_Post $post ) {
-		// TODO: Implement evaluate() method.
-	}
-
-	/**
 	 * Check if this content rule matches a post.
 	 *
 	 * @since 1.18

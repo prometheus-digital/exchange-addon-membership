@@ -49,25 +49,23 @@ interface IT_Exchange_Membership_Content_RuleInterface extends IT_Exchange_Membe
 	 *
 	 * @since 1.18
 	 *
-	 * @param WP_Post                $post
-	 * @param IT_Exchange_Membership $membership
+	 * @param WP_Post $post
 	 *
 	 * @return bool
 	 */
-	public function is_post_exempt( WP_Post $post, IT_Exchange_Membership $membership );
+	public function is_post_exempt( WP_Post $post );
 
 	/**
 	 * Set a given post to be exempt from this content rule.
 	 *
 	 * @since 1.18
 	 *
-	 * @param WP_Post                $post
-	 * @param IT_Exchange_Membership $membership
-	 * @param bool                   $exempt
+	 * @param WP_Post $post
+	 * @param bool    $exempt
 	 *
 	 * @return
 	 */
-	public function set_post_exempt( WP_Post $post, IT_Exchange_Membership $membership, $exempt = true );
+	public function set_post_exempt( WP_Post $post, $exempt = true );
 
 	/**
 	 * Check if tis content type is groupable.
@@ -112,4 +110,13 @@ interface IT_Exchange_Membership_Content_RuleInterface extends IT_Exchange_Membe
 	 * @return string|int|null
 	 */
 	public function get_term();
+
+	/**
+	 * Get this rule's membership.
+	 *
+	 * @since 1.18
+	 *
+	 * @return IT_Exchange_Membership|null
+	 */
+	public function get_membership();
 }
