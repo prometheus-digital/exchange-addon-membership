@@ -174,7 +174,7 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 				$return .= it_exchange_membership_addon_get_selections( $selection, $selected, $count, $post_types, $taxonomies );
 				$return .= '<div class="it-exchange-content-access-content column col-6-12"><div class="it-exchange-membership-content-type-terms">';
 
-				$rule_obj = $factory->make_content_rule($selected, $rule, it_exchange_get_product( $product_id ) );
+				$rule_obj = $factory->make_content_rule( $selected, $rule, it_exchange_get_product( $product_id ) );
 
 				$return .= '<input type="hidden" value="' . $selected . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
 
@@ -271,37 +271,19 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
  */
 function it_exchange_membership_addon_build_drip_rules( $rule = array(), $count, $product_id = false ) {
 
-	$return = '';
+	$membership = $product_id ? it_exchange_get_product( $product_id ) : null;
 
-	if ( ! empty( $product_id ) && ! empty( $rule['selected'] ) && 'posts' === $rule['selected'] && ! empty( $rule['term'] ) ) {
-		$drip_interval = get_post_meta( $rule['term'], '_item-content-rule-drip-interval-' . $product_id, true );
-	} else {
-		$drip_interval = 0;
+	if ( ! empty( $rule['term'] ) && isset( $rule['selected'] ) && $rule['selected'] === 'posts' ) {
+		$post = get_post( $rule['term'] );
 	}
 
-	if ( 0 < $drip_interval ) {
-		$drip_duration = get_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $product_id, true );
-		$drip_duration = ! empty( $drip_duration ) ? $drip_duration : 'days';
-	} else {
-		$drip_interval = 0;
-		$drip_duration = 'days';
+	if ( empty( $post ) ) {
+		$post = null;
 	}
 
-	$return .= '<input type="number" min="0" value="' . $drip_interval . '" name="it_exchange_content_access_rules[' . $count . '][drip-interval]" />';
-	$return .= '<select class="it-exchange-membership-content-drip-duration" name="it_exchange_content_access_rules[' . $count . '][drip-duration]">';
-	$durations = array(
-		'days'   => __( 'Days', 'LION' ),
-		'weeks'  => __( 'Weeks', 'LION' ),
-		'months' => __( 'Months', 'LION' ),
-		'years'  => __( 'Years', 'LION' ),
-	);
-	$durations = apply_filters( 'it-exchange-membership-drip-durations', $durations );
-	foreach ( $durations as $key => $string ) {
-		$return .= '<option value="' . $key . '"' . selected( $key, $drip_duration, false ) . '>' . $string . '</option>';
-	}
-	$return .= '</select>';
+	$drip = new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
 
-	return $return;
+	return $drip->get_field_html( "it_exchange_content_access_rules[$count]" );
 }
 
 /**

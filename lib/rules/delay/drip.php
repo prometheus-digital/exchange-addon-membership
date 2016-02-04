@@ -42,11 +42,11 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 	 * @param WP_Post                $post
 	 * @param IT_Exchange_Membership $membership
 	 */
-	public function __construct( WP_Post $post, IT_Exchange_Membership $membership = null ) {
+	public function __construct( WP_Post $post = null, IT_Exchange_Membership $membership = null ) {
 		$this->post       = $post;
 		$this->membership = $membership;
 
-		if ( ! $membership ) {
+		if ( ! $membership || ! $post ) {
 			return;
 		}
 
@@ -54,7 +54,7 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 
 		$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $membership->ID, true );
 
-		if ( array_key_exists( $duration, self::get_durations() ) ) {
+		if ( is_string( $duration ) && array_key_exists( $duration, self::get_durations() ) ) {
 			$this->duration = $duration;
 		}
 	}
@@ -96,12 +96,13 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 		<label for="<?php echo $context; ?>-interval" class="screen-reader-text">
 			<?php _e( 'Drip Interval', 'LION' ); ?>
 		</label>
-		<input id="<?php echo $context; ?>-interval" class="it-exchange-membership-drip-rule-interval" type="number" min="0" value="<?php echo $interval; ?>" name="it_exchange_membership_drip_interval">
+		<input id="<?php echo $context; ?>-interval" class="it-exchange-membership-drip-rule-interval" type="number" min="0"
+		       value="<?php echo $interval; ?>" name="<?php echo $context; ?>[drip-interval]">
 
 		<label for="<?php echo $context; ?>-drip" class="screen-reader-text">
 			<?php _e( 'Drip Duration', 'LION' ); ?>
 		</label>
-		<select id="<?php echo $context; ?>-drip" class="it-exchange-membership-drip-rule-duration" name="it_exchange_membership_drip_duration">
+		<select id="<?php echo $context; ?>-drip" class="it-exchange-membership-drip-rule-duration" name="<?php echo $context; ?>[drip-duration]">
 			<?php foreach ( self::get_durations() as $type => $label ): ?>
 				<option value="<?php echo $type; ?>" <?php selected( $type, $this->duration ); ?>>
 					<?php echo $label; ?>
@@ -130,6 +131,10 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 
 		if ( ! $this->membership ) {
 			throw new UnexpectedValueException( 'Constructed with null IT_Exchange_Membership.' );
+		}
+
+		if ( ! $this->post ) {
+			throw new UnexpectedValueException( 'Constructed with null WP_Post' );
 		}
 
 		$r1 = true;
