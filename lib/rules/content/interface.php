@@ -32,6 +32,15 @@ interface IT_Exchange_Membership_Content_RuleInterface extends IT_Exchange_Membe
 	public function get_delay_rules();
 
 	/**
+	 * Does this content rule support delay rules.
+	 *
+	 * @since 1.18
+	 *
+	 * @return bool
+	 */
+	public function supports_delay_rules();
+
+	/**
 	 * Check if this content rule matches a post.
 	 *
 	 * @since 1.18
@@ -74,7 +83,7 @@ interface IT_Exchange_Membership_Content_RuleInterface extends IT_Exchange_Membe
 	 *
 	 * @return bool
 	 */
-	public function is_groupable();
+	public function is_layout_configurable();
 
 	/**
 	 * Get the value this content rule instance represents.

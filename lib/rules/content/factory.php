@@ -92,6 +92,76 @@ class IT_Exchange_Membership_Rule_Factory {
 	}
 
 	/**
+	 * Make all memberships, grouped.
+	 *
+	 * This returns
+	 *
+	 * @since 1.18
+	 *
+	 * @param IT_Exchange_Membership $membership
+	 *
+	 * @return array
+	 */
+	public function make_all_for_membership_grouped( IT_Exchange_Membership $membership ) {
+
+		$rules = $membership->get_feature( 'membership-content-access-rules' );
+
+		$objects = array();
+
+		if ( ! is_array( $rules ) ) {
+			return array();
+		}
+
+		$groups = array();
+
+		foreach ( $rules as $rule ) {
+			if ( isset( $rule['group_id'] ) && ! isset( $groups[ $rule['group_id'] ] ) ) {
+
+				$ID = $rule['group_id'];
+
+				$groups[ $ID ] = new IT_Exchange_Membership_Content_Rule_Group( $rule['group'], $rule['group_layout'], $ID );
+			}
+		}
+
+		$added_group_ids = array();
+
+		$i = 0;
+
+		foreach ( $rules as $rule ) {
+
+			if ( empty( $rule['selected'] ) ) {
+				continue;
+			}
+
+			$object = $this->make_content_rule( $rule['selected'], $rule, $membership );
+
+			if ( isset( $rule['grouped_id'] ) && trim( $rule['grouped_id'] ) !== '' ) {
+
+				$group_id = $rule['grouped_id'];
+
+				if ( isset( $groups[ $group_id ] ) ) {
+					$group = $groups[ $group_id ];
+					/** @var IT_Exchange_Membership_Content_Rule_Group $group */
+					$group->add_rule( $object );
+
+					if ( ! in_array( $group_id, $added_group_ids ) ) {
+						$objects[ $i ]     = $group;
+						$added_group_ids[] = $group_id;
+					}
+				} else {
+					$objects[ $i ] = $object;
+				}
+			} else {
+				$objects[ $i ] = $object;
+			}
+
+			$i ++;
+		}
+
+		return $objects;
+	}
+
+	/**
 	 * Make an individual content rule.
 	 *
 	 * @since 1.18

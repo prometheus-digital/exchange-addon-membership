@@ -18,8 +18,19 @@ class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membersh
 	 *
 	 * @return bool
 	 */
-	public function is_groupable() {
+	public function is_layout_configurable() {
 		return true;
+	}
+
+	/**
+	 * Does this content rule support delay rules.
+	 *
+	 * @since 1.18
+	 *
+	 * @return bool
+	 */
+	public function supports_delay_rules() {
+		return false;
 	}
 
 	/**

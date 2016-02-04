@@ -68,6 +68,8 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 			$return .= $rule->get_selection( true );
 			$return .= "</option>";
 		}
+
+		$return .= '</optgroup>';
 	}
 
 	$return .= apply_filters( 'it_exchange_membership_addon_get_selections', '', $selection, $selection_type );
@@ -89,171 +91,15 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
  * @return string
  */
 function it_exchange_membership_addon_build_content_rules( $rules, $product_id ) {
-	$count        = 0;
-	$group_count  = 0;
-	$groupings    = array();
-	$post_types   = get_post_types( array( 'public' => true ), 'objects' );
-	$taxonomies   = get_taxonomies( array( 'public' => true ), 'objects' );
-	$cache        = new stdClass();
-	$cache->posts = new stdClass();
-	$cache->terms = new stdClass();
+	$rules      = ! is_array( $rules ) ? array() : $rules;
+	$membership = it_exchange_get_product( $product_id );
 
-	$factory = new IT_Exchange_Membership_Rule_Factory();
+	$factory  = new IT_Exchange_Membership_Rule_Factory();
+	$renderer = new IT_Exchange_Membership_Content_Rule_Renderer( $rules, $membership, $factory );
 
 	$return = '<div class="it-exchange-membership-addon-content-access-rules content-access-sortable">';
-
-	if ( ! empty( $rules ) ) {
-
-		foreach ( $rules as $rule ) {
-			$options = '';
-
-			$current_grouped_id = isset( $rule['grouped_id'] ) ? $rule['grouped_id'] : false;
-
-			if ( ! empty( $groupings ) && $current_grouped_id !== end( $groupings ) ) {
-
-				$return .= '</div></div>'; //this is ending the divs from the group opening in it_exchange_membership_addon_build_content_rule()
-				array_pop( $groupings );
-
-			} else if ( false === $current_grouped_id && ! empty( $groupings ) ) {
-
-				foreach ( $groupings as $group ) {
-					$return .= '</div></div>'; //this is ending the divs from the group opening in it_exchange_membership_addon_build_content_rule()
-				}
-				$groupings = array();
-
-			}
-
-			$selection    = ! empty( $rule['selection'] ) ? $rule['selection'] : false; //Content Types (e.g. post_types or taxonomies)
-			$selected     = ! empty( $rule['selected'] ) ? $rule['selected'] : false;  //Content Type (e.g. posts post_type, or category taxonomy)
-			$value        = ! empty( $rule['term'] ) ? $rule['term'] : false;      //Content (e.g. specific post or category)
-			$group        = isset( $rule['group'] ) ? $rule['group'] : null;
-			$group_layout = ! empty( $rule['group_layout'] ) ? $rule['group_layout'] : 'grid';
-			$group_id     = isset( $rule['group_id'] ) ? $rule['group_id'] : null;
-			$grouped_id   = isset( $rule['grouped_id'] ) ? $rule['grouped_id'] : null;
-
-			if ( isset( $group ) && isset( $group_id ) ) {
-				$group_class = 'it-exchange-membership-addon-content-access-group';
-			} else {
-				$group_class = '';
-			}
-
-			$return .= '<div class="it-exchange-membership-addon-content-access-rule ' . $group_class . ' columns-wrapper" data-count="' . $count . '">';
-			$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>';
-
-			if ( isset( $group_id ) ) {
-
-				$return .= '<input type="text" name="it_exchange_content_access_rules[' . $count . '][group]" value="' . $group . '" />';
-				$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="' . $group_id . '" />';
-
-				$return .= '<div class="group-layout-options">';
-				$return .= '<span class="group-layout ' . ( 'grid' === $group_layout ? 'active-group-layout' : '' ) . '" data-type="grid">grid</span><span class="group-layout ' . ( 'list' === $group_layout ? 'active-group-layout' : '' ) . '" data-type="list">list</span>';
-				$return .= '<input type="hidden" class="group-layout-input" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="' . $group_layout . '" />';
-				$return .= '</div>';
-
-				$return .= '<div class="it-exchange-membership-addon-group-action-wrapper">';
-				$return .= '<div class="it-exchange-membership-addon-group-action">ACTION</div>';
-				$return .= '<div class="it-exchange-membership-addon-group-actions">';
-				$return .= '	<div class="it-exchange-membership-addon-ungroup-content-access-group column">';
-				$return .= '		<a href="#">' . __( 'Ungroup', 'LION' ) . '</a>';
-				$return .= '	</div>';
-				$return .= '	<div class="it-exchange-membership-addon-remove-content-access-group column">';
-				$return .= '		<a href="#">' . __( 'Delete Group', 'LION' ) . '</a>';
-				$return .= '	</div>';
-				$return .= '</div>';
-				$return .= '</div>';
-
-				$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][grouped_id]" value="' . $grouped_id . '" />';
-
-				$return .= '<div class="columns-wrapper it-exchange-membership-content-access-group-content content-access-sortable" data-group-id="' . $group_id . '">';
-				//we don't want to end the <div> yet, because the next bunch of rules are grouped under this
-				//we only want to end the <div> when a new group_id is set
-				//or the div above
-
-			} else {
-
-				$return .= it_exchange_membership_addon_get_selections( $selection, $selected, $count, $post_types, $taxonomies );
-				$return .= '<div class="it-exchange-content-access-content column col-6-12"><div class="it-exchange-membership-content-type-terms">';
-
-				$rule_obj = $factory->make_content_rule( $selected, $rule, it_exchange_get_product( $product_id ) );
-
-				$return .= '<input type="hidden" value="' . $selected . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
-
-				if ( ! empty( $rule_obj ) ) {
-					$return .= $rule_obj->get_field_html( "it_exchange_content_access_rules[$count]" );
-
-					if ( $rule_obj->is_groupable() && false ) {
-						$return .= '<div class="group-layout-options">';
-						$return .= '<span class="group-layout active-group-layout" data-type="grid">grid</span><span class="group-layout"data-type="list">list</span>';
-						$return .= '<input type="hidden" class="group-layout-input" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="grid" />';
-						$return .= '</div>';
-					}
-				} else {
-
-					$options = apply_filters( 'it_exchange_membership_addon_get_custom_selected_options', $options, $value, $selected );
-
-					$return .= '<input type="hidden" value="' . $selected . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
-					$return .= '<select class="it-exchange-membership-content-type-term" name="it_exchange_content_access_rules[' . $count . '][term]">';
-					$return .= $options;
-					$return .= '</select>';
-				}
-
-				$return .= '</div></div>';
-
-				if ( 'posts' === $selected ) {
-					$drip_hidden    = '';
-					$unavail_hidden = 'hidden';
-				} else {
-					$drip_hidden    = 'hidden';
-					$unavail_hidden = '';
-				}
-
-				$return .= '<div class="it-exchange-content-access-delay column col-3-12 column-reduce-padding">';
-				$return .= '<div class="it-exchange-membership-content-type-drip ' . $drip_hidden . '">';
-				$return .= it_exchange_membership_addon_build_drip_rules( $rule, $count, $product_id );
-				$return .= '</div>';
-				$return .= '<div class="it-exchange-content-access-delay-unavailable ' . $unavail_hidden . '">';
-				$return .= __( 'Available for single posts or pages', 'LION' );
-				$return .= '</div>';
-				$return .= '</div>';
-
-				$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column col-3_4-12">';
-				$return .= '<a href="#">×</a>';
-				$return .= '</div>';
-
-				$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][grouped_id]" value="' . $grouped_id . '" />';
-
-
-				$return .= '</div>';
-			}
-
-			$current_group_id = isset( $rule['group_id'] ) ? $rule['group_id'] : false;
-
-			if ( false !== $current_group_id && ! in_array( $current_group_id, $groupings ) ) {
-				$groupings[] = $current_group_id;
-			}
-
-			if ( false !== $current_group_id && $group_count >= $current_group_id ) {
-				$group_count = $rule['group_id'] + 1;
-			}
-
-			$count ++;
-
-		}
-
-		if ( ! empty( $groupings ) ) {
-			foreach ( $groupings as $group ) {
-				$return .= '</div></div>'; //this is ending the divs from the group opening in it_exchange_membership_addon_build_content_rule()
-			}
-		}
-
-	}
-
+	$return .= $renderer->render();
 	$return .= '</div>';
-
-	$return .= '<script type="text/javascript" charset="utf-8">';
-	$return .= '	var it_exchange_membership_addon_content_access_iteration = ' . $count . ';';
-	$return .= '	var it_exchange_membership_addon_content_access_group_iteration = ' . $group_count . ';';
-	$return .= '</script>';
 
 	return $return;
 }
