@@ -13,7 +13,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	 * Constructor. Registers hooks
 	 *
 	 * @since 1.0.0
-	 * @return void
 	*/
 	function __construct() {
 		if ( is_admin() ) {

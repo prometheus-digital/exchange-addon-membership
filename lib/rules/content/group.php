@@ -9,10 +9,7 @@
 /**
  * Class IT_Exchange_Membership_Content_Rule_Group
  */
-class IT_Exchange_Membership_Content_Rule_Group {
-
-	const L_GRID = 'grid';
-	const L_LIST = 'list';
+class IT_Exchange_Membership_Content_Rule_Group implements IT_Exchange_Membership_Rule_Layoutable {
 
 	/**
 	 * @var string
@@ -105,6 +102,4 @@ class IT_Exchange_Membership_Content_Rule_Group {
 	public function get_ID() {
 		return $this->ID;
 	}
-
-
 }

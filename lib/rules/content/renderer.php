@@ -152,24 +152,24 @@ class IT_Exchange_Membership_Content_Rule_Renderer {
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Content_Rule_Group $group
-	 * @param int                                       $count
+	 * @param IT_Exchange_Membership_Rule_Layoutable $layoutable
+	 * @param int                                    $count
 	 *
 	 * @return string
 	 */
-	protected function render_group_layout( IT_Exchange_Membership_Content_Rule_Group $group, $count ) {
+	protected function render_group_layout( IT_Exchange_Membership_Rule_Layoutable $layoutable, $count ) {
 
 		ob_start();
 
 		$name = $this->name;
 
-		$active_grid = 'grid' === $group->get_layout() ? 'active-group-layout' : '';
-		$active_list = 'list' === $group->get_layout() ? 'active-group-layout' : '';
+		$active_grid = 'grid' === $layoutable->get_layout() ? 'active-group-layout' : '';
+		$active_list = 'list' === $layoutable->get_layout() ? 'active-group-layout' : '';
 		?>
 		<div class="group-layout-options">
 			<span class="group-layout <?php echo $active_grid; ?>" data-type="grid">grid</span>
 			<span class="group-layout <?php echo $active_list; ?>" data-type="list">list</span>
-			<input type="hidden" class="group-layout-input" name="<?php echo $name . "[$count]"; ?>[group_layout]" value="<?php echo $group->get_layout(); ?>">
+			<input type="hidden" class="group-layout-input" name="<?php echo $name . "[$count]"; ?>[group_layout]" value="<?php echo $layoutable->get_layout(); ?>">
 		</div>
 		<?php
 
@@ -199,15 +199,8 @@ class IT_Exchange_Membership_Content_Rule_Renderer {
 				<input type="hidden" value="<?php echo $rule->get_type(); ?>" name="<?php echo $name . "[$count]"; ?>[selected]">
 				<?php echo $rule->get_field_html( $name . "[$count]" ); ?>
 
-				<?php if ( $rule->is_layout_configurable() ): ?>
-
-					<div class="group-layout-options">
-
-						<span class="group-layout active-group-layout" data-type="grid">grid</span>
-						<span class="group-layout" data-type="list">list</span>
-						<input type="hidden" class="group-layout-input" name="<?php echo $name . "[$count]"; ?>[group_layout]" value="grid">
-
-					</div>
+				<?php if ( $rule instanceof IT_Exchange_Membership_Rule_Layoutable ): ?>
+					<?php echo $this->render_group_layout( $rule, $count ); ?>
 				<?php endif; ?>
 			</div>
 		</div>

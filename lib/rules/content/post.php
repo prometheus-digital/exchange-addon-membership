@@ -30,17 +30,6 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 	}
 
 	/**
-	 * Check if tis content type is groupable.
-	 *
-	 * @since 1.18
-	 *
-	 * @return bool
-	 */
-	public function is_layout_configurable() {
-		return false;
-	}
-
-	/**
 	 * Does this content rule support delay rules.
 	 *
 	 * @since 1.18

@@ -9,19 +9,18 @@
 /**
  * Class IT_Exchange_Membership_Content_Rule_Post_Type
  */
-class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membership_AbstractContent_Rule {
+class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchange_Membership_Rule_Layoutable {
 
 	/**
-	 * Check if tis content type is groupable.
+	 * Get the layout for this rule.
 	 *
 	 * @since 1.18
 	 *
-	 * @return bool
+	 * @return string
 	 */
-	public function is_layout_configurable() {
-		return true;
+	public function get_layout() {
+		return isset( $this->data['group_layout'] ) ? $this->data['group_layout'] : self::L_GRID;
 	}
-
 	/**
 	 * Does this content rule support delay rules.
 	 *

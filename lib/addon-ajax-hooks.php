@@ -143,7 +143,7 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 		$return .= '<input type="hidden" value="' . $type . '" name="it_exchange_content_access_rules[' . $count . '][selected]" />';
 		$return .= $rule->get_field_html( "it_exchange_content_access_rules[$count]" );
 
-		if ( $rule->is_layout_configurable() ) {
+		if ( $rule instanceof IT_Exchange_Membership_Rule_Layoutable ) {
 			$return .= '<div class="group-layout-options">';
 			$return .= '<span class="group-layout active-group-layout" data-type="grid">grid</span><span class="group-layout"data-type="list">list</span>';
 			$return .= '<input type="hidden" class="group-layout-input" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="grid" />';

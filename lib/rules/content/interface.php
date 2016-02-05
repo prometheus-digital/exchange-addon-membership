@@ -77,15 +77,6 @@ interface IT_Exchange_Membership_Content_RuleInterface extends IT_Exchange_Membe
 	public function set_post_exempt( WP_Post $post, $exempt = true );
 
 	/**
-	 * Check if tis content type is groupable.
-	 *
-	 * @since 1.18
-	 *
-	 * @return bool
-	 */
-	public function is_layout_configurable();
-
-	/**
 	 * Get the value this content rule instance represents.
 	 *
 	 * This is used to build the content access type dropdown.

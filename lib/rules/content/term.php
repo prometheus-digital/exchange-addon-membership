@@ -9,7 +9,7 @@
 /**
  * Class IT_Exchange_Membership_Content_Rule_Term
  */
-class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_AbstractContent_Rule {
+class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchange_Membership_Rule_Layoutable {
 
 	/**
 	 * @var string
@@ -30,14 +30,14 @@ class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_Ab
 	}
 
 	/**
-	 * Check if tis content type is groupable.
+	 * Get the layout for this rule.
 	 *
 	 * @since 1.18
 	 *
-	 * @return bool
+	 * @return string
 	 */
-	public function is_layout_configurable() {
-		return true;
+	public function get_layout() {
+		return isset( $this->data['group_layout'] ) ? $this->data['group_layout'] : self::L_GRID;
 	}
 
 	/**
