@@ -27,7 +27,7 @@ class IT_Exchange_Membership_Rule_Factory {
 	 */
 	public function make_all_for_post( WP_Post $post ) {
 
-		$memberships = get_post_meta( $post->ID, '_item-content-rule', true );
+		$memberships = $this->get_possible_membership_ids_for_post( $post );
 
 		if ( ! $memberships ) {
 			return array();
@@ -45,6 +45,36 @@ class IT_Exchange_Membership_Rule_Factory {
 		$this->post = null;
 
 		return $rules;
+	}
+
+	/**
+	 * Get all possible membership IDs for a post.
+	 *
+	 * This iterates through the per-post rules, post type rules, and taxonomy rules.
+	 *
+	 * @since 1.18
+	 *
+	 * @param WP_Post $post
+	 *
+	 * @return array
+	 */
+	protected function get_possible_membership_ids_for_post( WP_Post $post ) {
+
+		$IDs = get_post_meta( $post->ID, '_item-content-rule', true );
+		$IDs = is_array( $IDs ) ? $IDs : array();
+
+		$post_type = get_post_type( $post );
+
+		$IDs = array_merge( $IDs, get_option( "_item-content-rule-post-type-$post_type", array() ) );
+
+		$terms = wp_get_object_terms( $post->ID, get_taxonomies( array( 'public' => true ) ) );
+
+		/** @var WP_Term $term */
+		foreach ( $terms as $term ) {
+			$IDs = array_merge( $IDs, get_option( "_item-content-rule-tax-$term->taxonomy-$term->term_id", array() ) );
+		}
+
+		return array_unique( $IDs );
 	}
 
 	/**
