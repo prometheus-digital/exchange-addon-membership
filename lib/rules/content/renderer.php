@@ -78,7 +78,7 @@ class IT_Exchange_Membership_Content_Rule_Renderer {
 
 					<input type="hidden" name="<?php echo $name . "[$count]"; ?>[group_id]" value="<?php echo $group->get_ID(); ?>">
 
-					<?php echo $this->render_group_layout( $group, $count ); ?>
+					<?php echo $this->render_layout_controls( $group, $count ); ?>
 					<?php echo $this->render_group_actions(); ?>
 
 					<input type="hidden" class="it-exchange-content-access-group" name="<?php echo $name . "[$count]"; ?>[grouped_id]" value="<?php echo $group->get_ID(); ?>">
@@ -86,25 +86,14 @@ class IT_Exchange_Membership_Content_Rule_Renderer {
 					<div class="columns-wrapper it-exchange-membership-content-access-group-content content-access-sortable" data-group-id="<?php echo $group->get_ID(); ?>">
 
 						<?php foreach ( $group->get_rules() as $rule ): ?>
-							<div class="it-exchange-membership-addon-content-access-rule columns-wrapper" data-count="<?php echo $count; ?>">
-								<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>
-
-								<?php echo $this->render_rule( $rule, ++ $count, $group ); ?>
-
-							</div>
+							<?php echo $this->render_rule( $rule, ++ $count, $group ); ?>
 						<?php endforeach; ?>
 
 					</div>
 				</div>
 
 			<?php else: ?>
-
-				<div class="it-exchange-membership-addon-content-access-rule columns-wrapper" data-count="<?php echo $count; ?>">
-					<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>
-
-					<?php echo $this->render_rule( $maybe_group, $count ); ?>
-				</div>
-
+				<?php echo $this->render_rule( $maybe_group, $count ); ?>
 			<?php endif;
 
 			++ $count;
@@ -157,7 +146,7 @@ class IT_Exchange_Membership_Content_Rule_Renderer {
 	 *
 	 * @return string
 	 */
-	protected function render_group_layout( IT_Exchange_Membership_Rule_Layoutable $layoutable, $count ) {
+	protected function render_layout_controls( IT_Exchange_Membership_Rule_Layoutable $layoutable, $count ) {
 
 		ob_start();
 
@@ -192,44 +181,49 @@ class IT_Exchange_Membership_Content_Rule_Renderer {
 		ob_start();
 		$name = $this->name;
 
-		echo it_exchange_membership_addon_get_selections( $rule->get_selection(), $rule->get_type(), $count );
 		?>
-		<div class="it-exchange-content-access-content column col-6-12">
-			<div class="it-exchange-membership-content-type-terms">
-				<input type="hidden" value="<?php echo $rule->get_type(); ?>" name="<?php echo $name . "[$count]"; ?>[selected]">
-				<?php echo $rule->get_field_html( $name . "[$count]" ); ?>
+		<div class="it-exchange-membership-addon-content-access-rule columns-wrapper" data-count="<?php echo $count; ?>">
+			<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>
 
-				<?php if ( $rule instanceof IT_Exchange_Membership_Rule_Layoutable ): ?>
-					<?php echo $this->render_group_layout( $rule, $count ); ?>
-				<?php endif; ?>
-			</div>
-		</div>
+			<?php echo it_exchange_membership_addon_get_selections( $rule->get_selection(), $rule->get_type(), $count ); ?>
 
-		<?php if ( $rule->supports_delay_rules() ):
-			$drip_hidden    = '';
-			$unavail_hidden = 'hidden';
-		else:
-			$drip_hidden    = 'hidden';
-			$unavail_hidden = '';
-		endif; ?>
+			<div class="it-exchange-content-access-content column col-6-12">
+				<div class="it-exchange-membership-content-type-terms">
+					<input type="hidden" value="<?php echo $rule->get_type(); ?>" name="<?php echo $name . "[$count]"; ?>[selected]">
+					<?php echo $rule->get_field_html( $name . "[$count]" ); ?>
 
-		<div class="it-exchange-content-access-delay column col-3-12 column-reduce-padding">
-			<div class="it-exchange-membership-content-type-drip <?php echo $drip_hidden; ?>">
-				<?php $drip = new IT_Exchange_Membership_Delay_Rule_Drip( get_post( $rule->get_term() ), $this->membership ); ?>
-				<?php echo $drip->get_field_html( $name . "[$count]" ); ?>
+					<?php if ( $rule instanceof IT_Exchange_Membership_Rule_Layoutable ): ?>
+						<?php echo $this->render_layout_controls( $rule, $count ); ?>
+					<?php endif; ?>
+				</div>
 			</div>
 
-			<div class="it-exchange-content-access-delay-unavailable <?php echo $unavail_hidden; ?>">
-				<?php _e( 'Available for single posts or pages.', 'LION' ); ?>
+			<?php if ( $rule->supports_delay_rules() ):
+				$drip_hidden    = '';
+				$unavail_hidden = 'hidden';
+			else:
+				$drip_hidden    = 'hidden';
+				$unavail_hidden = '';
+			endif; ?>
+
+			<div class="it-exchange-content-access-delay column col-3-12 column-reduce-padding">
+				<div class="it-exchange-membership-content-type-drip <?php echo $drip_hidden; ?>">
+					<?php $drip = new IT_Exchange_Membership_Delay_Rule_Drip( get_post( $rule->get_term() ), $this->membership ); ?>
+					<?php echo $drip->get_field_html( $name . "[$count]" ); ?>
+				</div>
+
+				<div class="it-exchange-content-access-delay-unavailable <?php echo $unavail_hidden; ?>">
+					<?php _e( 'Available for single posts or pages.', 'LION' ); ?>
+				</div>
 			</div>
+
+			<div class="it-exchange-membership-addon-remove-content-access-rule column col-3_4-12">
+				<a href="#">×</a>
+			</div>
+
+			<input type="hidden" class="it-exchange-content-access-group" name="<?php echo $name . "[$count]"; ?>[grouped_id]" value="<?php echo $group ? $group->get_ID() : ''; ?>">
+
 		</div>
-
-		<div class="it-exchange-membership-addon-remove-content-access-rule column col-3_4-12">
-			<a href="#">×</a>
-		</div>
-
-		<input type="hidden" class="it-exchange-content-access-group" name="<?php echo $name . "[$count]"; ?>[grouped_id]" value="<?php echo $group ? $group->get_ID() : ''; ?>">
-
 		<?php
 
 		return ob_get_clean();
