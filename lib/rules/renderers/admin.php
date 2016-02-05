@@ -7,9 +7,9 @@
  */
 
 /**
- * Class IT_Exchange_Membership_Content_Rule_Renderer
+ * Class IT_Exchange_Membership_Admin_Rule_Renderer
  */
-class IT_Exchange_Membership_Content_Rule_Renderer {
+class IT_Exchange_Membership_Admin_Rule_Renderer {
 
 	/**
 	 * @var array
@@ -31,7 +31,7 @@ class IT_Exchange_Membership_Content_Rule_Renderer {
 	private $name = 'it_exchange_content_access_rules';
 
 	/**
-	 * IT_Exchange_Membership_Content_Rule_Renderer constructor.
+	 * IT_Exchange_Membership_Admin_Rule_Renderer constructor.
 	 *
 	 * @param array                               $rules
 	 * @param IT_Exchange_Membership              $membership

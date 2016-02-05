@@ -21,6 +21,7 @@ class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membersh
 	public function get_layout() {
 		return isset( $this->data['group_layout'] ) ? $this->data['group_layout'] : self::L_GRID;
 	}
+
 	/**
 	 * Does this content rule support delay rules.
 	 *
@@ -43,6 +44,41 @@ class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membersh
 	 */
 	public function matches_post( WP_Post $post ) {
 		return $this->get_term() === get_post_type( $post );
+	}
+
+	/**
+	 * Get matching posts for this rule.
+	 *
+	 * @since 1.18
+	 *
+	 * @param int $number
+	 *
+	 * @return WP_Post[]
+	 */
+	public function get_matching_posts( $number = 5 ) {
+
+		$query = new WP_Query( array(
+			'post_type'      => $this->get_term(),
+			'posts_per_page' => $number
+		) );
+
+		return $query->get_posts();
+	}
+
+	/**
+	 * Get the more content URL.
+	 *
+	 * @since 1.1.8
+	 *
+	 * @return string
+	 */
+	public function get_more_content_url() {
+
+		if ( $this->get_term() === 'posts' ) {
+			return get_home_url();
+		} else {
+			return get_post_type_archive_link( $this->get_term() );
+		}
 	}
 
 	/**

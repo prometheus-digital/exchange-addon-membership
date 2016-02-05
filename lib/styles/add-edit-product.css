@@ -296,6 +296,10 @@
 	border-top: 0;
 }
 
+.it-exchange-content-access-delay-unavailable {
+	padding-top: 10px;
+}
+
 /** ----------------------------------------:[ content drip ]:--- */
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-content-type-drip input {
 	max-width: 60px;

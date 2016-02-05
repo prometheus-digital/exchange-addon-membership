@@ -95,7 +95,7 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 	$membership = it_exchange_get_product( $product_id );
 
 	$factory  = new IT_Exchange_Membership_Rule_Factory();
-	$renderer = new IT_Exchange_Membership_Content_Rule_Renderer( $rules, $membership, $factory );
+	$renderer = new IT_Exchange_Membership_Admin_Rule_Renderer( $rules, $membership, $factory );
 
 	$return = '<div class="it-exchange-membership-addon-content-access-rules content-access-sortable">';
 	$return .= $renderer->render();

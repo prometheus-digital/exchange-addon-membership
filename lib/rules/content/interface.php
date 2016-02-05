@@ -52,6 +52,26 @@ interface IT_Exchange_Membership_Content_RuleInterface extends IT_Exchange_Membe
 	public function matches_post( WP_Post $post );
 
 	/**
+	 * Get matching posts for this rule.
+	 *
+	 * @since 1.18
+	 *
+	 * @param int $number
+	 *
+	 * @return WP_Post[]
+	 */
+	public function get_matching_posts( $number = 5 );
+
+	/**
+	 * Get the more content URL.
+	 *
+	 * @since 1.1.8
+	 *
+	 * @return string
+	 */
+	public function get_more_content_url();
+
+	/**
 	 * Check if a post is exempt from this rule.
 	 *
 	 * This is mainly used for global rules like taxonomies.

@@ -68,6 +68,49 @@ class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_Ab
 	}
 
 	/**
+	 * Get matching posts for this rule.
+	 *
+	 * @since 1.18
+	 *
+	 * @param int $number
+	 *
+	 * @return WP_Post[]
+	 */
+	public function get_matching_posts( $number = 5 ) {
+
+		$query = new WP_Query( array(
+			'posts_per_page' => $number,
+			'tax_query'      => array(
+				array(
+					'taxonomy' => $this->get_selection(),
+					'field'    => 'id',
+					'terms'    => $this->get_term()
+				)
+			)
+		) );
+
+		return $query->get_posts();
+	}
+
+	/**
+	 * Get the more content URL.
+	 *
+	 * @since 1.1.8
+	 *
+	 * @return string
+	 */
+	public function get_more_content_url() {
+
+		$url = get_term_link( (int) $this->get_term() );
+
+		if ( is_wp_error( $url ) ) {
+			return '';
+		}
+
+		return $url;
+	}
+
+	/**
 	 * Get HTML to render the necessary form fields.
 	 *
 	 * @since    1.18

@@ -78,6 +78,26 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 	}
 
 	/**
+	 * Get the availability date for this rule.
+	 *
+	 * Null can be returned to indicate that the subscription will never
+	 * have access to this content.
+	 *
+	 * @since 1.18
+	 *
+	 * @param IT_Exchange_Subscription $subscription
+	 *
+	 * @return DateTime|null
+	 */
+	public function get_availability_date( IT_Exchange_Subscription $subscription ) {
+
+		$start_time = (int) $subscription->get_start_date()->format( 'U' );
+		$drip_time  = strtotime( $this->interval . ' ' . $this->duration, $start_time );
+
+		return new DateTime( "@$drip_time" );
+	}
+
+	/**
 	 * Get HTML to render the necessary form fields.
 	 *
 	 * @since    1.18

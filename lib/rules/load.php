@@ -12,7 +12,6 @@ require_once dirname( __FILE__ ) . '/layoutable.php';
 
 require_once dirname( __FILE__ ) . '/content/factory.php';
 require_once dirname( __FILE__ ) . '/content/group.php';
-require_once dirname( __FILE__ ) . '/content/renderer.php';
 require_once dirname( __FILE__ ) . '/content/interface.php';
 require_once dirname( __FILE__ ) . '/content/abstract.php';
 require_once dirname( __FILE__ ) . '/content/post-type.php';
@@ -21,3 +20,6 @@ require_once dirname( __FILE__ ) . '/content/term.php';
 
 require_once dirname( __FILE__ ) . '/delay/interface.php';
 require_once dirname( __FILE__ ) . '/delay/drip.php';
+
+require_once dirname( __FILE__ ) . '/renderers/admin.php';
+require_once dirname( __FILE__ ) . '/renderers/front.php';
