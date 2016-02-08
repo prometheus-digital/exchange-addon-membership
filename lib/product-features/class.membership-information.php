@@ -36,7 +36,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 	 * Deprecated Constructor. Registers hooks
 	 *
 	 * @since 1.1.0
-	 * @return void
 	 */
 	function IT_Exchange_Addon_Membership_Product_Feature_Membership_Information() {
 		self::__construct();
@@ -60,7 +59,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 	 * Register's the metabox for any product type that supports the feature
 	 *
 	 * @since 1.1.0
-	 * @return void
 	 */
 	function init_feature_metaboxes() {
 
@@ -109,6 +107,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 	 * Hooked to it_exchange_product_metabox_callback_[product-type] where product type supports the feature
 	 *
 	 * @since 1.1.0
+	 *
 	 * @return void
 	 */
 	function register_metabox() {
@@ -122,28 +121,81 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 	 * This echos the feature metabox.
 	 *
 	 * @since 1.1.0
-	 * @return void
+	 *
+	 * @param WP_Post $post
 	 */
 	function print_metabox( $post ) {
 		// Grab the iThemes Exchange Product object from the WP $post object
 		$product  = it_exchange_get_product( $post );
 		$defaults = it_exchange_get_option( 'addon_membership' );
 
-		$intended_audience = it_exchange_get_product_feature( $product->ID, 'membership-information', array( 'setting' => 'intended-audience' ) );
-		$objectives        = it_exchange_get_product_feature( $product->ID, 'membership-information', array( 'setting' => 'objectives' ) );
-		$prerequisites     = it_exchange_get_product_feature( $product->ID, 'membership-information', array( 'setting' => 'prerequisites' ) );
+		$content_restricted = $product->get_feature( 'membership-information', array( 'setting' => 'content-restricted' ) );
+		$has_restricted     = $product->has_feature( 'membership-information', array( 'setting' => 'content-restricted' ) );
+		$content_delayed    = $product->get_feature( 'membership-information', array( 'setting' => 'content-delayed' ) );
+		$has_delayed        = $product->has_feature( 'membership-information', array( 'setting' => 'content-delayed' ) );
+
+		$intended_audience = $product->get_feature( 'membership-information', array( 'setting' => 'intended-audience' ) );
+		$has_audience      = $product->has_feature( 'membership-information', array( 'setting' => 'intended-audience' ) );
+
+		$objectives     = $product->get_feature( 'membership-information', array( 'setting' => 'objectives' ) );
+		$has_objectives = $product->has_feature( 'membership-information', array( 'setting' => 'objectives' ) );
+
+		$prerequisites     = $product->get_feature( 'membership-information', array( 'setting' => 'prerequisites' ) );
+		$has_prerequisites = $product->has_feature( 'membership-information', array( 'setting' => 'prerequisites' ) );
 		?>
+
+		<p>
+			<label for="it-exchange-show-override-content-restricted">
+
+				<input type="checkbox" id="it-exchange-show-override-content-restricted" name="it-exchange-show-override-content-restricted" <?php checked( $has_restricted ); ?>>&nbsp;
+
+				<?php _e( 'Override the Restricted Content Message', 'LION' ); ?>
+			</label>
+		</p>
+
+		<div <?php echo ! $has_restricted ? 'class="hide-if-js"' : ''; ?> id="it-exchange-override-content-restricted">
+			<?php wp_editor( $content_restricted, 'membership-information-content-restricted-template', array(
+				'textarea_name' => 'it-exchange-membership-information-content-restricted-template',
+				'textarea_rows' => 5,
+				'textarea_cols' => 30,
+				'editor_class'  => 'large-text',
+				'teeny'         => true
+			) ); ?>
+		</div>
+
+		<p>
+			<label for="it-exchange-show-override-content-delayed">
+
+				<input type="checkbox" id="it-exchange-show-override-content-delayed" name="it-exchange-show-override-content-delayed" <?php checked( $has_delayed ); ?>>&nbsp;
+
+				<?php _e( 'Override the Content Delayed Message', 'LION' ); ?>
+			</label>
+		</p>
+
+		<div <?php echo ! $has_delayed ? 'class="hide-if-js"' : ''; ?> id="it-exchange-override-content-delayed">
+			<?php wp_editor( $content_delayed, 'membership-information-content-delayed-template', array(
+				'textarea_name' => 'it-exchange-membership-information-content-delayed-template',
+				'textarea_rows' => 5,
+				'textarea_cols' => 30,
+				'editor_class'  => 'large-text',
+				'teeny'         => true
+			) ); ?>
+
+			<p class="description">
+				<?php _e( 'Use %d to represent the number of days until the delayed content will be available.', 'LION' ); ?>
+			</p>
+		</div>
 
 		<p>
 			<label for="it-exchange-show-intended-audience" class="customer-information-label">
 
-				<input type="checkbox" id="it-exchange-show-intended-audience" <?php checked( ! empty( $intended_audience ) ); ?>>&nbsp;
+				<input type="checkbox" id="it-exchange-show-intended-audience" name="it-exchange-show-intended-audience" <?php checked( $has_audience ); ?>>&nbsp;
 
 				<?php printf( __( 'Display %s', 'LION' ), $defaults['membership-intended-audience-label'] ); ?>
 			</label>
 		</p>
 
-		<div <?php echo empty( $intended_audience ) ? 'class="hide-if-js"' : ''; ?> id="it-exchange-intended-audience">
+		<div <?php echo ! $has_audience ? 'class="hide-if-js"' : ''; ?> id="it-exchange-intended-audience">
 			<?php wp_editor( $intended_audience, 'membership-information-intended-audience-template', array(
 				'textarea_name' => 'it-exchange-membership-information-intended-audience-template',
 				'textarea_rows' => 5,
@@ -156,13 +208,13 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 		<p>
 			<label for="it-exchange-show-objectives" class="customer-information-label">
 
-				<input type="checkbox" id="it-exchange-show-objectives" <?php checked( ! empty( $objectives ) ); ?>>&nbsp;
+				<input type="checkbox" id="it-exchange-show-objectives" name="it-exchange-show-objectives" <?php checked( $has_objectives ); ?>>&nbsp;
 
 				<?php printf( __( 'Display %s', 'LION' ), $defaults['membership-objectives-label'] ); ?>
 			</label>
 		</p>
 
-		<div <?php echo empty( $objectives ) ? 'class="hide-if-js"' : ''; ?> id="it-exchange-objectives">
+		<div <?php echo ! $has_objectives ? 'class="hide-if-js"' : ''; ?> id="it-exchange-objectives">
 			<?php wp_editor( $objectives, 'membership-information-objectives-template', array(
 				'textarea_name' => 'it-exchange-membership-information-objectives-template',
 				'textarea_rows' => 5,
@@ -175,13 +227,13 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 		<p>
 			<label for="it-exchange-show-prerequisites" class="customer-information-label">
 
-				<input type="checkbox" id="it-exchange-show-prerequisites" <?php checked( ! empty( $prerequisites ) ); ?>>&nbsp;
+				<input type="checkbox" id="it-exchange-show-prerequisites" name="it-exchange-show-prerequisites" <?php checked( $has_prerequisites ); ?>>&nbsp;
 
 				<?php printf( __( 'Display %s', 'LION' ), $defaults['membership-prerequisites-label'] ); ?>
 			</label>
 		</p>
 
-		<div <?php echo empty( $prerequisites ) ? 'class="hide-if-js"' : ''; ?> id="it-exchange-prerequisites">
+		<div <?php echo ! $has_prerequisites ? 'class="hide-if-js"' : ''; ?> id="it-exchange-prerequisites">
 			<?php wp_editor( $prerequisites, 'membership-information-prerequisites-template', array(
 				'textarea_name' => 'it-exchange-membership-information-prerequisites-template',
 				'textarea_rows' => 5,
@@ -198,8 +250,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 	 * This saves the value
 	 *
 	 * @since 1.1.0
-	 *
-	 * @param object $post wp post object
 	 *
 	 * @return void
 	 */
@@ -218,6 +268,39 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 		// Abort if this product type doesn't support this feature 
 		if ( ! it_exchange_product_type_supports_feature( $product_type, 'membership-information' ) ) {
 			return;
+		}
+
+		it_exchange_update_product_feature( $product_id, 'membership-information', ! empty( $_POST['it-exchange-show-override-content-restricted'] ), array(
+			'setting' => 'content-restricted',
+			'enabled' => true
+		) );
+		it_exchange_update_product_feature( $product_id, 'membership-information', ! empty( $_POST['it-exchange-show-override-content-delayed'] ), array(
+			'setting' => 'content-delayed',
+			'enabled' => true
+		) );
+		it_exchange_update_product_feature( $product_id, 'membership-information', ! empty( $_POST['it-exchange-show-intended-audience'] ), array(
+			'setting' => 'intended-audience',
+			'enabled' => true
+		) );
+		it_exchange_update_product_feature( $product_id, 'membership-information', ! empty( $_POST['it-exchange-show-objectives'] ), array(
+			'setting' => 'objectives',
+			'enabled' => true
+		) );
+		it_exchange_update_product_feature( $product_id, 'membership-information', ! empty( $_POST['it-exchange-show-prerequisites'] ), array(
+			'setting' => 'prerequisites',
+			'enabled' => true
+		) );
+
+		if ( empty( $_POST['it-exchange-membership-information-content-restricted-template'] ) ) {
+			delete_post_meta( $product_id, '_it-exchange-product-membership-content-restricted' );
+		} else {
+			it_exchange_update_product_feature( $product_id, 'membership-information', $_POST['it-exchange-membership-information-content-restricted-template'], array( 'setting' => 'content-restricted' ) );
+		}
+
+		if ( empty( $_POST['it-exchange-membership-information-content-delayed-template'] ) ) {
+			delete_post_meta( $product_id, '_it-exchange-product-membership-content-delayed' );
+		} else {
+			it_exchange_update_product_feature( $product_id, 'membership-information', $_POST['it-exchange-membership-information-content-delayed-template'], array( 'setting' => 'content-delayed' ) );
 		}
 
 		if ( empty( $_POST['it-exchange-membership-information-intended-audience-template'] ) ) {
@@ -244,25 +327,21 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @param mixed $existing the values passed in by the WP Filter API. Ignored here.
-	 * @param       integer   product_id the WordPress post ID
+	 * @param integer $product_id the WordPress post ID
+	 * @param mixed   $new_value
+	 * @param array   $options
 	 *
 	 * @return string product feature
 	 */
 	function save_feature( $product_id, $new_value, $options = array() ) {
-		switch ( $options['setting'] ) {
 
-			case 'intended-audience':
-				update_post_meta( $product_id, '_it-exchange-product-membership-intended-audience', $new_value );
-				break;
-			case 'objectives':
-				update_post_meta( $product_id, '_it-exchange-product-membership-objectives', $new_value );
-				break;
-			case 'prerequisites':
-				update_post_meta( $product_id, '_it-exchange-product-membership-prerequisites', $new_value );
-				break;
+		$meta_key = $this->get_feature_meta_key( $options['setting'], ! empty( $options['enabled'] ) );
 
+		if ( ! $meta_key ) {
+			return false;
 		}
+
+		update_post_meta( $product_id, $meta_key, $new_value );
 
 		return true;
 	}
@@ -272,23 +351,21 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @param mixed $existing the values passed in by the WP Filter API. Ignored here.
-	 * @param       integer   product_id the WordPress post ID
+	 * @param mixed $existing   the values passed in by the WP Filter API. Ignored here.
+	 * @param int   $product_id the WordPress post ID
+	 * @param array $options
 	 *
 	 * @return string product feature
 	 */
 	function get_feature( $existing, $product_id, $options = array() ) {
-		switch ( $options['setting'] ) {
 
-			case 'intended-audience':
-				return get_post_meta( $product_id, '_it-exchange-product-membership-intended-audience', true );
-			case 'objectives':
-				return get_post_meta( $product_id, '_it-exchange-product-membership-objectives', true );
-			case 'prerequisites':
-				return get_post_meta( $product_id, '_it-exchange-product-membership-prerequisites', true );
+		$meta_key = $this->get_feature_meta_key( $options['setting'], ! empty( $options['enabled'] ) );
+
+		if ( ! $meta_key ) {
+			return $existing;
 		}
 
-		return false;
+		return get_post_meta( $product_id, $meta_key, true );
 	}
 
 	/**
@@ -296,8 +373,9 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @param mixed   $result Not used by core
-	 * @param integer $product_id
+	 * @param mixed $result Not used by core
+	 * @param int   $product_id
+	 * @param array $options
 	 *
 	 * @return boolean
 	 */
@@ -307,9 +385,65 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 			return false;
 		}
 
+		$options['enabled'] = true;
+
+		switch ( $options['setting'] ) {
+			case 'intended-audience':
+			case 'objectives':
+			case 'prerequisites':
+
+				$has_meta_key = $this->get_feature_meta_key( $options['setting'], true );
+				$meta_key     = $this->get_feature_meta_key( $options['setting'], false );
+
+				if ( ! metadata_exists( 'post', $product_id, $has_meta_key ) ) {
+					update_post_meta( $product_id, $has_meta_key, (bool) get_post_meta( $product_id, $meta_key, true ) );
+				}
+
+				break;
+		}
+
 		// If it does support, does it have it?
 		return (boolean) $this->get_feature( false, $product_id, $options );
 	}
+
+	/**
+	 * @param string $feature
+	 * @param bool   $check_enabled
+	 *
+	 * @return false|string
+	 */
+	protected function get_feature_meta_key( $feature, $check_enabled = false ) {
+
+		switch ( $feature ) {
+
+			case 'content-restricted' :
+				$meta_key = '_it-exchange-product-membership-content-restricted';
+				break;
+
+			case 'content-delayed' :
+				$meta_key = '_it-exchange-product-membership-content-delayed';
+				break;
+
+			case 'intended-audience':
+				$meta_key = '_it-exchange-product-membership-intended-audience';
+				break;
+			case 'objectives':
+				$meta_key = '_it-exchange-product-membership-objectives';
+				break;
+			case 'prerequisites':
+				$meta_key = '_it-exchange-product-membership-prerequisites';
+				break;
+			default:
+				return false;
+		}
+
+		if ( $check_enabled ) {
+			$meta_key .= '-enabled';
+		}
+
+		return $meta_key;
+	}
+
 
 	/**
 	 * Does the product support this feature?
@@ -319,8 +453,8 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @param mixed   $result Not used by core
-	 * @param integer $product_id
+	 * @param mixed $result Not used by core
+	 * @param int   $product_id
 	 *
 	 * @return boolean
 	 */
