@@ -23,17 +23,6 @@ class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membersh
 	}
 
 	/**
-	 * Does this content rule support delay rules.
-	 *
-	 * @since 1.18
-	 *
-	 * @return bool
-	 */
-	public function supports_delay_rules() {
-		return false;
-	}
-
-	/**
 	 * Check if this content rule matches a post.
 	 *
 	 * @since 1.18

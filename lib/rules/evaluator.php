@@ -85,6 +85,10 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 
 			foreach ( $rules as $rule ) {
 
+				if ( ! $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable ) {
+					continue;
+				}
+
 				if ( ! $rule->matches_post( $post ) ) {
 					continue;
 				}
@@ -93,16 +97,14 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 					continue;
 				}
 
-				$delays = $rule->get_delay_rules();
+				$delay = $rule->get_delay_rule();
 
-				if ( empty( $delays ) ) {
+				if ( empty( $delay ) ) {
 					continue;
 				}
 
-				foreach ( $delays as $delay ) {
-					if ( ! $delay->evaluate( $subscription, $post ) ) {
-						$failed[] = $delay;
-					}
+				if ( ! $delay->evaluate( $subscription, $post ) ) {
+					$failed[] = $delay;
 				}
 			}
 		}

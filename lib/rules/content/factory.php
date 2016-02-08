@@ -244,17 +244,17 @@ class IT_Exchange_Membership_Rule_Factory {
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Content_RuleInterface $rule
+	 * @param IT_Exchange_Membership_Content_Rule_Delayable $rule
 	 * @param IT_Exchange_Membership                       $membership
 	 * @param WP_Post                                      $post
 	 */
-	protected function attach_delay_rules( IT_Exchange_Membership_Content_RuleInterface $rule, IT_Exchange_Membership $membership, WP_Post $post ) {
+	protected function attach_delay_rules( IT_Exchange_Membership_Content_Rule_Delayable $rule, IT_Exchange_Membership $membership, WP_Post $post ) {
 
 		$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $membership->ID, true );
 
 		// we don't currently store the type of delay rule, so we just need to check that the metadata is there
 		if ( $interval ) {
-			$rule->add_delay_rule( new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership ) );
+			$rule->set_delay_rule( new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership ) );
 		}
 	}
 

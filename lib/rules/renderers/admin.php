@@ -198,7 +198,7 @@ class IT_Exchange_Membership_Admin_Rule_Renderer {
 				</div>
 			</div>
 
-			<?php if ( $rule->supports_delay_rules() ):
+			<?php if ( $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable ):
 				$drip_hidden    = '';
 				$unavail_hidden = 'hidden';
 			else:

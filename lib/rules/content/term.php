@@ -41,17 +41,6 @@ class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_Ab
 	}
 
 	/**
-	 * Does this content rule support delay rules.
-	 *
-	 * @since 1.18
-	 *
-	 * @return bool
-	 */
-	public function supports_delay_rules() {
-		return false;
-	}
-
-	/**
 	 * Check if this content rule matches a post.
 	 *
 	 * @since 1.18

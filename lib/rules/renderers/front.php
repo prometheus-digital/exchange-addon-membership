@@ -192,22 +192,16 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 	 */
 	protected function render_post( WP_Post $post, IT_Exchange_Membership_Content_RuleInterface $rule ) {
 
-		$delay_rules  = $rule->get_delay_rules();
 		$subscription = $this->subscription;
 
-		foreach ( $delay_rules as $delay_rule ) {
+		if ( $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable && $rule->get_delay_rule() ) {
+			$delay = $rule->get_delay_rule()->get_availability_date( $subscription );
 
-			if ( $delay_rule->get_availability_date( $subscription ) ) {
-				$delay = $delay_rule->get_availability_date( $subscription );
-			}
-		}
-
-		if ( ! isset( $delay ) ) {
-			if ( count( $delay_rules ) ) {
+			if ( ! $delay ) {
 				return '';
-			} else {
-				$delay = null;
 			}
+		} else {
+			$delay = null;
 		}
 
 		$unavailable = $delay ? 'it-exchange-content-unavailable' : '';
