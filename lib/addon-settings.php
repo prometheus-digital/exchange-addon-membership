@@ -203,20 +203,20 @@ class IT_Exchange_Membership_Add_On {
 				if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
 					wp_editor( $settings['restricted-content-message'], 'restricted-content-message', array(
 						'textarea_name' => 'it-exchange-add-on-membership-restricted-content-message',
-						'textarea_rows' => 10,
+						'textarea_rows' => 5,
 						'textarea_cols' => 30,
 						'editor_class'  => 'large-text'
 					) );
 
 					//We do this for some ITForm trickery... just to add recurring-payments-cancel-body to the used inputs field
 					$form->get_text_area( 'restricted-content-message', array(
-						'rows'  => 10,
+						'rows'  => 5,
 						'cols'  => 30,
 						'class' => 'large-text'
 					) );
 				} else {
 					$form->add_text_area( 'restricted-content-message', array(
-						'rows'  => 10,
+						'rows'  => 5,
 						'cols'  => 30,
 						'class' => 'large-text'
 					) );
@@ -233,20 +233,20 @@ class IT_Exchange_Membership_Add_On {
 				if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
 					wp_editor( $settings['dripped-content-message'], 'dripped-content-message', array(
 						'textarea_name' => 'it-exchange-add-on-membership-dripped-content-message',
-						'textarea_rows' => 10,
+						'textarea_rows' => 5,
 						'textarea_cols' => 30,
 						'editor_class'  => 'large-text'
 					) );
 
 					//We do this for some ITForm trickery... just to add recurring-payments-cancel-body to the used inputs field
 					$form->get_text_area( 'dripped-content-message', array(
-						'rows'  => 10,
+						'rows'  => 5,
 						'cols'  => 30,
 						'class' => 'large-text'
 					) );
 				} else {
 					$form->add_text_area( 'dripped-content-message', array(
-						'rows'  => 10,
+						'rows'  => 5,
 						'cols'  => 30,
 						'class' => 'large-text'
 					) );
@@ -265,20 +265,20 @@ class IT_Exchange_Membership_Add_On {
 				if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
 					wp_editor( $settings['restricted-product-message'], 'restricted-product-message', array(
 						'textarea_name' => 'it-exchange-add-on-membership-restricted-product-message',
-						'textarea_rows' => 10,
+						'textarea_rows' => 5,
 						'textarea_cols' => 30,
 						'editor_class'  => 'large-text'
 					) );
 
 					//We do this for some ITForm trickery... just to add recurring-payments-cancel-body to the used inputs field
 					$form->get_text_area( 'restricted-product-message', array(
-						'rows'  => 10,
+						'rows'  => 5,
 						'cols'  => 30,
 						'class' => 'large-text'
 					) );
 				} else {
 					$form->add_text_area( 'restricted-product-message', array(
-						'rows'  => 10,
+						'rows'  => 5,
 						'cols'  => 30,
 						'class' => 'large-text'
 					) );
@@ -292,20 +292,20 @@ class IT_Exchange_Membership_Add_On {
 				if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
 					wp_editor( $settings['dripped-product-message'], 'dripped-product-message', array(
 						'textarea_name' => 'it-exchange-add-on-membership-dripped-product-message',
-						'textarea_rows' => 10,
+						'textarea_rows' => 5,
 						'textarea_cols' => 30,
 						'editor_class'  => 'large-text'
 					) );
 
 					//We do this for some ITForm trickery... just to add recurring-payments-cancel-body to the used inputs field
 					$form->get_text_area( 'dripped-product-message', array(
-						'rows'  => 10,
+						'rows'  => 5,
 						'cols'  => 30,
 						'class' => 'large-text'
 					) );
 				} else {
 					$form->add_text_area( 'dripped-product-message', array(
-						'rows'  => 10,
+						'rows'  => 5,
 						'cols'  => 30,
 						'class' => 'large-text'
 					) );
