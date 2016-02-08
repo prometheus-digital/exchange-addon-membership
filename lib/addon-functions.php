@@ -566,3 +566,99 @@ function it_exchange_membership_addon_get_all_the_children( $membership_id, $chi
 
 	return $child_ids;
 }
+
+/**
+ * Returns Membership content restricted template part
+ *
+ * @since 1.0.0
+ * @since 1.18 Add $failed parameter.
+ *
+ * @param IT_Exchange_Membership_RuleInterface[] $failed
+ *
+ * @return string
+ */
+function it_exchange_membership_addon_content_restricted_template( array $failed = array() ) {
+
+	it_exchange_set_global( 'membership_failed_rules', $failed );
+
+	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
+	$GLOBALS['wp_query']->is_page   = false;   //false -- so comments_template() doesn't add comments
+	ob_start();
+	it_exchange_get_template_part( 'content', 'restricted' );
+
+	it_exchange_set_global( 'membership_failed_rules', null );
+
+	return ob_get_clean();
+}
+
+/**
+ * Returns Membership excerpt restricted template part
+ *
+ * @since 1.0.0
+ * @since 1.18 Add $failed parameter.
+ *
+ * @param IT_Exchange_Membership_RuleInterface[] $failed
+ *
+ * @return string
+ */
+function it_exchange_membership_addon_excerpt_restricted_template( array $failed = array() ) {
+
+	it_exchange_set_global( 'membership_failed_rules', $failed );
+
+	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
+	$GLOBALS['wp_query']->is_page   = false;   //false -- so comments_template() doesn't add comments
+	ob_start();
+	it_exchange_get_template_part( 'excerpt', 'restricted' );
+
+	it_exchange_set_global( 'membership_failed_rules', null );
+
+	return ob_get_clean();
+}
+
+/**
+ * Returns Membership content dripped template part
+ *
+ * @since 1.0.0
+ * @since 1.18 Add $failed parameter.
+ *
+ * @param IT_Exchange_Membership_RuleInterface[] $failed
+ *
+ * @return string
+ */
+function it_exchange_membership_addon_content_dripped_template( array $failed = array() ) {
+
+	it_exchange_set_global( 'membership_failed_rules', $failed );
+
+	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
+	$GLOBALS['wp_query']->is_page   = false;   //false -- so comments_template() doesn't add comments
+	ob_start();
+	it_exchange_get_template_part( 'content', 'dripped' );
+
+	it_exchange_set_global( 'membership_failed_rules', null );
+
+	return ob_get_clean();
+}
+
+/**
+ * Returns Membership excerpt dripped template part
+ *
+ * @since 1.0.0
+ * @since 1.18 Add $failed parameter.
+ *
+ * @param IT_Exchange_Membership_RuleInterface[] $failed
+ *
+ * @return string
+ */
+function it_exchange_membership_addon_excerpt_dripped_template( array $failed = array() ) {
+
+	it_exchange_set_global( 'membership_failed_rules', $failed );
+
+	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
+	$GLOBALS['wp_query']->is_page   = false;   //false -- so comments_template() doesn't add comments
+	ob_start();
+	it_exchange_get_template_part( 'excerpt', 'dripped' );
+
+	it_exchange_set_global( 'membership_failed_rules', null );
+
+	return ob_get_clean();
+}

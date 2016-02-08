@@ -1,24 +1,24 @@
 <?php
+
 /**
  * Restricted class for THEME API in Membership Add-on
  *
  * @since 1.0.0
-*/
-
+ */
 class IT_Theme_API_Restricted implements IT_Theme_API {
-	
+
 	/**
 	 * API context
 	 * @var string $_context
 	 * @since 1.0.0
-	*/
+	 */
 	private $_context = 'restricted';
 
 	/**
 	 * Maps api tags to methods
 	 * @var array $_tag_map
 	 * @since 1.0.0
-	*/
+	 */
 	public $_tag_map = array(
 		'content' => 'content',
 		'excerpt' => 'excerpt',
@@ -29,9 +29,7 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 	 * Constructor
 	 *
 	 * @since 1.0.0
-	 *
-	 * @return void
-	*/
+	 */
 	function __construct() {
 	}
 
@@ -39,9 +37,7 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 	 * Deprecated Constructor
 	 *
 	 * @since 1.0.0
-	 *
-	 * @return void
-	*/
+	 */
 	function IT_Theme_API_Restricted() {
 		self::__construct();
 	}
@@ -50,102 +46,113 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 	 * Returns the context. Also helps to confirm we are an iThemes Exchange theme API class
 	 *
 	 * @since 1.0.0
-	 * 
+	 *
 	 * @return string
-	*/
+	 */
 	function get_api_context() {
 		return $this->_context;
 	}
 
 	/**
+	 * Override the post content with the restriction message.
+	 *
+	 * If enabled, includes the post excerpt before the message.
+	 *
 	 * @since 1.0.0
+	 *
+	 * @param array $options
+	 *
 	 * @return string
-	*/
-	function content( $options=array() ) {
+	 */
+	public function content( $options = array() ) {
+
 		global $post;
-		
+
 		$membership_settings = it_exchange_get_option( 'addon_membership' );
-		
-		//Suhosin Fix
-		if ( !empty( $membership_settings['restricted-content-message'] ) ) {
-			$message = $membership_settings['restricted-content-message'];
-		} else {
-			$message = $membership_settings['membership-restricted-content-message'];
-		}
-		//End Suhosin Fix
-		
+
+		$rules   = it_exchange_get_global( 'membership_failed_rules' );
+		$message = $this->get_message( is_array( $rules ) ? $rules : array() );
+
 		$defaults = array(
-			'before' => '',
-			'after'  => '',
+			'before'  => '',
+			'after'   => '',
 			'message' => $message,
-			'class'  => 'it-exchange-membership-restricted-content',
+			'class'   => 'it-exchange-membership-restricted-content',
 		);
-		$options = ITUtility::merge_defaults( $options, $defaults );
-		
+		$options  = ITUtility::merge_defaults( $options, $defaults );
+
 		$content = $options['before'];
-				
+
 		if ( $membership_settings['membership-restricted-show-excerpt'] ) {
-			if ( !empty( $post->post_excerpt ) ) {
+
+			if ( ! empty( $post->post_excerpt ) ) {
 				$excerpt = $post->post_excerpt;
-			} else if ( !empty( $post->post_content ) ) {
-				$excerpt = $post->post_content;
-                $excerpt = str_replace(']]>', ']]&gt;', $excerpt);
-                $excerpt_length = apply_filters('excerpt_length', 55);
-                $excerpt_more = apply_filters('excerpt_more', ' ' . '[&hellip;]');
-                $excerpt = wp_trim_words( $excerpt, $excerpt_length, $excerpt_more );
+			} else if ( ! empty( $post->post_content ) ) {
+				$excerpt        = $post->post_content;
+				$excerpt        = str_replace( ']]>', ']]&gt;', $excerpt );
+				$excerpt_length = apply_filters( 'excerpt_length', 55 );
+				$excerpt_more   = apply_filters( 'excerpt_more', ' ' . '[&hellip;]' );
+				$excerpt        = wp_trim_words( $excerpt, $excerpt_length, $excerpt_more );
 			}
-			if ( !empty( $excerpt ) ) {
+
+			if ( ! empty( $excerpt ) ) {
 				$excerpt = wp_trim_excerpt( $excerpt );
 			} else {
 				$excerpt = '';
 			}
+
 			$content .= '<p class="it-exchange-membership-content-excerpt">';
 			$content .= $excerpt;
 			$content .= '</p>';
 		}
-		
+
 		$content .= '<p class="' . $options['class'] . '">' . $options['message'] . '</p>';
 		$content .= $options['after'];
-		
+
 		return $content;
 	}
 
 	/**
+	 * Override the post excerpt with the restriction message.
+	 *
+	 * If enabled, includes the post excerpt.
+	 *
 	 * @since 1.0.0
+	 *
+	 * @param array $options
+	 *
 	 * @return string
-	*/
-	function excerpt( $options=array() ) {
+	 */
+	public function excerpt( $options = array() ) {
+
+		global $post;
+
 		$membership_settings = it_exchange_get_option( 'addon_membership' );
-		
-		//Suhosin Fix
-		if ( !empty( $membership_settings['restricted-content-message'] ) ) {
-			$message = $membership_settings['restricted-content-message'];
-		} else {
-			$message = $membership_settings['membership-restricted-content-message'];
-		}
-		//End Suhosin Fix
-		
+
+		$rules   = it_exchange_get_global( 'membership_failed_rules' );
+		$message = $this->get_message( is_array( $rules ) ? $rules : array() );
+
 		$defaults = array(
 			'before'  => '',
 			'after'   => '',
 			'message' => $message,
 			'class'   => 'it-exchange-membership-restricted-excerpt',
 		);
-		$options = ITUtility::merge_defaults( $options, $defaults );
-		
+		$options  = ITUtility::merge_defaults( $options, $defaults );
+
 		$content = $options['before'];
-				
+
 		if ( $membership_settings['membership-restricted-show-excerpt'] ) {
-			if ( !empty( $post->post_excerpt ) ) {
+			if ( ! empty( $post->post_excerpt ) ) {
 				$excerpt = $post->post_excerpt;
-			} else if ( !empty( $post->post_content ) ) {
-				$excerpt = $post->post_content;
-                $excerpt = str_replace(']]>', ']]&gt;', $excerpt);
-                $excerpt_length = apply_filters('excerpt_length', 55);
-                $excerpt_more = apply_filters('excerpt_more', ' ' . '[&hellip;]');
-                $excerpt = wp_trim_words( $excerpt, $excerpt_length, $excerpt_more );
+			} else if ( ! empty( $post->post_content ) ) {
+				$excerpt        = $post->post_content;
+				$excerpt        = str_replace( ']]>', ']]&gt;', $excerpt );
+				$excerpt_length = apply_filters( 'excerpt_length', 55 );
+				$excerpt_more   = apply_filters( 'excerpt_more', ' ' . '[&hellip;]' );
+				$excerpt        = wp_trim_words( $excerpt, $excerpt_length, $excerpt_more );
 			}
-			if ( !empty( $excerpt ) ) {
+			if ( ! empty( $excerpt ) ) {
 				$excerpt = wp_trim_excerpt( $excerpt );
 			} else {
 				$excerpt = '';
@@ -154,42 +161,130 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 			$content .= $excerpt;
 			$content .= '</p>';
 		}
-		
+
 		$content .= '<p class="' . $options['class'] . '">' . $options['message'] . '</p>';
 		$content .= $options['after'];
-		
+
 		return $content;
 	}
 
 	/**
+	 * Retrieve the product restriction message.
+	 *
 	 * @since 1.0.0
+	 *
+	 * @param array $options
+	 *
 	 * @return string
-	*/
-	function product( $options=array() ) {
-		global $post;
-		
-		$membership_settings = it_exchange_get_option( 'addon_membership' );
-		
+	 */
+	public function product( $options = array() ) {
+
+		$rules = it_exchange_get_global( 'membership_failed_rules' );
+
 		//Suhosin Fix
-		if ( !empty( $membership_settings['restricted-product-message'] ) ) {
+		if ( ! empty( $membership_settings['restricted-product-message'] ) ) {
 			$message = $membership_settings['restricted-product-message'];
 		} else {
 			$message = $membership_settings['membership-restricted-product-message'];
 		}
-		//End Suhosin Fix
-		
+
+		if ( strpos( $message, '{products}' ) !== false ) {
+			$message = str_replace( '{products}', $this->product_replacement( $this->get_products( $rules ) ), $message );
+		}
+
 		$defaults = array(
-			'before' => '',
-			'after'  => '',
+			'before'  => '',
+			'after'   => '',
 			'message' => $message,
-			'class'  => 'it-exchange-membership-restricted-product',
+			'class'   => 'it-exchange-membership-restricted-product',
 		);
-		$options = ITUtility::merge_defaults( $options, $defaults );
-		
+		$options  = ITUtility::merge_defaults( $options, $defaults );
+
 		$content = $options['before'];
 		$content .= '<p class="' . $options['class'] . '">' . $options['message'] . '</p>';
 		$content .= $options['after'];
-		
+
 		return $content;
+	}
+
+	/**
+	 * Get a unique list of products from the given rules.
+	 *
+	 * @since 1.18
+	 *
+	 * @param IT_Exchange_Membership_Content_RuleInterface[] $rules
+	 *
+	 * @return IT_Exchange_Membership[]
+	 */
+	protected function get_products( array $rules ) {
+		$products = array();
+
+		foreach ( $rules as $rule ) {
+			if ( $rule->get_membership() ) {
+				$products[ $rule->get_membership()->ID ] = $rule->get_membership();
+			}
+		}
+
+		return $products;
+	}
+
+	/**
+	 * Get the restriction message.
+	 *
+	 * @since 1.18
+	 *
+	 * @param IT_Exchange_Membership_Content_RuleInterface[] $rules
+	 *
+	 * @return string
+	 */
+	protected function get_message( array $rules ) {
+
+		$membership_settings = it_exchange_get_option( 'addon_membership' );
+
+		$products = $this->get_products( $rules );
+
+		//Suhosin Fix
+		if ( ! empty( $membership_settings['restricted-content-message'] ) ) {
+			$message = $membership_settings['restricted-content-message'];
+		} else {
+			$message = $membership_settings['membership-restricted-content-message'];
+		}
+
+		// if more than one product, we use the global message.
+		if ( count( $products ) == 1 ) {
+
+			/** @var IT_Exchange_Membership $product */
+			$product = reset( $products );
+
+			if ( $product->has_feature( 'membership-information', array( 'setting' => 'content-restricted' ) ) ) {
+				$message = $product->get_feature( 'membership-information', array( 'setting' => 'content-restricted' ) );
+			}
+		}
+
+		if ( strpos( $message, '{products}' ) !== false ) {
+			$message = str_replace( '{products}', $this->product_replacement( $products ), $message );
+		}
+
+		return $message;
+	}
+
+	/**
+	 * Replace the product tag.
+	 *
+	 * @since 1.18
+	 *
+	 * @param IT_Exchange_Membership[] $products
+	 *
+	 * @return string
+	 */
+	protected function product_replacement( array $products ) {
+
+		$links = array();
+
+		foreach ( $products as $product ) {
+			$links[] = '<a href="' . get_permalink( $product->ID ) . '">' . get_the_title( $product->ID ) . '</a>';
+		}
+
+		return implode( ', ', $links );
 	}
 }

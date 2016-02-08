@@ -161,6 +161,13 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 				'editor_class'  => 'large-text',
 				'teeny'         => true
 			) ); ?>
+
+			<br>
+
+			<p class="description">
+				<?php _e( 'This message will be displayed if this is the only product that can grant access to a given piece of content.', 'LION' ); ?>&nbsp;
+				<?php _e( 'Otherwise, the global restriction message will be used.', 'LION' ); ?>
+			</p>
 		</div>
 
 		<p>
@@ -180,6 +187,13 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 				'editor_class'  => 'large-text',
 				'teeny'         => true
 			) ); ?>
+
+			<br>
+
+			<p class="description">
+				<?php _e( 'This message will be displayed if this is the only product that can grant access to a given piece of content.', 'LION' ); ?>&nbsp;
+				<?php _e( 'Otherwise, the global delayed message will be used.', 'LION' ); ?>
+			</p>
 
 			<p class="description">
 				<?php _e( 'Use %d to represent the number of days until the delayed content will be available.', 'LION' ); ?>

@@ -38,14 +38,13 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 	public function evaluate( WP_Post $post, IT_Exchange_Customer $customer = null ) {
 
 		if ( ! $customer ) {
-			return count( $this->factory->make_all_for_post( $post ) );
+			return $this->factory->make_all_for_post( $post );
 		}
 
 		$subscriptions = it_exchange_get_customer_membership_subscriptions( $customer );
 
 		$failed = array();
 
-		/** @var IT_Exchange_Subscription $subscription */
 		foreach ( $subscriptions as $subscription ) {
 			$rules = $this->factory->make_all_for_membership( $subscription->get_product() );
 

@@ -15,7 +15,7 @@
 function it_exchange_membership_addon_show_permlink_update_nag() {
 	$version = get_option( 'it-exchange-membership-addon-version', true );
 	if ( version_compare( $version, '1.6.0', '<' ) ) { //Updated membership redirect rules in 1.6.0
-		if ( !empty( $_GET['flush-rewrite-rules'] ) ) {						
+		if ( !empty( $_GET['flush-rewrite-rules'] ) ) {
 			flush_rewrite_rules();
 			update_option( 'it-exchange-membership-addon-version', ITE_MEMBERSHIP_PLUGIN_VERSION );
 		} else {
@@ -89,7 +89,7 @@ function it_exchange_membership_addon_admin_menu() {
 
 	$hook = add_submenu_page( 'users.php', 'iThemes Exchange ' . __( 'Members', 'LION' ), __( 'Members', 'LION' ), apply_filters( 'it_exchange_admin_menu_capability', 'activate_plugins' ), 'it-exchange-members-table', 'it_exchange_membership_addon_members_table' );
 	add_action( "load-$hook", 'it_exchange_membership_addon_members_table_add_screen_option' );
-	
+
 }
 add_action( 'admin_menu', 'it_exchange_membership_addon_admin_menu' );
 
@@ -111,7 +111,7 @@ function it_exchange_membership_addon_members_table_add_screen_option() {
  * @return void
 */
 function it_exchange_membership_addon_members_table_set_screen_option( $status, $option, $value ) {
-    if ( 'users_page_it_exchange_members_table_per_page' == $option ) return $value; 
+    if ( 'users_page_it_exchange_members_table_per_page' == $option ) return $value;
     return $status;
 }
 add_filter('set-screen-option', 'it_exchange_membership_addon_members_table_set_screen_option', 10, 3);
@@ -124,17 +124,17 @@ add_filter('set-screen-option', 'it_exchange_membership_addon_members_table_set_
  * @return void
 */
 function it_exchange_membership_addon_members_table() {
-	
+
 	if ( ! current_user_can( 'list_users' ) )
 		wp_die( __( 'Cheatin&#8217; uh?' ) );
-	
+
 	$wp_list_table = new IT_Exchange_Membership_List_Table();
 	$pagenum = $wp_list_table->get_pagenum();
 	$title = __('iThemes Exchange Members');
-	
+
 	$wp_list_table->prepare_items();
 	$total_pages = $wp_list_table->get_pagination_arg( 'total_pages' );
-	
+
 	if ( $pagenum > $total_pages && $total_pages > 0 ) {
 		wp_redirect( esc_url_raw( add_query_arg( 'paged', $total_pages ) ) );
 		exit;
@@ -145,22 +145,22 @@ function it_exchange_membership_addon_members_table() {
 	<h2>
 	<?php
 	echo esc_html( $title );
-	
+
 	if ( !empty( $usersearch ) ) {
-		printf( '<span class="subtitle">' . __( 'Search results for &#8220;%s&#8221;', 'LION' ) . '</span>', esc_html( $usersearch ) ); 
+		printf( '<span class="subtitle">' . __( 'Search results for &#8220;%s&#8221;', 'LION' ) . '</span>', esc_html( $usersearch ) );
 	}
 	?>
 	</h2>
-	
+
 	<?php $wp_list_table->views(); ?>
-	
+
 	<form id="it-exchange-members-table-form" action="<?php echo esc_url( add_query_arg( 'page', 'it-exchange-members-table', admin_url( 'users.php' ) ) ); ?>" method="get">
 	<input type="hidden" name="page" value="it-exchange-members-table" />
 	<?php $wp_list_table->search_box( __( 'Search Members', 'LION' ), 'users' ); ?>
-	
+
 	<?php $wp_list_table->display(); ?>
 	</form>
-	
+
 	<br class="clear" />
 	</div>
 	<?php
@@ -199,15 +199,15 @@ add_action( 'admin_notices', 'it_exchange_membership_addon_show_version_nag' );
  * @param array $meta Existing meta
  * @param string $plugin_file the wp plugin slug (path)
  * @param array $plugin_data the data WP harvested from the plugin header
- * @param string $context 
+ * @param string $context
  * @return array
 */
 function it_exchange_membership_plugin_row_actions( $actions, $plugin_file, $plugin_data, $context ) {
-    
+
     $actions['setup_addon'] = '<a href="' . get_admin_url( NULL, 'admin.php?page=it-exchange-addons&add-on-settings=membership-product-type' ) . '">' . __( 'Setup Add-on', 'LION' ) . '</a>';
-    
+
     return $actions;
-    
+
 }
 add_filter( 'plugin_action_links_exchange-addon-membership/exchange-addon-membership.php', 'it_exchange_membership_plugin_row_actions', 10, 4 );
 
@@ -233,7 +233,7 @@ add_action( 'it_exchange_enabled_addons_loaded', 'ithemes_exchange_membership_ad
 */
 function it_exchange_membership_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
 	global $post;
-	
+
 	if ( isset( $_REQUEST['post_type'] ) ) {
 		$post_type = $_REQUEST['post_type'];
 	} else {
@@ -250,7 +250,7 @@ function it_exchange_membership_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
 		if ( isset( $post ) && !empty( $post ) )
 			$post_type = $post->post_type;
 	}
-	
+
 	if ( isset( $post_type ) && 'it_exchange_prod' === $post_type ) {
 		$deps = array( 'post', 'jquery-ui-sortable', 'jquery-ui-droppable', 'jquery-ui-tabs', 'jquery-ui-tooltip', 'jquery-ui-datepicker', 'autosave' );
 		wp_enqueue_script( 'it-exchange-membership-addon-add-edit-product', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/js/add-edit-product.js', $deps );
@@ -318,12 +318,12 @@ add_action( 'wp_enqueue_scripts', 'it_exchange_membership_addon_load_public_scri
 /**
  * Outputs the Membership media form button
  *
- * @since 1.0.18 
+ * @since 1.0.18
  * @return void
 */
 function it_exchange_membership_addon_media_form_button() {
 	global $post;
-	
+
 	if ( isset( $_REQUEST['post_type'] ) ) {
 		$post_type = $_REQUEST['post_type'];
 	} else {
@@ -340,9 +340,9 @@ function it_exchange_membership_addon_media_form_button() {
 		if ( isset( $post ) && !empty( $post ) )
 			$post_type = $post->post_type;
 	}
-	
+
 	add_thickbox();
-   
+
 	if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
         // display button matching new UI
         echo '<style>.it_exchange_membership_media_icon{
@@ -365,12 +365,12 @@ add_action( 'media_buttons', 'it_exchange_membership_addon_media_form_button', 1
 /**
  * Outputs the Membershpi MCE Popup
  *
- * @since 1.0.18 
+ * @since 1.0.18
  * @return void
 */
 function it_exchange_membership_addon_mce_popup_footer() {
 	global $post;
-	
+
 	if ( isset( $_REQUEST['post_type'] ) ) {
 		$post_type = $_REQUEST['post_type'];
 	} else {
@@ -387,22 +387,22 @@ function it_exchange_membership_addon_mce_popup_footer() {
 		if ( isset( $post ) && !empty( $post ) )
 			$post_type = $post->post_type;
 	}
-	
+
 	if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
 		?>
 		<script>
             function InsertMemberContentShortcode() {
-            	var membership_ids = new Array;
+            	var membership_ids = [];
 
                 jQuery( '#add-membership-id option:selected' ).each( function() {
 					membership_ids.push( jQuery( this ).val() );
 				});
-				
+
 				if ( membership_ids.length == 0 ){
                     alert("<?php _e( 'You must select at least one membership product', 'LION' ); ?>");
                     return;
                 }
-                
+
                 var content = tinyMCE.activeEditor.selection.getContent();
 
                 window.send_to_editor( '[it-exchange-member-content membership_ids="' + membership_ids.join() + '"]' + content + '[/it-exchange-member-content]' );
@@ -438,7 +438,7 @@ function it_exchange_membership_addon_mce_popup_footer() {
         </div>
         <?php
 	}
-	
+
 }
 add_action( 'admin_footer', 'it_exchange_membership_addon_mce_popup_footer' );
 
@@ -446,21 +446,21 @@ add_action( 'admin_footer', 'it_exchange_membership_addon_mce_popup_footer' );
  * Adds shortcode information below extended description box
  *
  * @since 1.0.0
- * @param object $post WordPress post object 
+ * @param object $post WordPress post object
  * @return void
 */
 function it_exchange_membership_addon_after_print_extended_description_metabox( $post ) {
-	
+
 	$product_type = it_exchange_get_product_type( $post->ID );
-			
+
 	if ( 'membership-product-type' === $product_type ) {
 		echo '<p class="description">[it-exchange-membership-included-content] - ' . __( 'Displays content available with this membership. <a href="http://ithemes.com/codex/page/Exchange_Product_Types:_Memberships#Shortcodes">Click here to read about the available shortcode options.</a>', 'LION' ) . '</p>';
 	}
-	
+
 	//http://ithemes.com/codex/page/Exchange_Product_Types:_Memberships#Shortcodes
-	
+
 	return;
-	
+
 }
 add_action( 'it_exchange_after_print_extended_description_metabox', 'it_exchange_membership_addon_after_print_extended_description_metabox' );
 
@@ -468,7 +468,7 @@ add_action( 'it_exchange_after_print_extended_description_metabox', 'it_exchange
  * Adds necessary details to Exchange upon successfully completed transaction
  *
  * @since 1.0.0
- * @param int $transaction_id iThemes Exchange Transaction ID 
+ * @param int $transaction_id iThemes Exchange Transaction ID
  * @return void
 */
 function it_exchange_membership_addon_add_transaction( $transaction_id ) {
@@ -488,7 +488,7 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 				$member_access[$transaction_id][] = $product_id;
 			}
 		}
-		
+
 		if ( !empty ( $cancel_subscription[$product_id] ) ) {
 			$transaction->update_transaction_meta( 'free_days', $cancel_subscription[$product_id]['free_days'] );
 			$transaction->update_transaction_meta( 'credit', $cancel_subscription[$product_id]['credit'] );
@@ -509,7 +509,7 @@ add_action( 'it_exchange_add_transaction_success', 'it_exchange_membership_addon
  * Adds necessary details to Exchange upon successfully completed child transaction
  *
  * @since 1.0.0
- * @param int $transaction_id iThemes Exchange Child Transaction ID 
+ * @param int $transaction_id iThemes Exchange Child Transaction ID
  * @return void
 */
 function it_exchange_membership_addon_add_child_transaction( $transaction_id ) {
@@ -532,7 +532,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 			$customer = new IT_Exchange_Customer( $user_id );
 			$member_access = $customer->get_customer_meta( 'member_access' );
 			$member_access_session = it_exchange_membership_addon_get_customer_memberships();
-	
+
 			if ( !empty( $member_access ) ) {
 				//If the transient doesn't exist, verify the membership access subscriber status and reset transient
 				$transient = get_transient( 'member_access_check_' . $customer->id );
@@ -545,11 +545,11 @@ function it_exchange_membership_addon_setup_customer_session() {
 							$transaction_status = 'failed';
 						}
 						if ( empty( $transaction ) || empty( $transaction->ID )
-							|| $transaction->ID !== $txn_id 
-							|| 'voided' === $transaction_status 
-							|| 'reversed' === $transaction_status 
-							|| 'deactivated' === $transaction_status 
-							|| 'failed' === $transaction_status 
+							|| $transaction->ID !== $txn_id
+							|| 'voided' === $transaction_status
+							|| 'reversed' === $transaction_status
+							|| 'deactivated' === $transaction_status
+							|| 'failed' === $transaction_status
 							|| 'refunded' === $transaction_status ) {
 							unset( $member_access[$txn_id] );
 						} else {
@@ -568,7 +568,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 							unset( $member_access[$txn_id] );
 						}
 					}
-					
+
 					set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 4 ); //only do it every four hours
 				} else {
 					$member_diff = array_diff_assoc( (array)$member_access, (array)$member_access_session );
@@ -580,7 +580,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 						}
 					}
 				}
-				
+
 				$flip_member_access = array();
 				foreach( $member_access as $txn_id => $product_id_array ) {
 					// we want the transaction ID to be the value to help us determine child access relations to transaction IDs
@@ -600,7 +600,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 			} else {
 				it_exchange_clear_session_data( 'member_access' );
 				it_exchange_clear_session_data( 'parent_access' );
-			}	
+			}
 		} else {
 			it_exchange_clear_session_data( 'member_access' );
 			it_exchange_clear_session_data( 'parent_access' );
@@ -633,7 +633,7 @@ add_action( 'it_exchange_update_transaction_subscription_status', 'it_exchange_m
 */
 function it_exchange_before_delete_membership_product( $post_id ){
 	$existing_access_rules = it_exchange_get_product_feature( $post_id, 'membership-content-access-rules' );
-	
+
 	if ( !empty( $existing_access_rules ) ) {
 		foreach( $existing_access_rules as $rule ) {
 			if ( !empty( $rule['selected'] ) ) {
@@ -641,10 +641,10 @@ function it_exchange_before_delete_membership_product( $post_id ){
 					case 'posts':
 						if ( !( $rules = get_post_meta( $rule['term'], '_item-content-rule', true ) ) )
 							$rules = array();
-						
+
 						delete_post_meta( $rule['term'], '_item-content-rule-drip-interval-' . $post_id );
 						delete_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $post_id );
-						
+
 						$restriction_exemptions = get_post_meta( $rule['term'], '_item-content-rule-exemptions', true );
 						if ( !empty( $restriction_exemptions ) ) {
 							if ( array_key_exists( $post_id, $restriction_exemptions ) ) {
@@ -655,7 +655,7 @@ function it_exchange_before_delete_membership_product( $post_id ){
 									delete_post_meta( $rule['term'], '_item-content-rule-exemptions' );
 							}
 						}
-							
+
 						if( false !== $key = array_search( $post_id, $rules ) ) {
 							unset( $rules[$key] );
 							if ( empty( $rules ) )
@@ -664,11 +664,11 @@ function it_exchange_before_delete_membership_product( $post_id ){
 								update_post_meta( $rule['term'], '_item-content-rule', $rules );
 						}
 						break;
-						
+
 					case 'post_types':
 						if ( !( $rules = get_option( '_item-content-rule-post-type-' . $rule['term'] ) ) )
 							$rules = array();
-							
+
 						if( false !== $key = array_search( $post_id, $rules ) ) {
 							unset( $rules[$key] );
 							if ( empty( $rules ) )
@@ -677,11 +677,11 @@ function it_exchange_before_delete_membership_product( $post_id ){
 								update_option( '_item-content-rule-post-type-' . $rule['term'],  $rules );
 						}
 						break;
-						
+
 					case 'taxonomy':
 						if ( !( $rules = get_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] ) ) )
 							$rules = array();
-							
+
 						if( false !==  $key = array_search( $post_id, $rules ) ) {
 							unset( $rules[$key] );
 							if ( empty( $rules ) )
@@ -690,7 +690,7 @@ function it_exchange_before_delete_membership_product( $post_id ){
 								update_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'],  $rules );
 						}
 						break;
-				}	
+				}
 			}
 		}
 	}
@@ -707,13 +707,16 @@ add_action( 'before_delete_post', 'it_exchange_before_delete_membership_product'
  * @return string
 */
 function it_exchange_membership_addon_content_filter( $content ) {
-	if ( it_exchange_membership_addon_is_content_restricted() ) {
-		return it_exchange_membership_addon_content_restricted_template();
+
+	if ( it_exchange_membership_addon_is_content_restricted( null, $failed_rules ) ) {
+		return it_exchange_membership_addon_content_restricted_template( $failed_rules );
 	}
-	if ( it_exchange_membership_addon_is_content_dripped() ) {
-		return it_exchange_membership_addon_content_dripped_template();
+
+	if ( it_exchange_membership_addon_is_content_dripped( null, $failed_rules ) ) {
+		return it_exchange_membership_addon_content_dripped_template( $failed_rules );
 	}
-	return $content;	
+
+	return $content;
 }
 add_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
 
@@ -723,16 +726,21 @@ add_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
  * Otherwise, return $post's $content
  *
  * @since 1.0.0
- * @param string $content
+ *
+ * @param string $excerpt
+ *
  * @return string
 */
 function it_exchange_membership_addon_excerpt_filter( $excerpt ) {
-	if ( it_exchange_membership_addon_is_content_restricted() ) {
-		return it_exchange_membership_addon_excerpt_restricted_template();
+
+	if ( it_exchange_membership_addon_is_content_restricted( null, $failed_rules ) ) {
+		return it_exchange_membership_addon_excerpt_restricted_template( $failed_rules );
 	}
-	if ( it_exchange_membership_addon_is_content_dripped() ) {
-		return it_exchange_membership_addon_excerpt_dripped_template();
+
+	if ( it_exchange_membership_addon_is_content_dripped( null, $failed_rules ) ) {
+		return it_exchange_membership_addon_excerpt_dripped_template( $failed_rules );
 	}
+
 	return $excerpt;
 }
 add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
@@ -748,77 +756,37 @@ add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
  * @return string
 */
 function it_exchange_membership_addon_super_widget_filter( $result, $options ) {
+
 	global $post;
+
 	if ( 'it_exchange_prod' === $post->post_type ) {
-		if ( it_exchange_membership_addon_is_product_restricted() ) {
+
+		if ( it_exchange_membership_addon_is_product_restricted( null, $failed_rules ) ) {
+
+			it_exchange_set_global( 'membership_failed_rules', $failed_rules );
+
 			ob_start();
 			it_exchange_get_template_part( 'product', 'restricted' );
+
+			it_exchange_set_global( 'membership_failed_rules', null );
+
 			return ob_get_clean();
-		} else if ( it_exchange_membership_addon_is_product_dripped() ) {
+		} else if ( it_exchange_membership_addon_is_product_dripped( null, $failed_rules ) ) {
+
+			it_exchange_set_global( 'membership_failed_rules', $failed_rules );
+
 			ob_start();
 			it_exchange_get_template_part( 'product', 'dripped' );
+
+			it_exchange_set_global( 'membership_failed_rules', null );
+
 			return ob_get_clean();
 		}
 	}
+
 	return $result;
 }
 add_filter( 'it_exchange_theme_api_product_purchase_options', 'it_exchange_membership_addon_super_widget_filter', 10, 2 );
-
-/**
- * Returns Membership content restricted template part
- *
- * @since 1.0.0
- * @return string
-*/
-function it_exchange_membership_addon_content_restricted_template() {
-	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
-	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
-	ob_start();
-	it_exchange_get_template_part( 'content', 'restricted' );
-	return ob_get_clean();
-}
-
-/**
- * Returns Membership excerpt restricted template part
- *
- * @since 1.0.0
- * @return string
-*/
-function it_exchange_membership_addon_excerpt_restricted_template() {
-	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
-	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
-	ob_start();
-	it_exchange_get_template_part( 'excerpt', 'restricted' );
-	return ob_get_clean();
-}
-
-/**
- * Returns Membership content dripped template part
- *
- * @since 1.0.0
- * @return string
-*/
-function it_exchange_membership_addon_content_dripped_template() {
-	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
-	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
-	ob_start();
-	it_exchange_get_template_part( 'content', 'dripped' );
-	return ob_get_clean();	
-}
-
-/**
- * Returns Membership excerpt dripped template part
- *
- * @since 1.0.0
- * @return string
-*/
-function it_exchange_membership_addon_excerpt_dripped_template() {
-	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
-	$GLOBALS['wp_query']->is_page = false;   //false -- so comments_template() doesn't add comments
-	ob_start();
-	it_exchange_get_template_part( 'excerpt', 'dripped' );
-	return ob_get_clean();	
-}
 
 /**
  * Function to modify the default transaction confirmation elements
@@ -849,15 +817,15 @@ add_filter( 'it_exchange_possible_template_paths', 'it_exchange_membership_addon
 /**
  * Replaces base-price content product element with customer-pricing element, if found
  *
- * @since 1.0.7 
+ * @since 1.0.7
  *
  * @param array $parts Element array for temmplate parts
  * @return array Modified array with new customer-pricing element (if base-price was found).
 */
 function it_exchange_memnbership_addon_get_content_product_product_advanced_loop_elements( $parts ) {
-	$parts[] = 'intended-audience';	
-	$parts[] = 'objectives';	
-	$parts[] = 'prerequisites';	
+	$parts[] = 'intended-audience';
+	$parts[] = 'objectives';
+	$parts[] = 'prerequisites';
 	return $parts;
 }
 add_filter( 'it_exchange_get_content_product_product_advanced_loop_elements', 'it_exchange_memnbership_addon_get_content_product_product_advanced_loop_elements' );
@@ -877,7 +845,7 @@ function it_exchange_memnbership_addon_get_content_product_product_info_loop_ele
 }
 add_filter( 'it_exchange_get_content_product_product_info_loop_elements', 'it_exchange_memnbership_addon_get_content_product_product_info_loop_elements' );
 
-/*
+/**
  * Registers the membership frontend dashboard page in iThemes Exchange
  *
  * @since 1.0.0
@@ -895,7 +863,7 @@ function it_exchange_membership_addon_account_page() {
 		'type'          => 'exchange',
 		'menu'          => true,
 		'optional'      => true,
-    );  
+    );
     it_exchange_register_page( 'memberships', $options );
 }
 add_action( 'it_libraries_loaded', 'it_exchange_membership_addon_account_page', 11 );
@@ -936,7 +904,7 @@ function it_exchange_get_memberships_page_rewrites( $page ) {
 /**
  * Modifies rewrite rules when setting the Memberships page to a WordPress page
  *
- * @since 1.0.19 
+ * @since 1.0.19
  *
  * @param array $existing rewrite rules
  * @return array modified rewrite rules
@@ -949,7 +917,7 @@ function it_exchange_membership_addon_register_rewrite_rules( $existing ) {
 		else
 			$page_slug = 'memberships';
 
-		$rewrite = array( 
+		$rewrite = array(
 			$page_slug . '/([^/]+)/?$' => 'index.php?pagename=' . $page_slug . '&' . $page_slug . '=$matches[1]',
 			$page_slug . '/?$' => 'index.php?pagename=' . $page_slug . '&' . $page_slug . '=itememberships'
 		);
@@ -980,7 +948,7 @@ function it_exchange_get_membership_page_urls( $page ) {
 	} else {
 		$account_slug = it_exchange_get_page_slug( 'account' );
 	}
-	
+
 	// Replace account value with name if user is logged in
 	if ( $permalinks )
 		$base = trailingslashit( $base . $account_slug );
@@ -996,7 +964,7 @@ function it_exchange_get_membership_page_urls( $page ) {
 			$base = add_query_arg( array( $account_slug => $account_name ), $base );
 		}
 	}
-	
+
 	if ( $permalinks )
 		return trailingslashit( esc_url( $base . $slug ) );
 	else
@@ -1016,7 +984,7 @@ function it_exchange_get_membership_page_urls( $page ) {
 */
 function it_exchange_membership_addon_pages( $pages ) {
 	$pages[] = 'memberships';
-	return $pages;	
+	return $pages;
 }
 add_filter( 'it_exchange_pages_to_protect', 'it_exchange_membership_addon_pages' );
 add_filter( 'it_exchange_profile_pages', 'it_exchange_membership_addon_pages' );
@@ -1061,11 +1029,11 @@ function it_exchange_membership_addon_append_to_customer_menu_loop( $nav='' ) {
 
 	if ( !empty( $memberships ) ) {
 		foreach ( $memberships as $membership_id => $txn_id ) {
-			if ( !empty( $membership_id ) ) {				
+			if ( !empty( $membership_id ) ) {
 				$membership_post = get_post( $membership_id );
 				if ( !empty( $membership_post ) ) {
 					$membership_slug = $membership_post->post_name;
-					
+
 					$query_var = get_query_var( 'memberships' );
 
 					$class = 'it-exchange-membership-page-link';
@@ -1075,18 +1043,18 @@ function it_exchange_membership_addon_append_to_customer_menu_loop( $nav='' ) {
 					}
 
 					$class = " class=\"$class\"";
-					
+
 					if ( $permalinks )
 						$url = trailingslashit( it_exchange_get_page_url( $page_slug ) ) . $membership_slug;
 					else
 						$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
-						
+
 					$nav .= '<li' . $class . '><a href="' . $url . '">' . get_the_title( $membership_id ) . '</a></li>';
 				}
 			}
 		}
 	}
-	
+
 	return $nav;
 }
 add_filter( 'it_exchange_after_customer_menu_loop', 'it_exchange_membership_addon_append_to_customer_menu_loop', 10, 2 );
@@ -1102,19 +1070,19 @@ add_filter( 'it_exchange_after_customer_menu_loop', 'it_exchange_membership_addo
 */
 function it_exchange_membership_addon_email_notification_order_table_product_name( $product_name, $product_obj ) {
 	if ( it_exchange_product_has_feature( $product_obj['product_id'], 'membership-content-access-rules' ) ) {
-	
+
 		$page_slug = 'memberships';
 		$permalinks = (bool)get_option( 'permalink_structure' );
-		
+
 		$membership_post = get_post( $product_obj['product_id'] );
 		if ( !empty( $membership_post ) ) {
 			$membership_slug = $membership_post->post_name;
-			
+
 			if ( $permalinks )
 				$url = trailingslashit( it_exchange_get_page_url( $page_slug ) ) . $membership_slug;
 			else
 				$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
-				
+
 			$product_name .= '<p><small>&nbsp;&nbsp;<a href="' . $url . '">' . __( 'View available content', 'LION' ) . '</a><p></small>';
 		}
 	}
@@ -1129,12 +1097,12 @@ add_filter( 'it_exchange_email_notification_order_table_product_name', 'it_excha
  *
  * @param string $db_base_price default Base Price
  * @param array $product iThemes Exchange Product
- * @param bool $format Whether or not the price should be formatted 
+ * @param bool $format Whether or not the price should be formatted
  * @return string $db_base_price modified, if upgrade price has been set for product
 */
 function it_exchange_membership_addon_get_credit_pricing_cart_product_base_price( $db_base_price, $product, $format ) {
 	$updown_details = it_exchange_get_session_data( 'updowngrade_details' );
-	
+
 	if ( !empty( $updown_details[$product['product_id']] ) && 'credit' == $updown_details[$product['product_id']]['upgrade_type'] ) {
 		$db_base_price = it_exchange_convert_from_database_number( it_exchange_convert_to_database_number( $db_base_price ) );
 		$db_base_price = $db_base_price - $updown_details[$product['product_id']]['credit'];
@@ -1143,7 +1111,7 @@ function it_exchange_membership_addon_get_credit_pricing_cart_product_base_price
 			$db_base_price = it_exchange_format_price( $db_base_price );
 		}
 	}
-		
+
 	return $db_base_price;
 }
 add_filter( 'it_exchange_get_cart_product_base_price', 'it_exchange_membership_addon_get_credit_pricing_cart_product_base_price', 10, 3 );
