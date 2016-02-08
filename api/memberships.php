@@ -35,6 +35,10 @@ function it_exchange_membership_addon_is_content_restricted( $post = null ) {
 		global $post;
 	}
 
+	if ( $post->post_type === 'it_exchange_prod' ) {
+		return false;
+	}
+
 	$evaluator    = new IT_Exchange_Membership_Rule_Evaluator_Service( new IT_Exchange_Membership_Rule_Factory() );
 	$customer     = it_exchange_get_current_customer();
 	$failed_rules = $evaluator->evaluate( $post, $customer ? $customer : null );
@@ -69,37 +73,21 @@ function it_exchange_membership_addon_is_product_restricted( $post = null ) {
 		global $post;
 	}
 
-	$restriction = false;
-
 	if ( current_user_can( 'administrator' ) ) {
 		return false;
 	}
 
-	$member_access = it_exchange_membership_addon_get_customer_memberships();
-
-	if ( ! empty( $post ) && 'it_exchange_prod' === $post->post_type ) {
-		$restriction_exemptions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
-
-		$post_rules = get_post_meta( $post->ID, '_item-content-rule', true );
-		if ( ! empty( $post_rules ) ) {
-			if ( ! empty( $member_access ) ) {
-				foreach ( $member_access as $product_id => $txn_id ) {
-					if ( in_array( $product_id, $post_rules ) ) {
-						return false;
-					}
-				}
-			}
-			foreach ( $post_rules as $product_id ) {
-				if ( ! empty( $restriction_exemptions[ $product_id ] ) && in_array( $post->post_type, $restriction_exemptions[ $product_id ] ) ) {
-					$restriction = false;
-				} else {
-					$restriction = true;
-				}
-			}
-		}
+	if ( $post->post_type !== 'it_exchange_prod' ) {
+		return false;
 	}
 
-	return apply_filters( 'it_exchange_membership_addon_is_product_restricted', $restriction, $member_access );
+	$evaluator    = new IT_Exchange_Membership_Rule_Evaluator_Service( new IT_Exchange_Membership_Rule_Factory() );
+	$customer     = it_exchange_get_current_customer();
+	$failed_rules = $evaluator->evaluate( $post, $customer ? $customer : null );
+
+	$memberships = it_exchange_membership_addon_get_customer_memberships();
+
+	return apply_filters( 'it_exchange_membership_addon_is_product_restricted', ! empty( $failed_rules ), $memberships );
 }
 
 /**
@@ -124,6 +112,10 @@ function it_exchange_membership_addon_is_content_dripped( $post = null ) {
 	}
 
 	if ( current_user_can( 'administrator' ) ) {
+		return false;
+	}
+
+	if ( $post->post_type === 'it_exchange_prod' ) {
 		return false;
 	}
 
@@ -161,36 +153,25 @@ function it_exchange_membership_addon_is_product_dripped( $post = null ) {
 		global $post;
 	}
 
-	$dripped = false;
-
 	if ( current_user_can( 'administrator' ) ) {
 		return false;
 	}
 
-	$member_access = it_exchange_membership_addon_get_customer_memberships();
-
-	if ( ! empty( $post ) && 'it_exchange_prod' === $post->post_type ) {
-		foreach ( $member_access as $product_id => $txn_id ) {
-			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
-			$interval = ! empty( $interval ) ? $interval : 0;
-			$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
-			$duration = ! empty( $duration ) ? $duration : 'days';
-			if ( 0 < $interval ) {
-				$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
-				$dripping      = strtotime( $interval . ' ' . $duration, $purchase_time );
-				$now           = time();
-
-				if ( $dripping < $now ) {
-					return false;
-				} // we can return here because they should have access to this content with this membership
-				else {
-					$dripped = true;
-				} // we don't want to return here, because other memberships might have access to content sooner
-			}
-		}
+	if ( $post->post_type !== 'it_exchange_prod' ) {
+		return false;
 	}
 
-	return apply_filters( 'it_exchange_membership_addon_is_product_dripped', $dripped, $member_access );
+	$evaluator = new IT_Exchange_Membership_Rule_Evaluator_Service( new IT_Exchange_Membership_Rule_Factory() );
+	$customer  = it_exchange_get_current_customer();
+
+	if ( ! $customer ) {
+		return false;
+	}
+
+	$failed_rules = $evaluator->evaluate_drip( $post, $customer );
+	$memberships  = it_exchange_membership_addon_get_customer_memberships();
+
+	return apply_filters( 'it_exchange_membership_addon_is_product_dripped', ! empty( $failed_rules ), $memberships );
 }
 
 /**
