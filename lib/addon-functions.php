@@ -188,12 +188,14 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 
 					<div class="it-exchange-membership-rule-description"><?php echo $rule->get_short_description(); ?></div>
 
-					<?php foreach ( $rule->get_delay_rules() as $delay_rule ): ?>
+					<?php if ( $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable && $rule->get_delay_rule() ): ?>
+						<?php $delay_rule = $rule->get_delay_rule(); ?>
+
 						<div class="it-exchange-membership-rule-delay"><?php _e( 'Delay', 'LION' ); ?></div>
 						<div class="it-exchange-membership-<?php echo $delay_rule->get_type(); ?>-rule">
 							<?php echo $delay_rule->get_field_html( $membership_id ); ?>
 						</div>
-					<?php endforeach; ?>
+					<?php endif; ?>
 				</div>
 			</div>
 			<?php
@@ -205,7 +207,6 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	$return .= '</div>';
 
 	return $return;
-
 }
 
 /**
