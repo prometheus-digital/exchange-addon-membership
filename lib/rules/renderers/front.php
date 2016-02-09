@@ -53,12 +53,17 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 
 		$defaults = array(
 			'as_child'              => false,
-			'include_product_title' => true
+			'include_product_title' => true,
+			'show_drip'             => 'on',
+			'show_drip_time'        => 'on'
 		);
 
 		$options = wp_parse_args( $options, $defaults );
 
-		$options['toggle'] = $options['toggle'] === 'true';
+		$options['toggle']         = $options['toggle'] === 'true';
+		$options['show_drip']      = $options['show_drip'] === 'on';
+		$options['show_drip_time'] = $options['show_drip_time'] === 'on';
+		$options['show_drip_time'] = $options['show_drip_time'] === 'on';
 
 		$grouped = $this->factory->make_all_for_membership_grouped( $membership );
 		ob_start();
@@ -110,7 +115,6 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 
 				<?php endif; ?>
 
-
 			<?php endforeach; ?>
 		</div>
 
@@ -156,7 +160,7 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 
 				<ul<?php echo $hidden; ?>>
 					<?php foreach ( $posts as $post ):
-						echo $this->render_post( $post, $rule );
+						echo $this->render_post( $post, $rule, $options );
 					endforeach; ?>
 
 					<?php if ( ! empty( $more_content ) && $options['posts_per_grouping'] == count( $posts ) ): ?>
@@ -171,7 +175,7 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 
 		<?php else:
 			foreach ( $posts as $post ):
-				echo $this->render_post( $post, $rule );
+				echo $this->render_post( $post, $rule, $options );
 			endforeach;
 		endif;
 
@@ -187,10 +191,11 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 	 *
 	 * @param WP_Post                                      $post
 	 * @param IT_Exchange_Membership_Content_RuleInterface $rule
+	 * @param array                                        $options
 	 *
 	 * @return string
 	 */
-	protected function render_post( WP_Post $post, IT_Exchange_Membership_Content_RuleInterface $rule ) {
+	protected function render_post( WP_Post $post, IT_Exchange_Membership_Content_RuleInterface $rule, array $options ) {
 
 		$subscription = $this->subscription;
 
@@ -219,8 +224,7 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 
 				<div class="it-exchange-content-item-info">
 					<p class="it-exchange-group-content-label">
-
-						<?php if ( $delay && $now < $delay ): ?>
+						<?php if ( $options['show_drip'] && $options['show_drip_time'] && $delay && $now < $delay ): ?>
 							<span class="it-exchange-item-unavailable-message">
 								<?php printf( __( 'available in %s', 'LION' ), human_time_diff( $delay->format( 'U' ) ) ); ?>
 							</span>
@@ -231,7 +235,6 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 								<span class="it-exchange-item-title"><?php echo get_the_title( $post ); ?></span>
 							</a>
 						<?php endif; ?>
-
 					</p>
 				</div>
 			</div>
