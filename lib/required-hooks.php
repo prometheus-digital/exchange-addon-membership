@@ -823,9 +823,21 @@ add_filter( 'it_exchange_possible_template_paths', 'it_exchange_membership_addon
  * @return array Modified array with new customer-pricing element (if base-price was found).
 */
 function it_exchange_memnbership_addon_get_content_product_product_advanced_loop_elements( $parts ) {
-	$parts[] = 'intended-audience';
-	$parts[] = 'objectives';
-	$parts[] = 'prerequisites';
+
+	$product = it_exchange_get_the_product_id();
+
+	if ( it_exchange_product_has_feature( $product, 'membership-information', array( 'setting' => 'intended-audience' ) ) ) {
+		$parts[] = 'intended-audience';
+	}
+
+	if ( it_exchange_product_has_feature( $product, 'membership-information', array( 'setting' => 'objectives' ) ) ) {
+		$parts[] = 'objectives';
+	}
+
+	if ( it_exchange_product_has_feature( $product, 'membership-information', array( 'setting' => 'prerequisites' ) ) ) {
+		$parts[] = 'prerequisites';
+	}
+
 	return $parts;
 }
 add_filter( 'it_exchange_get_content_product_product_advanced_loop_elements', 'it_exchange_memnbership_addon_get_content_product_product_advanced_loop_elements' );
