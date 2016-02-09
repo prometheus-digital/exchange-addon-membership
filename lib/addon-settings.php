@@ -32,10 +32,10 @@ function it_exchange_membership_addon_settings_callback() {
 function it_exchange_membership_addon_default_settings( $values ) {
 	$defaults = array(
 		'membership-restricted-show-excerpt' => false,
-		'restricted-content-message'         => __( 'This content is for members only. Become a member now to get access to this and other awesome members-only content.', 'LION' ),
-		'dripped-content-message'            => __( 'This content will be available in %d days.', 'LION' ),
-		'restricted-product-message'         => __( 'This product is for members only. Become a member now to get access to this and other awesome members-only product.', 'LION' ),
-		'dripped-product-message'            => __( 'This product will be available in %d days.', 'LION' ),
+		'restricted-content-message'         => __( 'This content is for members only. Become a member now by purchasing {products} to get access to this and other awesome members-only content.', 'LION' ),
+		'dripped-content-message'            => __( 'This content will be available in {time_until_available} on {available_date}.', 'LION' ),
+		'restricted-product-message'         => __( 'This product is for members only. Become a member now by purchasing {products} to get access to this and other awesome members-only product.', 'LION' ),
+		'dripped-product-message'            => __( 'This product will be available in {time_until_available} on {available_date}.', 'LION' ),
 		'membership-prerequisites-label'     => __( 'Prerequisites', 'LION' ),
 		'membership-intended-audience-label' => __( 'Intended Audience', 'LION' ),
 		'membership-objectives-label'        => __( 'Objectives', 'LION' ),
