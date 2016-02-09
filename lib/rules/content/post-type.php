@@ -117,19 +117,6 @@ class IT_Exchange_Membership_Content_Rule_Post_Type extends IT_Exchange_Membersh
 	}
 
 	/**
-	 * String representation of this rule.
-	 *
-	 * Ex. This content will be accessible in 5 days.
-	 *
-	 * @since 1.18
-	 *
-	 * @return string
-	 */
-	public function __toString() {
-		return 'This content is for members only.';
-	}
-
-	/**
 	 * Get the value this content rule instance represents.
 	 *
 	 * This is used to build the content access type dropdown.

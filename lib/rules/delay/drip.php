@@ -189,19 +189,6 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 	}
 
 	/**
-	 * String representation of this rule.
-	 *
-	 * Ex. This content will be accessible in 5 days.
-	 *
-	 * @since 1.18
-	 *
-	 * @return string
-	 */
-	public function __toString() {
-		return 'This content will be accessible in 5 days.';
-	}
-
-	/**
 	 * Get the type of this restriction.
 	 *
 	 * @since 1.18

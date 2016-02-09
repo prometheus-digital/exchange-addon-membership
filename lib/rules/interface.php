@@ -34,17 +34,6 @@ interface IT_Exchange_Membership_RuleInterface {
 	public function get_field_html( $context );
 
 	/**
-	 * String representation of this rule.
-	 *
-	 * Ex. This content will be accessible in 5 days.
-	 *
-	 * @since 1.18
-	 *
-	 * @return string
-	 */
-	public function __toString();
-
-	/**
 	 * Get the type of this restriction.
 	 *
 	 * @since 1.18
