@@ -1,24 +1,24 @@
 <?php
+
 /**
  * Dripped class for THEME API in Membership Add-on
  *
  * @since 1.0.0
-*/
-
+ */
 class IT_Theme_API_Dripped implements IT_Theme_API {
-	
+
 	/**
 	 * API context
 	 * @var string $_context
 	 * @since 1.0.0
-	*/
+	 */
 	private $_context = 'dripped';
 
 	/**
 	 * Maps api tags to methods
 	 * @var array $_tag_map
 	 * @since 1.0.0
-	*/
+	 */
 	public $_tag_map = array(
 		'content' => 'content',
 		'excerpt' => 'excerpt',
@@ -29,9 +29,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 	 * Constructor
 	 *
 	 * @since 1.0.0
-	 *
-	 * @return void
-	*/
+	 */
 	function __construct() {
 	}
 
@@ -39,9 +37,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 	 * Deprecated Constructor
 	 *
 	 * @since 1.0.0
-	 *
-	 * @return void
-	*/
+	 */
 	function IT_Theme_API_Dripped() {
 		self::__construct();
 	}
@@ -50,152 +46,161 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 	 * Returns the context. Also helps to confirm we are an iThemes Exchange theme API class
 	 *
 	 * @since 1.0.0
-	 * 
+	 *
 	 * @return string
-	*/
+	 */
 	function get_api_context() {
 		return $this->_context;
 	}
 
 	/**
+	 * Replace the content with the drip message.
+	 *
 	 * @since 1.0.0
+	 *
+	 * @param array $options
+	 *
 	 * @return string
-	*/
-	function content( $options=array() ) {
-		global $post;
-		$earliest_drip = false;
-		$now = time();
-		$membership_settings = it_exchange_get_option( 'addon_membership' );
-		
-		$member_access = it_exchange_membership_addon_get_customer_memberships();
-		foreach( $member_access as $product_id => $txn_id ) {
-			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
-			$interval = !empty( $interval ) ? $interval : 0;
-			$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
-			$duration = !empty( $duration ) ? $duration : 'days';
-			if ( 0 < $interval ) {
-				$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
-				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time ) - $now;
-				if ( !$earliest_drip || $dripping < $earliest_drip )
-					$earliest_drip = $dripping;
-			}
-		}
-		
-		//Suhosin Fix
-		if ( !empty( $membership_settings['dripped-content-message'] ) ) {
-			$message = $membership_settings['dripped-content-message'];
-		} else {
-			$message = $membership_settings['membership-dripped-content-message'];
-		}
-		//End Suhosin Fix
-		
+	 */
+	function content( $options = array() ) {
+
+		$failed  = it_exchange_get_global( 'membership_failed_delay' );
+		$message = $this->get_message( is_array( $failed ) ? $failed : array(), false );
+
 		$defaults = array(
-			'before' => '',
-			'after'  => '',
-			'message' => sprintf( $message, ceil( $earliest_drip / 60 / 60 / 24 ) ),
-			'class'  => 'it-exchange-membership-restricted-content',
+			'before'  => '',
+			'after'   => '',
+			'message' => $message,
+			'class'   => 'it-exchange-membership-restricted-content',
 		);
-		$options = ITUtility::merge_defaults( $options, $defaults );
-			
-		$content  = $options['before'];
+		$options  = ITUtility::merge_defaults( $options, $defaults );
+
+		$content = $options['before'];
 		$content .= '<p class="' . $options['class'] . '">' . $options['message'] . '</p>';
 		$content .= $options['after'];
-		
+
 		return $content;
 	}
 
 	/**
+	 * Replace the excerpt with the drip message.
+	 *
 	 * @since 1.0.0
+	 *
+	 * @param array $options
+	 *
 	 * @return string
-	*/
-	function excerpt( $options=array() ) {
-		global $post;
-		$earliest_drip = false;
-		$now = time();
-		$membership_settings = it_exchange_get_option( 'addon_membership' );
-		
-		$member_access = it_exchange_membership_addon_get_customer_memberships();
-		foreach( $member_access as $product_id => $txn_id ) {
-			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
-			$interval = !empty( $interval ) ? $interval : 0;
-			$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
-			$duration = !empty( $duration ) ? $duration : 'days';
-			if ( 0 < $interval ) {
-				$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
-				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time ) - $now;
-				if ( !$earliest_drip || $dripping < $earliest_drip )
-					$earliest_drip = $dripping;
-			}
-		}
-		
-		//Suhosin Fix
-		if ( !empty( $membership_settings['dripped-content-message'] ) ) {
-			$message = $membership_settings['dripped-content-message'];
-		} else {
-			$message = $membership_settings['membership-dripped-content-message'];
-		}
-		//End Suhosin Fix
-		
+	 */
+	function excerpt( $options = array() ) {
+
+		$failed  = it_exchange_get_global( 'membership_failed_delay' );
+		$message = $this->get_message( is_array( $failed ) ? $failed : array(), false );
+
 		$defaults = array(
-			'before' => '',
-			'after'  => '',
-			'message' => sprintf( $message, ceil( $earliest_drip / 60 / 60 / 24 ) ),
+			'before'  => '',
+			'after'   => '',
+			'message' => $message,
 			'class'   => 'it-exchange-membership-restricted-excerpt',
 		);
-		$options = ITUtility::merge_defaults( $options, $defaults );
-		
-		$content  = $options['before'];
+		$options  = ITUtility::merge_defaults( $options, $defaults );
+
+		$content = $options['before'];
 		$content .= '<p class="' . $options['class'] . '">' . $options['message'] . '</p>';
 		$content .= $options['after'];
-		
+
 		return $content;
 	}
 
 	/**
+	 * Replace the product with the drip message.
+	 *
 	 * @since 1.0.0
+	 *
+	 * @param array $options
+	 *
 	 * @return string
-	*/
-	function product( $options=array() ) {
-		global $post;
-		$earliest_drip = false;
-		$now = time();
-		$membership_settings = it_exchange_get_option( 'addon_membership' );
-		
-		$member_access = it_exchange_membership_addon_get_customer_memberships();
-		foreach( $member_access as $product_id => $txn_id ) {
-			$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $product_id, true );
-			$interval = !empty( $interval ) ? $interval : 0;
-			$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $product_id, true );
-			$duration = !empty( $duration ) ? $duration : 'days';
-			if ( 0 < $interval ) {
-				$purchase_time = strtotime( 'midnight', get_post_time( 'U', true, $txn_id ) );
-				$dripping = strtotime( $interval . ' ' . $duration, $purchase_time ) - $now;
-				if ( !$earliest_drip || $dripping < $earliest_drip )
-					$earliest_drip = $dripping;
-			}
-		}
-		
-		//Suhosin Fix
-		if ( !empty( $membership_settings['dripped-product-message'] ) ) {
-			$message = $membership_settings['dripped-product-message'];
-		} else {
-			$message = $membership_settings['membership-dripped-product-message'];
-		}
-		//End Suhosin Fix
-		
+	 */
+	function product( $options = array() ) {
+
+		$failed  = it_exchange_get_global( 'membership_failed_delay' );
+		$message = $this->get_message( is_array( $failed ) ? $failed : array(), false );
+
 		$defaults = array(
-			'before' => '',
-			'after'  => '',
-			'message' => sprintf( $message, ceil( $earliest_drip / 60 / 60 / 24 ) ),
+			'before'  => '',
+			'after'   => '',
+			'message' => $message,
 			'class'   => 'it-exchange-membership-restricted-product',
 		);
-		$options = ITUtility::merge_defaults( $options, $defaults );
-		
-		$content  = $options['before'];
+		$options  = ITUtility::merge_defaults( $options, $defaults );
+
+		$content = $options['before'];
 		$content .= '<p class="' . $options['class'] . '">' . $options['message'] . '</p>';
 		$content .= $options['after'];
-		
+
 		return $content;
 	}
-	
+
+	/**
+	 * Get the restriction message.
+	 *
+	 * @since 1.18
+	 *
+	 * @param array $failed
+	 * @param bool  $product Get message for a product.
+	 *
+	 * @return string
+	 */
+	protected function get_message( array $failed, $product = false ) {
+
+		$membership_settings = it_exchange_get_option( 'addon_membership' );
+
+		/** @var IT_Exchange_Subscription $subscription */
+		$subscription = $failed['subscription'];
+
+		/** @var IT_Exchange_Membership_Delay_RuleInterface $rule */
+		$rule = $failed['rule'];
+
+		if ( ! $rule->get_availability_date( $subscription ) ) {
+			return __( 'Your membership is not eligible to receive this content.', 'LION' );
+		}
+
+		if ( $product ) {
+			//Suhosin Fix
+			if ( ! empty( $membership_settings['dripped-product-message'] ) ) {
+				$message = $membership_settings['dripped-product-message'];
+			} else {
+				$message = $membership_settings['membership-dripped-product-message'];
+			}
+			//End Suhosin Fix
+		} else {
+			//Suhosin Fix
+			if ( ! empty( $membership_settings['dripped-content-message'] ) ) {
+				$message = $membership_settings['dripped-content-message'];
+			} else {
+				$message = $membership_settings['membership-dripped-content-message'];
+			}
+		}
+
+		if ( ! $product && $subscription->get_product()->has_feature( 'membership-information', array( 'setting' => 'content-delayed' ) ) ) {
+			$message = $subscription->get_product()->get_feature( 'membership-information', array( 'setting' => 'content-delayed' ) );
+		}
+
+		$available = $rule->get_availability_date( $subscription );
+
+		if ( strpos( $message, '{available_date}' ) !== false ) {
+			$df      = get_option( 'date_format' );
+			$message = str_replace( '{available_date}', $available->format( $df ), $message );
+		}
+
+		if ( strpos( $message, '{time_until_available}' ) !== false || strpos( $message, '%d' ) !== false ) {
+			$message = str_replace( '{time_until_available}', human_time_diff( $available->format( 'U' ) ), $message );
+		}
+
+		if ( strpos( $message, '%d' ) !== false ) {
+			$message = sprintf( $message, ceil( ( (int) $available->format( 'U' ) - time() ) / DAY_IN_SECONDS ) );
+		}
+
+		return $message;
+	}
+
 }

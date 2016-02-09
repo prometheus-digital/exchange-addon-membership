@@ -191,12 +191,9 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 			<br>
 
 			<p class="description">
-				<?php _e( 'This message will be displayed if this is the only product that can grant access to a given piece of content.', 'LION' ); ?>&nbsp;
-				<?php _e( 'Otherwise, the global delayed message will be used.', 'LION' ); ?>
-			</p>
-
-			<p class="description">
-				<?php _e( 'Use %d to represent the number of days until the delayed content will be available.', 'LION' ); ?>
+				<?php _e( 'Use the {available_date} tag to display the date this content will be available.', 'LION' ); ?>
+				<br>
+				<?php _e( 'Use the {time_until_available} tag to display the time until the content will be available. Ex: <b>5 days</b> or <b>2 months</b>.', 'LION' ); ?>
 			</p>
 		</div>
 

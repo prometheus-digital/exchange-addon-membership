@@ -66,17 +66,24 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 	/**
 	 * Evaluate drip rules.
 	 *
+	 * A customer only needs one drip rule to pass to be granted access.
+	 *
 	 * @since 1.18
 	 *
 	 * @param WP_Post              $post
 	 * @param IT_Exchange_Customer $customer
 	 *
-	 * @return IT_Exchange_Membership_Delay_Rule_Drip[]
+	 * @return array|null Null if customer has immediate access,
+	 *                    or array with 'rule' containing rule granting earliest access and
+	 *                    'subscription' containing associated subscription.
 	 */
 	public function evaluate_drip( WP_Post $post, IT_Exchange_Customer $customer ) {
 
 		$subscriptions = it_exchange_get_customer_membership_subscriptions( $customer );
-		$failed        = array();
+
+		/** @var IT_Exchange_Membership_Delay_RuleInterface $failed */
+		$failed              = null;
+		$failed_subscription = null;
 
 		/** @var IT_Exchange_Subscription $subscription */
 		foreach ( $subscriptions as $subscription ) {
@@ -102,12 +109,32 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 					continue;
 				}
 
-				if ( ! $delay->evaluate( $subscription, $post ) ) {
-					$failed[] = $delay;
+				if ( $delay->evaluate( $subscription, $post ) ) {
+					return null;
+				}
+
+				$available = $delay->get_availability_date( $subscription );
+
+				if ( is_null( $failed ) ) {
+					$failed              = $delay;
+					$failed_subscription = $subscription;
+				} elseif ( ! $failed->get_availability_date( $subscription ) ) {
+					$failed              = $delay;
+					$failed_subscription = $subscription;
+				} elseif ( $available && $failed->get_availability_date( $subscription ) > $available ) {
+					$failed              = $delay;
+					$failed_subscription = $subscription;
 				}
 			}
 		}
 
-		return $failed;
+		if ( is_null( $failed ) ) {
+			return null;
+		}
+
+		return array(
+			'rule'         => $failed,
+			'subscription' => $failed_subscription
+		);
 	}
 }

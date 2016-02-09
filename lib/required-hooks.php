@@ -773,12 +773,12 @@ function it_exchange_membership_addon_super_widget_filter( $result, $options ) {
 			return ob_get_clean();
 		} else if ( it_exchange_membership_addon_is_product_dripped( null, $failed_rules ) ) {
 
-			it_exchange_set_global( 'membership_failed_rules', $failed_rules );
+			it_exchange_set_global( 'membership_failed_delay', $failed_rules );
 
 			ob_start();
 			it_exchange_get_template_part( 'product', 'dripped' );
 
-			it_exchange_set_global( 'membership_failed_rules', null );
+			it_exchange_set_global( 'membership_failed_delay', null );
 
 			return ob_get_clean();
 		}

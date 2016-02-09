@@ -627,14 +627,14 @@ function it_exchange_membership_addon_excerpt_restricted_template( array $failed
  */
 function it_exchange_membership_addon_content_dripped_template( array $failed = array() ) {
 
-	it_exchange_set_global( 'membership_failed_rules', $failed );
+	it_exchange_set_global( 'membership_failed_delay', $failed );
 
 	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
 	$GLOBALS['wp_query']->is_page   = false;   //false -- so comments_template() doesn't add comments
 	ob_start();
 	it_exchange_get_template_part( 'content', 'dripped' );
 
-	it_exchange_set_global( 'membership_failed_rules', null );
+	it_exchange_set_global( 'membership_failed_delay', null );
 
 	return ob_get_clean();
 }
@@ -651,14 +651,14 @@ function it_exchange_membership_addon_content_dripped_template( array $failed = 
  */
 function it_exchange_membership_addon_excerpt_dripped_template( array $failed = array() ) {
 
-	it_exchange_set_global( 'membership_failed_rules', $failed );
+	it_exchange_set_global( 'membership_failed_delay', $failed );
 
 	$GLOBALS['wp_query']->is_single = false; //false -- so comments_template() doesn't add comments
 	$GLOBALS['wp_query']->is_page   = false;   //false -- so comments_template() doesn't add comments
 	ob_start();
 	it_exchange_get_template_part( 'excerpt', 'dripped' );
 
-	it_exchange_set_global( 'membership_failed_rules', null );
+	it_exchange_set_global( 'membership_failed_delay', null );
 
 	return ob_get_clean();
 }
