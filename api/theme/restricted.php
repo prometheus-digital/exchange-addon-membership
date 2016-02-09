@@ -179,18 +179,8 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 	 */
 	public function product( $options = array() ) {
 
-		$rules = it_exchange_get_global( 'membership_failed_rules' );
-
-		//Suhosin Fix
-		if ( ! empty( $membership_settings['restricted-product-message'] ) ) {
-			$message = $membership_settings['restricted-product-message'];
-		} else {
-			$message = $membership_settings['membership-restricted-product-message'];
-		}
-
-		if ( strpos( $message, '{products}' ) !== false ) {
-			$message = str_replace( '{products}', $this->product_replacement( $this->get_products( $rules ) ), $message );
-		}
+		$rules   = it_exchange_get_global( 'membership_failed_rules' );
+		$message = $this->get_message( is_array( $rules ) ? $rules : array(), true );
 
 		$defaults = array(
 			'before'  => '',
@@ -234,30 +224,38 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 	 * @since 1.18
 	 *
 	 * @param IT_Exchange_Membership_Content_RuleInterface[] $rules
+	 * @param bool                                           $product Return the product message.
 	 *
 	 * @return string
 	 */
-	protected function get_message( array $rules ) {
+	protected function get_message( array $rules, $product = false ) {
 
 		$membership_settings = it_exchange_get_option( 'addon_membership' );
 
 		$products = $this->get_products( $rules );
 
-		//Suhosin Fix
-		if ( ! empty( $membership_settings['restricted-content-message'] ) ) {
-			$message = $membership_settings['restricted-content-message'];
+		if ( $product ) {
+			if ( ! empty( $membership_settings['restricted-product-message'] ) ) {
+				$message = $membership_settings['restricted-product-message'];
+			} else {
+				$message = $membership_settings['membership-restricted-product-message'];
+			}
 		} else {
-			$message = $membership_settings['membership-restricted-content-message'];
+			if ( ! empty( $membership_settings['restricted-content-message'] ) ) {
+				$message = $membership_settings['restricted-content-message'];
+			} else {
+				$message = $membership_settings['membership-restricted-content-message'];
+			}
 		}
 
 		// if more than one product, we use the global message.
-		if ( count( $products ) == 1 ) {
+		if ( count( $products ) == 1 && ! $product ) {
 
-			/** @var IT_Exchange_Membership $product */
-			$product = reset( $products );
+			/** @var IT_Exchange_Membership $membership */
+			$membership = reset( $products );
 
-			if ( $product->has_feature( 'membership-information', array( 'setting' => 'content-restricted' ) ) ) {
-				$message = $product->get_feature( 'membership-information', array( 'setting' => 'content-restricted' ) );
+			if ( $membership->has_feature( 'membership-information', array( 'setting' => 'content-restricted' ) ) ) {
+				$message = $membership->get_feature( 'membership-information', array( 'setting' => 'content-restricted' ) );
 			}
 		}
 

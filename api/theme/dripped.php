@@ -165,15 +165,12 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 		}
 
 		if ( $product ) {
-			//Suhosin Fix
 			if ( ! empty( $membership_settings['dripped-product-message'] ) ) {
 				$message = $membership_settings['dripped-product-message'];
 			} else {
 				$message = $membership_settings['membership-dripped-product-message'];
 			}
-			//End Suhosin Fix
 		} else {
-			//Suhosin Fix
 			if ( ! empty( $membership_settings['dripped-content-message'] ) ) {
 				$message = $membership_settings['dripped-content-message'];
 			} else {
@@ -192,7 +189,7 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 			$message = str_replace( '{available_date}', $available->format( $df ), $message );
 		}
 
-		if ( strpos( $message, '{time_until_available}' ) !== false || strpos( $message, '%d' ) !== false ) {
+		if ( strpos( $message, '{time_until_available}' ) !== false ) {
 			$message = str_replace( '{time_until_available}', human_time_diff( $available->format( 'U' ) ), $message );
 		}
 
