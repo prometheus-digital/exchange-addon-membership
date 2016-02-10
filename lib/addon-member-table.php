@@ -2,23 +2,24 @@
 /**
  * iThemes Exchange Membership Add-on
  * @package IT_Exchange_Addon_Membership
- * @since CHANGEME
-*/
+ * @since   CHANGEME
+ */
 
 /*************************** LOAD THE BASE CLASS *******************************
  *******************************************************************************
  * The WP_List_Table class isn't automatically available to plugins, so we need
  * to check if it's available and load it if necessary.
  */
-if( !class_exists( 'WP_List_Table' ) )
+if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+}
 
 class IT_Exchange_Membership_List_Table extends WP_List_Table {
 
 	/**
 	 * Check the current user's permissions.
 	 *
- 	 * @since CHANGEME
+	 * @since  CHANGEME
 	 * @access public
 	 */
 	public function ajax_user_can() {
@@ -28,7 +29,7 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 	/**
 	 * Prepare the users list for display.
 	 *
-	 * @since CHANGEME
+	 * @since  CHANGEME
 	 * @access public
 	 */
 	public function prepare_items() {
@@ -41,10 +42,10 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 		 * can be defined in another method (as we've done here) before being
 		 * used to build the value for our _column_headers property.
 		 */
-		$columns = $this->get_columns();
-		$hidden = array();
+		$columns  = $this->get_columns();
+		$hidden   = array();
 		$sortable = $this->get_sortable_columns();
-		
+
 		/**
 		 * REQUIRED. Finally, we build an array to be used by the class for column
 		 * headers. The $this->_column_headers property takes an array which contains
@@ -62,14 +63,14 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 		$paged = $this->get_pagenum();
 
 		$args = array(
-			'number' => $users_per_page,
-			'offset' => ( $paged-1 ) * $users_per_page,
-			'search' => $usersearch,
-			'fields' => 'all_with_meta',
+			'number'      => $users_per_page,
+			'offset'      => ( $paged - 1 ) * $users_per_page,
+			'search'      => $usersearch,
+			'fields'      => 'all_with_meta',
 			'post_status' => 'any'
 		);
-		
-		if ( !empty( $membership ) ) {
+
+		if ( ! empty( $membership ) ) {
 			$args['meta_query'] = array(
 				array(
 					'key'     => '_it_exchange_customer_member_access',
@@ -86,14 +87,17 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 			);
 		}
 
-		if ( '' !== $args['search'] )
+		if ( '' !== $args['search'] ) {
 			$args['search'] = '*' . $args['search'] . '*';
+		}
 
-		if ( isset( $_REQUEST['orderby'] ) )
+		if ( isset( $_REQUEST['orderby'] ) ) {
 			$args['orderby'] = $_REQUEST['orderby'];
+		}
 
-		if ( isset( $_REQUEST['order'] ) )
+		if ( isset( $_REQUEST['order'] ) ) {
 			$args['order'] = $_REQUEST['order'];
+		}
 
 		// Query the user IDs for this page
 		$wp_user_search = new WP_User_Query( $args );
@@ -102,14 +106,14 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 
 		$this->set_pagination_args( array(
 			'total_items' => $wp_user_search->get_total(),
-			'per_page' => $users_per_page,
+			'per_page'    => $users_per_page,
 		) );
 	}
 
 	/**
 	 * Output 'no users' message.
 	 *
-	 * @since CHANGEME
+	 * @since  CHANGEME
 	 * @access public
 	 */
 	public function no_items() {
@@ -123,39 +127,48 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 	 * Provides a list of roles and user count for that role for easy
 	 * filtering of the user table.
 	 *
-	 * @since CHANGEME
+	 * @since  CHANGEME
 	 * @access public
 	 *
 	 * @return array An array of HTML links, one for each view.
 	 */
 	public function get_views() {
 		global $membership;
-		
-		$url = add_query_arg( 'page', 'it-exchange-members-table', admin_url( 'users.php' ) );
-		$class = empty($membership) ? ' class="current"' : '';
-		
-		$membership_links = array();
+
+		$url   = add_query_arg( 'page', 'it-exchange-members-table', admin_url( 'users.php' ) );
+		$class = empty( $membership ) ? ' class="current"' : '';
+
+		$membership_links        = array();
 		$membership_links['all'] = "<a href='$url'$class>" . __( 'All', 'LION' ) . '</a>';
 
-		$member_products = it_exchange_get_products( array( 'product_type' => 'membership-product-type' ) );
+		$member_products = it_exchange_get_products( array(
+			'product_type' => 'membership-product-type',
+			'numberposts'  => - 1,
+			'meta_query'   => array(
+				array(
+					'key'     => '_it_exchange_transaction_id',
+					'compare' => 'EXISTS'
+				)
+			)
+		) );
 
 		foreach ( $member_products as $member_product ) {
 			$class = '';
-			
+
 			if ( $member_product->ID == $membership ) {
 				$class = ' class="current"';
 			}
-			
-			$membership_links[$member_product->ID] = "<a href='" . esc_url( add_query_arg( 'membership', $member_product->ID, $url ) ) . "'$class>$member_product->post_title</a>";
+
+			$membership_links[ $member_product->ID ] = "<a href='" . esc_url( add_query_arg( 'membership', $member_product->ID, $url ) ) . "'$class>$member_product->post_title</a>";
 		}
-				
+
 		return $membership_links;
 	}
 
 	/**
 	 * Get a list of columns for the list table.
 	 *
-	 * @since CHANGEME
+	 * @since  CHANGEME
 	 * @access public
 	 *
 	 * @return array Array in which the key is the ID of the column,
@@ -175,7 +188,7 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 	/**
 	 * Get a list of sortable columns for the list table.
 	 *
-	 * @since CHANGEME
+	 * @since  CHANGEME
 	 * @access public
 	 *
 	 * @return array Array of sortable columns.
@@ -194,11 +207,10 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 	/**
 	 * Generate the list table rows.
 	 *
-	 * @since CHANGEME
+	 * @since  CHANGEME
 	 * @access public
 	 */
 	public function display_rows() {
-		$editable_roles = array_keys( get_editable_roles() );
 
 		$style = '';
 		foreach ( $this->items as $user_object ) {
@@ -210,21 +222,23 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 	/**
 	 * Generate HTML for a single row on the users.php admin panel.
 	 *
-	 * @since CHANGEME
+	 * @since  CHANGEME
 	 * @access public
 	 *
 	 * @param object $user_object The current user object.
 	 * @param string $style       Optional. Style attributes added to the <tr> element.
 	 *                            Must be sanitized. Default empty.
+	 *
 	 * @return string Output for a single row.
 	 */
 	public function single_row( $user_object, $style = '' ) {
-		if ( !( is_object( $user_object ) && is_a( $user_object, 'WP_User' ) ) )
+		if ( ! ( is_object( $user_object ) && is_a( $user_object, 'WP_User' ) ) ) {
 			$user_object = get_userdata( (int) $user_object );
-			
+		}
+
 		$user_object->filter = 'display';
-		$email = $user_object->user_email;
-		$avatar = get_avatar( $user_object->ID, 32 );
+		$email               = $user_object->user_email;
+		$avatar              = get_avatar( $user_object->ID, 32 );
 
 		// Check if the user for this row is editable
 		if ( current_user_can( 'list_users' ) ) {
@@ -234,8 +248,8 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 			// Set up the hover actions for this user
 			$actions = array();
 
-			if ( current_user_can( 'edit_user',  $user_object->ID ) ) {
-				$edit = "<strong><a href=\"$edit_link\">$user_object->user_login</a></strong><br />";
+			if ( current_user_can( 'edit_user', $user_object->ID ) ) {
+				$edit            = "<strong><a href=\"$edit_link\">$user_object->user_login</a></strong><br />";
 				$actions['edit'] = '<a href="' . $edit_link . '">' . __( 'Edit', 'LION' ) . '</a>';
 			} else {
 				$edit = "<strong>$user_object->user_login</strong><br />";
@@ -266,8 +280,9 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 			$class = "class=\"$column_name column-$column_name\"";
 
 			$style = '';
-			if ( in_array( $column_name, $hidden ) )
+			if ( in_array( $column_name, $hidden ) ) {
 				$style = ' style="display:none;"';
+			}
 
 			$attributes = "$class$style";
 
@@ -282,65 +297,42 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 					$r .= "<td $attributes><a href='mailto:$email' title='" . esc_attr( sprintf( __( 'E-mail: %s', 'LION' ), $email ) ) . "'>$email</a></td>";
 					break;
 				case 'membership':
-					$customer = new IT_Exchange_Customer( $user_object->ID );
-					$member_access = $customer->get_customer_meta( 'member_access' );
-					if ( !empty( $member_access ) ) {
-						$flip_member_access = array();
-						foreach( $member_access as $txn_id => $product_id_array ) {
-							// we want the transaction ID to be the value to help us determine child access relations to transaction IDs
-							// Can't use array_flip because product_id_array is an array -- now :)
-								foreach ( (array) $product_id_array as $product_id ) {
-								$flip_member_access[$product_id] = $txn_id;
-							}
+
+					$subscriptions = it_exchange_get_customer_membership_subscriptions( it_exchange_get_customer( $user_object->ID ) );
+
+					$membership_labels = array();
+
+					foreach ( $subscriptions as $subscription ) {
+
+						$membership = $subscription->get_product();
+
+						if ( $membership ) {
+							$title = get_the_title( $membership );
+						} else {
+							$title = __( 'Missing Membership', 'LION' );
 						}
-						$memberships = array();
-						if ( !empty( $flip_member_access ) ) {
-							foreach( $flip_member_access as $product_id => $txn_id ) {
-								$transaction = it_exchange_get_transaction( $txn_id );
-								
-								if ( !empty( $transaction ) ) {
-									$transaction_status = strtolower( $transaction->get_status() );
-								} else {
-									$transaction_status = 'failed';
-								}
-								
-								if ( !empty( $transaction ) && 'voided' !== $transaction_status 
-									&& 'reversed' !== $transaction_status 
-									&& 'deactivated' !== $transaction_status 
-									&& 'failed' !== $transaction_status 
-									&& 'refunded' !== $transaction_status ) {
-									$title = get_the_title( $product_id );
-									$expired = false;
-									$autorenew = '';
-									
-									if ( empty( $title ) ) {
-										$title = sprintf( __( 'Missing Membership (%s)', 'LION' ), $product_id );
-									}
-	
-									if ( $expires = $transaction->get_transaction_meta( 'subscription_expired_' . $product_id, true ) ) {
-										$expires = sprintf( __( 'Expired %s', 'LION' ), date_i18n( get_option( 'date_format' ), $expires ) );
-										$expired = true;
-									} else if ( $expires = $transaction->get_transaction_meta( 'subscription_expires_' . $product_id, true ) ) {
-										$expires = sprintf( __( 'Expires %s', 'LION' ), date_i18n( get_option( 'date_format' ), $expires ) );
-									} else {
-										$expires = __( 'Forever', 'LION' );
-									}
-									
-									if ( !$expired ) {										
-										if ( $transaction->get_transaction_meta( 'subscription_autorenew_' . $product_id, true ) ) {
-											$autorenew = '(auto-renewing)';
-										}
-									}
-									
-									$tip = '<span data-tip-content="' . $expires . ' ' . $autorenew . '" class="it-exchange-tip">i</span>';
-									$memberships[] = $title . ' ' . $tip;
-								}
+
+						if ( $expires = $subscription->get_expiry_date() ) {
+
+							$now = new DateTime();
+
+							if ( $expires < $now ) {
+								$expires = sprintf( __( 'Expired %s', 'LION' ), $expires->format( get_option( 'date_format' ) ) );
+							} else {
+								$expires = sprintf( __( 'Expires %s', 'LION' ), $expires->format( get_option( 'date_format' ) ) );
 							}
+						} else {
+							$expires = __( 'Forever', 'LION' );
 						}
-						$r .= "<td $attributes>" . join( ', ', $memberships ) . "</td>";
-					} else {
-						$r .= "<td $attributes>&nbsp;</td>";
+
+						if ( $subscription->is_auto_renewing() ) {
+							$expires .= ' (auto-renewing)';
+						}
+
+						$membership_labels[] = "$title <span class='tip' title='$expires'>i</span>";
 					}
+
+					$r .= "<td $attributes>" . join( ', ', $membership_labels ) . "</td>";
 					break;
 				default:
 					$r .= "<td $attributes>";
@@ -362,40 +354,40 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 
 		return $r;
 	}
-	
+
 	/**
 	 * Display the table
 	 *
-	 * @since 3.1.0
+	 * @since  3.1.0
 	 * @access public
 	 */
 	public function display() {
 		$singular = $this->_args['singular'];
-		
+
 		//$this->display_tablenav( 'top' );
 
-?>
-<table class="wp-list-table <?php echo implode( ' ', $this->get_table_classes() ); ?>">
-	<thead>
-	<tr>
-		<?php $this->print_column_headers(); ?>
-	</tr>
-	</thead>
+		?>
+		<table class="wp-list-table <?php echo implode( ' ', $this->get_table_classes() ); ?>">
+			<thead>
+			<tr>
+				<?php $this->print_column_headers(); ?>
+			</tr>
+			</thead>
 
-	<tfoot>
-	<tr>
-		<?php $this->print_column_headers( false ); ?>
-	</tr>
-	</tfoot>
+			<tfoot>
+			<tr>
+				<?php $this->print_column_headers( false ); ?>
+			</tr>
+			</tfoot>
 
-	<tbody id="the-list"<?php
-		if ( $singular ) {
-			echo " data-wp-lists='list:$singular'";
-		} ?>>
-		<?php $this->display_rows_or_placeholder(); ?>
-	</tbody>
-</table>
-<?php
+			<tbody id="the-list"<?php
+			if ( $singular ) {
+				echo " data-wp-lists='list:$singular'";
+			} ?>>
+			<?php $this->display_rows_or_placeholder(); ?>
+			</tbody>
+		</table>
+		<?php
 		$this->display_tablenav( 'bottom' );
 	}
 

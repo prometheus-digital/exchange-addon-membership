@@ -244,7 +244,14 @@ function it_exchange_get_customer_membership_subscriptions( IT_Exchange_Customer
 	$memberships  = it_exchange_membership_addon_get_customer_memberships( $customer ? $customer->ID : false );
 	$transactions = array_unique( array_values( $memberships ) );
 
-	return array_map( 'it_exchange_get_subscription', array_map( 'it_exchange_get_transaction', $transactions ) );
+	try {
+		$subs = array_map( 'it_exchange_get_subscription', array_map( 'it_exchange_get_transaction', $transactions ) );
+	}
+	catch ( Exception $e ) {
+		return array();
+	}
+
+	return $subs;
 }
 
 /**
