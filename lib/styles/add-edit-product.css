@@ -368,3 +368,7 @@
 #it-exchange-product-membership-hierarchy .it-exchange-membership-label {
 	margin-top: 2em;
 }
+
+.it-exchange-membership-group-rule-title {
+	margin: 7px 0 5px 1em;
+}

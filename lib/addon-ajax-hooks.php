@@ -65,7 +65,7 @@ function it_exchange_membership_addon_ajax_add_content_access_group() {
 
 		$return .= '<div class="it-exchange-membership-addon-sort-content-access-rule column"></div>';
 
-		$return .= '<input type="text" name="it_exchange_content_access_rules[' . $count . '][group]" value="" />';
+		$return .= '<input type="text" name="it_exchange_content_access_rules[' . $count . '][group]" class="it-exchange-membership-group-rule-title" value="" />';
 		$return .= '<input type="hidden" name="it_exchange_content_access_rules[' . $count . '][group_id]" value="' . $group_id . '" />';
 
 		$return .= '<div class="group-layout-options">';

@@ -222,8 +222,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 
 				if ( ! empty( $rule['selected'] ) && ! empty( $rule['selection'] ) && ! empty( $rule['term'] ) ) {
 
-					//error_log( print_r( $rule, true ) );
-
 					$delay_data = isset( $rule['delay'] ) ? $rule['delay'] : array();
 					unset( $rule['delay'] );
 					unset( $_REQUEST['it_exchange_content_access_rules'][ $key ]['delay'] );
@@ -234,8 +232,6 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 					$saved_ids[] = $rule_model->get_rule_id();
 
 					if ( $rule_model instanceof IT_Exchange_Membership_Content_Rule_Delayable && $delay_data ) {
-
-						//error_log( print_r( $rule_model, true ) );
 
 						$delay = $factory->make_delay_rule( $rule['delay-type'], $membership, $rule_model->get_post_for_delay() );
 

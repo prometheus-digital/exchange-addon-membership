@@ -73,7 +73,7 @@ class IT_Exchange_Membership_Admin_Rule_Renderer {
 					<label for="it_exchange_membership_group_name_<?php echo $group->get_ID(); ?>" class="screen-reader-text">
 						<?php _e( 'Group Name', 'LION' ); ?>
 					</label>
-					<input type="text" id="it_exchange_membership_group_name_<?php echo $group->get_ID(); ?>"
+					<input type="text" id="it_exchange_membership_group_name_<?php echo $group->get_ID(); ?>" class="it-exchange-membership-group-rule-title"
 					       name="<?php echo $name . "[$count]"; ?>[group]" value="<?php echo $group->get_name(); ?>">
 
 					<input type="hidden" name="<?php echo $name . "[$count]"; ?>[group_id]" value="<?php echo $group->get_ID(); ?>">
