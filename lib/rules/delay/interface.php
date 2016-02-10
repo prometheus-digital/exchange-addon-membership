@@ -26,20 +26,6 @@ interface IT_Exchange_Membership_Delay_RuleInterface extends IT_Exchange_Members
 	public function evaluate( IT_Exchange_Subscription $subscription, WP_Post $post = null );
 
 	/**
-	 * Save the data to the post.
-	 *
-	 * @since 1.18
-	 *
-	 * @param array $data
-	 *
-	 * @return bool
-	 *
-	 * @throws UnexpectedValueException
-	 * @throws InvalidArgumentException
-	 */
-	public function save( array $data );
-
-	/**
 	 * Get the availability date for this rule.
 	 *
 	 * Null can be returned to indicate that the subscription will never

@@ -187,7 +187,7 @@ function it_exchange_membership_addon_ajax_get_content_delay_rules() {
 
 		<?php foreach ( $all_delay as $delay ): ?>
 			<div class="it-exchange-membership-content-delay-rule-<?php echo $delay->get_type(); ?> it-exchange-membership-content-delay-rule hidden">
-				<?php echo $delay->get_field_html( $name . "[$count]" ); ?>
+				<?php echo $delay->get_field_html( $name . "[$count][delay]" ); ?>
 			</div>
 		<?php endforeach; ?>
 	<?php endif; ?>

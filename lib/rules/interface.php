@@ -34,6 +34,16 @@ interface IT_Exchange_Membership_RuleInterface {
 	public function get_field_html( $context );
 
 	/**
+	 * Delete the rule from the database.
+	 *
+	 * @since 1.18
+	 *
+	 * @return bool
+	 * @throws UnexpectedValueException
+	 */
+	public function delete();
+
+	/**
 	 * Get the type of this restriction.
 	 *
 	 * @since 1.18
@@ -43,4 +53,18 @@ interface IT_Exchange_Membership_RuleInterface {
 	 * @return string
 	 */
 	public function get_type( $label = false );
+
+	/**
+	 * Save the data to the post.
+	 *
+	 * @since 1.18
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 *
+	 * @throws UnexpectedValueException
+	 * @throws InvalidArgumentException
+	 */
+	public function save( array $data = array() );
 }

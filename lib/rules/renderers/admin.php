@@ -185,6 +185,8 @@ class IT_Exchange_Membership_Admin_Rule_Renderer {
 		<div class="it-exchange-membership-addon-content-access-rule columns-wrapper" data-count="<?php echo $count; ?>">
 			<div class="it-exchange-membership-addon-sort-content-access-rule column col-1_4-12"></div>
 
+			<input type="hidden" name="<?php echo $name . "[$count]"; ?>[id]" value="<?php echo $rule->get_rule_id(); ?>">
+
 			<?php echo it_exchange_membership_addon_get_selections( $rule->get_selection(), $rule->get_type(), $count ); ?>
 
 			<div class="it-exchange-content-access-content column col-6-12">

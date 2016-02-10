@@ -247,6 +247,29 @@ class IT_Exchange_Membership_Rule_Factory {
 	}
 
 	/**
+	 * Make a content rule by its ID.
+	 *
+	 * @since 1.18
+	 *
+	 * @param string                 $id
+	 * @param IT_Exchange_Membership $membership
+	 *
+	 * @return IT_Exchange_Membership_Content_RuleInterface|null
+	 */
+	public function make_content_rule_by_id( $id, IT_Exchange_Membership $membership ) {
+
+		$rules = $membership->get_feature( 'membership-content-access-rules' );
+
+		foreach ( $rules as $rule ) {
+			if ( isset( $rule['id'] ) && $rule['id'] === $id ) {
+				return $this->make_content_rule( $rule['selected'], $rule, $membership );
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Attach delay rules to a content rule.
 	 *
 	 * @since 1.18

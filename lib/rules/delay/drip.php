@@ -147,7 +147,7 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 	 * @throws UnexpectedValueException If rule was not constructed with a IT_Exchange_Membership object.
 	 * @throws InvalidArgumentException If invalid data.
 	 */
-	public function save( array $data ) {
+	public function save( array $data = array() ) {
 
 		if ( ! $this->membership ) {
 			throw new UnexpectedValueException( 'Constructed with null IT_Exchange_Membership.' );
@@ -167,6 +167,8 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 			} else {
 				$r1 = update_post_meta( $this->post->ID, '_item-content-rule-drip-interval-' . $this->membership->ID, $data['interval'] );
 			}
+
+			$this->interval = $data['interval'];
 		}
 
 		if ( array_key_exists( 'duration', $data ) ) {
@@ -183,7 +185,34 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 
 				$r2 = update_post_meta( $this->post->ID, '_item-content-rule-drip-duration-' . $this->membership->ID, $duration );
 			}
+
+			$this->duration = $data['duration'];
 		}
+
+		return $r1 && $r2;
+	}
+
+	/**
+	 * Delete the rule from the database.
+	 *
+	 * @since 1.18
+	 *
+	 * @return bool
+	 */
+	public function delete() {
+
+		if ( ! $this->membership ) {
+			throw new UnexpectedValueException( 'Constructed with null IT_Exchange_Membership.' );
+		}
+
+		if ( ! $this->post ) {
+			throw new UnexpectedValueException( 'Constructed with null WP_Post' );
+		}
+
+		error_log('deleting');
+
+		$r1 = delete_post_meta( $this->post->ID, '_item-content-rule-drip-interval-' . $this->membership->ID );
+		$r2 = delete_post_meta( $this->post->ID, '_item-content-rule-drip-duration-' . $this->membership->ID );
 
 		return $r1 && $r2;
 	}

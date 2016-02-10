@@ -139,6 +139,94 @@ class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_Ab
 	}
 
 	/**
+	 * Save the data.
+	 *
+	 * @since 1.18
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 *
+	 * @throws UnexpectedValueException
+	 * @throws InvalidArgumentException
+	 */
+	public function save( array $data = array() ) {
+
+		$r2 = true;
+
+		if ( $r1 = parent::save( $data ) ) {
+
+			$rule = $this->data;
+
+			if ( ! ( $rules = get_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] ) ) ) {
+				$rules = array();
+			}
+
+			if ( ! in_array( $this->get_membership()->ID, $rules ) ) {
+
+				/**
+				 * Fires when a term is added to the protection rule.
+				 *
+				 * @since 1.9
+				 *
+				 * @param int   $product_id
+				 * @param int   $term_id
+				 * @param array $rule
+				 */
+				do_action( 'it_exchange_membership_add_taxonomy_rule', $this->get_membership()->ID, $this->get_term(), $rule );
+
+				$rules[] = $this->get_membership()->ID;
+
+				$r2 = update_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'], $rules );
+			}
+		}
+
+		return $r1 && $r2;
+	}
+
+	/**
+	 * Delete the rule from the database.
+	 *
+	 * @since 1.18
+	 *
+	 * @return bool
+	 */
+	public function delete() {
+
+		$r1 = true;
+		$r2 = parent::delete();
+
+		$rule = $this->data;
+
+		if ( ! ( $rules = get_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] ) ) ) {
+			$rules = array();
+		}
+
+		if ( false !== $key = array_search( $this->get_membership()->ID, $rules ) ) {
+
+			/**
+			 * Fires when a term is removed from the protection rules.
+			 *
+			 * @since 1.0
+			 *
+			 * @param int   $product_id
+			 * @param int   $term_id
+			 * @param array $rule
+			 */
+			do_action( 'it_exchange_membership_remove_taxonomy_rule', $this->get_membership()->ID, $this->get_term(), $rule );
+
+			unset( $rules[ $key ] );
+			if ( empty( $rules ) ) {
+				$r1 = delete_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] );
+			} else {
+				$r1 = update_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'], $rules );
+			}
+		}
+
+		return $r1 && $r2;
+	}
+
+	/**
 	 * Get the value this content rule instance represents.
 	 *
 	 * This is used to build the content access type dropdown.

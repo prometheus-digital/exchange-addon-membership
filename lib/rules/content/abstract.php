@@ -74,6 +74,96 @@ abstract class IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchang
 	}
 
 	/**
+	 * Save the data.
+	 *
+	 * @since 1.18
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 *
+	 * @throws UnexpectedValueException
+	 * @throws InvalidArgumentException
+	 */
+	public function save( array $data = array() ) {
+
+		if ( ! $this->get_membership() ) {
+			throw new UnexpectedValueException( 'Constructed with null IT_Exchange_Membership' );
+		}
+
+		$id = $this->get_rule_id();
+
+		$this->data = array_filter( array_merge( $this->data, $data ) );
+
+		$access = $this->get_membership()->get_feature( 'membership-content-access-rules' );
+
+		if ( ! $id ) {
+			$rule['id']       = md5( serialize( $this->data ) . uniqid() );
+			$this->data['id'] = $rule['id'];
+
+			$access[] = $rule;
+		} else {
+			foreach ( $access as $key => $rule ) {
+				if ( isset( $rule['id'] ) && $rule['id'] === $id ) {
+
+					$access[ $key ] = array_filter( array_merge( $rule, $data ) );
+
+					break;
+				}
+			}
+		}
+
+		$this->get_membership()->update_feature( 'membership-content-access-rules', $access );
+
+		return true;
+	}
+
+	/**
+	 * Delete the rule from the database.
+	 *
+	 * @since 1.18
+	 *
+	 * @return bool
+	 */
+	public function delete() {
+
+		if ( ! $this->get_membership() ) {
+			throw new UnexpectedValueException( 'Constructed with null IT_Exchange_Membership' );
+		}
+
+		$id = $this->get_rule_id();
+
+		if ( ! $id ) {
+			return false;
+		}
+
+		$access = $this->get_membership()->get_feature( 'membership-content-access-rules' );
+
+		foreach ( $access as $key => $rule ) {
+			if ( isset( $rule['id'] ) && $rule['id'] === $id ) {
+				unset( $access[ $key ] );
+
+				break;
+			}
+		}
+
+		$this->get_membership()->update_feature( 'membership-content-access-rules', $access );
+
+		return true;
+	}
+
+	/**
+	 * Get the unique ID for this rule.
+	 *
+	 * @since 1.18
+	 *
+	 * @return string
+	 */
+	public function get_rule_id() {
+		return isset( $this->data['id'] ) ? $this->data['id'] : null;
+	}
+
+	/**
 	 * Get the exemption meta key.
 	 *
 	 * @since 1.18

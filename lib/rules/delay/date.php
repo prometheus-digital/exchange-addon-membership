@@ -69,59 +69,6 @@ class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_D
 	}
 
 	/**
-	 * Save the data to the post.
-	 *
-	 * @since 1.18
-	 *
-	 * @param array $data
-	 *
-	 * @return bool
-	 *
-	 * @throws UnexpectedValueException
-	 * @throws InvalidArgumentException
-	 */
-	public function save( array $data ) {
-
-		if ( ! $this->membership ) {
-			throw new UnexpectedValueException( 'Constructed with null IT_Exchange_Membership' );
-		}
-
-		if ( ! $this->post ) {
-			throw new UnexpectedValueException( 'Constructed with null WP_Post' );
-		}
-
-		if ( array_key_exists( 'date', $data ) ) {
-			if ( is_null( $data['date'] ) ) {
-				return delete_post_meta( $this->post->ID, '_item-content-rule-date-' . $this->membership->ID );
-			} else {
-
-				$date = new DateTime( $data['date'], new DateTimeZone( 'UTC' ) );
-				$date = $date->format( 'Y-m-d H:i:s' );
-
-				return update_post_meta( $this->post->ID, '_item-content-rule-date-' . $this->membership->ID, $date );
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Get the availability date for this rule.
-	 *
-	 * Null can be returned to indicate that the subscription will never
-	 * have access to this content.
-	 *
-	 * @since 1.18
-	 *
-	 * @param IT_Exchange_Subscription $subscription
-	 *
-	 * @return DateTime|null
-	 */
-	public function get_availability_date( IT_Exchange_Subscription $subscription ) {
-		return $this->date;
-	}
-
-	/**
 	 * Get HTML to render the necessary form fields.
 	 *
 	 * @since    1.18
@@ -146,6 +93,86 @@ class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_D
 
 		<?php
 		return ob_get_clean();
+	}
+
+	/**
+	 * Save the data to the post.
+	 *
+	 * @since 1.18
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 *
+	 * @throws UnexpectedValueException
+	 * @throws InvalidArgumentException
+	 */
+	public function save( array $data = array() ) {
+
+		if ( ! $this->membership ) {
+			throw new UnexpectedValueException( 'Constructed with null IT_Exchange_Membership' );
+		}
+
+		if ( ! $this->post ) {
+			throw new UnexpectedValueException( 'Constructed with null WP_Post' );
+		}
+
+		if ( array_key_exists( 'date', $data ) ) {
+			if ( is_null( $data['date'] ) ) {
+
+				$this->date = null;
+
+				return delete_post_meta( $this->post->ID, '_item-content-rule-date-' . $this->membership->ID );
+			} else {
+
+				$date = new DateTime( $data['date'], new DateTimeZone( 'UTC' ) );
+
+				$this->date = $date;
+
+				$date = $date->format( 'Y-m-d H:i:s' );
+
+				return update_post_meta( $this->post->ID, '_item-content-rule-date-' . $this->membership->ID, $date );
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Delete the rule from the database.
+	 *
+	 * @since 1.18
+	 *
+	 * @return bool
+	 * @throws UnexpectedValueException
+	 */
+	public function delete() {
+
+		if ( ! $this->membership ) {
+			throw new UnexpectedValueException( 'Constructed with null IT_Exchange_Membership' );
+		}
+
+		if ( ! $this->post ) {
+			throw new UnexpectedValueException( 'Constructed with null WP_Post' );
+		}
+
+		return delete_post_meta( $this->post->ID, '_item-content-rule-date-' . $this->membership->ID );
+	}
+
+	/**
+	 * Get the availability date for this rule.
+	 *
+	 * Null can be returned to indicate that the subscription will never
+	 * have access to this content.
+	 *
+	 * @since 1.18
+	 *
+	 * @param IT_Exchange_Subscription $subscription
+	 *
+	 * @return DateTime|null
+	 */
+	public function get_availability_date( IT_Exchange_Subscription $subscription ) {
+		return $this->date;
 	}
 
 	/**

@@ -68,6 +68,15 @@ interface IT_Exchange_Membership_Content_RuleInterface extends IT_Exchange_Membe
 	public function set_post_exempt( WP_Post $post, $exempt = true );
 
 	/**
+	 * Get the unique ID for this rule.
+	 *
+	 * @since 1.18
+	 *
+	 * @return string
+	 */
+	public function get_rule_id();
+
+	/**
 	 * Get the value this content rule instance represents.
 	 *
 	 * This is used to build the content access type dropdown.
