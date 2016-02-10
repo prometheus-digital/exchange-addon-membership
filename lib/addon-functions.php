@@ -182,6 +182,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 		?>
 		<div class="it-exchange-membership-restriction-group">
 			<input type="hidden" name="it_exchange_membership_id" value="<?php echo $rule->get_membership()->ID; ?>">
+			<input type="hidden" name="it_exchange_rule_id" value="<?php echo $rule->get_rule_id() ?>">
 
 			<?php
 			$membership_id = $rule->get_membership()->ID;

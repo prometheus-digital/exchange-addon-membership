@@ -264,80 +264,17 @@ function it_exchange_membership_addon_ajax_remove_rule_from_post() {
 
 	$return = '';
 
-	if ( ! empty( $_REQUEST['membership_id'] ) && ! empty( $_REQUEST['post_id'] ) ) {
+	if ( ! empty( $_REQUEST['membership_id'] ) && ! empty( $_REQUEST['post_id'] ) && ! empty( $_REQUEST['rule'] ) ) {
 
 		$post_id       = $_REQUEST['post_id'];
 		$membership_id = $_REQUEST['membership_id'];
+		$rule_id       = $_REQUEST['rule'];
 
-		//remove from content rule
-		if ( ! ( $rules = get_post_meta( $post_id, '_item-content-rule', true ) ) ) {
-			$rules = array();
-		}
-
-		if ( ( $key = array_search( $membership_id, $rules ) ) !== false ) {
-
-			/**
-			 * Fires when a post of any type is removed from the protection rules.
-			 *
-			 * @since 1.9
-			 *
-			 * @param int   $membership_id
-			 * @param int   $post_id
-			 * @param array $rule
-			 */
-			do_action( 'it_exchange_membership_remove_post_rule', $membership_id, $post_id, $rules[ $key ] );
-
-			unset( $rules[ $key ] );
-			update_post_meta( $post_id, '_item-content-rule', $rules );
-		}
-
-		//remove from exemptions
-		if ( ! ( $exemptions = get_post_meta( $post_id, '_item-content-rule-exemptions', true ) ) ) {
-			$exemptions = array();
-		}
-
-		if ( ! empty( $exemptions[ $membership_id ] ) ) {
-			if ( ( $key = array_search( 'post', $exemptions[ $membership_id ] ) ) !== false ) {
-
-				/**
-				 * Fires when an exemption is removed from the protection rules.
-				 *
-				 * @since 1.0
-				 *
-				 * @param int    $membership_id
-				 * @param int    $post_id
-				 * @param string $exemption
-				 */
-				do_action( 'it_exchange_membership_remove_exemption', $membership_id, $post_id, $exemptions[ $membership_id ][ $key ] );
-
-				unset( $exemptions[ $membership_id ][ $key ] );
-
-				// clean up arrays if empty
-				if ( empty( $exemptions[ $membership_id ][ $key ] ) ) {
-					unset( $exemptions[ $membership_id ] );
-				}
-				if ( empty( $exemptions ) ) {
-					delete_post_meta( $post_id, '_item-content-rule-exemptions' );
-				} else {
-					update_post_meta( $post_id, '_item-content-rule-exemptions', $exemptions );
-				}
-			}
-		}
-
-		//Remove from Membership Product (we need to keep these in sync)
-		$membership_product_feature = it_exchange_get_product_feature( $membership_id, 'membership-content-access-rules' );
-		$value                      = array(
-			'selection' => 'post',
-			'selected'  => 'posts',
-			'term'      => $post_id,
-		);
-		if ( false !== $key = array_search( $value, $membership_product_feature ) ) {
-			unset( $membership_product_feature[ $key ] );
-			it_exchange_update_product_feature( $membership_id, 'membership-content-access-rules', $membership_product_feature );
-		}
+		$factory = new IT_Exchange_Membership_Rule_Factory();
+		$rule    = $factory->make_content_rule_by_id( $rule_id, it_exchange_get_product( $membership_id ) );
+		$rule->delete();
 
 		$return = it_exchange_membership_addon_build_post_restriction_rules( $post_id );
-
 	}
 
 	die( $return );
