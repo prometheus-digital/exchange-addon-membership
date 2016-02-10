@@ -165,13 +165,18 @@ class IT_Exchange_Membership_Rule_Factory {
 
 			$object = $this->make_content_rule( $rule['selected'], $rule, $membership );
 
+			if ( ! $object ) {
+				continue;
+			}
+
 			if ( isset( $rule['grouped_id'] ) && trim( $rule['grouped_id'] ) !== '' ) {
 
 				$group_id = $rule['grouped_id'];
 
 				if ( isset( $groups[ $group_id ] ) ) {
-					$group = $groups[ $group_id ];
+
 					/** @var IT_Exchange_Membership_Content_Rule_Group $group */
+					$group = $groups[ $group_id ];
 					$group->add_rule( $object );
 
 					if ( ! in_array( $group_id, $added_group_ids ) ) {
@@ -207,16 +212,13 @@ class IT_Exchange_Membership_Rule_Factory {
 		switch ( $type ) {
 			case 'posts':
 				$rule = new IT_Exchange_Membership_Content_Rule_Post( $data['selection'], $membership, $data );
-
-				if ( isset( $data['term'] ) ) {
-					$this->attach_delay_rules( $rule, $membership, get_post( $data['term'] ) );
-				}
-
-				return $rule;
+				break;
 			case 'post_types':
-				return new IT_Exchange_Membership_Content_Rule_Post_Type( $membership, $data );
+				$rule = new IT_Exchange_Membership_Content_Rule_Post_Type( $membership, $data );
+				break;
 			case 'taxonomy':
-				return new IT_Exchange_Membership_Content_Rule_Term( $data['selection'], $membership, $data );
+				$rule = new IT_Exchange_Membership_Content_Rule_Term( $data['selection'], $membership, $data );
+				break;
 			default:
 
 				/**
@@ -234,9 +236,14 @@ class IT_Exchange_Membership_Rule_Factory {
 				if ( $rule && ! $rule instanceof IT_Exchange_Membership_Content_RuleInterface ) {
 					throw new UnexpectedValueException( 'Invalid class type for new rule.' );
 				}
-
-				return $rule;
+				break;
 		}
+
+		if ( $rule && $membership && $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable ) {
+			$this->attach_delay_rules( $rule, $membership, $data );
+		}
+
+		return $rule;
 	}
 
 	/**
@@ -245,16 +252,71 @@ class IT_Exchange_Membership_Rule_Factory {
 	 * @since 1.18
 	 *
 	 * @param IT_Exchange_Membership_Content_Rule_Delayable $rule
-	 * @param IT_Exchange_Membership                       $membership
-	 * @param WP_Post                                      $post
+	 * @param IT_Exchange_Membership                        $membership
+	 * @param array                                         $data
 	 */
-	protected function attach_delay_rules( IT_Exchange_Membership_Content_Rule_Delayable $rule, IT_Exchange_Membership $membership, WP_Post $post ) {
+	protected function attach_delay_rules( IT_Exchange_Membership_Content_Rule_Delayable $rule, IT_Exchange_Membership $membership, $data ) {
 
-		$interval = get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $membership->ID, true );
+		$post = $rule->get_post_for_delay();
 
-		// we don't currently store the type of delay rule, so we just need to check that the metadata is there
-		if ( $interval ) {
-			$rule->set_delay_rule( new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership ) );
+		if ( ! $post ) {
+			return;
+		}
+
+		if ( ! isset( $data['delay-type'] ) ) {
+			if ( get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $membership->ID, true ) ) {
+				$type = 'drip';
+			} else {
+				$type = '';
+			}
+		} else {
+			$type = $data['delay-type'];
+		}
+
+		$delay = $this->make_delay_rule( $type, $membership, $post );
+
+		if ( $delay ) {
+			$rule->set_delay_rule( $delay );
+		}
+	}
+
+	/**
+	 * Make a delay rule object.
+	 *
+	 * @since 1.18
+	 *
+	 * @param string                 $type
+	 * @param IT_Exchange_Membership $membership
+	 * @param WP_Post                $post
+	 *
+	 * @return IT_Exchange_Membership_Delay_RuleInterface|null
+	 */
+	public function make_delay_rule( $type, IT_Exchange_Membership $membership, WP_Post $post ) {
+
+		switch ( $type ) {
+			case 'drip':
+				return new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
+			case 'date':
+				return new IT_Exchange_Membership_Delay_Rule_Date( $post, $membership );
+			default:
+
+				/**
+				 * Filter the delay rule for unknown types.
+				 *
+				 * @since 1.18
+				 *
+				 * @param IT_Exchange_Membership_Content_RuleInterface $rule
+				 * @param string                                       $type
+				 * @param IT_Exchange_Membership                       $membership
+				 * @param WP_Post                                      $post
+				 */
+				$rule = apply_filters( 'it_exchange_membership_rule_factory_make_delay_rule', null, $type, $membership, $post );
+
+				if ( $rule && ! $rule instanceof IT_Exchange_Membership_Delay_RuleInterface ) {
+					throw new UnexpectedValueException( 'Invalid class type for new delay rule.' );
+				}
+
+				return $rule;
 		}
 	}
 

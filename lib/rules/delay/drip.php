@@ -117,12 +117,12 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 			<?php _e( 'Drip Interval', 'LION' ); ?>
 		</label>
 		<input id="<?php echo $context; ?>-interval" class="it-exchange-membership-drip-rule-interval" type="number" min="0"
-		       value="<?php echo $interval; ?>" name="<?php echo $context; ?>[drip-interval]">
+		       value="<?php echo $interval; ?>" name="<?php echo $context; ?>[interval]">
 
 		<label for="<?php echo $context; ?>-drip" class="screen-reader-text">
 			<?php _e( 'Drip Duration', 'LION' ); ?>
 		</label>
-		<select id="<?php echo $context; ?>-drip" class="it-exchange-membership-drip-rule-duration" name="<?php echo $context; ?>[drip-duration]">
+		<select id="<?php echo $context; ?>-drip" class="it-exchange-membership-drip-rule-duration" name="<?php echo $context; ?>[duration]">
 			<?php foreach ( self::get_durations() as $type => $label ): ?>
 				<option value="<?php echo $type; ?>" <?php selected( $type, $this->duration ); ?>>
 					<?php echo $label; ?>

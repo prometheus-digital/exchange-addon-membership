@@ -198,23 +198,43 @@ class IT_Exchange_Membership_Admin_Rule_Renderer {
 				</div>
 			</div>
 
-			<?php if ( $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable ):
-				$drip_hidden    = '';
-				$unavail_hidden = 'hidden';
-			else:
-				$drip_hidden    = 'hidden';
-				$unavail_hidden = '';
-			endif; ?>
+			<div class="it-exchange-content-access-delay column col-3-12">
 
-			<div class="it-exchange-content-access-delay column col-3-12 column-reduce-padding">
-				<div class="it-exchange-membership-content-type-drip <?php echo $drip_hidden; ?>">
-					<?php $drip = new IT_Exchange_Membership_Delay_Rule_Drip( get_post( $rule->get_term() ), $this->membership ); ?>
-					<?php echo $drip->get_field_html( $name . "[$count]" ); ?>
-				</div>
+				<?php if ( $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable ): ?>
 
-				<div class="it-exchange-content-access-delay-unavailable <?php echo $unavail_hidden; ?>">
-					<?php _e( 'Available for single posts or pages.', 'LION' ); ?>
-				</div>
+					<?php
+					$current_delay = $rule->get_delay_rule();
+					$current_delay = $current_delay ? $current_delay->get_type() : '';
+					$all_delay     = it_exchange_membership_addon_get_delay_rules( $rule->get_post_for_delay(), $rule->get_membership() );
+					?>
+
+					<div class="it-exchange-membership-delay-rule-selection">
+						<label for="<?php echo $name . "[$count]"; ?>-delay-type" class="screen-reader-text">
+							<?php _e( 'Select a delay rule type.', 'LION' ); ?>
+						</label>
+						<select name="<?php echo $name . "[$count]"; ?>[delay-type]" id="<?php echo $name . "[$count]"; ?>-delay-type">
+							<option value=""><?php _e( 'None', 'LION' ); ?></option>
+							<?php foreach ( $all_delay as $delay ): ?>
+								<option value="<?php echo $delay->get_type(); ?>" <?php selected( $delay->get_type(), $current_delay ); ?>>
+									<?php echo $delay->get_type( true ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+
+					<?php foreach ( $all_delay as $delay ): ?>
+						<?php $hidden = $delay->get_type() === $current_delay ? '' : ' hidden'; ?>
+						<div class="it-exchange-membership-content-delay-rule-<?php echo $delay->get_type() . $hidden; ?> it-exchange-membership-content-delay-rule">
+							<?php echo $delay->get_field_html( $name . "[$count][delay]" ); ?>
+						</div>
+					<?php endforeach; ?>
+
+				<?php else: ?>
+					<div class="it-exchange-content-access-delay-unavailable">
+						<?php _e( 'Available for single posts or pages.', 'LION' ); ?>
+					</div>
+				<?php endif; ?>
+
 			</div>
 
 			<div class="it-exchange-membership-addon-remove-content-access-rule column col-3_4-12">

@@ -58,9 +58,9 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	 * @return void
 	*/
 	function init_feature_metaboxes() {
-		
+
 		global $post;
-		
+
 		if ( isset( $_REQUEST['post_type'] ) ) {
 			$post_type = $_REQUEST['post_type'];
 		} else {
@@ -77,23 +77,23 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 			if ( isset( $post ) && !empty( $post ) )
 				$post_type = $post->post_type;
 		}
-			
+
 		if ( !empty( $_REQUEST['it-exchange-product-type'] ) )
 			$product_type = $_REQUEST['it-exchange-product-type'];
 		else
 			$product_type = it_exchange_get_product_type( $post );
-		
+
 		if ( !empty( $post_type ) && 'it_exchange_prod' === $post_type ) {
 			if ( !empty( $product_type ) &&  it_exchange_product_type_supports_feature( $product_type, 'membership-content-access-rules' ) )
 				add_action( 'it_exchange_product_metabox_callback_' . $product_type, array( $this, 'register_metabox' ), 1 ); //we want this to appear first in Membership product types
 		}
-		
+
 	}
 
 	/**
 	 * Registers the feature metabox for a specific product type
 	 *
-	 * Hooked to it_exchange_product_metabox_callback_[product-type] where product type supports the feature 
+	 * Hooked to it_exchange_product_metabox_callback_[product-type] where product type supports the feature
 	 *
 	 * @since 1.0.0
 	 * @return void
@@ -172,7 +172,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 		// Abort if we can't determine a product type
 		if ( ! $product_type = it_exchange_get_product_type() )
 			return;
-		
+
 		// Abort if we don't have a product ID
 		$product_id = empty( $_POST['ID'] ) ? false : $_POST['ID'];
 
@@ -185,42 +185,42 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 			return;
 
 		$membership = it_exchange_get_product( $product_id );
-		
-		$existing_access_rules = it_exchange_get_product_feature( $product_id, 'membership-content-access-rules' );
-		
-		if ( ! empty( $_REQUEST['it_exchange_content_access_rules'] ) ) {
-			
-			foreach( $_REQUEST['it_exchange_content_access_rules'] as $key => $rule ) {
-			
-				if ( !empty( $rule['selected'] ) && !empty( $rule['selection'] ) && !empty( $rule['term'] ) ) {
-				
-					switch( $rule['selected'] ) {
-					
-						case 'posts':
-							if ( !( $rules = get_post_meta( $rule['term'], '_item-content-rule', true ) ) )
-								$rules = array();
-								
-							if ( isset( $rule['drip-interval'] ) && isset( $rule['drip-duration'] ) ) {
 
+		$existing_access_rules = it_exchange_get_product_feature( $product_id, 'membership-content-access-rules' );
+
+		if ( ! empty( $_REQUEST['it_exchange_content_access_rules'] ) ) {
+
+			foreach( $_REQUEST['it_exchange_content_access_rules'] as $key => $rule ) {
+
+				if ( !empty( $rule['selected'] ) && !empty( $rule['selection'] ) && !empty( $rule['term'] ) ) {
+
+					switch( $rule['selected'] ) {
+
+						case 'posts':
+							if ( !( $rules = get_post_meta( $rule['term'], '_item-content-rule', true ) ) ) {
+								$rules = array();
+							}
+
+							$type = $rule['delay-type'];
+
+							if ( $type ) {
 								$post = get_post( $rule['term'] );
 
-								$drip = new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
+								$delay_data = $rule['delay'];
+
+								$factory = new IT_Exchange_Membership_Rule_Factory();
+								$delay = $factory->make_delay_rule( $rule['delay-type'], $membership, $post );
 
 								try {
-									$drip->save( array(
-										'interval' => absint( $rule['drip-interval'] ),
-										'duration' => $rule['drip-duration']
-									) );
-								} catch ( InvalidArgumentException $e ) {
+									$delay->save( $delay_data );
+								} catch ( Exception $e ) {
 									it_exchange_add_message( 'error', $e->getMessage() );
 								}
-
-								unset( $rule['drip-interval'] );
-								unset( $rule['drip-duration'] );
-								unset( $_REQUEST['it_exchange_content_access_rules'][$key]['drip-interval'] );
-								unset( $_REQUEST['it_exchange_content_access_rules'][$key]['drip-duration'] );
 							}
-								
+
+							unset( $rule['delay'] );
+							unset( $_REQUEST['it_exchange_content_access_rules'][$key]['delay'] );
+
 							if ( !in_array( $product_id, $rules ) ) {
 
 								/**
@@ -238,11 +238,11 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 								update_post_meta( $rule['term'], '_item-content-rule', $rules );
 							}
 							break;
-							
+
 						case 'post_types':
 							if ( !( $rules = get_option( '_item-content-rule-post-type-' . $rule['term'] ) ) )
 								$rules = array();
-	
+
 							if ( !in_array( $product_id, $rules ) ) {
 
 								/**
@@ -260,11 +260,11 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 								update_option( '_item-content-rule-post-type-' . $rule['term'],  $rules );
 							}
 							break;
-							
+
 						case 'taxonomy':
 							if ( !( $rules = get_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] ) ) )
 								$rules = array();
-								
+
 							if ( !in_array( $product_id, $rules ) ) {
 
 								/**
@@ -282,76 +282,76 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 								update_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'],  $rules );
 							}
 							break;
-						
+
 					}
-					
+
 					do_action( 'it_exchange_membership_addon_update_content_access_rules_options', $product_id, $rule['selected'], $rule['selection'], $rule['term'] );
-					
+
 				} else if ( isset( $rule['group'] ) && isset( $rule['group_id'] ) ) {
-				
+
 					//nothing really to do here, just want to make sure this case isn't unset by the else
-				
+
 				} else {
-				
+
 					//This should only happen if the user adds a new rule but doesn't make a selection
 					unset( $_REQUEST['it_exchange_content_access_rules'][$key] );
-					
+
 				}
-				
+
 			}
-				
+
 			it_exchange_update_product_feature( $product_id, 'membership-content-access-rules', $_REQUEST['it_exchange_content_access_rules'] );
-			
+
 		} else {
-			
+
 			it_exchange_update_product_feature( $product_id, 'membership-content-access-rules', array() );
-			
+
 		}
-			
+
 		if ( !empty( $existing_access_rules ) ) {
-			
+
 			$updated_access_rules = it_exchange_get_product_feature( $product_id, 'membership-content-access-rules' );
 			$diff_access_rules = array();
-			
+
 			foreach ( $existing_access_rules as $existing_access_rule ) {
-			
+
 				$defaults = array(
 					'selection' => '',
 					'selected'  => '',
 					'term'      => '',
 				);
 				$existing_access_rule = wp_parse_args( $existing_access_rule, $defaults );
-				
+
 				$found = false;
-			
+
 				foreach ( $updated_access_rules as $updated_access_rule ) {
-				
+
 					$updated_access_rule = wp_parse_args( $updated_access_rule, $defaults );
-													
+
 					if (   $existing_access_rule['selection'] === $updated_access_rule['selection']
 						&& $existing_access_rule['selected']  === $updated_access_rule['selected']
 						&& $existing_access_rule['term']      === $updated_access_rule['term'] ) {
 						$found = true;
 						continue;
 					}
-				
+
 				}
-				
+
 				if ( !$found )
 					$diff_access_rules[] = $existing_access_rule;
-				
+
 			}
-						
+
 			if ( ! empty( $diff_access_rules ) ) {
-				
+
 				foreach( $diff_access_rules as $rule ) {
-				
+
 					switch( $rule['selected'] ) {
-					
+
 						case 'posts':
 							if ( !( $rules = get_post_meta( $rule['term'], '_item-content-rule', true ) ) )
 								$rules = array();
-								
+
 							if( false !== $key = array_search( $product_id, $rules ) ) {
 
 								/**
@@ -372,11 +372,11 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 									update_post_meta( $rule['term'], '_item-content-rule', $rules );
 							}
 							break;
-							
+
 						case 'post_types':
 							if ( !( $rules = get_option( '_item-content-rule-post-type-' . $rule['term'] ) ) )
 								$rules = array();
-								
+
 							if( false !== $key = array_search( $product_id, $rules ) ) {
 
 								/**
@@ -397,11 +397,11 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 									update_option( '_item-content-rule-post-type-' . $rule['term'],  $rules );
 							}
 							break;
-							
+
 						case 'taxonomy':
 							if ( !( $rules = get_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] ) ) )
 								$rules = array();
-								
+
 							if( false !==  $key = array_search( $product_id, $rules ) ) {
 
 								/**
@@ -422,32 +422,32 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 									update_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'],  $rules );
 							}
 							break;
-						
+
 					}
-					
+
 					do_action( 'it_exchange_membership_addon_update_content_access_diff_rules_options', $product_id, $rule['selected'], $rule['selection'], $rule['term'] );
-					
+
 				}
-				
+
 			}
 
 		}
-		
+
 	}
-	
+
 	/**
 	 * This updates the feature for a product
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param integer $product_id the product id
-	 * @param mixed $new_value the new value 
+	 * @param mixed $new_value the new value
 	 * @return bolean
 	*/
 	function save_feature( $product_id, $new_value ) {
 		if ( ! it_exchange_get_product( $product_id ) )
 			return false;
-			
+
 		update_post_meta( $product_id, '_it-exchange-membership-addon-content-access-meta', $new_value );
 	}
 
@@ -483,7 +483,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	/**
 	 * Does the product support this feature?
 	 *
-	 * This is different than if it has the feature, a product can 
+	 * This is different than if it has the feature, a product can
 	 * support a feature but might not have the feature set.
 	 *
 	 * @since 1.0.0

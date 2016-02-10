@@ -279,7 +279,8 @@ function it_exchange_membership_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
 		);
 		wp_enqueue_script( 'it-exchange-membership-addon-add-edit-product', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/js/add-edit-product.js', $deps );
 	} else if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
-		wp_enqueue_script( 'it-exchange-membership-addon-add-edit-post', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/js/add-edit-post.js' );
+		$deps = array( 'jquery-ui-datepicker' );
+		wp_enqueue_script( 'it-exchange-membership-addon-add-edit-post', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/js/add-edit-post.js', $deps );
 	} else if ( 'users_page_it-exchange-members-table' === $hook_suffix ) {
 		wp_enqueue_script( 'jquery-ui-tooltip' );
 		wp_enqueue_script( 'it-exchange-dialog' );

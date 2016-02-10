@@ -21,6 +21,7 @@ require_once dirname( __FILE__ ) . '/content/term.php';
 
 require_once dirname( __FILE__ ) . '/delay/interface.php';
 require_once dirname( __FILE__ ) . '/delay/drip.php';
+require_once dirname( __FILE__ ) . '/delay/date.php';
 
 require_once dirname( __FILE__ ) . '/renderers/admin.php';
 require_once dirname( __FILE__ ) . '/renderers/front.php';

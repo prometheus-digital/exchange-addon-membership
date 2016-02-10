@@ -61,6 +61,17 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 	}
 
 	/**
+	 * Retrieve the post for a delay rule.
+	 *
+	 * @since 1.18
+	 *
+	 * @return WP_Post
+	 */
+	public function get_post_for_delay() {
+		return get_post( $this->get_term() );
+	}
+
+	/**
 	 * Check if this content rule matches a post.
 	 *
 	 * @since 1.18

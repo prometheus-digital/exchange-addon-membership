@@ -63,7 +63,6 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 		$options['toggle']         = $options['toggle'] === 'true';
 		$options['show_drip']      = $options['show_drip'] === 'on';
 		$options['show_drip_time'] = $options['show_drip_time'] === 'on';
-		$options['show_drip_time'] = $options['show_drip_time'] === 'on';
 
 		$grouped = $this->factory->make_all_for_membership_grouped( $membership );
 		ob_start();
@@ -209,9 +208,9 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 			$delay = null;
 		}
 
-		$unavailable = $delay ? 'it-exchange-content-unavailable' : '';
-
 		$now = new DateTime();
+
+		$unavailable = $delay && $now < $delay ? 'it-exchange-content-unavailable' : '';
 
 		ob_start();
 		?>

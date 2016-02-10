@@ -25,16 +25,9 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 
 		$return .= it_exchange_membership_addon_get_selections( 0, null, $count );
 
-		$return .= '<div class="it-exchange-content-access-content column"><div class="it-exchange-membership-content-type-terms hidden">';
-		$return .= '</div></div>';
+		$return .= '<div class="it-exchange-content-access-content column"><div class="it-exchange-membership-content-type-terms hidden"></div></div>';
 
 		$return .= '<div class="it-exchange-content-access-delay column">';
-		$return .= '<div class="it-exchange-membership-content-type-drip hidden">';
-		$return .= it_exchange_membership_addon_build_drip_rules( array(), $count );
-		$return .= '</div>';
-		$return .= '<div class="it-exchange-content-access-delay-unavailable hidden">';
-		$return .= __( 'Available for single posts or pages', 'LION' );
-		$return .= '</div>';
 		$return .= '</div>';
 
 		$return .= '<div class="it-exchange-membership-addon-remove-content-access-rule column">';
@@ -94,10 +87,10 @@ function it_exchange_membership_addon_ajax_add_content_access_group() {
 
 		$return .= '<input type="hidden" class="it-exchange-content-access-group" name="it_exchange_content_access_rules[' . $count . '][grouped_id]" value="" />';
 
-		$return .= '<div class="columns-wrapper it-exchange-membership-content-access-group-content content-access-sortable" data-group-id="' . $group_id . '"><div class="nosort">' . __( 'Drag content items into this area to group them together.', 'LION' ) . '</div></div>';
+		$return .= '<div class="columns-wrapper it-exchange-membership-content-access-group-content content-access-sortable" data-group-id="' . $group_id . '">';
+		$return .= '<div class="nosort">' . __( 'Drag content items into this area to group them together.', 'LION' ) . '</div></div>';
 
 		$return .= '</div>';
-
 	}
 
 	die( $return );
@@ -145,7 +138,7 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 
 		if ( $rule instanceof IT_Exchange_Membership_Rule_Layoutable ) {
 			$return .= '<div class="group-layout-options">';
-			$return .= '<span class="group-layout active-group-layout" data-type="grid">grid</span><span class="group-layout"data-type="list">list</span>';
+			$return .= '<span class="group-layout active-group-layout" data-type="grid">grid</span><span class="group-layout" data-type="list">list</span>';
 			$return .= '<input type="hidden" class="group-layout-input" name="it_exchange_content_access_rules[' . $count . '][group_layout]" value="grid" />';
 			$return .= '</div>';
 		}
@@ -156,6 +149,55 @@ function it_exchange_membership_addon_ajax_get_content_type_term() {
 }
 
 add_action( 'wp_ajax_it-exchange-membership-addon-content-type-terms', 'it_exchange_membership_addon_ajax_get_content_type_term' );
+
+/**
+ * AJAX function called to grab the HTML for the content delay rules.
+ *
+ * @since 1.18.0
+ */
+function it_exchange_membership_addon_ajax_get_content_delay_rules() {
+
+	ob_start();
+
+	$name      = 'it_exchange_content_access_rules';
+	$count     = $_REQUEST['count'];
+	$delayable = $_REQUEST['delayable'];
+
+	$all_delay = it_exchange_membership_addon_get_delay_rules();
+	?>
+
+	<?php if ( $delayable === 'no' ): ?>
+		<div class="it-exchange-content-access-delay-unavailable">
+			<?php _e( 'Available for single posts or pages.', 'LION' ); ?>
+		</div>
+	<?php else: ?>
+		<div class="it-exchange-membership-delay-rule-selection">
+			<label for="<?php echo $name . "[$count]"; ?>-delay-type" class="screen-reader-text">
+				<?php _e( 'Select a delay rule type.', 'LION' ); ?>
+			</label>
+			<select name="<?php echo $name . "[$count]"; ?>[delay-type]" id="<?php echo $name . "[$count]"; ?>-delay-type">
+				<option value=""><?php _e( 'None', 'LION' ); ?></option>
+				<?php foreach ( $all_delay as $delay ): ?>
+					<option value="<?php echo $delay->get_type(); ?>">
+						<?php echo $delay->get_type( true ); ?>
+					</option>
+				<?php endforeach; ?>
+			</select>
+		</div>
+
+		<?php foreach ( $all_delay as $delay ): ?>
+			<div class="it-exchange-membership-content-delay-rule-<?php echo $delay->get_type(); ?> it-exchange-membership-content-delay-rule hidden">
+				<?php echo $delay->get_field_html( $name . "[$count]" ); ?>
+			</div>
+		<?php endforeach; ?>
+	<?php endif; ?>
+
+	<?php
+
+	die( ob_get_clean() );
+}
+
+add_action( 'wp_ajax_it-exchange-membership-addon-content-delay-rules', 'it_exchange_membership_addon_ajax_get_content_delay_rules' );
 
 /**
  * AJAX function called to add new content access rules to a WordPress $post
@@ -179,12 +221,28 @@ function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
 	}
 	$return .= '</select>';
 	$return .= '<span class="it-exchange-membership-remove-new-rule">&times;</span>';
-
 	$return .= '<div class="it-exchange-membership-rule-delay">' . __( 'Delay', 'LION' ) . '</div>';
-	$return .= '<div class="it-exchange-membership-drip-rule">';
-	$delay = new IT_Exchange_Membership_Delay_Rule_Drip( $post );
-	$return .= $delay->get_field_html( 'new' );
-	$return .= '</div>';
+
+	$all_delay = it_exchange_membership_addon_get_delay_rules( $post );
+
+	ob_start();
+	?>
+	<div class="it-exchange-membership-delay-rule-selection">
+		<label for="it-exchange-membership-delay-type" class="screen-reader-text">
+			<?php _e( 'Select a delay rule type.', 'LION' ); ?>
+		</label>
+		<select id="it-exchange-membership-delay-type">
+			<option value=""><?php _e( 'None', 'LION' ); ?></option>
+			<?php foreach ( $all_delay as $delay ): ?>
+				<option value="<?php echo $delay->get_type(); ?>">
+					<?php echo $delay->get_type( true ); ?>
+				</option>
+			<?php endforeach; ?>
+		</select>
+	</div>
+
+	<?php
+	$return .= ob_get_clean();
 
 	$return .= '<div class="it-exchange-add-new-restriction-ok-button">';
 	$return .= '<a href class="button">' . __( 'OK', 'LION' ) . '</a>';
@@ -311,27 +369,21 @@ function it_exchange_membership_addon_ajax_add_new_rule_to_post() {
 			update_post_meta( $post_id, '_item-content-rule', $rules );
 		}
 
-		$interval = ! empty( $_REQUEST['interval'] ) ? $_REQUEST['interval'] : 0;
-		$duration = ! empty( $_REQUEST['duration'] ) ? $_REQUEST['duration'] : 'days';
-
-		if ( ! empty( $interval ) ) {
-			update_post_meta( $post_id, '_item-content-rule-drip-interval-' . $membership_id, $interval );
-			update_post_meta( $post_id, '_item-content-rule-drip-duration-' . $membership_id, $duration );
-		}
-
 		//Add details to Membership Product (we need to keep these in sync)
 		$membership_product_feature = it_exchange_get_product_feature( $membership_id, 'membership-content-access-rules' );
 
 		$value = array(
-			'selection' => get_post_type( $post_id ),
-			'selected'  => 'posts',
-			'term'      => $post_id,
+			'selection'  => get_post_type( $post_id ),
+			'selected'   => 'posts',
+			'term'       => $post_id,
+			'delay-type' => $_REQUEST['delay']
 		);
 
-		$rule                  = $value;
+		$rule = $value;
+
 		$rule['group_layout']  = 'grid'; // set rule array to default options
-		$rule['drip-interval'] = $interval;
-		$rule['drip-duration'] = $duration;
+		$rule['drip-interval'] = 0;
+		$rule['drip-duration'] = IT_Exchange_Membership_Delay_Rule_Drip::D_DAYS;
 
 		/**
 		 * Fires when a post of any type is added to the protection rules.
@@ -425,24 +477,35 @@ add_action( 'wp_ajax_it-exchange-membership-addon-modify-restrictions-exemptions
  *  - $post       The post ID of the content
  *  - $membership The membership ID for dripping
  *  - $changes    Array of changes to be saved. Keyed with 'interval', and 'duration'.
+ *  - $type       Delay rule type.
  *
  * @since 1.18
  */
 function it_exchange_membership_addon_ajax_update_drip_rule() {
 
-	if ( ! empty( $_REQUEST['post'] ) && ! empty( $_REQUEST['membership'] ) && ! empty( $_REQUEST['changes'] ) ) {
+	if ( ! empty( $_REQUEST['post'] ) && ! empty( $_REQUEST['membership'] ) && ! empty( $_REQUEST['changes'] ) && ! empty( $_REQUEST['type'] ) ) {
 		$post       = get_post( $_REQUEST['post'] );
 		$membership = it_exchange_get_product( $_REQUEST['membership'] );
+		$type       = $_REQUEST['type'];
 		$changes    = $_REQUEST['changes'];
 
-		$drip = new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
-		$drip->save( $changes );
+		$factory = new IT_Exchange_Membership_Rule_Factory();
+		$delay   = $factory->make_delay_rule( $type, $membership, $post );
+
+		if ( $delay ) {
+			try {
+				$delay->save( $changes );
+			}
+			catch ( Exception $e ) {
+
+			}
+		}
 	}
 
 	die();
 }
 
-add_action( 'wp_ajax_it-exchange-membership-update-drip-rule', 'it_exchange_membership_addon_ajax_update_drip_rule' );
+add_action( 'wp_ajax_it-exchange-membership-update-delay-rule', 'it_exchange_membership_addon_ajax_update_drip_rule' );
 
 function it_exchange_membership_addon_ajax_add_membership_child() {
 

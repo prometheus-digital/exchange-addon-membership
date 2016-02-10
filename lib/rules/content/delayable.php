@@ -30,4 +30,13 @@ interface IT_Exchange_Membership_Content_Rule_Delayable extends IT_Exchange_Memb
 	 * @return IT_Exchange_Membership_Delay_RuleInterface
 	 */
 	public function get_delay_rule();
+
+	/**
+	 * Retrieve the post for a delay rule.
+	 *
+	 * @since 1.18
+	 *
+	 * @return WP_Post
+	 */
+	public function get_post_for_delay();
 }
