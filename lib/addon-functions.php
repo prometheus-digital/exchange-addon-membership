@@ -276,6 +276,16 @@ function it_exchange_membership_addon_get_content_rules( $flat = true ) {
 		}
 	}
 
+	/**
+	 * Filters the available content rules.
+	 *
+	 * @since 1.18
+	 *
+	 * @param IT_Exchange_Membership_Content_RuleInterface[]|array[] $rules
+	 * @param bool                                                   $flat
+	 */
+	$rules = apply_filters( 'it_exchange_membership_addon_get_content_rules', $rules, $flat );
+
 	return $rules;
 }
 
@@ -295,6 +305,17 @@ function it_exchange_membership_addon_get_delay_rules( WP_Post $post = null, IT_
 
 	$rules[] = new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
 	$rules[] = new IT_Exchange_Membership_Delay_Rule_Date( $post, $membership );
+
+	/**
+	 * Filter the available delay rules.
+	 *
+	 * @since 1.18
+	 *
+	 * @param IT_Exchange_Membership_Delay_RuleInterface[] $rules
+	 * @param WP_Post                                      $post
+	 * @param IT_Exchange_Membership                       $membership
+	 */
+	$rules = apply_filters( 'it_exchange_membership_addon_get_delay_rules', $rules, $post, $membership );
 
 	return $rules;
 }
