@@ -149,7 +149,28 @@ abstract class IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchang
 
 		$this->get_membership()->update_feature( 'membership-content-access-rules', $access );
 
+		$this->delete_exemptions();
+
 		return true;
+	}
+
+	/**
+	 * Delete all exemptions from this rule.
+	 *
+	 * @since 1.18
+	 */
+	private function delete_exemptions() {
+
+		$key = $this->get_exemption_meta_key();
+
+		/** @var $wpdb wpdb */
+		global $wpdb;
+
+		$mids = $wpdb->get_results( "SELECT meta_id FROM $wpdb->postmeta WHERE meta_key = '$key'" );
+
+		foreach ( $mids as $mid ) {
+			delete_metadata_by_mid( 'post', $mid->meta_id );
+		}
 	}
 
 	/**
