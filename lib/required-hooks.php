@@ -323,8 +323,14 @@ function it_exchange_membership_addon_admin_wp_enqueue_styles() {
 	// Exchange Product pages
 	if ( isset( $post_type ) && 'it_exchange_prod' === $post_type ) {
 		wp_enqueue_style( 'it-exchange-membership-addon-add-edit-product', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/styles/add-edit-product.css' );
+		wp_localize_script( 'it-exchange-membership-addon-add-edit-product', 'ITE_MEMBERSHIP', array(
+			'nonce' => wp_create_nonce( 'it-exchange-membership-product-edit' )
+		) );
 	} else if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
 		wp_enqueue_style( 'it-exchange-membership-addon-add-edit-post', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/styles/add-edit-post.css' );
+		wp_localize_script( 'it-exchange-membership-addon-add-edit-post', 'ITE_MEMBERSHIP', array(
+			'nonce' => wp_create_nonce( 'it-exchange-membership-post-edit' )
+		) );
 	}
 }
 

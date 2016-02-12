@@ -15,6 +15,18 @@ function it_exchange_membership_addon_ajax_add_content_access_rule() {
 
 	$return = '';
 
+	if ( empty( $_REQUEST['nonce'] ) || ! wp_verify_nonce( $_REQUEST['nonce'], 'it-exchange-membership-product-edit' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'Request expired. Please refresh the page and try again.', 'LION' )
+		) );
+	}
+
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'You don\'t have permission to do this.', 'LION' )
+		) );
+	}
+
 	if ( isset( $_REQUEST['count'] ) ) { //use isset() in case count is 0
 
 		$count = $_REQUEST['count'];
@@ -53,6 +65,18 @@ add_action( 'wp_ajax_it-exchange-membership-addon-add-content-access-rule', 'it_
  * @return string
  */
 function it_exchange_membership_addon_ajax_add_content_access_group() {
+
+	if ( empty( $_REQUEST['nonce'] ) || ! wp_verify_nonce( $_REQUEST['nonce'], 'it-exchange-membership-product-edit' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'Request expired. Please refresh the page and try again.', 'LION' )
+		) );
+	}
+
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'You don\'t have permission to do this.', 'LION' )
+		) );
+	}
 
 	$return = '';
 
@@ -106,6 +130,18 @@ add_action( 'wp_ajax_it-exchange-membership-addon-add-content-access-group', 'it
  */
 function it_exchange_membership_addon_ajax_get_content_type_term() {
 
+	if ( empty( $_REQUEST['nonce'] ) || ! wp_verify_nonce( $_REQUEST['nonce'], 'it-exchange-membership-product-edit' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'Request expired. Please refresh the page and try again.', 'LION' )
+		) );
+	}
+
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'You don\'t have permission to do this.', 'LION' )
+		) );
+	}
+
 	$return = '';
 
 	if ( ! empty( $_REQUEST['type'] ) && ! empty( $_REQUEST['value'] ) ) {
@@ -157,6 +193,18 @@ add_action( 'wp_ajax_it-exchange-membership-addon-content-type-terms', 'it_excha
  */
 function it_exchange_membership_addon_ajax_get_content_delay_rules() {
 
+	if ( empty( $_REQUEST['nonce'] ) || ! wp_verify_nonce( $_REQUEST['nonce'], 'it-exchange-membership-product-edit' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'Request expired. Please refresh the page and try again.', 'LION' )
+		) );
+	}
+
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'You don\'t have permission to do this.', 'LION' )
+		) );
+	}
+
 	ob_start();
 
 	$name      = 'it_exchange_content_access_rules';
@@ -206,6 +254,18 @@ add_action( 'wp_ajax_it-exchange-membership-addon-content-delay-rules', 'it_exch
  * @return string HTML output of content access rules
  */
 function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
+
+	if ( empty( $_REQUEST['nonce'] ) || ! wp_verify_nonce( $_REQUEST['nonce'], 'it-exchange-membership-post-edit' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'Request expired. Please refresh the page and try again.', 'LION' )
+		) );
+	}
+
+	if ( ! current_user_can( 'edit_post', $_REQUEST['ID'] ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'You don\'t have permission to do this.', 'LION' )
+		) );
+	}
 
 	$post = get_post( $_POST['ID'] );
 
@@ -262,6 +322,18 @@ add_action( 'wp_ajax_it-exchange-membership-addon-add-content-access-rule-to-pos
  */
 function it_exchange_membership_addon_ajax_remove_rule_from_post() {
 
+	if ( empty( $_REQUEST['nonce'] ) || ! wp_verify_nonce( $_REQUEST['nonce'], 'it-exchange-membership-post-edit' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'Request expired. Please refresh the page and try again.', 'LION' )
+		) );
+	}
+
+	if ( ! current_user_can( 'edit_post', $_REQUEST['post_id'] ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'You don\'t have permission to do this.', 'LION' )
+		) );
+	}
+
 	$return = '';
 
 	if ( ! empty( $_REQUEST['membership_id'] ) && ! empty( $_REQUEST['post_id'] ) && ! empty( $_REQUEST['rule'] ) ) {
@@ -289,6 +361,18 @@ add_action( 'wp_ajax_it-exchange-membership-addon-remove-rule-from-post', 'it_ex
  * @return string HTML output of content access rules
  */
 function it_exchange_membership_addon_ajax_add_new_rule_to_post() {
+
+	if ( empty( $_REQUEST['nonce'] ) || ! wp_verify_nonce( $_REQUEST['nonce'], 'it-exchange-membership-post-edit' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'Request expired. Please refresh the page and try again.', 'LION' )
+		) );
+	}
+
+	if ( ! current_user_can( 'edit_post', $_REQUEST['post_id'] ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'You don\'t have permission to do this.', 'LION' )
+		) );
+	}
 
 	$return = '';
 
@@ -319,6 +403,18 @@ add_action( 'wp_ajax_it-exchange-membership-addon-add-new-rule-to-post', 'it_exc
  * @return void
  */
 function it_exchange_membership_addon_ajax_modify_restrictions_exemptions() {
+
+	if ( empty( $_REQUEST['nonce'] ) || ! wp_verify_nonce( $_REQUEST['nonce'], 'it-exchange-membership-post-edit' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'Request expired. Please refresh the page and try again.', 'LION' )
+		) );
+	}
+
+	if ( ! current_user_can( 'edit_post', $_REQUEST['post_id'] ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'You don\'t have permission to do this.', 'LION' )
+		) );
+	}
 
 	if ( ! empty( $_REQUEST['post_id'] ) && ! empty( $_REQUEST['membership_id'] ) && ! empty( $_REQUEST['rule_data'] ) && ! empty( $_REQUEST['checked'] ) ) {
 		$post_id       = $_REQUEST['post_id'];
@@ -384,6 +480,19 @@ add_action( 'wp_ajax_it-exchange-membership-addon-modify-restrictions-exemptions
  * @since 1.18
  */
 function it_exchange_membership_addon_ajax_update_drip_rule() {
+
+	if ( empty( $_REQUEST['nonce'] ) || ! wp_verify_nonce( $_REQUEST['nonce'], 'it-exchange-membership-post-edit' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'Request expired. Please refresh the page and try again.', 'LION' )
+		) );
+	}
+
+	if ( ! current_user_can( 'edit_post', $_REQUEST['post'] ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'You don\'t have permission to do this.', 'LION' )
+		) );
+	}
+
 
 	if ( ! empty( $_REQUEST['post'] ) && ! empty( $_REQUEST['membership'] ) && ! empty( $_REQUEST['changes'] ) && ! empty( $_REQUEST['type'] ) ) {
 		$post       = get_post( $_REQUEST['post'] );
