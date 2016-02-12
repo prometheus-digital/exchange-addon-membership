@@ -32,6 +32,10 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 		parent::__construct( $membership, $data );
 
 		$this->post_type = $post_type;
+
+		if ( empty( $this->data['selection'] ) ) {
+			$this->data['selection'] = $post_type;
+		}
 	}
 
 	/**

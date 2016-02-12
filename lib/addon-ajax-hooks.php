@@ -294,52 +294,19 @@ function it_exchange_membership_addon_ajax_add_new_rule_to_post() {
 
 	if ( ! empty( $_REQUEST['membership_id'] ) && ! empty( $_REQUEST['post_id'] ) ) {
 
-		$post_id       = $_REQUEST['post_id'];
-		$membership_id = $_REQUEST['membership_id'];
+		$post       = get_post( $_REQUEST['post_id'] );
+		$membership = it_exchange_get_product( $_REQUEST['membership_id'] );
 
-		if ( ! ( $rules = get_post_meta( $post_id, '_item-content-rule', true ) ) ) {
-			$rules = array();
-		}
+		$rule = new IT_Exchange_Membership_Content_Rule_Post( $post->post_type, $membership );
+		$rule->save( array(
+			'term'         => $post->ID,
+			'delay-type'   => empty( $_REQUEST['delay'] ) ? '' : $_REQUEST['delay'],
+			'group_layout' => IT_Exchange_Membership_Rule_Layoutable::L_GRID
+		) );
 
-		if ( ! in_array( $membership_id, $rules ) ) {
-			$rules[] = $membership_id;
-			update_post_meta( $post_id, '_item-content-rule', $rules );
-		}
+		error_log(print_r($rule, true));
 
-		//Add details to Membership Product (we need to keep these in sync)
-		$membership_product_feature = it_exchange_get_product_feature( $membership_id, 'membership-content-access-rules' );
-
-		$value = array(
-			'selection'  => get_post_type( $post_id ),
-			'selected'   => 'posts',
-			'term'       => $post_id,
-			'delay-type' => $_REQUEST['delay']
-		);
-
-		$rule = $value;
-
-		$rule['group_layout']  = 'grid'; // set rule array to default options
-		$rule['drip-interval'] = 0;
-		$rule['drip-duration'] = IT_Exchange_Membership_Delay_Rule_Drip::D_DAYS;
-
-		/**
-		 * Fires when a post of any type is added to the protection rules.
-		 *
-		 * @since 1.9
-		 *
-		 * @param int   $membership_id
-		 * @param int   $post_id
-		 * @param array $rule
-		 */
-		do_action( 'it_exchange_membership_add_post_rule', $membership_id, $post_id, $rule );
-
-		if ( false === array_search( $value, $membership_product_feature ) ) {
-			$membership_product_feature[] = $value;
-			it_exchange_update_product_feature( $membership_id, 'membership-content-access-rules', $membership_product_feature );
-		}
-
-		$return = it_exchange_membership_addon_build_post_restriction_rules( $post_id );
-
+		$return = it_exchange_membership_addon_build_post_restriction_rules( $post->ID );
 	}
 
 	die( $return );

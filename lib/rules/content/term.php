@@ -27,6 +27,10 @@ class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_Ab
 		parent::__construct( $membership, $data );
 
 		$this->taxonomy = $taxonomy;
+
+		if ( empty( $this->data['selection'] ) ) {
+			$this->data['selection'] = $taxonomy;
+		}
 	}
 
 	/**

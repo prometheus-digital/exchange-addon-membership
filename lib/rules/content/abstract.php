@@ -30,6 +30,10 @@ abstract class IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchang
 	public function __construct( IT_Exchange_Membership $membership = null, array $data = array() ) {
 		$this->membership = $membership;
 		$this->data       = $data;
+
+		if ( empty( $this->data['selected'] ) ) {
+			$this->data['selected'] = $this->get_type();
+		}
 	}
 
 	/**
@@ -98,10 +102,9 @@ abstract class IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchang
 		$access = $this->get_membership()->get_feature( 'membership-content-access-rules' );
 
 		if ( ! $id ) {
-			$rule['id']       = md5( serialize( $this->data ) . uniqid() );
-			$this->data['id'] = $rule['id'];
+			$this->data['id'] = md5( serialize( $this->data ) . uniqid() );
 
-			$access[] = $rule;
+			$access[] = $this->data;
 		} else {
 			foreach ( $access as $key => $rule ) {
 				if ( isset( $rule['id'] ) && $rule['id'] === $id ) {
