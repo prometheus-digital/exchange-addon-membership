@@ -727,74 +727,22 @@ add_action( 'it_exchange_transition_subscription_status', 'it_exchange_update_me
  * @return void
  */
 function it_exchange_before_delete_membership_product( $post_id ) {
-	$existing_access_rules = it_exchange_get_product_feature( $post_id, 'membership-content-access-rules' );
 
-	if ( ! empty( $existing_access_rules ) ) {
-		foreach ( $existing_access_rules as $rule ) {
-			if ( ! empty( $rule['selected'] ) ) {
-				switch ( $rule['selected'] ) {
-					case 'posts':
-						if ( ! ( $rules = get_post_meta( $rule['term'], '_item-content-rule', true ) ) ) {
-							$rules = array();
-						}
+	if ( get_post_type( $post_id ) !== 'it_exchange_prod' ) {
+		return;
+	}
 
-						delete_post_meta( $rule['term'], '_item-content-rule-drip-interval-' . $post_id );
-						delete_post_meta( $rule['term'], '_item-content-rule-drip-duration-' . $post_id );
+	$membership = it_exchange_get_product( $post_id );
 
-						$restriction_exemptions = get_post_meta( $rule['term'], '_item-content-rule-exemptions', true );
-						if ( ! empty( $restriction_exemptions ) ) {
-							if ( array_key_exists( $post_id, $restriction_exemptions ) ) {
-								unset( $restriction_exemptions[ $post_id ] );
-								if ( ! empty( $restriction_exemptions ) ) {
-									update_post_meta( $rule['term'], '_item-content-rule-exemptions', $restriction_exemptions );
-								} else {
-									delete_post_meta( $rule['term'], '_item-content-rule-exemptions' );
-								}
-							}
-						}
+	if ( ! $membership instanceof IT_Exchange_Membership ) {
+		return;
+	}
 
-						if ( false !== $key = array_search( $post_id, $rules ) ) {
-							unset( $rules[ $key ] );
-							if ( empty( $rules ) ) {
-								delete_post_meta( $rule['term'], '_item-content-rule' );
-							} else {
-								update_post_meta( $rule['term'], '_item-content-rule', $rules );
-							}
-						}
-						break;
+	$factory = new IT_Exchange_Membership_Rule_Factory();
+	$rules = $factory->make_all_for_membership( $membership );
 
-					case 'post_types':
-						if ( ! ( $rules = get_option( '_item-content-rule-post-type-' . $rule['term'] ) ) ) {
-							$rules = array();
-						}
-
-						if ( false !== $key = array_search( $post_id, $rules ) ) {
-							unset( $rules[ $key ] );
-							if ( empty( $rules ) ) {
-								delete_option( '_item-content-rule-post-type-' . $rule['term'] );
-							} else {
-								update_option( '_item-content-rule-post-type-' . $rule['term'], $rules );
-							}
-						}
-						break;
-
-					case 'taxonomy':
-						if ( ! ( $rules = get_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] ) ) ) {
-							$rules = array();
-						}
-
-						if ( false !== $key = array_search( $post_id, $rules ) ) {
-							unset( $rules[ $key ] );
-							if ( empty( $rules ) ) {
-								delete_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'] );
-							} else {
-								update_option( '_item-content-rule-tax-' . $rule['selection'] . '-' . $rule['term'], $rules );
-							}
-						}
-						break;
-				}
-			}
-		}
+	foreach ( $rules as $rule ) {
+		$rule->delete();
 	}
 }
 
