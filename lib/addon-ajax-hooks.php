@@ -304,8 +304,6 @@ function it_exchange_membership_addon_ajax_add_new_rule_to_post() {
 			'group_layout' => IT_Exchange_Membership_Rule_Layoutable::L_GRID
 		) );
 
-		error_log(print_r($rule, true));
-
 		$return = it_exchange_membership_addon_build_post_restriction_rules( $post->ID );
 	}
 

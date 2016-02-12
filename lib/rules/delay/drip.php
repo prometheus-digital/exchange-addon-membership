@@ -209,8 +209,6 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 			throw new UnexpectedValueException( 'Constructed with null WP_Post' );
 		}
 
-		error_log('deleting');
-
 		$r1 = delete_post_meta( $this->post->ID, '_item-content-rule-drip-interval-' . $this->membership->ID );
 		$r2 = delete_post_meta( $this->post->ID, '_item-content-rule-drip-duration-' . $this->membership->ID );
 
