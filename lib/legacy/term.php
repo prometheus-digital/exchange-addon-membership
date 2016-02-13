@@ -8,19 +8,15 @@
 
 /**
  * Class IT_Exchange_Membership_Content_Rule_Term
+ *
+ * Legacy rule for WP 4.4 and lower.
  */
-class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_AbstractContent_Rule
-	implements IT_Exchange_Membership_Rule_Layoutable, IT_Exchange_Membership_Content_Rule_Delayable {
+class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchange_Membership_Rule_Layoutable {
 
 	/**
 	 * @var string
 	 */
 	private $taxonomy;
-
-	/**
-	 * @var IT_Exchange_Membership_Delay_RuleInterface
-	 */
-	private $delay_rule;
 
 	/**
 	 * IT_Exchange_Membership_Content_Rule_Post constructor.
@@ -37,72 +33,6 @@ class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_Ab
 		if ( empty( $this->data['selection'] ) ) {
 			$this->data['selection'] = $taxonomy;
 		}
-	}
-
-	/**
-	 * Set this content rule's delay rule.
-	 *
-	 * @since 1.18
-	 *
-	 * @param IT_Exchange_Membership_Delay_RuleInterface $delay_rule
-	 *
-	 * @return self
-	 */
-	public function set_delay_rule( IT_Exchange_Membership_Delay_RuleInterface $delay_rule ) {
-		$this->delay_rule = $delay_rule;
-
-		return $this;
-	}
-
-	/**
-	 * Retrieve this content rule's delay rule.
-	 *
-	 * @since 1.18
-	 *
-	 * @return IT_Exchange_Membership_Delay_RuleInterface
-	 */
-	public function get_delay_rule() {
-		return $this->delay_rule;
-	}
-
-	/**
-	 * Get delay meta for a given key.
-	 *
-	 * @since 1.18
-	 *
-	 * @param string $key
-	 *
-	 * @return mixed
-	 */
-	public function get_delay_meta( $key ) {
-		return get_term_meta( $this->get_term(), $key, true );
-	}
-
-	/**
-	 * Update delay meta for a given key.
-	 *
-	 * @since 1.18
-	 *
-	 * @param string $key
-	 * @param mixed  $value
-	 *
-	 * @return bool
-	 */
-	public function update_delay_meta( $key, $value ) {
-		return update_term_meta( $this->get_term(), $key, $value );
-	}
-
-	/**
-	 * Delete delay meta for a given key.
-	 *
-	 * @since 1.18
-	 *
-	 * @param string $key
-	 *
-	 * @return bool
-	 */
-	public function delete_delay_meta( $key ) {
-		return delete_term_meta( $this->get_term(), $key );
 	}
 
 	/**

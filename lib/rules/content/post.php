@@ -104,7 +104,6 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 		return delete_post_meta( $this->get_term(), $key );
 	}
 
-
 	/**
 	 * Check if this content rule matches a post.
 	 *
