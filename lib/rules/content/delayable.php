@@ -32,11 +32,36 @@ interface IT_Exchange_Membership_Content_Rule_Delayable extends IT_Exchange_Memb
 	public function get_delay_rule();
 
 	/**
-	 * Retrieve the post for a delay rule.
+	 * Get delay meta for a given key.
 	 *
 	 * @since 1.18
 	 *
-	 * @return WP_Post
+	 * @param string $key
+	 *
+	 * @return mixed
 	 */
-	public function get_post_for_delay();
+	public function get_delay_meta( $key );
+
+	/**
+	 * Update delay meta for a given key.
+	 *
+	 * @since 1.18
+	 *
+	 * @param string $key
+	 * @param mixed  $value
+	 *
+	 * @return bool
+	 */
+	public function update_delay_meta( $key, $value );
+
+	/**
+	 * Delete delay meta for a given key.
+	 *
+	 * @since 1.18
+	 *
+	 * @param string $key
+	 *
+	 * @return bool
+	 */
+	public function delete_delay_meta( $key );
 }

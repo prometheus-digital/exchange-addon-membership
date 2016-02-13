@@ -65,15 +65,45 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 	}
 
 	/**
-	 * Retrieve the post for a delay rule.
+	 * Get delay meta for a given key.
 	 *
 	 * @since 1.18
 	 *
-	 * @return WP_Post
+	 * @param string $key
+	 *
+	 * @return mixed
 	 */
-	public function get_post_for_delay() {
-		return get_post( $this->get_term() );
+	public function get_delay_meta( $key ) {
+		return get_post_meta( $this->get_term(), $key, true );
 	}
+
+	/**
+	 * Update delay meta for a given key.
+	 *
+	 * @since 1.18
+	 *
+	 * @param string $key
+	 * @param mixed  $value
+	 *
+	 * @return bool
+	 */
+	public function update_delay_meta( $key, $value ) {
+		return update_post_meta( $this->get_term(), $key, $value );
+	}
+
+	/**
+	 * Delete delay meta for a given key.
+	 *
+	 * @since 1.18
+	 *
+	 * @param string $key
+	 *
+	 * @return bool
+	 */
+	public function delete_delay_meta( $key ) {
+		return delete_post_meta( $this->get_term(), $key );
+	}
+
 
 	/**
 	 * Check if this content rule matches a post.

@@ -12,9 +12,9 @@
 class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_Delay_RuleInterface {
 
 	/**
-	 * @var WP_Post
+	 * @var IT_Exchange_Membership_Content_Rule_Delayable
 	 */
-	private $post;
+	private $rule;
 
 	/**
 	 * @var IT_Exchange_Membership
@@ -29,18 +29,18 @@ class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_D
 	/**
 	 * IT_Exchange_Membership_Delay_Rule_Date constructor.
 	 *
-	 * @param WP_Post                $post
-	 * @param IT_Exchange_Membership $membership
+	 * @param IT_Exchange_Membership_Content_Rule_Delayable $rule
+	 * @param IT_Exchange_Membership                        $membership
 	 */
-	public function __construct( WP_Post $post = null, IT_Exchange_Membership $membership = null ) {
-		$this->post       = $post;
+	public function __construct( IT_Exchange_Membership_Content_Rule_Delayable $rule = null, IT_Exchange_Membership $membership = null ) {
+		$this->rule       = $rule;
 		$this->membership = $membership;
 
-		if ( ! $post || ! $membership ) {
+		if ( ! $rule || ! $membership ) {
 			return;
 		}
 
-		$date = get_post_meta( $post->ID, '_item-content-rule-date-' . $membership->ID, true );
+		$date = $rule->get_delay_meta( '_item-content-rule-date-' . $membership->ID );
 
 		if ( ! empty( $date ) ) {
 			$this->date = new DateTime( $date, new DateTimeZone( 'UTC' ) );
@@ -113,8 +113,8 @@ class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_D
 			throw new UnexpectedValueException( 'Constructed with null IT_Exchange_Membership' );
 		}
 
-		if ( ! $this->post ) {
-			throw new UnexpectedValueException( 'Constructed with null WP_Post' );
+		if ( ! $this->rule ) {
+			throw new UnexpectedValueException( 'Constructed with null Delayable rule.' );
 		}
 
 		if ( array_key_exists( 'date', $data ) ) {
@@ -122,7 +122,7 @@ class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_D
 
 				$this->date = null;
 
-				return delete_post_meta( $this->post->ID, '_item-content-rule-date-' . $this->membership->ID );
+				return $this->rule->delete_delay_meta( '_item-content-rule-date-' . $this->membership->ID );
 			} else {
 
 				$date = new DateTime( $data['date'], new DateTimeZone( 'UTC' ) );
@@ -131,7 +131,7 @@ class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_D
 
 				$date = $date->format( 'Y-m-d H:i:s' );
 
-				return update_post_meta( $this->post->ID, '_item-content-rule-date-' . $this->membership->ID, $date );
+				return $this->rule->update_delay_meta( '_item-content-rule-date-' . $this->membership->ID, $date );
 			}
 		}
 
@@ -152,11 +152,11 @@ class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_D
 			throw new UnexpectedValueException( 'Constructed with null IT_Exchange_Membership' );
 		}
 
-		if ( ! $this->post ) {
-			throw new UnexpectedValueException( 'Constructed with null WP_Post' );
+		if ( ! $this->rule ) {
+			throw new UnexpectedValueException( 'Constructed with null Delayable rule.' );
 		}
 
-		return delete_post_meta( $this->post->ID, '_item-content-rule-date-' . $this->membership->ID );
+		return $this->rule->delete_delay_meta( '_item-content-rule-date-' . $this->membership->ID );
 	}
 
 	/**

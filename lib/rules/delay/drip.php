@@ -17,9 +17,9 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 	const D_YEARS = 'years';
 
 	/**
-	 * @var WP_Post
+	 * @var IT_Exchange_Membership_Content_Rule_Delayable
 	 */
-	private $post;
+	private $rule;
 
 	/**
 	 * @var IT_Exchange_Membership
@@ -39,20 +39,20 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 	/**
 	 * IT_Exchange_Membership_Content_Rule_Drip constructor.
 	 *
-	 * @param WP_Post                $post
-	 * @param IT_Exchange_Membership $membership
+	 * @param IT_Exchange_Membership_Content_Rule_Delayable $rule
+	 * @param IT_Exchange_Membership                        $membership
 	 */
-	public function __construct( WP_Post $post = null, IT_Exchange_Membership $membership = null ) {
-		$this->post       = $post;
+	public function __construct( IT_Exchange_Membership_Content_Rule_Delayable $rule = null, IT_Exchange_Membership $membership = null ) {
+		$this->rule       = $rule;
 		$this->membership = $membership;
 
-		if ( ! $membership || ! $post ) {
+		if ( ! $membership || ! $rule ) {
 			return;
 		}
 
-		$this->interval = (int) get_post_meta( $post->ID, '_item-content-rule-drip-interval-' . $membership->ID, true );
+		$this->interval = (int) $rule->get_delay_meta( '_item-content-rule-drip-interval-' . $membership->ID );
 
-		$duration = get_post_meta( $post->ID, '_item-content-rule-drip-duration-' . $membership->ID, true );
+		$duration = $rule->get_delay_meta( '_item-content-rule-drip-duration-' . $membership->ID );
 
 		if ( is_string( $duration ) && array_key_exists( $duration, self::get_durations() ) ) {
 			$this->duration = $duration;
@@ -153,8 +153,8 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 			throw new UnexpectedValueException( 'Constructed with null IT_Exchange_Membership.' );
 		}
 
-		if ( ! $this->post ) {
-			throw new UnexpectedValueException( 'Constructed with null WP_Post' );
+		if ( ! $this->rule ) {
+			throw new UnexpectedValueException( 'Constructed with null Delayable rule.' );
 		}
 
 		$r1 = true;
@@ -163,9 +163,9 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 		if ( array_key_exists( 'interval', $data ) ) {
 
 			if ( is_null( $data['interval'] ) ) {
-				$r1 = delete_post_meta( $this->post->ID, '_item-content-rule-drip-interval-' . $this->membership->ID );
+				$r1 = $this->rule->delete_delay_meta( '_item-content-rule-drip-interval-' . $this->membership->ID );
 			} else {
-				$r1 = update_post_meta( $this->post->ID, '_item-content-rule-drip-interval-' . $this->membership->ID, $data['interval'] );
+				$r1 = $this->rule->update_delay_meta( '_item-content-rule-drip-interval-' . $this->membership->ID, $data['interval'] );
 			}
 
 			$this->interval = $data['interval'];
@@ -174,7 +174,7 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 		if ( array_key_exists( 'duration', $data ) ) {
 
 			if ( is_null( $data['duration'] ) ) {
-				$r2 = delete_post_meta( $this->post->ID, '_item-content-rule-drip-duration-' . $this->membership->ID );
+				$r2 = $this->rule->delete_delay_meta( '_item-content-rule-drip-duration-' . $this->membership->ID );
 			} else {
 
 				$duration = $data['duration'];
@@ -183,7 +183,7 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 					throw new InvalidArgumentException( "Invalid duration '$duration'" );
 				}
 
-				$r2 = update_post_meta( $this->post->ID, '_item-content-rule-drip-duration-' . $this->membership->ID, $duration );
+				$r2 = $this->rule->update_delay_meta( '_item-content-rule-drip-duration-' . $this->membership->ID, $duration );
 			}
 
 			$this->duration = $data['duration'];
@@ -205,12 +205,12 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 			throw new UnexpectedValueException( 'Constructed with null IT_Exchange_Membership.' );
 		}
 
-		if ( ! $this->post ) {
-			throw new UnexpectedValueException( 'Constructed with null WP_Post' );
+		if ( ! $this->rule ) {
+			throw new UnexpectedValueException( 'Constructed with null Delayable rule.' );
 		}
 
-		$r1 = delete_post_meta( $this->post->ID, '_item-content-rule-drip-interval-' . $this->membership->ID );
-		$r2 = delete_post_meta( $this->post->ID, '_item-content-rule-drip-duration-' . $this->membership->ID );
+		$r1 = $this->rule->delete_delay_meta( '_item-content-rule-drip-interval-' . $this->membership->ID );
+		$r2 = $this->rule->delete_delay_meta( '_item-content-rule-drip-duration-' . $this->membership->ID );
 
 		return $r1 && $r2;
 	}

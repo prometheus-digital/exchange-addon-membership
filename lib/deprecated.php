@@ -59,3 +59,18 @@ function it_exchange_membership_addon_ajax_update_duration() {
 }
 
 add_action( 'wp_ajax_it-exchange-membership-addon-update-drip-rule-duration', 'it_exchange_membership_addon_ajax_update_duration' );
+
+/**
+ * Builds the actual drip rule HTML
+ *
+ * @since 1.0.0
+ *
+ * @param array    $rule       A Memberships rule
+ * @param int      $count      current row count, used for JavaScript/AJAX
+ * @param int|bool $product_id Memberhip's product ID
+ *
+ * @return string HTML output of drip rule div
+ */
+function it_exchange_membership_addon_build_drip_rules( $rule = array(), $count, $product_id = false ) {
+	_deprecated_function( __FUNCTION__, '1.18' );
+}

@@ -227,7 +227,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 
 					if ( $rule_model instanceof IT_Exchange_Membership_Content_Rule_Delayable && $delay_data ) {
 
-						$delay = $factory->make_delay_rule( $rule['delay-type'], $membership, $rule_model->get_post_for_delay() );
+						$delay = $factory->make_delay_rule( $rule['delay-type'], $membership, $rule_model );
 
 						if ( $delay ) {
 							try {

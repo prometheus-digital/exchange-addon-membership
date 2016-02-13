@@ -207,7 +207,7 @@ class IT_Exchange_Membership_Admin_Rule_Renderer {
 					<?php
 					$current_delay = $rule->get_delay_rule();
 					$current_delay = $current_delay ? $current_delay->get_type() : '';
-					$all_delay     = it_exchange_membership_addon_get_delay_rules( $rule->get_post_for_delay(), $rule->get_membership() );
+					$all_delay     = it_exchange_membership_addon_get_delay_rules( $rule, $rule->get_membership() );
 					?>
 
 					<div class="it-exchange-membership-delay-rule-selection">

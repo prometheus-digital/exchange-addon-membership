@@ -110,42 +110,6 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 }
 
 /**
- * Builds the actual drip rule HTML
- *
- * @since 1.0.0
- *
- * @param array    $rule       A Memberships rule
- * @param int      $count      current row count, used for JavaScript/AJAX
- * @param int|bool $product_id Memberhip's product ID
- *
- * @return string HTML output of drip rule div
- */
-function it_exchange_membership_addon_build_drip_rules( $rule = array(), $count, $product_id = false ) {
-
-	$membership = $product_id ? it_exchange_get_product( $product_id ) : null;
-
-	if ( ! empty( $rule['term'] ) && isset( $rule['selected'] ) && $rule['selected'] === 'posts' ) {
-		$post = get_post( $rule['term'] );
-	}
-
-	if ( empty( $post ) ) {
-		$post = null;
-	}
-
-	$rules = it_exchange_membership_addon_get_delay_rules( $post, $membership );
-
-	$return = '';
-
-	foreach ( $rules as $rule ) {
-		$return .= '<div class="it-exchange-membership-content-delay-rule-' . $rule->get_type() . ' it-exchange-membership-content-delay-rule">';
-		$return .= $rule->get_field_html( "it_exchange_content_access_rules[$count]" );
-		$return .= '</div>';
-	}
-
-	return $return;
-}
-
-/**
  * Builds the actual restriction rule HTML, used for non-iThemes Exchange post types
  *
  * @since 1.0.0
@@ -294,28 +258,28 @@ function it_exchange_membership_addon_get_content_rules( $flat = true ) {
  *
  * @since 1.18
  *
- * @param WP_Post|null                $post
- * @param IT_Exchange_Membership|null $membership
+ * @param IT_Exchange_Membership_Content_Rule_Delayable|null $rule
+ * @param IT_Exchange_Membership|null                        $membership
  *
  * @return IT_Exchange_Membership_Delay_RuleInterface[]
  */
-function it_exchange_membership_addon_get_delay_rules( WP_Post $post = null, IT_Exchange_Membership $membership = null ) {
+function it_exchange_membership_addon_get_delay_rules( IT_Exchange_Membership_Content_Rule_Delayable $rule = null, IT_Exchange_Membership $membership = null ) {
 
 	$rules = array();
 
-	$rules[] = new IT_Exchange_Membership_Delay_Rule_Drip( $post, $membership );
-	$rules[] = new IT_Exchange_Membership_Delay_Rule_Date( $post, $membership );
+	$rules[] = new IT_Exchange_Membership_Delay_Rule_Drip( $rule, $membership );
+	$rules[] = new IT_Exchange_Membership_Delay_Rule_Date( $rule, $membership );
 
 	/**
 	 * Filter the available delay rules.
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Delay_RuleInterface[] $rules
-	 * @param WP_Post                                      $post
-	 * @param IT_Exchange_Membership                       $membership
+	 * @param IT_Exchange_Membership_Delay_RuleInterface[]  $rules
+	 * @param IT_Exchange_Membership_Content_Rule_Delayable $post
+	 * @param IT_Exchange_Membership                        $membership
 	 */
-	$rules = apply_filters( 'it_exchange_membership_addon_get_delay_rules', $rules, $post, $membership );
+	$rules = apply_filters( 'it_exchange_membership_addon_get_delay_rules', $rules, $rule, $membership );
 
 	return $rules;
 }

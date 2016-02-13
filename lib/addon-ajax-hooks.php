@@ -267,8 +267,6 @@ function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
 		) );
 	}
 
-	$post = get_post( $_POST['ID'] );
-
 	$return = '<div class="it-exchange-new-membership-rule-post it-exchange-new-membership-rule">';
 	$return .= '<select class="it-exchange-membership-id" name="it_exchange_membership_id">';
 	$membership_products = it_exchange_get_products( array(
@@ -283,7 +281,7 @@ function it_exchange_membership_addon_ajax_add_content_access_rule_to_post() {
 	$return .= '<span class="it-exchange-membership-remove-new-rule">&times;</span>';
 	$return .= '<div class="it-exchange-membership-rule-delay">' . __( 'Delay', 'LION' ) . '</div>';
 
-	$all_delay = it_exchange_membership_addon_get_delay_rules( $post );
+	$all_delay = it_exchange_membership_addon_get_delay_rules();
 
 	ob_start();
 	?>
@@ -487,21 +485,29 @@ function it_exchange_membership_addon_ajax_update_drip_rule() {
 		) );
 	}
 
-	if ( ! current_user_can( 'edit_post', $_REQUEST['post'] ) ) {
+	if ( empty( $_REQUEST['post'] ) || ! current_user_can( 'edit_post', $_REQUEST['post'] ) ) {
 		wp_send_json_error( array(
 			'message' => __( 'You don\'t have permission to do this.', 'LION' )
 		) );
 	}
 
 
-	if ( ! empty( $_REQUEST['post'] ) && ! empty( $_REQUEST['membership'] ) && ! empty( $_REQUEST['changes'] ) && ! empty( $_REQUEST['type'] ) ) {
-		$post       = get_post( $_REQUEST['post'] );
+	if ( ! empty( $_REQUEST['membership'] ) && ! empty( $_REQUEST['changes'] ) && ! empty( $_REQUEST['type'] ) && ! empty( $_REQUEST['rule'] ) ) {
+
 		$membership = it_exchange_get_product( $_REQUEST['membership'] );
 		$type       = $_REQUEST['type'];
 		$changes    = $_REQUEST['changes'];
 
-		$factory = new IT_Exchange_Membership_Rule_Factory();
-		$delay   = $factory->make_delay_rule( $type, $membership, $post );
+		$factory   = new IT_Exchange_Membership_Rule_Factory();
+		$delayable = $factory->make_content_rule_by_id( $_REQUEST['rule'], $membership );
+
+		if ( ! $delayable instanceof IT_Exchange_Membership_Content_Rule_Delayable ) {
+			wp_send_json_error( array(
+				'message' => __( 'Invalid rule.', 'LION' )
+			) );
+		}
+
+		$delay = $factory->make_delay_rule( $type, $membership, $delayable );
 
 		if ( $delay ) {
 			try {
