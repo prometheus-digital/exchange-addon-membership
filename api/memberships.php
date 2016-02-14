@@ -241,14 +241,21 @@ function it_exchange_membership_addon_get_customer_memberships( $customer_id = f
  */
 function it_exchange_get_customer_membership_subscriptions( IT_Exchange_Customer $customer = null ) {
 
-	$memberships  = it_exchange_membership_addon_get_customer_memberships( $customer ? $customer->ID : false );
-	$transactions = array_unique( array_values( $memberships ) );
+	$memberships = it_exchange_membership_addon_get_customer_memberships( $customer ? $customer->ID : false );
 
-	try {
-		$subs = array_map( 'it_exchange_get_subscription', array_map( 'it_exchange_get_transaction', $transactions ) );
-	}
-	catch ( Exception $e ) {
-		return array();
+	$subs = array();
+
+	foreach ( $memberships as $product_id => $transaction_id ) {
+
+		$txn  = it_exchange_get_transaction( $transaction_id );
+		$prod = it_exchange_get_product( $product_id );
+
+		try {
+			$subs[] = it_exchange_get_subscription( $txn, $prod );
+		}
+		catch ( Exception $e ) {
+
+		}
 	}
 
 	return $subs;
