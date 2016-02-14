@@ -177,7 +177,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 				<?php if ( $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable && $rule->get_delay_rule() ): ?>
 					<?php $delay_rule = $rule->get_delay_rule(); ?>
 
-					<div class="it-exchange-membership-rule-delay"><?php _e( 'Delay', 'LION' ); ?></div>
+					<div class="it-exchange-membership-rule-delay"><?php echo $delay_rule->get_type( true ); ?></div>
 					<div class="it-exchange-membership-<?php echo $delay_rule->get_type(); ?>-rule it-exchange-membership-delay-rule" data-type="<?php echo $delay_rule->get_type(); ?>">
 						<?php echo $delay_rule->get_field_html( "[$membership_id][delay]" ); ?>
 					</div>
