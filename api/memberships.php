@@ -251,7 +251,7 @@ function it_exchange_get_customer_membership_subscriptions( IT_Exchange_Customer
 		$prod = it_exchange_get_product( $product_id );
 
 		try {
-			$subs[] = it_exchange_get_subscription( $txn, $prod );
+			$subs[] = it_exchange_get_subscription_by_transaction( $txn, $prod );
 		}
 		catch ( Exception $e ) {
 

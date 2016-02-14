@@ -62,7 +62,7 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 
 	$result .= '<div class="it-exchange-membership-membership-content">';
 
-	$subscription = it_exchange_get_subscription( it_exchange_get_transaction( $memberships[ $product_id ] ) );
+	$subscription = it_exchange_get_subscription_by_transaction( it_exchange_get_transaction( $memberships[ $product_id ] ) );
 	$factory      = new IT_Exchange_Membership_Rule_Factory();
 
 	foreach ( $all_access as $product_id => $ignore ) {
