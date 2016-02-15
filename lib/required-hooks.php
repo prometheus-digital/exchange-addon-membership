@@ -600,10 +600,9 @@ function it_exchange_membership_addon_setup_customer_session() {
 		return;
 	}
 
-	$user_id               = get_current_user_id();
-	$customer              = new IT_Exchange_Customer( $user_id );
-	$member_access         = $customer->get_customer_meta( 'member_access' );
-	$member_access_session = it_exchange_membership_addon_get_customer_memberships();
+	$user_id       = get_current_user_id();
+	$customer      = new IT_Exchange_Customer( $user_id );
+	$member_access = $customer->get_customer_meta( 'member_access' );
 
 	if ( empty( $member_access ) ) {
 
@@ -611,61 +610,6 @@ function it_exchange_membership_addon_setup_customer_session() {
 		it_exchange_clear_session_data( 'parent_access' );
 
 		return;
-	}
-
-	//If the transient doesn't exist, verify the membership access subscriber status and reset transient
-	$transient = get_transient( 'member_access_check_' . $customer->id );
-
-	if ( empty( $transient ) ) {
-		foreach ( $member_access as $txn_id => $product_id ) {
-			$transaction = it_exchange_get_transaction( $txn_id );
-
-			if ( ! empty( $transaction ) ) {
-				$transaction_status = strtolower( $transaction->get_status() );
-			} else {
-				$transaction_status = 'failed';
-			}
-
-			if ( empty( $transaction ) || empty( $transaction->ID )
-			     || $transaction->ID !== $txn_id
-			     || in_array( $transaction_status, array(
-					'voided',
-					'reversed',
-					'deactivated',
-					'failed',
-					'refunded'
-				), true )
-			) {
-				unset( $member_access[ $txn_id ] );
-			} else {
-				$subscription_status = $transaction->get_transaction_meta( 'subscriber_status' );
-				//empty means it was never set... which should mean that recurring payments isn't setup
-				if ( ! empty( $subscription_status ) && 'deactivated' === $subscription_status ) {
-					//This should never happen unless it is an auto-renewing payment that has been deactivated...
-					//Otherwise we'd have to worry about carts with multiple membership products
-					unset( $member_access[ $txn_id ] );
-				}
-			}
-		}
-
-		$customer->update_customer_meta( 'member_access', $member_access ); //Update the member_access customer meta, remove invalids
-
-		foreach ( $member_access as $txn_id => $product_id ) {
-			if ( ! it_exchange_transaction_is_cleared_for_delivery( $txn_id ) ) {
-				unset( $member_access[ $txn_id ] );
-			}
-		}
-
-		set_transient( 'member_access_check_' . $customer->id, $member_access, 60 * 60 * 4 ); //only do it every four hours
-	} else {
-		$member_diff = array_diff_assoc( (array) $member_access, (array) $member_access_session );
-		if ( ! empty( $member_diff ) ) {
-			foreach ( $member_access as $txn_id => $product_id ) {
-				if ( ! it_exchange_transaction_is_cleared_for_delivery( $txn_id ) ) {
-					unset( $member_access[ $txn_id ] );
-				}
-			}
-		}
 	}
 
 	$flip_member_access = array();
@@ -688,7 +632,6 @@ function it_exchange_membership_addon_setup_customer_session() {
 	if ( ! empty( $parent_access ) ) {
 		it_exchange_update_session_data( 'parent_access', $parent_access );
 	}
-
 }
 
 add_action( 'wp', 'it_exchange_membership_addon_setup_customer_session' );
