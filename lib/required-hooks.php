@@ -688,6 +688,10 @@ function it_exchange_update_member_access_on_transaction_status_change( $transac
 
 	$member_access = $customer->get_customer_meta( 'member_access' );
 
+	if ( ! is_array( $member_access ) ) {
+		$member_access = array();
+	}
+
 	$new_cleared = it_exchange_transaction_is_cleared_for_delivery( $transaction );
 
 	if ( $new_cleared && ! $old_status_cleared ) {
@@ -725,6 +729,10 @@ function it_exchange_update_member_access_on_subscription_status_change( $new_st
 
 	$customer      = $subscription->get_beneficiary();
 	$member_access = $customer->get_customer_meta( 'member_access' );
+
+	if ( ! is_array( $member_access ) ) {
+		$member_access = array();
+	}
 
 	$tid = $subscription->get_transaction()->ID;
 
