@@ -43,6 +43,10 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 
 		$subscriptions = it_exchange_get_customer_membership_subscriptions( $customer );
 
+		if ( empty( $subscriptions ) ) {
+			return $this->factory->make_all_for_post( $post );
+		}
+
 		$failed = array();
 
 		foreach ( $subscriptions as $subscription ) {
