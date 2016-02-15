@@ -747,6 +747,34 @@ function it_exchange_update_member_access_on_subscription_status_change( $new_st
 add_action( 'it_exchange_transition_subscription_status', 'it_exchange_update_member_access_on_subscription_status_change', 10, 3 );
 
 /**
+ * Revoke a member's access when a transaction is deleted.
+ *
+ * @since 1.18
+ *
+ * @param int $transaction_id
+ */
+function it_exchange_revoke_member_access_when_transaction_deleted( $transaction_id ) {
+
+	if ( get_post_type( $transaction_id ) !== 'it_exchange_tran' ) {
+		return;
+	}
+
+	$customer = it_exchange_get_transaction_customer( $transaction_id );
+
+	$member_access = $customer->get_customer_meta( 'member_access' );
+
+	if ( empty( $member_access ) ) {
+		return;
+	}
+
+	unset( $member_access[ $transaction_id ] );
+
+	$customer->update_customer_meta( 'member_access', $member_access );
+}
+
+add_action( 'before_delete_post', 'it_exchange_revoke_member_access_when_transaction_deleted', 0 );
+
+/**
  * Creates sessions data with logged in customer's membership access rules
  *
  * @since 1.0.0
