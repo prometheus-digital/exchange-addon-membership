@@ -526,12 +526,14 @@ add_action( 'it_exchange_after_print_extended_description_metabox', 'it_exchange
  * @return void
  */
 function it_exchange_membership_addon_add_transaction( $transaction_id ) {
+
 	$cart_object         = get_post_meta( $transaction_id, '_it_exchange_cart_object', true );
 	$customer_id         = get_post_meta( $transaction_id, '_it_exchange_customer_id', true );
 	$customer            = new IT_Exchange_Customer( $customer_id );
 	$transaction         = it_exchange_get_transaction( $transaction_id );
 	$member_access       = $customer->get_customer_meta( 'member_access' );
 	$cancel_subscription = it_exchange_get_session_data( 'cancel_subscription' );
+
 	foreach ( $cart_object->products as $product ) {
 		$product_id   = $product['product_id'];
 		$product_type = it_exchange_get_product_type( $product_id );
@@ -548,6 +550,7 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 			$transaction->update_transaction_meta( 'credit', $cancel_subscription[ $product_id ]['credit'] );
 		}
 	}
+
 	if ( ! empty( $cancel_subscription ) ) {
 		foreach ( $cancel_subscription as $cancel_subscription_item ) {
 			$old_transaction_id = $cancel_subscription_item['old_transaction_id'];
@@ -555,10 +558,11 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 			$old_transaction->update_status( 'cancelled' );
 		}
 	}
+
 	$customer->update_customer_meta( 'member_access', $member_access );
 }
 
-add_action( 'it_exchange_add_transaction_success', 'it_exchange_membership_addon_add_transaction' );
+add_action( 'it_exchange_add_transaction_success', 'it_exchange_membership_addon_add_transaction', 0 );
 
 /**
  * Adds necessary details to Exchange upon successfully completed child transaction
@@ -690,6 +694,80 @@ function it_exchange_membership_addon_setup_customer_session() {
 add_action( 'wp', 'it_exchange_membership_addon_setup_customer_session' );
 
 /**
+ * Update a customer's member access whenever the transaction's status changes.
+ *
+ * This is only used for memberships which are not connected to a subscription. Subscription
+ * memberships will have their access changes whenever the subscription status changes.
+ *
+ * @since 1.18
+ *
+ * @param IT_Exchange_Transaction $transaction
+ * @param string                  $old_status
+ * @param bool                    $old_status_cleared
+ * @param string                  $new_status
+ */
+function it_exchange_update_member_access_on_transaction_status_change( $transaction, $old_status, $old_status_cleared, $new_status ) {
+
+	$memberships = array();
+
+	foreach ( $transaction->get_products() as $product ) {
+
+		$product = it_exchange_get_product( $product['product_id'] );
+
+		if ( $product instanceof IT_Exchange_Membership ) {
+			$memberships[] = $product->ID;
+		}
+	}
+
+	if ( empty( $memberships ) ) {
+		return;
+	}
+
+	// account for cases where a subscription membership ( or any other product ) and a non-subscription
+	// membership are purchased in the same transaction
+	$subs = it_exchange_get_transaction_subscriptions( $transaction );
+
+	foreach ( $subs as $sub ) {
+		if ( $sub->get_product() instanceof IT_Exchange_Membership ) {
+			$i = array_search( $sub->get_product()->ID, $memberships );
+
+			if ( $i !== false ) {
+				unset( $memberships[ $i ] );
+			}
+		}
+	}
+
+	if ( empty( $memberships ) ) {
+		return;
+	}
+
+	$customer = it_exchange_get_transaction_customer( $transaction );
+
+	$member_access = $customer->get_customer_meta( 'member_access' );
+
+	$new_cleared = it_exchange_transaction_is_cleared_for_delivery( $transaction );
+
+	if ( $new_cleared && ! $old_status_cleared ) {
+
+		if ( ! isset( $member_access[ $transaction->ID ] ) ) {
+			$member_access[ $transaction->ID ] = array();
+		}
+
+		foreach ( $memberships as $membership ) {
+			if ( ! in_array( $membership, $member_access[ $transaction->ID ] ) ) {
+				$member_access[ $transaction->ID ][] = $membership;
+			}
+		}
+	} elseif ( ! $new_cleared && $old_status_cleared ) {
+		unset( $member_access[ $transaction->ID ] );
+	} else {
+		return;
+	}
+
+	$customer->update_customer_meta( 'member_access', $member_access );
+}
+
+/**
  * Update the member access array when the subscription status changes.
  *
  * @since 1.18
@@ -745,7 +823,7 @@ function it_exchange_before_delete_membership_product( $post_id ) {
 	}
 
 	$factory = new IT_Exchange_Membership_Rule_Factory();
-	$rules = $factory->make_all_for_membership( $membership );
+	$rules   = $factory->make_all_for_membership( $membership );
 
 	foreach ( $rules as $rule ) {
 		$rule->delete();
