@@ -767,6 +767,8 @@ function it_exchange_update_member_access_on_transaction_status_change( $transac
 	$customer->update_customer_meta( 'member_access', $member_access );
 }
 
+add_action( 'it_exchange_update_transaction_status', 'it_exchange_update_member_access_on_transaction_status_change', 10, 4 );
+
 /**
  * Update the member access array when the subscription status changes.
  *
