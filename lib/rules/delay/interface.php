@@ -14,18 +14,6 @@
 interface IT_Exchange_Membership_Delay_RuleInterface extends IT_Exchange_Membership_RuleInterface {
 
 	/**
-	 * Evaluate the rule.
-	 *
-	 * @since 1.18
-	 *
-	 * @param IT_Exchange_Subscription $subscription
-	 * @param WP_Post                  $post
-	 *
-	 * @return bool True if readable
-	 */
-	public function evaluate( IT_Exchange_Subscription $subscription, WP_Post $post = null );
-
-	/**
 	 * Get the availability date for this rule.
 	 *
 	 * Null can be returned to indicate that the subscription will never
