@@ -325,7 +325,7 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 							$expires = __( 'Forever', 'LION' );
 						}
 
-						if ( $membership->is_auto_renewing() ) {
+						if ( $user_membership->is_auto_renewing() ) {
 							$expires .= ' (auto-renewing)';
 						}
 
