@@ -231,30 +231,30 @@ function it_exchange_membership_addon_get_customer_memberships( $customer_id = f
 }
 
 /**
- * Get a customer's membership subscriptions.
+ * Get a customer's memberships.
  *
  * @since 1.18
  *
  * @param IT_Exchange_Customer|null $customer
  *
- * @return IT_Exchange_Subscription[]
+ * @return IT_Exchange_User_MembershipInterface[]
  */
-function it_exchange_get_customer_membership_subscriptions( IT_Exchange_Customer $customer = null ) {
+function it_exchange_get_user_memberships( IT_Exchange_Customer $customer = null ) {
 
-	$memberships = it_exchange_membership_addon_get_customer_memberships( $customer ? $customer->ID : false );
+	$membership_ids = it_exchange_membership_addon_get_customer_memberships( $customer ? $customer->ID : false );
 
-	$subs = array();
+	$memberships = array();
 
-	foreach ( $memberships as $product_id => $transaction_id ) {
+	foreach ( $membership_ids as $product_id => $transaction_id ) {
 
 		$txn  = it_exchange_get_transaction( $transaction_id );
 		$prod = it_exchange_get_product( $product_id );
 
 		try {
-			$sub = it_exchange_get_subscription_by_transaction( $txn, $prod );
+			$subscription = it_exchange_get_subscription_by_transaction( $txn, $prod );
 
-			if ( $sub ) {
-				$subs[] = $sub;
+			if ( $subscription ) {
+				$memberships[] = new IT_Exchange_Membership_Subscription_Driver( $subscription );
 			}
 		}
 		catch ( Exception $e ) {
@@ -262,7 +262,7 @@ function it_exchange_get_customer_membership_subscriptions( IT_Exchange_Customer
 		}
 	}
 
-	return $subs;
+	return $memberships;
 }
 
 /**

@@ -17,9 +17,9 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 	private $rules;
 
 	/**
-	 * @var IT_Exchange_Subscription
+	 * @var IT_Exchange_User_MembershipInterface
 	 */
-	private $subscription;
+	private $user_membership;
 
 	/**
 	 * @var IT_Exchange_Membership_Rule_Factory
@@ -33,10 +33,10 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 	 * @param IT_Exchange_Subscription            $subscription
 	 * @param IT_Exchange_Membership_Rule_Factory $factory
 	 */
-	public function __construct( array $rules, IT_Exchange_Subscription $subscription, IT_Exchange_Membership_Rule_Factory $factory ) {
-		$this->rules        = $rules;
-		$this->subscription = $subscription;
-		$this->factory      = $factory;
+	public function __construct( array $rules, IT_Exchange_User_MembershipInterface $user_membership, IT_Exchange_Membership_Rule_Factory $factory ) {
+		$this->rules           = $rules;
+		$this->user_membership = $user_membership;
+		$this->factory         = $factory;
 	}
 
 	/**
@@ -196,10 +196,8 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 	 */
 	protected function render_post( WP_Post $post, IT_Exchange_Membership_Content_RuleInterface $rule, array $options ) {
 
-		$subscription = $this->subscription;
-
 		if ( $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable && $rule->get_delay_rule() ) {
-			$delay = $rule->get_delay_rule()->get_availability_date( $subscription );
+			$delay = $rule->get_delay_rule()->get_availability_date( $this->user_membership );
 
 			if ( ! $delay ) {
 				return '';

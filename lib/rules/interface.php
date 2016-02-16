@@ -13,14 +13,14 @@ interface IT_Exchange_Membership_RuleInterface {
 	/**
 	 * Evaluate the rule.
 	 *
-	 * @since 1.18
+	 * @since    1.18
 	 *
-	 * @param IT_Exchange_Subscription $subscription
-	 * @param WP_Post                  $post
+	 * @param IT_Exchange_User_MembershipInterface $user_membership
+	 * @param WP_Post                              $post
 	 *
 	 * @return bool True if readable
 	 */
-	public function evaluate( IT_Exchange_Subscription $subscription, WP_Post $post );
+	public function evaluate( IT_Exchange_User_MembershipInterface $user_membership, WP_Post $post );
 
 	/**
 	 * Get HTML to render the necessary form fields.

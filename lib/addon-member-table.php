@@ -298,21 +298,21 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 					break;
 				case 'membership':
 
-					$subscriptions = it_exchange_get_customer_membership_subscriptions( it_exchange_get_customer( $user_object->ID ) );
+					$user_memberships = it_exchange_get_user_memberships( it_exchange_get_customer( $user_object->ID ) );
 
 					$membership_labels = array();
 
-					foreach ( $subscriptions as $subscription ) {
+					foreach ( $user_memberships as $user_membership ) {
 
-						$membership = $subscription->get_product();
+						$product = $user_membership->get_membership();
 
-						if ( $membership ) {
-							$title = get_the_title( $membership );
+						if ( $product ) {
+							$title = get_the_title( $product->ID );
 						} else {
 							$title = __( 'Missing Membership', 'LION' );
 						}
 
-						if ( $expires = $subscription->get_expiry_date() ) {
+						if ( $expires = $user_membership->get_end_date() ) {
 
 							$now = new DateTime();
 
@@ -325,9 +325,9 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 							$expires = __( 'Forever', 'LION' );
 						}
 
-						if ( $subscription->is_auto_renewing() ) {
+						/*if ( $membership->is_auto_renewing() ) {
 							$expires .= ' (auto-renewing)';
-						}
+						}*/
 
 						$membership_labels[] = "$title <span class='tip' title='$expires'>i</span>";
 					}

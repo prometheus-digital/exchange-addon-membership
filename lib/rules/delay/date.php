@@ -52,12 +52,12 @@ class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_D
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Subscription $subscription
-	 * @param WP_Post                  $post
+	 * @param IT_Exchange_User_MembershipInterface $user_membership
+	 * @param WP_Post                              $post
 	 *
 	 * @return bool True if readable
 	 */
-	public function evaluate( IT_Exchange_Subscription $subscription, WP_Post $post = null ) {
+	public function evaluate( IT_Exchange_User_MembershipInterface $user_membership, WP_Post $post = null ) {
 
 		if ( ! $this->date ) {
 			return false;
@@ -167,11 +167,11 @@ class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_D
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Subscription $subscription
+	 * @param IT_Exchange_Subscription|IT_Exchange_User_MembershipInterface $user_membership
 	 *
 	 * @return DateTime|null
 	 */
-	public function get_availability_date( IT_Exchange_Subscription $subscription ) {
+	public function get_availability_date( IT_Exchange_User_MembershipInterface $user_membership ) {
 		return $this->date;
 	}
 

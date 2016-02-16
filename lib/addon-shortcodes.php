@@ -65,8 +65,9 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 	$transaction = it_exchange_get_transaction( $memberships[ $product_id ] );
 	$product     = it_exchange_get_product( $product_id );
 
-	$subscription = it_exchange_get_subscription_by_transaction( $transaction, $product );
-	$factory      = new IT_Exchange_Membership_Rule_Factory();
+	$subscription    = it_exchange_get_subscription_by_transaction( $transaction, $product );
+	$user_membership = new IT_Exchange_Membership_Subscription_Driver( $subscription );
+	$factory         = new IT_Exchange_Membership_Rule_Factory();
 
 	foreach ( $all_access as $product_id => $ignore ) {
 
@@ -92,7 +93,7 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 			$result .= '<h2>' . $atts['title'] . '</h2>';
 		}
 
-		$renderer       = new IT_Exchange_Membership_Front_Rule_Renderer( $access_rules, $subscription, $factory );
+		$renderer       = new IT_Exchange_Membership_Front_Rule_Renderer( $access_rules, $user_membership, $factory );
 		$render_options = $atts;
 
 		$render_options['include_product_title'] = count( $all_access ) > 1;

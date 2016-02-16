@@ -41,16 +41,16 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 			return $this->factory->make_all_for_post( $post );
 		}
 
-		$subscriptions = it_exchange_get_customer_membership_subscriptions( $customer );
+		$user_memberships = it_exchange_get_user_memberships( $customer );
 
-		if ( empty( $subscriptions ) ) {
+		if ( empty( $user_memberships ) ) {
 			return $this->factory->make_all_for_post( $post );
 		}
 
 		$failed = array();
 
-		foreach ( $subscriptions as $subscription ) {
-			$rules = $this->factory->make_all_for_membership( $subscription->get_product() );
+		foreach ( $user_memberships as $user_membership ) {
+			$rules = $this->factory->make_all_for_membership( $user_membership->get_membership() );
 
 			foreach ( $rules as $rule ) {
 
@@ -58,7 +58,7 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 					continue;
 				}
 
-				if ( ! $rule->evaluate( $subscription, $post ) ) {
+				if ( ! $rule->evaluate( $user_membership, $post ) ) {
 					$failed[] = $rule;
 				}
 			}
@@ -83,15 +83,14 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 	 */
 	public function evaluate_drip( WP_Post $post, IT_Exchange_Customer $customer ) {
 
-		$subscriptions = it_exchange_get_customer_membership_subscriptions( $customer );
+		$user_memberships = it_exchange_get_user_memberships( $customer );
 
 		/** @var IT_Exchange_Membership_Delay_RuleInterface $failed */
-		$failed              = null;
-		$failed_subscription = null;
+		$failed            = null;
+		$failed_membership = null;
 
-		/** @var IT_Exchange_Subscription $subscription */
-		foreach ( $subscriptions as $subscription ) {
-			$rules = $this->factory->make_all_for_membership( $subscription->get_product() );
+		foreach ( $user_memberships as $user_membership ) {
+			$rules = $this->factory->make_all_for_membership( $user_membership->get_membership() );
 
 			foreach ( $rules as $rule ) {
 
@@ -103,7 +102,7 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 					continue;
 				}
 
-				if ( ! $rule->evaluate( $subscription, $post ) ) {
+				if ( ! $rule->evaluate( $user_membership, $post ) ) {
 					continue;
 				}
 
@@ -113,21 +112,21 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 					continue;
 				}
 
-				if ( $delay->evaluate( $subscription, $post ) ) {
+				if ( $delay->evaluate( $user_membership, $post ) ) {
 					return null;
 				}
 
-				$available = $delay->get_availability_date( $subscription );
+				$available = $delay->get_availability_date( $user_membership );
 
 				if ( is_null( $failed ) ) {
-					$failed              = $delay;
-					$failed_subscription = $subscription;
-				} elseif ( ! $failed->get_availability_date( $subscription ) ) {
-					$failed              = $delay;
-					$failed_subscription = $subscription;
-				} elseif ( $available && $failed->get_availability_date( $subscription ) > $available ) {
-					$failed              = $delay;
-					$failed_subscription = $subscription;
+					$failed            = $delay;
+					$failed_membership = $user_membership;
+				} elseif ( ! $failed->get_availability_date( $user_membership ) ) {
+					$failed            = $delay;
+					$failed_membership = $user_membership;
+				} elseif ( $available && $failed->get_availability_date( $user_membership ) > $available ) {
+					$failed            = $delay;
+					$failed_membership = $user_membership;
 				}
 			}
 		}
@@ -137,8 +136,8 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 		}
 
 		return array(
-			'rule'         => $failed,
-			'subscription' => $failed_subscription
+			'rule'       => $failed,
+			'membership' => $failed_membership
 		);
 	}
 }

@@ -64,6 +64,9 @@ include( 'lib/integrations/builder/init.php' );
  */
 require( 'lib/product-features/load.php' );
 
+require_once( dirname( __FILE__ ) . '/lib/interface.user-membership.php' );
+require_once( dirname( __FILE__ ) . '/lib/class.subscription-membership.php' );
+
 require_once( dirname( __FILE__ ) . '/lib/deprecated.php' );
 
 require_once( dirname( __FILE__ ) . '/lib/rules/load.php' );

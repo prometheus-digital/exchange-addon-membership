@@ -154,13 +154,13 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 
 		$membership_settings = it_exchange_get_option( 'addon_membership' );
 
-		/** @var IT_Exchange_Subscription $subscription */
-		$subscription = $failed['subscription'];
+		/** @var IT_Exchange_User_MembershipInterface $user_membership */
+		$user_membership = $failed['membership'];
 
 		/** @var IT_Exchange_Membership_Delay_RuleInterface $rule */
 		$rule = $failed['rule'];
 
-		if ( ! $rule->get_availability_date( $subscription ) ) {
+		if ( ! $rule->get_availability_date( $user_membership ) ) {
 			return __( 'Your membership is not eligible to receive this content.', 'LION' );
 		}
 
@@ -178,11 +178,11 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 			}
 		}
 
-		if ( ! $product && $subscription->get_product()->has_feature( 'membership-information', array( 'setting' => 'content-delayed' ) ) ) {
-			$message = $subscription->get_product()->get_feature( 'membership-information', array( 'setting' => 'content-delayed' ) );
+		if ( ! $product && $user_membership->get_membership()->has_feature( 'membership-information', array( 'setting' => 'content-delayed' ) ) ) {
+			$message = $user_membership->get_membership()->get_feature( 'membership-information', array( 'setting' => 'content-delayed' ) );
 		}
 
-		$available = $rule->get_availability_date( $subscription );
+		$available = $rule->get_availability_date( $user_membership );
 
 		if ( strpos( $message, '{available_date}' ) !== false ) {
 			$df      = get_option( 'date_format' );

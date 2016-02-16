@@ -64,14 +64,14 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Subscription $subscription
-	 * @param WP_Post                  $post
+	 * @param IT_Exchange_User_MembershipInterface $user_membership
+	 * @param WP_Post                              $post
 	 *
 	 * @return bool True if readable
 	 */
-	public function evaluate( IT_Exchange_Subscription $subscription, WP_Post $post = null ) {
+	public function evaluate( IT_Exchange_User_MembershipInterface $user_membership, WP_Post $post = null ) {
 
-		$start_time = (int) $subscription->get_start_date()->format( 'U' );
+		$start_time = (int) $user_membership->get_start_date()->format( 'U' );
 		$drip_time  = strtotime( $this->interval . ' ' . $this->duration, $start_time );
 
 		return $drip_time < time();
@@ -85,13 +85,13 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Subscription $subscription
+	 * @param IT_Exchange_Subscription|IT_Exchange_User_MembershipInterface $user_membership
 	 *
 	 * @return DateTime|null
 	 */
-	public function get_availability_date( IT_Exchange_Subscription $subscription ) {
+	public function get_availability_date( IT_Exchange_User_MembershipInterface $user_membership ) {
 
-		$start_time = (int) $subscription->get_start_date()->format( 'U' );
+		$start_time = (int) $user_membership->get_start_date()->format( 'U' );
 		$drip_time  = strtotime( $this->interval . ' ' . $this->duration, $start_time );
 
 		return new DateTime( "@$drip_time" );
