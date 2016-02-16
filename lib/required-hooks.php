@@ -80,6 +80,57 @@ function it_exchange_membership_show_php_version_nag() {
 add_action( 'admin_notices', 'it_exchange_membership_show_php_version_nag' );
 
 /**
+ * Shows a nag requiring version 1.35.0 of Exchange.
+ *
+ * @since 1.0.0
+ * @since 1.18 Increase minimum requirement to 1.35.0
+ *
+ * @return void
+ */
+function it_exchange_membership_addon_show_version_nag() {
+	if ( version_compare( $GLOBALS['it_exchange']['version'], '1.35.0', '<' ) ) {
+		?>
+		<div id="it-exchange-add-on-min-version-nag" class="it-exchange-nag">
+			<?php printf( __( 'The Membership add-on requires iThemes Exchange version 1.35.0 or greater. %sPlease upgrade Exchange%s.', 'LION' ), '<a href="' . admin_url( 'update-core.php' ) . '">', '</a>' ); ?>
+		</div>
+		<script type="text/javascript">
+			jQuery( document ).ready( function () {
+				if ( jQuery( '.wrap > h2' ).length == '1' ) {
+					jQuery( "#it-exchange-add-on-min-version-nag" ).insertAfter( '.wrap > h2' ).addClass( 'after-h2' );
+				}
+			} );
+		</script>
+		<?php
+	}
+}
+
+add_action( 'admin_notices', 'it_exchange_membership_addon_show_version_nag' );
+
+/**
+ * Shows a nag requiring version 1.8+ of recurring payments.
+ *
+ * @since 1.18
+ */
+function it_exchange_membership_addon_show_recurring_payments_version_nag() {
+	if ( function_exists( 'it_exchange_register_recurring_payments_addon' ) && ! class_exists( 'IT_Exchange_Subscription' ) ) {
+		?>
+		<div id="it-exchange-add-on-min-version-nag" class="it-exchange-nag">
+			<?php printf( __( 'The Membership add-on requires Recurring Payments version 1.8.0 or greater. %sPlease upgrade the Recurring Payments add-on%s.', 'LION' ), '<a href="' . admin_url( 'update-core.php' ) . '">', '</a>' ); ?>
+		</div>
+		<script type="text/javascript">
+			jQuery( document ).ready( function () {
+				if ( jQuery( '.wrap > h2' ).length == '1' ) {
+					jQuery( "#it-exchange-add-on-min-version-nag" ).insertAfter( '.wrap > h2' ).addClass( 'after-h2' );
+				}
+			} );
+		</script>
+		<?php
+	}
+}
+
+add_action( 'admin_notices', 'it_exchange_membership_addon_show_recurring_payments_version_nag' );
+
+/**
  * Adds a members table to the Users WP Menu.
  *
  * @since 1.2.0
@@ -177,33 +228,6 @@ function it_exchange_membership_addon_members_table() {
 	</div>
 	<?php
 }
-
-/**
- * Shows the nag when needed.
- *
- * @since 1.0.0
- * @since 1.18 Increase minimum requirement to 1.35.0
- *
- * @return void
- */
-function it_exchange_membership_addon_show_version_nag() {
-	if ( version_compare( $GLOBALS['it_exchange']['version'], '1.35.0', '<' ) ) {
-		?>
-		<div id="it-exchange-add-on-min-version-nag" class="it-exchange-nag">
-			<?php printf( __( 'The Membership add-on requires iThemes Exchange version 1.35.0 or greater. %sPlease upgrade Exchange%s.', 'LION' ), '<a href="' . admin_url( 'update-core.php' ) . '">', '</a>' ); ?>
-		</div>
-		<script type="text/javascript">
-			jQuery( document ).ready( function () {
-				if ( jQuery( '.wrap > h2' ).length == '1' ) {
-					jQuery( "#it-exchange-add-on-min-version-nag" ).insertAfter( '.wrap > h2' ).addClass( 'after-h2' );
-				}
-			} );
-		</script>
-		<?php
-	}
-}
-
-add_action( 'admin_notices', 'it_exchange_membership_addon_show_version_nag' );
 
 /**
  * Adds actions to the plugins page for the iThemes Exchange Membership plugin
