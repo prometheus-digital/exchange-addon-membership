@@ -83,6 +83,11 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 				array(
 					'key'     => '_it_exchange_customer_member_access',
 					'compare' => 'EXISTS',
+				),
+				array(
+					'key'     => '_it_exchange_customer_member_access',
+					'compare' => '!=',
+					'value'   => 'a:0:{}' // empty serialized array
 				)
 			);
 		}
