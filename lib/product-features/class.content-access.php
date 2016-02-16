@@ -29,7 +29,10 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 		add_action( 'it_exchange_update_product_feature_' . $this->slug, array( $this, 'save_feature' ), 9, 3 );
 		add_filter( 'it_exchange_get_product_feature_' . $this->slug, array( $this, 'get_feature' ), 9, 3 );
 		add_filter( 'it_exchange_product_has_feature_' . $this->slug, array( $this, 'product_has_feature' ), 9, 2 );
-		add_filter( 'it_exchange_product_supports_feature_' . $this->slug, array( $this, 'product_supports_feature'	), 9, 2 );
+		add_filter( 'it_exchange_product_supports_feature_' . $this->slug, array(
+			$this,
+			'product_supports_feature'
+		), 9, 2 );
 	}
 
 	/**
@@ -293,6 +296,10 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	 */
 	public function get_feature( $existing, $product_id ) {
 		$content_access = get_post_meta( $product_id, '_it-exchange-membership-addon-content-access-meta', true );
+
+		if ( empty( $content_access ) ) {
+			return array();
+		}
 
 		$resave = false;
 
