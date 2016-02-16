@@ -106,7 +106,34 @@ class IT_Exchange_User_Membership_Transaction_Driver implements IT_Exchange_User
 	 * @param string $new_status
 	 */
 	public function set_status( $new_status ) {
-		// no-op
+
+		$customer      = it_exchange_get_customer( $this->get_user()->ID );
+		$member_access = $customer->get_customer_meta( 'member_access' );
+
+		if ( $new_status === 'active' ) {
+
+			if ( ! isset( $member_access[ $this->transaction->ID ] ) ) {
+				$member_access[ $this->transaction->ID ] = array( $this->get_membership()->ID );
+			} elseif ( ! in_array( $this->get_membership()->ID, $member_access[ $this->transaction->ID ] ) ) {
+				$member_access[ $this->transaction->ID ][] = $this->get_membership()->ID;
+			}
+		} else {
+
+			if ( isset( $member_access[ $this->transaction->ID ] ) ) {
+
+				$i = array_search( $this->get_membership()->ID, $member_access[ $this->transaction->ID ] );
+
+				if ( $i !== false ) {
+					unset( $member_access[ $this->transaction->ID ][ $i ] );
+
+					if ( empty( $member_access[ $this->transaction->ID ] ) ) {
+						unset( $member_access[ $this->transaction->ID ] );
+					}
+				}
+			}
+		}
+
+		$customer->update_customer_meta( 'member_access', $member_access );
 	}
 
 	/**
