@@ -126,51 +126,6 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Return an associative array listing all the views that can be used
-	 * with this table.
-	 *
-	 * Provides a list of roles and user count for that role for easy
-	 * filtering of the user table.
-	 *
-	 * @since  CHANGEME
-	 * @access public
-	 *
-	 * @return array An array of HTML links, one for each view.
-	 */
-	public function get_views() {
-		global $membership;
-
-		$url   = add_query_arg( 'page', 'it-exchange-members-table', admin_url( 'users.php' ) );
-		$class = empty( $membership ) ? ' class="current"' : '';
-
-		$membership_links        = array();
-		$membership_links['all'] = "<a href='$url'$class>" . __( 'All', 'LION' ) . '</a>';
-
-		$member_products = it_exchange_get_products( array(
-			'product_type' => 'membership-product-type',
-			'numberposts'  => - 1,
-			'meta_query'   => array(
-				array(
-					'key'     => '_it_exchange_transaction_id',
-					'compare' => 'EXISTS'
-				)
-			)
-		) );
-
-		foreach ( $member_products as $member_product ) {
-			$class = '';
-
-			if ( $member_product->ID == $membership ) {
-				$class = ' class="current"';
-			}
-
-			$membership_links[ $member_product->ID ] = "<a href='" . esc_url( add_query_arg( 'membership', $member_product->ID, $url ) ) . "'$class>$member_product->post_title</a>";
-		}
-
-		return $membership_links;
-	}
-
-	/**
 	 * Get a list of columns for the list table.
 	 *
 	 * @since  CHANGEME
@@ -361,6 +316,53 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Extra controls to be displayed between bulk actions and pagination
+	 *
+	 * @since  3.1.0
+	 * @access protected
+	 *
+	 * @param string $which
+	 */
+	protected function extra_tablenav( $which ) {
+
+		if ( $which !== 'top' ) {
+			return;
+		}
+
+		$member_products = it_exchange_get_products( array(
+			'product_type' => 'membership-product-type',
+			'numberposts'  => - 1,
+			'meta_query'   => array(
+				array(
+					'key'     => '_it_exchange_transaction_id',
+					'compare' => 'EXISTS'
+				)
+			)
+		) );
+
+		$current = empty( $_GET['membership'] ) ? false : $_GET['membership'];
+		?>
+
+		<label class="screen-reader-text" for="filter-by-membership">
+			<?php _e( 'Filter members table by membership.', 'LION' ); ?>
+		</label>
+		<select name="membership" id="filter-by-membership">
+
+			<option value=""><?php _e( 'All Memberships', 'LION' ); ?></option>
+
+			<?php foreach ( $member_products as $product ): ?>
+				<option value="<?php echo esc_attr( $product->ID ); ?>" <?php selected( $product->ID, $current ); ?>>
+					<?php echo $product->post_title; ?>
+				</option>
+			<?php endforeach; ?>
+		</select>
+
+		<?php
+
+		submit_button( __( 'Filter' ), 'button', 'filter_action', false, array( 'id' => 'members-query-submit' ) );
+	}
+
+	/**
 	 * Display the table
 	 *
 	 * @since  3.1.0
@@ -369,7 +371,7 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 	public function display() {
 		$singular = $this->_args['singular'];
 
-		//$this->display_tablenav( 'top' );
+		$this->display_tablenav( 'top' );
 
 		?>
 		<table class="wp-list-table <?php echo implode( ' ', $this->get_table_classes() ); ?>">
