@@ -385,9 +385,12 @@ function it_exchange_membership_addon_media_form_button() {
 	add_thickbox();
 
 	if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
+
+		$title = __( 'Restrict content to a specific Membership product in this post with the Member Content shortcode', 'LION' );
+
 		// display button matching new UI
-		echo '<style>.it_exchange_membership_media_icon{
-					background:url(' . ITUtility::get_url_from_file( dirname( __FILE__ ) . '/images/membership16px.png' ) . ') no-repeat top left;
+		echo "<style>.it_exchange_membership_media_icon{
+					background:url(" . ITUtility::get_url_from_file( dirname( __FILE__ ) . '/images/membership16px.png' ) . ") no-repeat top left;
 					display: inline-block;
 					height: 16px;
 					margin: 0 2px 0 0;
@@ -398,7 +401,8 @@ function it_exchange_membership_addon_media_form_button() {
 					 padding-left: 0.4em;
 				}
 			</style>
-			<a href="#TB_inline?width=380&inlineId=select-membership-product" class="thickbox button it_exchange_membership_media_link" id="add_membership_content" title="' . __( 'Restrict content to a specific Membership product in this post with the Member Content shortcode', 'LION' ) . '"><span class="it_exchange_membership_media_icon "></span> ' . __( 'Member Content', 'LION' ) . '</a>';
+			<a href=\"#TB_inline?width=380&inlineId=select-membership-product\" class=\"thickbox button it_exchange_membership_media_link\" id=\"add_membership_content\" title=\"{$title}\">
+			<span class=\"it_exchange_membership_media_icon\"></span> " . __( 'Member Content', 'LION' ) . '</a>';
 	}
 }
 
@@ -457,7 +461,9 @@ function it_exchange_membership_addon_mce_popup_footer() {
 		<div id="select-membership-product" style="display:none;">
 			<div class="wrap">
 				<div>
-					<p class="description" style="padding:0 15px;"><?php _e( 'To restrict content within this post or page to users with a specific membership level, highlight the section you’d like to restrict in your content, choose the membership levels you’d like to give access to the content and click the Insert Shortcode button below.', 'LION' ); ?></p>
+					<p class="description" style="padding:0 15px;">
+						<?php _e( 'To restrict content within this post or page to users with a specific membership level, highlight the section you’d like to restrict in your content, choose the membership levels you’d like to give access to the content and click the Insert Shortcode button below.', 'LION' ); ?>
+					</p>
 					<div style="padding:15px 15px 0 15px;">
 						<h3><?php _e( 'Select Membership Product(s)', 'LION' ); ?></h3>
                         <span>
@@ -506,12 +512,13 @@ function it_exchange_membership_addon_after_print_extended_description_metabox( 
 	$product_type = it_exchange_get_product_type( $post->ID );
 
 	if ( 'membership-product-type' === $product_type ) {
-		echo '<p class="description">[it-exchange-membership-included-content] - ' . __( 'Displays content available with this membership. <a href="http://ithemes.com/codex/page/Exchange_Product_Types:_Memberships#Shortcodes">Click here to read about the available shortcode options.</a>', 'LION' ) . '</p>';
+
+		$codex = '<a href="http://ithemes.com/codex/page/Exchange_Product_Types:_Memberships#Shortcodes">';
+
+		echo '<p class="description">[it-exchange-membership-included-content] - ';
+		echo sprintf( __( 'Displays content available with this membership. %sClick here to read about the available shortcode options%s.', 'LION' ), $codex, '</a>' );
+		echo '</p>';
 	}
-
-	//http://ithemes.com/codex/page/Exchange_Product_Types:_Memberships#Shortcodes
-
-	return;
 }
 
 add_action( 'it_exchange_after_print_extended_description_metabox', 'it_exchange_membership_addon_after_print_extended_description_metabox' );
@@ -666,22 +673,25 @@ function it_exchange_update_member_access_on_transaction_status_change( $transac
 		return;
 	}
 
-	// account for cases where a subscription membership ( or any other product ) and a non-subscription
-	// membership are purchased in the same transaction
-	$subs = it_exchange_get_transaction_subscriptions( $transaction );
+	if ( function_exists( 'it_exchange_get_transaction_subscriptions' ) ) {
 
-	foreach ( $subs as $sub ) {
-		if ( $sub->get_product() instanceof IT_Exchange_Membership ) {
-			$i = array_search( $sub->get_product()->ID, $memberships );
+		// account for cases where a subscription membership ( or any other product ) and a non-subscription
+		// membership are purchased in the same transaction
+		$subs = it_exchange_get_transaction_subscriptions( $transaction );
 
-			if ( $i !== false ) {
-				unset( $memberships[ $i ] );
+		foreach ( $subs as $sub ) {
+			if ( $sub->get_product() instanceof IT_Exchange_Membership ) {
+				$i = array_search( $sub->get_product()->ID, $memberships );
+
+				if ( $i !== false ) {
+					unset( $memberships[ $i ] );
+				}
 			}
 		}
-	}
 
-	if ( empty( $memberships ) ) {
-		return;
+		if ( empty( $memberships ) ) {
+			return;
+		}
 	}
 
 	$customer = it_exchange_get_transaction_customer( $transaction );
@@ -1087,7 +1097,7 @@ add_filter( 'rewrite_rules_array', 'it_exchange_membership_addon_register_rewrit
  *
  * @since 1.0.0
  *
- * @param string page
+ * @param string $page
  *
  * @return string URL
  */

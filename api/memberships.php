@@ -250,17 +250,20 @@ function it_exchange_get_user_memberships( IT_Exchange_Customer $customer = null
 		$txn  = it_exchange_get_transaction( $transaction_id );
 		$prod = it_exchange_get_product( $product_id );
 
-		try {
-			$subscription = it_exchange_get_subscription_by_transaction( $txn, $prod );
+		if ( function_exists( 'it_exchange_get_subscription_by_transaction' ) ) {
 
-			if ( $subscription ) {
-				$memberships[] = new IT_Exchange_User_Membership_Subscription_Driver( $subscription );
+			try {
+				$subscription = it_exchange_get_subscription_by_transaction( $txn, $prod );
 
-				continue;
+				if ( $subscription ) {
+					$memberships[] = new IT_Exchange_User_Membership_Subscription_Driver( $subscription );
+
+					continue;
+				}
 			}
-		}
-		catch ( Exception $e ) {
+			catch ( Exception $e ) {
 
+			}
 		}
 
 		$memberships[] = new IT_Exchange_User_Membership_Transaction_Driver( $txn, $prod );
