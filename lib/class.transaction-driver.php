@@ -81,6 +81,17 @@ class IT_Exchange_User_Membership_Transaction_Driver implements IT_Exchange_User
 	}
 
 	/**
+	 * Is this membership auto-renewing.
+	 *
+	 * @since 1.18
+	 *
+	 * @return bool
+	 */
+	public function is_auto_renewing() {
+		return false;
+	}
+
+	/**
 	 * Get the status of this membership.
 	 *
 	 * @since 1.18

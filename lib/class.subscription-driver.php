@@ -74,6 +74,17 @@ class IT_Exchange_User_Membership_Subscription_Driver implements IT_Exchange_Use
 	}
 
 	/**
+	 * Is this membership auto-renewing.
+	 *
+	 * @since 1.18
+	 *
+	 * @return bool
+	 */
+	public function is_auto_renewing() {
+		return $this->subscription->is_auto_renewing();
+	}
+
+	/**
 	 * Get the status of this membership.
 	 *
 	 * @since 1.18

@@ -52,6 +52,15 @@ interface IT_Exchange_User_MembershipInterface {
 	public function get_end_date();
 
 	/**
+	 * Is this membership auto-renewing.
+	 *
+	 * @since 1.18
+	 *
+	 * @return bool
+	 */
+	public function is_auto_renewing();
+
+	/**
 	 * Get the status of this membership.
 	 *
 	 * @since 1.18

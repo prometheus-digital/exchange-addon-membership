@@ -325,9 +325,9 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 							$expires = __( 'Forever', 'LION' );
 						}
 
-						/*if ( $membership->is_auto_renewing() ) {
+						if ( $membership->is_auto_renewing() ) {
 							$expires .= ' (auto-renewing)';
-						}*/
+						}
 
 						$membership_labels[] = "$title <span class='tip' title='$expires'>i</span>";
 					}
