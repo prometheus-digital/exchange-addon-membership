@@ -244,6 +244,7 @@ class IT_Exchange_Memberships_Repair_Member_Access_Upgrade implements IT_Exchang
 					unset( $membership_ids[ $i ] );
 				}
 
+				// only active subscriptions need to be cancelled.
 				if ( $sub->get_status() !== IT_Exchange_Subscription::STATUS_ACTIVE ) {
 					continue;
 				}
@@ -286,6 +287,11 @@ class IT_Exchange_Memberships_Repair_Member_Access_Upgrade implements IT_Exchang
 			}
 
 			$customer->update_customer_meta( 'member_access', $member_access );
+		}
+
+		if ( $verbose ) {
+			$skin->debug( 'Upgraded Txn: ' . $transaction->ID );
+			$skin->debug( '' );
 		}
 	}
 
