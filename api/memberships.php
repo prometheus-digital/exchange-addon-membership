@@ -255,14 +255,79 @@ function it_exchange_get_user_memberships( IT_Exchange_Customer $customer = null
 
 			if ( $subscription ) {
 				$memberships[] = new IT_Exchange_User_Membership_Subscription_Driver( $subscription );
+
+				continue;
 			}
 		}
 		catch ( Exception $e ) {
 
 		}
+
+		$memberships[] = new IT_Exchange_User_Membership_Transaction_Driver( $txn, $prod );
 	}
 
 	return $memberships;
+}
+
+/**
+ * Get a user's membership for a given product.
+ *
+ * In the case of multiple memberships, the user membership that is still active
+ * with the earliest start date will be returned.
+ *
+ * @since 1.18
+ *
+ * @param IT_Exchange_Customer   $customer
+ * @param IT_Exchange_Membership $membership
+ *
+ * @return IT_Exchange_User_MembershipInterface
+ */
+function it_exchange_get_user_membership_for_product( IT_Exchange_Customer $customer, IT_Exchange_Membership $membership ) {
+
+	$user_memberships = it_exchange_get_user_memberships( $customer );
+
+	$user_memberships_matching_product = array();
+
+	foreach ( $user_memberships as $user_membership ) {
+		if ( $user_membership->get_membership()->ID === $membership->ID ) {
+			$user_memberships_matching_product[] = $user_membership;
+		}
+	}
+
+	if ( count( $user_memberships_matching_product ) === 1 ) {
+		return reset( $user_memberships_matching_product );
+	}
+
+	$active_user_memberships_matching_product = array();
+
+	/** @var IT_Exchange_User_MembershipInterface $membership */
+	foreach ( $user_memberships_matching_product as $membership ) {
+		if ( $membership->current_status_grants_access() ) {
+			$active_user_memberships_matching_product[] = $membership;
+		}
+	}
+
+	// if no memberships are active, then it doesn't matter which we return
+	if ( empty( $active_user_memberships_matching_product ) ) {
+		return reset( $user_memberships_matching_product );
+	}
+
+	if ( count( $active_user_memberships_matching_product ) === 1 ) {
+		return reset( $active_user_memberships_matching_product );
+	}
+
+	/** @var IT_Exchange_User_MembershipInterface $earliest_membership */
+	$earliest_membership = null;
+
+	foreach ( $active_user_memberships_matching_product as $membership ) {
+		if ( ! $earliest_membership ) {
+			$earliest_membership = $membership;
+		} elseif ( $earliest_membership->get_start_date() > $membership->get_start_date() ) {
+			$earliest_membership = $membership;
+		}
+	}
+
+	return $earliest_membership;
 }
 
 /**

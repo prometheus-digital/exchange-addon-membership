@@ -177,13 +177,11 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 
 		$options = ITUtility::merge_defaults( $options, $defaults );
 
-		$count       = 0;
-		$memberships = it_exchange_membership_addon_get_customer_memberships();
-		$transaction = it_exchange_get_transaction( $memberships[ $product_id ] );
-		$product     = it_exchange_get_product( $product_id );
+		$count    = 0;
+		$product  = it_exchange_get_product( $product_id );
+		$customer = it_exchange_get_current_customer();
 
-		$subscription    = it_exchange_get_subscription_by_transaction( $transaction, $product );
-		$user_membership = new IT_Exchange_User_Membership_Subscription_Driver( $subscription );
+		$user_membership = it_exchange_get_user_membership_for_product( $customer, $product );
 		$factory         = new IT_Exchange_Membership_Rule_Factory();
 
 		foreach ( $all_access as $product_id => $ignore ) {
