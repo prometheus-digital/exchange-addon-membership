@@ -254,7 +254,7 @@ function it_exchange_get_user_memberships( IT_Exchange_Customer $customer = null
 			$subscription = it_exchange_get_subscription_by_transaction( $txn, $prod );
 
 			if ( $subscription ) {
-				$memberships[] = new IT_Exchange_Membership_Subscription_Driver( $subscription );
+				$memberships[] = new IT_Exchange_User_Membership_Subscription_Driver( $subscription );
 			}
 		}
 		catch ( Exception $e ) {

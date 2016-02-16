@@ -7,9 +7,9 @@
  */
 
 /**
- * Class IT_Exchange_Membership_Subscription_Driver
+ * Class IT_Exchange_User_Membership_Subscription_Driver
  */
-class IT_Exchange_Membership_Subscription_Driver implements IT_Exchange_User_MembershipInterface {
+class IT_Exchange_User_Membership_Subscription_Driver implements IT_Exchange_User_MembershipInterface {
 
 	/**
 	 * @var IT_Exchange_Subscription
@@ -17,7 +17,7 @@ class IT_Exchange_Membership_Subscription_Driver implements IT_Exchange_User_Mem
 	private $subscription;
 
 	/**
-	 * IT_Exchange_Membership_Subscription constructor.
+	 * IT_Exchange_User_Membership_Subscription_Driver constructor.
 	 *
 	 * @param IT_Exchange_Subscription $subscription
 	 */
