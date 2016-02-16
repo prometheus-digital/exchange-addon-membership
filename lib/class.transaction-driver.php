@@ -144,6 +144,14 @@ class IT_Exchange_User_Membership_Transaction_Driver implements IT_Exchange_User
 	 * @return bool
 	 */
 	public function current_status_grants_access() {
-		return it_exchange_transaction_is_cleared_for_delivery( $this->transaction );
+
+		$customer      = it_exchange_get_customer( $this->get_user()->ID );
+		$member_access = $customer->get_customer_meta( 'member_access' );
+
+		if ( empty( $member_access[ $this->transaction->ID ] ) ) {
+			return false;
+		}
+
+		return false !== array_search( $this->get_membership()->ID, $member_access[ $this->transaction->ID ] );
 	}
 }
