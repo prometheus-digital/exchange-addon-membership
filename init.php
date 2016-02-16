@@ -71,6 +71,7 @@ require_once( dirname( __FILE__ ) . '/lib/class.transaction-driver.php' );
 require_once( dirname( __FILE__ ) . '/lib/deprecated.php' );
 
 require_once( dirname( __FILE__ ) . '/lib/rules/load.php' );
+require_once( dirname( __FILE__ ) . '/lib/upgrades/load.php' );
 
 $current_version = get_option( 'exchange_mmebership_version', '1.17.0' );
 
