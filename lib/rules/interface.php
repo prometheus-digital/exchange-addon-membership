@@ -10,10 +10,11 @@
  * Interface IT_Exchange_Membership_Rule
  */
 interface IT_Exchange_Membership_Rule {
+
 	/**
 	 * Evaluate the rule.
 	 *
-	 * @since    1.18
+	 * @since 1.18
 	 *
 	 * @param IT_Exchange_User_Membership $user_membership
 	 * @param WP_Post                     $post
@@ -25,7 +26,7 @@ interface IT_Exchange_Membership_Rule {
 	/**
 	 * Get HTML to render the necessary form fields.
 	 *
-	 * @since    1.18
+	 * @since 1.18
 	 *
 	 * @param string $context Context to preface field name attributes.
 	 *
