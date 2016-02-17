@@ -80,6 +80,7 @@ class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_D
 	public function get_field_html( $context ) {
 
 		$df = str_replace( 'F', 'M', get_option( 'date_format' ) );
+		$jdf = it_exchange_php_date_format_to_jquery_datepicker_format( $df );
 
 		ob_start();
 		?>
@@ -89,7 +90,7 @@ class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_D
 		</label>
 
 		<input type="datetime" name="<?php echo $context ?>[date]" id="<?php echo $context; ?>-date" class="datepicker"
-		       value="<?php echo $this->date ? $this->date->format( $df ) : ''; ?>" data-format="<?php echo $df; ?>">
+		       value="<?php echo $this->date ? $this->date->format( $df ) : ''; ?>" data-format="<?php echo $jdf; ?>">
 
 		<?php
 		return ob_get_clean();
