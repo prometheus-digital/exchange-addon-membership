@@ -42,7 +42,7 @@ function it_exchange_membership_addon_is_content_restricted( $post = null, &$fai
 
 	$evaluator    = new IT_Exchange_Membership_Rule_Evaluator_Service( new IT_Exchange_Membership_Rule_Factory() );
 	$customer     = it_exchange_get_current_customer();
-	$failed_rules = $evaluator->evaluate( $post, $customer ? $customer : null );
+	$failed_rules = $evaluator->evaluate_content( $post, $customer ? $customer : null );
 
 	$memberships = it_exchange_membership_addon_get_customer_memberships();
 
@@ -85,7 +85,7 @@ function it_exchange_membership_addon_is_product_restricted( $post = null, &$fai
 
 	$evaluator    = new IT_Exchange_Membership_Rule_Evaluator_Service( new IT_Exchange_Membership_Rule_Factory() );
 	$customer     = it_exchange_get_current_customer();
-	$failed_rules = $evaluator->evaluate( $post, $customer ? $customer : null );
+	$failed_rules = $evaluator->evaluate_content( $post, $customer ? $customer : null );
 
 	$memberships = it_exchange_membership_addon_get_customer_memberships();
 

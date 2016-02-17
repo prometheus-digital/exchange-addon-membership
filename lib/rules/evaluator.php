@@ -35,7 +35,7 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 	 *
 	 * @return IT_Exchange_Membership_Content_RuleInterface[]
 	 */
-	public function evaluate( WP_Post $post, IT_Exchange_Customer $customer = null ) {
+	public function evaluate_content( WP_Post $post, IT_Exchange_Customer $customer = null ) {
 
 		if ( ! $customer ) {
 			return $this->factory->make_all_for_post( $post );
