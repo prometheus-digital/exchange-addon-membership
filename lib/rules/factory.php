@@ -80,6 +80,8 @@ class IT_Exchange_Membership_Rule_Factory {
 	/**
 	 * Filter callback.
 	 *
+	 * This will get removed when moved to PHP 5.3. This is an implementation detail, do not rely upon it.
+	 *
 	 * @internal
 	 *
 	 * @param IT_Exchange_Membership_Content_Rule $rule
