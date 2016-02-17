@@ -95,7 +95,7 @@
 }
 
 #it-exchange-product-membership-content-access-rules .it-exchange-content-access-delay {
-	width: 30%;
+	width: 35%;
 }
 
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-remove-content-access-rule {
@@ -240,7 +240,7 @@
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-content-access-rule input {
 	width: 100%;
 	max-width: 300px;
-	margin-left: 1em;
+	/*margin-left: 1em;*/
 }
 
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-addon-group-action-wrapper {
@@ -311,7 +311,7 @@
 }
 
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-content-delay-rule-drip input {
-	max-width: 60px;
+	max-width: 50px;
 }
 
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-content-delay-rule-date input {
