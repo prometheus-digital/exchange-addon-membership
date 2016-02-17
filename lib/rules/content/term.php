@@ -10,7 +10,7 @@
  * Class IT_Exchange_Membership_Content_Rule_Term
  */
 class IT_Exchange_Membership_Content_Rule_Term extends IT_Exchange_Membership_AbstractContent_Rule
-	implements IT_Exchange_Membership_Rule_Layoutable, IT_Exchange_Membership_Content_Rule_Delayable {
+	implements IT_Exchange_Membership_Rule_Layoutable, IT_Exchange_Membership_Rule_Delayable {
 
 	/**
 	 * @var string

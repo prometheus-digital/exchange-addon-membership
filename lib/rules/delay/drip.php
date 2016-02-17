@@ -17,7 +17,7 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 	const D_YEARS = 'years';
 
 	/**
-	 * @var IT_Exchange_Membership_Content_Rule_Delayable
+	 * @var IT_Exchange_Membership_Rule_Delayable
 	 */
 	private $rule;
 
@@ -39,10 +39,10 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 	/**
 	 * IT_Exchange_Membership_Content_Rule_Drip constructor.
 	 *
-	 * @param IT_Exchange_Membership_Content_Rule_Delayable $rule
-	 * @param IT_Exchange_Membership                        $membership
+	 * @param IT_Exchange_Membership_Rule_Delayable $rule
+	 * @param IT_Exchange_Membership                $membership
 	 */
-	public function __construct( IT_Exchange_Membership_Content_Rule_Delayable $rule = null, IT_Exchange_Membership $membership = null ) {
+	public function __construct( IT_Exchange_Membership_Rule_Delayable $rule = null, IT_Exchange_Membership $membership = null ) {
 		$this->rule       = $rule;
 		$this->membership = $membership;
 

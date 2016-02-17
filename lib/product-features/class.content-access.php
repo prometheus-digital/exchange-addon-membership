@@ -228,7 +228,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 
 					$saved_ids[] = $rule_model->get_rule_id();
 
-					if ( $rule_model instanceof IT_Exchange_Membership_Content_Rule_Delayable && $delay_data ) {
+					if ( $rule_model instanceof IT_Exchange_Membership_Rule_Delayable && $delay_data ) {
 
 						$delay = $factory->make_delay_rule( $rule['delay-type'], $membership, $rule_model );
 

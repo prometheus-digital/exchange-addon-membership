@@ -239,7 +239,7 @@ class IT_Exchange_Membership_Rule_Factory {
 				break;
 		}
 
-		if ( $rule && $membership && $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable ) {
+		if ( $rule && $membership && $rule instanceof IT_Exchange_Membership_Rule_Delayable ) {
 			$this->attach_delay_rules( $rule, $membership, $data );
 		}
 
@@ -274,11 +274,11 @@ class IT_Exchange_Membership_Rule_Factory {
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Content_Rule_Delayable $rule
-	 * @param IT_Exchange_Membership                        $membership
-	 * @param array                                         $data
+	 * @param IT_Exchange_Membership_Rule_Delayable $rule
+	 * @param IT_Exchange_Membership                $membership
+	 * @param array                                 $data
 	 */
-	protected function attach_delay_rules( IT_Exchange_Membership_Content_Rule_Delayable $rule, IT_Exchange_Membership $membership, $data ) {
+	protected function attach_delay_rules( IT_Exchange_Membership_Rule_Delayable $rule, IT_Exchange_Membership $membership, $data ) {
 
 		if ( ! isset( $data['delay-type'] ) ) {
 			if ( $rule->get_delay_meta( '_item-content-rule-drip-interval-' . $membership->ID ) ) {
@@ -302,13 +302,13 @@ class IT_Exchange_Membership_Rule_Factory {
 	 *
 	 * @since 1.18
 	 *
-	 * @param string                                        $type
-	 * @param IT_Exchange_Membership                        $membership
-	 * @param IT_Exchange_Membership_Content_Rule_Delayable $rule
+	 * @param string                                $type
+	 * @param IT_Exchange_Membership                $membership
+	 * @param IT_Exchange_Membership_Rule_Delayable $rule
 	 *
 	 * @return IT_Exchange_Membership_Delay_RuleInterface|null
 	 */
-	public function make_delay_rule( $type, IT_Exchange_Membership $membership, IT_Exchange_Membership_Content_Rule_Delayable $rule ) {
+	public function make_delay_rule( $type, IT_Exchange_Membership $membership, IT_Exchange_Membership_Rule_Delayable $rule ) {
 
 		switch ( $type ) {
 			case 'drip':
@@ -322,10 +322,10 @@ class IT_Exchange_Membership_Rule_Factory {
 				 *
 				 * @since 1.18
 				 *
-				 * @param IT_Exchange_Membership_Content_RuleInterface  $rule
-				 * @param string                                        $type
-				 * @param IT_Exchange_Membership                        $membership
-				 * @param IT_Exchange_Membership_Content_Rule_Delayable $rule
+				 * @param IT_Exchange_Membership_Content_RuleInterface $rule
+				 * @param string                                       $type
+				 * @param IT_Exchange_Membership                       $membership
+				 * @param IT_Exchange_Membership_Rule_Delayable        $rule
 				 */
 				$rule = apply_filters( 'it_exchange_membership_rule_factory_make_delay_rule', null, $type, $membership, $rule );
 

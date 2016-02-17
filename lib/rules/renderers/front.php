@@ -196,7 +196,7 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 	 */
 	protected function render_post( WP_Post $post, IT_Exchange_Membership_Content_RuleInterface $rule, array $options ) {
 
-		if ( $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable && $rule->get_delay_rule() ) {
+		if ( $rule instanceof IT_Exchange_Membership_Rule_Delayable && $rule->get_delay_rule() ) {
 			$delay = $rule->get_delay_rule()->get_availability_date( $this->user_membership );
 
 			if ( ! $delay ) {

@@ -202,7 +202,7 @@ class IT_Exchange_Membership_Admin_Rule_Renderer {
 
 			<div class="it-exchange-content-access-delay column col-3-12">
 
-				<?php if ( $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable ): ?>
+				<?php if ( $rule instanceof IT_Exchange_Membership_Rule_Delayable ): ?>
 
 					<?php
 					$current_delay = $rule->get_delay_rule();

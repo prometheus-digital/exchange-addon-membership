@@ -94,7 +94,7 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 
 			foreach ( $rules as $rule ) {
 
-				if ( ! $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable ) {
+				if ( ! $rule instanceof IT_Exchange_Membership_Rule_Delayable ) {
 					continue;
 				}
 

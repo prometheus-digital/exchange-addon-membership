@@ -7,13 +7,13 @@
  */
 
 require_once dirname( __FILE__ ) . '/interface.php';
+require_once dirname( __FILE__ ) . '/delayable.php';
 require_once dirname( __FILE__ ) . '/evaluator.php';
 require_once dirname( __FILE__ ) . '/layoutable.php';
 
 require_once dirname( __FILE__ ) . '/content/factory.php';
 require_once dirname( __FILE__ ) . '/content/group.php';
 require_once dirname( __FILE__ ) . '/content/interface.php';
-require_once dirname( __FILE__ ) . '/content/delayable.php';
 require_once dirname( __FILE__ ) . '/content/abstract.php';
 require_once dirname( __FILE__ ) . '/content/post-type.php';
 require_once dirname( __FILE__ ) . '/content/post.php';

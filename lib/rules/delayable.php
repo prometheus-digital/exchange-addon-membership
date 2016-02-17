@@ -7,9 +7,9 @@
  */
 
 /**
- * Interface IT_Exchange_Membership_Content_Rule_Delayable
+ * Interface IT_Exchange_Membership_Rule_Delayable
  */
-interface IT_Exchange_Membership_Content_Rule_Delayable extends IT_Exchange_Membership_Content_RuleInterface {
+interface IT_Exchange_Membership_Rule_Delayable extends IT_Exchange_Membership_RuleInterface {
 
 	/**
 	 * Set this content rule's delay rule.

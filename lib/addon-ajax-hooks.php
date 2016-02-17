@@ -501,7 +501,7 @@ function it_exchange_membership_addon_ajax_update_drip_rule() {
 		$factory   = new IT_Exchange_Membership_Rule_Factory();
 		$delayable = $factory->make_content_rule_by_id( $_REQUEST['rule'], $membership );
 
-		if ( ! $delayable instanceof IT_Exchange_Membership_Content_Rule_Delayable ) {
+		if ( ! $delayable instanceof IT_Exchange_Membership_Rule_Delayable ) {
 			wp_send_json_error( array(
 				'message' => __( 'Invalid rule.', 'LION' )
 			) );

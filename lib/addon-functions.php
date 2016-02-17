@@ -47,7 +47,7 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 		/** @var IT_Exchange_Membership_Content_RuleInterface $rule */
 		foreach ( $rules as $rule ) {
 
-			$delayable = $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable ? 'yes' : 'no';
+			$delayable = $rule instanceof IT_Exchange_Membership_Rule_Delayable ? 'yes' : 'no';
 			$selected  = selected( $rule->get_selection(), $selection, false );
 
 			$return .= "<option value='{$rule->get_selection()}' data-type='{$rule->get_type()}' data-delayable='$delayable' $selected>";
@@ -66,7 +66,7 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 
 		foreach ( $other as $rule ) {
 
-			$delayable = $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable ? 'yes' : 'no';
+			$delayable = $rule instanceof IT_Exchange_Membership_Rule_Delayable ? 'yes' : 'no';
 			$selected  = selected( $rule->get_selection( false ), $selection, false );
 
 			$return .= "<option value='{$rule->get_selection(false)}' data-type='{$rule->get_type()}' data-delayable='$delayable' $selected>";
@@ -175,7 +175,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 
 				<div class="it-exchange-membership-rule-description"><?php echo $rule->get_short_description(); ?></div>
 
-				<?php if ( $rule instanceof IT_Exchange_Membership_Content_Rule_Delayable && $rule->get_delay_rule() ): ?>
+				<?php if ( $rule instanceof IT_Exchange_Membership_Rule_Delayable && $rule->get_delay_rule() ): ?>
 					<?php $delay_rule = $rule->get_delay_rule(); ?>
 
 					<div class="it-exchange-membership-rule-delay"><?php echo $delay_rule->get_type( true ); ?></div>
@@ -259,12 +259,12 @@ function it_exchange_membership_addon_get_content_rules( $flat = true ) {
  *
  * @since 1.18
  *
- * @param IT_Exchange_Membership_Content_Rule_Delayable|null $rule
- * @param IT_Exchange_Membership|null                        $membership
+ * @param IT_Exchange_Membership_Rule_Delayable|null $rule
+ * @param IT_Exchange_Membership|null                $membership
  *
  * @return IT_Exchange_Membership_Delay_RuleInterface[]
  */
-function it_exchange_membership_addon_get_delay_rules( IT_Exchange_Membership_Content_Rule_Delayable $rule = null, IT_Exchange_Membership $membership = null ) {
+function it_exchange_membership_addon_get_delay_rules( IT_Exchange_Membership_Rule_Delayable $rule = null, IT_Exchange_Membership $membership = null ) {
 
 	$rules = array();
 
@@ -276,9 +276,9 @@ function it_exchange_membership_addon_get_delay_rules( IT_Exchange_Membership_Co
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Delay_RuleInterface[]  $rules
-	 * @param IT_Exchange_Membership_Content_Rule_Delayable $post
-	 * @param IT_Exchange_Membership                        $membership
+	 * @param IT_Exchange_Membership_Delay_RuleInterface[] $rules
+	 * @param IT_Exchange_Membership_Rule_Delayable        $post
+	 * @param IT_Exchange_Membership                       $membership
 	 */
 	$rules = apply_filters( 'it_exchange_membership_addon_get_delay_rules', $rules, $rule, $membership );
 
