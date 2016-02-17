@@ -132,7 +132,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 		$return .= '<div class="it-exchange-membership-no-restrictions">' . __( 'No membership restrictions for this content.', 'LION' ) . '</div>';
 		$return .= '</div>';
 
-		die( $return );
+		return $return;
 	}
 
 	$df = get_option( 'date_format' );
