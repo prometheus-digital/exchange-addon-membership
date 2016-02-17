@@ -9,25 +9,25 @@
 /**
  * Interface IT_Exchange_Membership_Rule_Delayable
  */
-interface IT_Exchange_Membership_Rule_Delayable extends IT_Exchange_Membership_RuleInterface {
+interface IT_Exchange_Membership_Rule_Delayable extends IT_Exchange_Membership_Rule {
 
 	/**
 	 * Set this content rule's delay rule.
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Delay_RuleInterface $delay_rule
+	 * @param IT_Exchange_Membership_Delay_Rule $delay_rule
 	 *
 	 * @return self
 	 */
-	public function set_delay_rule( IT_Exchange_Membership_Delay_RuleInterface $delay_rule );
+	public function set_delay_rule( IT_Exchange_Membership_Delay_Rule $delay_rule );
 
 	/**
 	 * Retrieve this content rule's delay rule.
 	 *
 	 * @since 1.18
 	 *
-	 * @return IT_Exchange_Membership_Delay_RuleInterface
+	 * @return IT_Exchange_Membership_Delay_Rule
 	 */
 	public function get_delay_rule();
 

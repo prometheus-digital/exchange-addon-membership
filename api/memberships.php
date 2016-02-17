@@ -237,7 +237,7 @@ function it_exchange_membership_addon_get_customer_memberships( $customer_id = f
  *
  * @param IT_Exchange_Customer|null $customer
  *
- * @return IT_Exchange_User_MembershipInterface[]
+ * @return IT_Exchange_User_Membership[]
  */
 function it_exchange_get_user_memberships( IT_Exchange_Customer $customer = null ) {
 
@@ -283,7 +283,7 @@ function it_exchange_get_user_memberships( IT_Exchange_Customer $customer = null
  * @param IT_Exchange_Customer   $customer
  * @param IT_Exchange_Membership $membership
  *
- * @return IT_Exchange_User_MembershipInterface
+ * @return IT_Exchange_User_Membership
  */
 function it_exchange_get_user_membership_for_product( IT_Exchange_Customer $customer, IT_Exchange_Membership $membership ) {
 
@@ -303,7 +303,7 @@ function it_exchange_get_user_membership_for_product( IT_Exchange_Customer $cust
 
 	$active_user_memberships_matching_product = array();
 
-	/** @var IT_Exchange_User_MembershipInterface $membership */
+	/** @var IT_Exchange_User_Membership $membership */
 	foreach ( $user_memberships_matching_product as $membership ) {
 		if ( $membership->current_status_grants_access() ) {
 			$active_user_memberships_matching_product[] = $membership;
@@ -319,7 +319,7 @@ function it_exchange_get_user_membership_for_product( IT_Exchange_Customer $cust
 		return reset( $active_user_memberships_matching_product );
 	}
 
-	/** @var IT_Exchange_User_MembershipInterface $earliest_membership */
+	/** @var IT_Exchange_User_Membership $earliest_membership */
 	$earliest_membership = null;
 
 	foreach ( $active_user_memberships_matching_product as $membership ) {

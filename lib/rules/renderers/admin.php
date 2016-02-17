@@ -170,13 +170,13 @@ class IT_Exchange_Membership_Admin_Rule_Renderer {
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Content_RuleInterface $rule
-	 * @param int                                          $count
-	 * @param IT_Exchange_Membership_Content_Rule_Group    $group
+	 * @param IT_Exchange_Membership_Content_Rule       $rule
+	 * @param int                                       $count
+	 * @param IT_Exchange_Membership_Content_Rule_Group $group
 	 *
 	 * @return string
 	 */
-	protected function render_rule( IT_Exchange_Membership_Content_RuleInterface $rule, $count, IT_Exchange_Membership_Content_Rule_Group $group = null ) {
+	protected function render_rule( IT_Exchange_Membership_Content_Rule $rule, $count, IT_Exchange_Membership_Content_Rule_Group $group = null ) {
 
 		ob_start();
 		$name = $this->name;

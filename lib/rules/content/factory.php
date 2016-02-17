@@ -23,7 +23,7 @@ class IT_Exchange_Membership_Rule_Factory {
 	 *
 	 * @param WP_Post $post
 	 *
-	 * @return IT_Exchange_Membership_Content_RuleInterface[]
+	 * @return IT_Exchange_Membership_Content_Rule[]
 	 */
 	public function make_all_for_post( WP_Post $post ) {
 
@@ -82,11 +82,11 @@ class IT_Exchange_Membership_Rule_Factory {
 	 *
 	 * @internal
 	 *
-	 * @param IT_Exchange_Membership_Content_RuleInterface $rule
+	 * @param IT_Exchange_Membership_Content_Rule $rule
 	 *
 	 * @return bool
 	 */
-	public function _filter( IT_Exchange_Membership_Content_RuleInterface $rule ) {
+	public function _filter( IT_Exchange_Membership_Content_Rule $rule ) {
 		return $rule->matches_post( $this->post );
 	}
 
@@ -97,7 +97,7 @@ class IT_Exchange_Membership_Rule_Factory {
 	 *
 	 * @param IT_Exchange_Membership $membership
 	 *
-	 * @return IT_Exchange_Membership_Content_RuleInterface[]
+	 * @return IT_Exchange_Membership_Content_Rule[]
 	 */
 	public function make_all_for_membership( IT_Exchange_Membership $membership ) {
 
@@ -205,7 +205,7 @@ class IT_Exchange_Membership_Rule_Factory {
 	 * @param array                  $data
 	 * @param IT_Exchange_Membership $membership
 	 *
-	 * @return IT_Exchange_Membership_Content_RuleInterface
+	 * @return IT_Exchange_Membership_Content_Rule
 	 */
 	public function make_content_rule( $type, $data, IT_Exchange_Membership $membership = null ) {
 
@@ -226,14 +226,14 @@ class IT_Exchange_Membership_Rule_Factory {
 				 *
 				 * @since 1.18
 				 *
-				 * @param IT_Exchange_Membership_Content_RuleInterface $rule
-				 * @param string                                       $type
-				 * @param array                                        $data
-				 * @param IT_Exchange_Membership                       $membership
+				 * @param IT_Exchange_Membership_Content_Rule $rule
+				 * @param string                              $type
+				 * @param array                               $data
+				 * @param IT_Exchange_Membership              $membership
 				 */
 				$rule = apply_filters( 'it_exchange_membership_rule_factory_make_rule', null, $type, $data, $membership );
 
-				if ( $rule && ! $rule instanceof IT_Exchange_Membership_Content_RuleInterface ) {
+				if ( $rule && ! $rule instanceof IT_Exchange_Membership_Content_Rule ) {
 					throw new UnexpectedValueException( 'Invalid class type for new rule.' );
 				}
 				break;
@@ -254,7 +254,7 @@ class IT_Exchange_Membership_Rule_Factory {
 	 * @param string                 $id
 	 * @param IT_Exchange_Membership $membership
 	 *
-	 * @return IT_Exchange_Membership_Content_RuleInterface|null
+	 * @return IT_Exchange_Membership_Content_Rule|null
 	 */
 	public function make_content_rule_by_id( $id, IT_Exchange_Membership $membership ) {
 
@@ -306,7 +306,7 @@ class IT_Exchange_Membership_Rule_Factory {
 	 * @param IT_Exchange_Membership                $membership
 	 * @param IT_Exchange_Membership_Rule_Delayable $rule
 	 *
-	 * @return IT_Exchange_Membership_Delay_RuleInterface|null
+	 * @return IT_Exchange_Membership_Delay_Rule|null
 	 */
 	public function make_delay_rule( $type, IT_Exchange_Membership $membership, IT_Exchange_Membership_Rule_Delayable $rule ) {
 
@@ -322,14 +322,14 @@ class IT_Exchange_Membership_Rule_Factory {
 				 *
 				 * @since 1.18
 				 *
-				 * @param IT_Exchange_Membership_Content_RuleInterface $rule
-				 * @param string                                       $type
-				 * @param IT_Exchange_Membership                       $membership
-				 * @param IT_Exchange_Membership_Rule_Delayable        $rule
+				 * @param IT_Exchange_Membership_Content_Rule   $rule
+				 * @param string                                $type
+				 * @param IT_Exchange_Membership                $membership
+				 * @param IT_Exchange_Membership_Rule_Delayable $rule
 				 */
 				$rule = apply_filters( 'it_exchange_membership_rule_factory_make_delay_rule', null, $type, $membership, $rule );
 
-				if ( $rule && ! $rule instanceof IT_Exchange_Membership_Delay_RuleInterface ) {
+				if ( $rule && ! $rule instanceof IT_Exchange_Membership_Delay_Rule ) {
 					throw new UnexpectedValueException( 'Invalid class type for new delay rule.' );
 				}
 

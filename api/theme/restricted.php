@@ -202,7 +202,7 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Content_RuleInterface[] $rules
+	 * @param IT_Exchange_Membership_Content_Rule[] $rules
 	 *
 	 * @return IT_Exchange_Membership[]
 	 */
@@ -223,8 +223,8 @@ class IT_Theme_API_Restricted implements IT_Theme_API {
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Content_RuleInterface[] $rules
-	 * @param bool                                           $product Return the product message.
+	 * @param IT_Exchange_Membership_Content_Rule[] $rules
+	 * @param bool                                  $product Return the product message.
 	 *
 	 * @return string
 	 */

@@ -7,9 +7,9 @@
  */
 
 /**
- * Interface IT_Exchange_User_MembershipInterface
+ * Interface IT_Exchange_User_Membership
  */
-interface IT_Exchange_User_MembershipInterface {
+interface IT_Exchange_User_Membership {
 
 	/**
 	 * Get the user associated with this membership.

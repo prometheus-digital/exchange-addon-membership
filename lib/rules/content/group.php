@@ -27,7 +27,7 @@ class IT_Exchange_Membership_Content_Rule_Group implements IT_Exchange_Membershi
 	private $ID;
 
 	/**
-	 * @var IT_Exchange_Membership_Content_RuleInterface[]
+	 * @var IT_Exchange_Membership_Content_Rule[]
 	 */
 	private $rules = array();
 
@@ -49,11 +49,11 @@ class IT_Exchange_Membership_Content_Rule_Group implements IT_Exchange_Membershi
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Content_RuleInterface $rule
+	 * @param IT_Exchange_Membership_Content_Rule $rule
 	 *
 	 * @return $this
 	 */
-	public function add_rule( IT_Exchange_Membership_Content_RuleInterface $rule ) {
+	public function add_rule( IT_Exchange_Membership_Content_Rule $rule ) {
 		$this->rules[] = $rule;
 
 		return $this;
@@ -64,7 +64,7 @@ class IT_Exchange_Membership_Content_Rule_Group implements IT_Exchange_Membershi
 	 *
 	 * @since 1.18
 	 *
-	 * @return IT_Exchange_Membership_Content_RuleInterface[]
+	 * @return IT_Exchange_Membership_Content_Rule[]
 	 */
 	public function get_rules() {
 		return $this->rules;

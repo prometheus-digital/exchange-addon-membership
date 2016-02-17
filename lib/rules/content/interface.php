@@ -7,9 +7,9 @@
  */
 
 /**
- * Interface IT_Exchange_Membership_Content_RuleInterface
+ * Interface IT_Exchange_Membership_Content_Rule
  */
-interface IT_Exchange_Membership_Content_RuleInterface extends IT_Exchange_Membership_RuleInterface {
+interface IT_Exchange_Membership_Content_Rule extends IT_Exchange_Membership_Rule {
 
 	/**
 	 * Check if this content rule matches a post.

@@ -154,10 +154,10 @@ class IT_Theme_API_Dripped implements IT_Theme_API {
 
 		$membership_settings = it_exchange_get_option( 'addon_membership' );
 
-		/** @var IT_Exchange_User_MembershipInterface $user_membership */
+		/** @var IT_Exchange_User_Membership $user_membership */
 		$user_membership = $failed['membership'];
 
-		/** @var IT_Exchange_Membership_Delay_RuleInterface $rule */
+		/** @var IT_Exchange_Membership_Delay_Rule $rule */
 		$rule = $failed['rule'];
 
 		if ( ! $rule->get_availability_date( $user_membership ) ) {

@@ -17,7 +17,7 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 	private $post_type;
 
 	/**
-	 * @var IT_Exchange_Membership_Delay_RuleInterface
+	 * @var IT_Exchange_Membership_Delay_Rule
 	 */
 	private $delay_rule;
 
@@ -43,11 +43,11 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Delay_RuleInterface $delay_rule
+	 * @param IT_Exchange_Membership_Delay_Rule $delay_rule
 	 *
 	 * @return self
 	 */
-	public function set_delay_rule( IT_Exchange_Membership_Delay_RuleInterface $delay_rule ) {
+	public function set_delay_rule( IT_Exchange_Membership_Delay_Rule $delay_rule ) {
 		$this->delay_rule = $delay_rule;
 
 		return $this;
@@ -58,7 +58,7 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ab
 	 *
 	 * @since 1.18
 	 *
-	 * @return IT_Exchange_Membership_Delay_RuleInterface
+	 * @return IT_Exchange_Membership_Delay_Rule
 	 */
 	public function get_delay_rule() {
 		return $this->delay_rule;

@@ -33,7 +33,7 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 	 * @param WP_Post              $post
 	 * @param IT_Exchange_Customer $customer
 	 *
-	 * @return IT_Exchange_Membership_Content_RuleInterface[]
+	 * @return IT_Exchange_Membership_Content_Rule[]
 	 */
 	public function evaluate_content( WP_Post $post, IT_Exchange_Customer $customer = null ) {
 
@@ -85,7 +85,7 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 
 		$user_memberships = it_exchange_get_user_memberships( $customer );
 
-		/** @var IT_Exchange_Membership_Delay_RuleInterface $failed */
+		/** @var IT_Exchange_Membership_Delay_Rule $failed */
 		$failed            = null;
 		$failed_membership = null;
 

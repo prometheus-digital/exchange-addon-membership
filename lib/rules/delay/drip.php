@@ -9,7 +9,7 @@
 /**
  * Class IT_Exchange_Membership_Delay_Rule_Drip
  */
-class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_Delay_RuleInterface {
+class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_Delay_Rule {
 
 	const D_DAYS = 'days';
 	const D_WEEKS = 'weeks';
@@ -64,12 +64,12 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_User_MembershipInterface $user_membership
-	 * @param WP_Post                              $post
+	 * @param IT_Exchange_User_Membership $user_membership
+	 * @param WP_Post                     $post
 	 *
 	 * @return bool True if readable
 	 */
-	public function evaluate( IT_Exchange_User_MembershipInterface $user_membership, WP_Post $post = null ) {
+	public function evaluate( IT_Exchange_User_Membership $user_membership, WP_Post $post = null ) {
 
 		$start_time = (int) $user_membership->get_start_date()->format( 'U' );
 		$drip_time  = strtotime( $this->interval . ' ' . $this->duration, $start_time );
@@ -85,11 +85,11 @@ class IT_Exchange_Membership_Delay_Rule_Drip implements IT_Exchange_Membership_D
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Subscription|IT_Exchange_User_MembershipInterface $user_membership
+	 * @param IT_Exchange_Subscription|IT_Exchange_User_Membership $user_membership
 	 *
 	 * @return DateTime|null
 	 */
-	public function get_availability_date( IT_Exchange_User_MembershipInterface $user_membership ) {
+	public function get_availability_date( IT_Exchange_User_Membership $user_membership ) {
 
 		$start_time = (int) $user_membership->get_start_date()->format( 'U' );
 		$drip_time  = strtotime( $this->interval . ' ' . $this->duration, $start_time );

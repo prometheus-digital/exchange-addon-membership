@@ -9,7 +9,7 @@
 /**
  * Class IT_Exchange_User_Membership_Subscription_Driver
  */
-class IT_Exchange_User_Membership_Subscription_Driver implements IT_Exchange_User_MembershipInterface {
+class IT_Exchange_User_Membership_Subscription_Driver implements IT_Exchange_User_Membership {
 
 	/**
 	 * @var IT_Exchange_Subscription

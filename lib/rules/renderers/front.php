@@ -17,7 +17,7 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 	private $rules;
 
 	/**
-	 * @var IT_Exchange_User_MembershipInterface
+	 * @var IT_Exchange_User_Membership
 	 */
 	private $user_membership;
 
@@ -33,7 +33,7 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 	 * @param IT_Exchange_Subscription            $subscription
 	 * @param IT_Exchange_Membership_Rule_Factory $factory
 	 */
-	public function __construct( array $rules, IT_Exchange_User_MembershipInterface $user_membership, IT_Exchange_Membership_Rule_Factory $factory ) {
+	public function __construct( array $rules, IT_Exchange_User_Membership $user_membership, IT_Exchange_Membership_Rule_Factory $factory ) {
 		$this->rules           = $rules;
 		$this->user_membership = $user_membership;
 		$this->factory         = $factory;
@@ -127,12 +127,12 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Content_RuleInterface $rule
-	 * @param array                                        $options
+	 * @param IT_Exchange_Membership_Content_Rule $rule
+	 * @param array                               $options
 	 *
 	 * @return string
 	 */
-	protected function render_rule( IT_Exchange_Membership_Content_RuleInterface $rule, array $options ) {
+	protected function render_rule( IT_Exchange_Membership_Content_Rule $rule, array $options ) {
 
 		$group_class  = $options['toggle'] ? 'it-exchange-content-group-toggle' : '';
 		$hidden       = $options['toggle'] ? ' class="it-exchange-hidden"' : '';
@@ -188,13 +188,13 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 	 *
 	 * @since 1.18
 	 *
-	 * @param WP_Post                                      $post
-	 * @param IT_Exchange_Membership_Content_RuleInterface $rule
-	 * @param array                                        $options
+	 * @param WP_Post                             $post
+	 * @param IT_Exchange_Membership_Content_Rule $rule
+	 * @param array                               $options
 	 *
 	 * @return string
 	 */
-	protected function render_post( WP_Post $post, IT_Exchange_Membership_Content_RuleInterface $rule, array $options ) {
+	protected function render_post( WP_Post $post, IT_Exchange_Membership_Content_Rule $rule, array $options ) {
 
 		if ( $rule instanceof IT_Exchange_Membership_Rule_Delayable && $rule->get_delay_rule() ) {
 			$delay = $rule->get_delay_rule()->get_availability_date( $this->user_membership );

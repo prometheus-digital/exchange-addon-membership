@@ -7,11 +7,11 @@
  */
 
 /**
- * Interface IT_Exchange_Membership_Delay_RuleInterface
+ * Interface IT_Exchange_Membership_Delay_Rule
  *
  * Delay rules are saved against the individual post object.
  */
-interface IT_Exchange_Membership_Delay_RuleInterface extends IT_Exchange_Membership_RuleInterface {
+interface IT_Exchange_Membership_Delay_Rule extends IT_Exchange_Membership_Rule {
 
 	/**
 	 * Get the availability date for this rule.
@@ -21,9 +21,9 @@ interface IT_Exchange_Membership_Delay_RuleInterface extends IT_Exchange_Members
 	 *
 	 * @since    1.18
 	 *
-	 * @param IT_Exchange_User_MembershipInterface $user_membership
+	 * @param IT_Exchange_User_Membership $user_membership
 	 *
 	 * @return DateTime|null
 	 */
-	public function get_availability_date( IT_Exchange_User_MembershipInterface $user_membership );
+	public function get_availability_date( IT_Exchange_User_Membership $user_membership );
 }

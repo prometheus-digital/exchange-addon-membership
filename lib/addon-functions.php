@@ -44,7 +44,7 @@ function it_exchange_membership_addon_get_selections( $selection = 0, $selection
 			continue;
 		}
 
-		/** @var IT_Exchange_Membership_Content_RuleInterface $rule */
+		/** @var IT_Exchange_Membership_Content_Rule $rule */
 		foreach ( $rules as $rule ) {
 
 			$delayable = $rule instanceof IT_Exchange_Membership_Rule_Delayable ? 'yes' : 'no';
@@ -202,7 +202,7 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
  *
  * @param bool $flat Whether to return a flat array, or an array segmented by type.
  *
- * @return IT_Exchange_Membership_Content_RuleInterface[]|array[]
+ * @return IT_Exchange_Membership_Content_Rule[]|array[]
  */
 function it_exchange_membership_addon_get_content_rules( $flat = true ) {
 
@@ -246,8 +246,8 @@ function it_exchange_membership_addon_get_content_rules( $flat = true ) {
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Content_RuleInterface[]|array[] $rules
-	 * @param bool                                                   $flat
+	 * @param IT_Exchange_Membership_Content_Rule[]|array[] $rules
+	 * @param bool                                          $flat
 	 */
 	$rules = apply_filters( 'it_exchange_membership_addon_get_content_rules', $rules, $flat );
 
@@ -262,7 +262,7 @@ function it_exchange_membership_addon_get_content_rules( $flat = true ) {
  * @param IT_Exchange_Membership_Rule_Delayable|null $rule
  * @param IT_Exchange_Membership|null                $membership
  *
- * @return IT_Exchange_Membership_Delay_RuleInterface[]
+ * @return IT_Exchange_Membership_Delay_Rule[]
  */
 function it_exchange_membership_addon_get_delay_rules( IT_Exchange_Membership_Rule_Delayable $rule = null, IT_Exchange_Membership $membership = null ) {
 
@@ -276,9 +276,9 @@ function it_exchange_membership_addon_get_delay_rules( IT_Exchange_Membership_Ru
 	 *
 	 * @since 1.18
 	 *
-	 * @param IT_Exchange_Membership_Delay_RuleInterface[] $rules
-	 * @param IT_Exchange_Membership_Rule_Delayable        $post
-	 * @param IT_Exchange_Membership                       $membership
+	 * @param IT_Exchange_Membership_Delay_Rule[]   $rules
+	 * @param IT_Exchange_Membership_Rule_Delayable $post
+	 * @param IT_Exchange_Membership                $membership
 	 */
 	$rules = apply_filters( 'it_exchange_membership_addon_get_delay_rules', $rules, $rule, $membership );
 
@@ -600,7 +600,7 @@ function it_exchange_membership_addon_get_all_the_children( $membership_id, $chi
  * @since 1.0.0
  * @since 1.18 Add $failed parameter.
  *
- * @param IT_Exchange_Membership_RuleInterface[] $failed
+ * @param IT_Exchange_Membership_Rule[] $failed
  *
  * @return string
  */
@@ -624,7 +624,7 @@ function it_exchange_membership_addon_content_restricted_template( array $failed
  * @since 1.0.0
  * @since 1.18 Add $failed parameter.
  *
- * @param IT_Exchange_Membership_RuleInterface[] $failed
+ * @param IT_Exchange_Membership_Rule[] $failed
  *
  * @return string
  */
@@ -648,7 +648,7 @@ function it_exchange_membership_addon_excerpt_restricted_template( array $failed
  * @since 1.0.0
  * @since 1.18 Add $failed parameter.
  *
- * @param IT_Exchange_Membership_RuleInterface[] $failed
+ * @param IT_Exchange_Membership_Rule[] $failed
  *
  * @return string
  */
@@ -672,7 +672,7 @@ function it_exchange_membership_addon_content_dripped_template( array $failed = 
  * @since 1.0.0
  * @since 1.18 Add $failed parameter.
  *
- * @param IT_Exchange_Membership_RuleInterface[] $failed
+ * @param IT_Exchange_Membership_Rule[] $failed
  *
  * @return string
  */

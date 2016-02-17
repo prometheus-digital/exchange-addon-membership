@@ -7,20 +7,20 @@
  */
 
 /**
- * Interface IT_Exchange_Membership_RuleInterface
+ * Interface IT_Exchange_Membership_Rule
  */
-interface IT_Exchange_Membership_RuleInterface {
+interface IT_Exchange_Membership_Rule {
 	/**
 	 * Evaluate the rule.
 	 *
 	 * @since    1.18
 	 *
-	 * @param IT_Exchange_User_MembershipInterface $user_membership
-	 * @param WP_Post                              $post
+	 * @param IT_Exchange_User_Membership $user_membership
+	 * @param WP_Post                     $post
 	 *
 	 * @return bool True if readable
 	 */
-	public function evaluate( IT_Exchange_User_MembershipInterface $user_membership, WP_Post $post );
+	public function evaluate( IT_Exchange_User_Membership $user_membership, WP_Post $post );
 
 	/**
 	 * Get HTML to render the necessary form fields.
