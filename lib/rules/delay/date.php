@@ -79,7 +79,7 @@ class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_D
 	 */
 	public function get_field_html( $context ) {
 
-		$df = get_option( 'date_format' );
+		$df = str_replace( 'F', 'M', get_option( 'date_format' ) );
 
 		ob_start();
 		?>

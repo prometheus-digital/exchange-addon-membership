@@ -74,6 +74,6 @@ function it_exchange_membership_addon_membership_access_metabox( $post ) {
 	echo '</div>';
 
 	echo '<div class="it-exchange-add-new-restriction">';
-	echo '<a href class="button">' . __( 'Add Restriction', 'LION' ) . '</a>';
+	echo '<a href="#" class="button">' . __( 'Add Restriction', 'LION' ) . '</a>';
 	echo '</div>';
 }

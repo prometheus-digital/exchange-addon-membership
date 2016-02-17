@@ -129,13 +129,14 @@ function it_exchange_membership_addon_build_post_restriction_rules( $post_id ) {
 	$rules   = $factory->make_all_for_post( $post );
 
 	if ( empty( $rules ) ) {
+
 		$return .= '<div class="it-exchange-membership-no-restrictions">' . __( 'No membership restrictions for this content.', 'LION' ) . '</div>';
 		$return .= '</div>';
 
 		return $return;
 	}
 
-	$df = get_option( 'date_format' );
+	$df = str_replace( 'F', 'M', get_option( 'date_format' ) );
 	$df = it_exchange_php_date_format_to_jquery_datepicker_format( $df );
 
 	$return .= '<input type="hidden" id="it_exchange_membership_df" value="' . $df . '">';
