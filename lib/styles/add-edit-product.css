@@ -299,6 +299,31 @@
 	padding-top: 10px;
 }
 
+/** ----------------------------------------:[ collapse groups ]:--- */
+
+#it-exchange-product-membership-content-access-rules .it-exchange-addon-content-access-group-collapsed .it-exchange-membership-group-rule-title {
+	display: none;
+}
+
+#it-exchange-product-membership-content-access-rules .it-exchange-addon-content-access-group-collapsed .it-exchange-membership-group-rule-title-label {
+	margin: 10px 10px 10px 16px;
+	display: inline-block;
+}
+
+#it-exchange-product-membership-content-access-rules .it-exchange-addon-content-access-group-collapsed .it-exchange-membership-addon-group-action {
+	margin-top: 8px;
+}
+
+#it-exchange-product-membership-content-access-rules .it-exchange-addon-content-access-group-collapsed .it-exchange-membership-addon-sort-content-access-rule {
+	height: 38px !important;
+	min-height: 0;
+	background: #F6F6F6 url(images/drag-dots-rotated.png) 6px 17px no-repeat;
+}
+
+#it-exchange-product-membership-content-access-rules .it-exchange-addon-content-access-group-collapsed .it-exchange-membership-content-access-group-content {
+	display: none;
+}
+
 /** ----------------------------------------:[ content drip ]:--- */
 
 #it-exchange-product-membership-content-access-rules .it-exchange-membership-delay-rule-selection,
