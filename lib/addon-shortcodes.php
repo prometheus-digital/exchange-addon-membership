@@ -33,6 +33,7 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 		'show_drip'          => 'on',
 		'show_drip_time'     => 'on',
 		'show_icon'          => 'on',
+		'link_to_content'    => is_user_logged_in(),
 		'layout'             => $membership_settings['memberships-dashboard-view'],
 		'child_description'  => '<p class="description">' . sprintf( __( '(Included with %s)', 'LION' ), get_the_title( $post->ID ) ) . '</p>',
 	);
@@ -56,17 +57,19 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 	$count       = 0;
 	$memberships = it_exchange_membership_addon_get_customer_memberships();
 
-	if ( ! isset( $memberships[ $product_id ] ) ) {
-		return '';
+	if ( isset( $memberships[ $product_id ] ) ) {
+
+		$customer = it_exchange_get_current_customer();
+		$product  = it_exchange_get_product( $product_id );
+
+		$user_membership = it_exchange_get_user_membership_for_product( $customer, $product );
+	} else {
+		$user_membership = null;
 	}
 
+	$factory = new IT_Exchange_Membership_Rule_Factory();
+
 	$result .= '<div class="it-exchange-membership-membership-content">';
-
-	$customer = it_exchange_get_current_customer();
-	$product  = it_exchange_get_product( $product_id );
-
-	$user_membership = it_exchange_get_user_membership_for_product( $customer, $product );
-	$factory         = new IT_Exchange_Membership_Rule_Factory();
 
 	foreach ( $all_access as $product_id => $ignore ) {
 
@@ -92,7 +95,7 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 			$result .= '<h2>' . $atts['title'] . '</h2>';
 		}
 
-		$renderer       = new IT_Exchange_Membership_Front_Rule_Renderer( $access_rules, $user_membership, $factory );
+		$renderer       = new IT_Exchange_Membership_Front_Rule_Renderer( $access_rules, $factory, $user_membership );
 		$render_options = $atts;
 
 		$render_options['include_product_title'] = count( $all_access ) > 1;

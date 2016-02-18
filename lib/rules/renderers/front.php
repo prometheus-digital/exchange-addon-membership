@@ -30,10 +30,10 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 	 * IT_Exchange_Membership_Front_Rule_Renderer constructor.
 	 *
 	 * @param array                               $rules
-	 * @param IT_Exchange_Subscription            $subscription
 	 * @param IT_Exchange_Membership_Rule_Factory $factory
+	 * @param IT_Exchange_User_Membership         $user_membership
 	 */
-	public function __construct( array $rules, IT_Exchange_User_Membership $user_membership, IT_Exchange_Membership_Rule_Factory $factory ) {
+	public function __construct( array $rules, IT_Exchange_Membership_Rule_Factory $factory, IT_Exchange_User_Membership $user_membership = null ) {
 		$this->rules           = $rules;
 		$this->user_membership = $user_membership;
 		$this->factory         = $factory;
@@ -55,7 +55,8 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 			'as_child'              => false,
 			'include_product_title' => true,
 			'show_drip'             => 'on',
-			'show_drip_time'        => 'on'
+			'show_drip_time'        => 'on',
+			'link_to_content'       => true
 		);
 
 		$options = wp_parse_args( $options, $defaults );
@@ -164,9 +165,13 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 
 					<?php if ( ! empty( $more_content ) && $options['posts_per_grouping'] == count( $posts ) ): ?>
 						<li class="it-exchange-content-more">
-							<a href="<?php echo $more_content; ?>">
-								<?php _e( 'Read more content in this group', 'LION' ); ?>
-							</a>
+							<?php if ( $options['link_to_content'] ): ?>
+								<a href="<?php echo $more_content; ?>">
+									<?php _e( 'Read more content in this group', 'LION' ); ?>
+								</a>
+							<?php else: ?>
+								<?php _e( 'Plus more content in this group', 'LION' ); ?>
+							<?php endif; ?>
 						</li>
 					<?php endif; ?>
 				</ul>
@@ -196,7 +201,7 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 	 */
 	protected function render_post( WP_Post $post, IT_Exchange_Membership_Content_Rule $rule, array $options ) {
 
-		if ( $rule instanceof IT_Exchange_Membership_Rule_Delayable && $rule->get_delay_rule() ) {
+		if ( $this->user_membership && $rule instanceof IT_Exchange_Membership_Rule_Delayable && $rule->get_delay_rule() ) {
 			$delay = $rule->get_delay_rule()->get_availability_date( $this->user_membership );
 
 			if ( ! $delay ) {
@@ -228,9 +233,14 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 
 							<span class="it-exchange-item-title"><?php echo get_the_title( $post ); ?></span>
 						<?php else: ?>
-							<a href="<?php echo get_permalink( $post ); ?>">
+
+							<?php if ( $options['link_to_content'] ): ?>
+								<a href="<?php echo get_permalink( $post ); ?>">
+									<span class="it-exchange-item-title"><?php echo get_the_title( $post ); ?></span>
+								</a>
+							<?php else: ?>
 								<span class="it-exchange-item-title"><?php echo get_the_title( $post ); ?></span>
-							</a>
+							<?php endif; ?>
 						<?php endif; ?>
 					</p>
 				</div>

@@ -208,7 +208,7 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 				$result .= '<h2>' . $options['title'] . '</h2>';
 			}
 
-			$renderer       = new IT_Exchange_Membership_Front_Rule_Renderer( $access_rules, $user_membership, $factory );
+			$renderer       = new IT_Exchange_Membership_Front_Rule_Renderer( $access_rules, $factory, $user_membership );
 			$render_options = $options;
 
 			$render_options['include_product_title'] = count( $all_access ) > 1;
