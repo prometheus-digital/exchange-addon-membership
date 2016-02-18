@@ -47,6 +47,7 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 			return $this->factory->make_all_for_post( $post );
 		}
 
+		$passed = array();
 		$failed = array();
 
 		foreach ( $user_memberships as $user_membership ) {
@@ -60,8 +61,14 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 
 				if ( ! $rule->evaluate( $user_membership, $post ) ) {
 					$failed[] = $rule;
+				} else {
+					$passed[] = $rule;
 				}
 			}
+		}
+
+		if ( empty( $passed ) ) {
+			return $this->factory->make_all_for_post( $post );
 		}
 
 		return $failed;
