@@ -3,6 +3,11 @@
 	float: right;
 }
 
+.it-exchange-membership-content-access-rules-settings {
+	width: 100%;
+	overflow: hidden;
+}
+
 #it_exchange_membership_addon_membership_access_metabox .it-exchange-membership-restriction-group {
 	margin-bottom: 10px;
 	background: #FFF;
