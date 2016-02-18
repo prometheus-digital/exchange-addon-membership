@@ -1,4 +1,8 @@
 /** -----------------------------------------------------:[ Membership Meta Box ]:---------- */
+#it_exchange_membership_addon_membership_access_metabox .switchery {
+	float: right;
+}
+
 #it_exchange_membership_addon_membership_access_metabox .it-exchange-membership-restriction-group {
 	margin-bottom: 10px;
 	background: #FFF;

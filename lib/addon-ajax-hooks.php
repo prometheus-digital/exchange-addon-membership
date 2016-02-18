@@ -524,6 +524,32 @@ function it_exchange_membership_addon_ajax_update_drip_rule() {
 
 add_action( 'wp_ajax_it-exchange-membership-update-delay-rule', 'it_exchange_membership_addon_ajax_update_drip_rule' );
 
+/**
+ * Toggle content restriction. When disabled, content is always public.
+ *
+ * @since 1.18
+ */
+function it_exchange_membership_addon_toggle_content_restriction() {
+
+	if ( empty( $_REQUEST['nonce'] ) || ! wp_verify_nonce( $_REQUEST['nonce'], 'it-exchange-membership-post-edit' ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'Request expired. Please refresh the page and try again.', 'LION' )
+		) );
+	}
+
+	if ( empty( $_REQUEST['ID'] ) || ! current_user_can( 'edit_post', $_REQUEST['ID'] ) ) {
+		wp_send_json_error( array(
+			'message' => __( 'You don\'t have permission to do this.', 'LION' )
+		) );
+	}
+
+	update_post_meta( $_REQUEST['ID'], '_it-exchange-content-restriction-disabled', $_REQUEST['value'] === 'false' );
+
+	wp_send_json_success();
+}
+
+add_action( 'wp_ajax_it-exchange-membership-addon-toggle-content-restriction', 'it_exchange_membership_addon_toggle_content_restriction' );
+
 function it_exchange_membership_addon_ajax_add_membership_child() {
 
 	$return = '';

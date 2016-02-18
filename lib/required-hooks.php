@@ -307,8 +307,14 @@ function it_exchange_membership_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
 		);
 		wp_enqueue_script( 'it-exchange-membership-addon-add-edit-product', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/js/add-edit-product.js', $deps );
 	} else if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
-		$deps = array( 'jquery-ui-datepicker' );
+
+		wp_register_script( 'switchery', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/assets/switchery/switchery.min.js' );
+
+		$deps = array( 'jquery-ui-datepicker', 'switchery' );
 		wp_enqueue_script( 'it-exchange-membership-addon-add-edit-post', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/js/add-edit-post.js', $deps );
+		wp_localize_script( 'it-exchange-membership-addon-add-edit-post', 'ITE_MEMBERSHIP', array(
+			'nonce' => wp_create_nonce( 'it-exchange-membership-post-edit' )
+		) );
 	} else if ( 'users_page_it-exchange-members-table' === $hook_suffix ) {
 		wp_enqueue_script( 'jquery-ui-tooltip' );
 		wp_enqueue_script( 'it-exchange-dialog' );
@@ -355,10 +361,11 @@ function it_exchange_membership_addon_admin_wp_enqueue_styles() {
 			'nonce' => wp_create_nonce( 'it-exchange-membership-product-edit' )
 		) );
 	} else if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
-		wp_enqueue_style( 'it-exchange-membership-addon-add-edit-post', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/styles/add-edit-post.css' );
-		wp_localize_script( 'it-exchange-membership-addon-add-edit-post', 'ITE_MEMBERSHIP', array(
-			'nonce' => wp_create_nonce( 'it-exchange-membership-post-edit' )
-		) );
+
+		wp_register_style( 'switchery', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/assets/switchery/switchery.min.css' );
+		$deps = array( 'switchery' );
+
+		wp_enqueue_style( 'it-exchange-membership-addon-add-edit-post', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/styles/add-edit-post.css', $deps );
 	}
 }
 

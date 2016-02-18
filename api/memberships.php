@@ -40,6 +40,10 @@ function it_exchange_membership_addon_is_content_restricted( $post = null, &$fai
 		return false;
 	}
 
+	if ( get_post_meta( $post->ID, '_it-exchange-content-restriction-disabled', true ) ) {
+		return false;
+	}
+
 	$evaluator    = new IT_Exchange_Membership_Rule_Evaluator_Service( new IT_Exchange_Membership_Rule_Factory() );
 	$customer     = it_exchange_get_current_customer();
 	$failed_rules = $evaluator->evaluate_content( $post, $customer ? $customer : null );

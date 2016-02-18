@@ -55,9 +55,13 @@ add_action( 'add_meta_boxes', 'it_exchange_membership_add_post_metabox' );
  */
 function it_exchange_membership_addon_membership_access_metabox( $post ) {
 
-	// Add a nonce field so we can check for it later.
-	wp_nonce_field( 'it_exchange_membership_addon_membership_access_metabox', 'it_exchange_membership_addon_membership_access_metabox_nonce' );
+	$disabled = get_post_meta( $post->ID, '_it-exchange-content-restriction-disabled', true );
+	$hidden = $disabled ? ' hidden' : '';
 
+	echo '<label for="it-exchange-switch-member-access">' . __( 'Enable Content Restriction', 'LION' ) . '</label>';
+	echo '<input type="checkbox" id="it-exchange-switch-member-access"' . checked( $disabled, false, false ) . '>';
+
+	echo '<div class="it-exchange-membership-content-access-rules-settings' . $hidden .'">';
 	echo '<h4>' . __( 'Who can access this post?', 'LION' ) . '</h4>';
 
 	echo it_exchange_membership_addon_build_post_restriction_rules( $post->ID );
@@ -67,5 +71,6 @@ function it_exchange_membership_addon_membership_access_metabox( $post ) {
 
 	echo '<div class="it-exchange-add-new-restriction">';
 	echo '<a href="#" class="button">' . __( 'Add Restriction', 'LION' ) . '</a>';
+	echo '</div>';
 	echo '</div>';
 }
