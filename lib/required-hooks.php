@@ -875,7 +875,7 @@ function it_exchange_membership_addon_content_filter( $content ) {
 	return $content;
 }
 
-add_filter( 'the_content', 'it_exchange_membership_addon_content_filter' );
+add_filter( 'the_content', 'it_exchange_membership_addon_content_filter', 8 );
 
 /**
  * Checks if $post is restriction rules apply, if so, return Membership restricted templates
