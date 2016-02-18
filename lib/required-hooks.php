@@ -901,7 +901,7 @@ function it_exchange_membership_addon_excerpt_filter( $excerpt ) {
 	return $excerpt;
 }
 
-add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter' );
+add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter', 8 );
 
 /**
  * Checks if $product is restriction rules apply, if so, return Membership restricted templates
