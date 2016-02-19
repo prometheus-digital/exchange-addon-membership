@@ -57,7 +57,7 @@ class IT_Exchange_Memberships_Fix_Rule_Exemptions_Upgrade implements IT_Exchange
 	 * @return string
 	 */
 	public function get_description() {
-		return __( 'Change how rule exemptions are stored..', 'LION' );
+		return __( 'Change how membership content rule exemptions are stored. Ensures content desired to be public is public.', 'LION' );
 	}
 
 	/**
