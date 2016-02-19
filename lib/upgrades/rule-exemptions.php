@@ -147,8 +147,6 @@ class IT_Exchange_Memberships_Fix_Rule_Exemptions_Upgrade implements IT_Exchange
 
 		if ( $verbose ) {
 			$skin->debug( 'Upgrade Post ' . $post->ID );
-
-			return;
 		}
 
 		$restrictions = get_post_meta( $post->ID, '_item-content-rule-exemptions', true );
@@ -157,8 +155,6 @@ class IT_Exchange_Memberships_Fix_Rule_Exemptions_Upgrade implements IT_Exchange
 
 			if ( $verbose ) {
 				$skin->debug( 'Skipped Post ' . $post->ID );
-
-				return;
 			}
 
 			return;
@@ -210,6 +206,11 @@ class IT_Exchange_Memberships_Fix_Rule_Exemptions_Upgrade implements IT_Exchange
 		}
 
 		if ( $all_exempt ) {
+
+			if ( $verbose ) {
+				$skin->debug( 'All rules exempted. Disabling restrictions.' );
+			}
+
 			update_post_meta( $post->ID, '_it-exchange-content-restriction-disabled', true );
 		}
 
@@ -217,6 +218,7 @@ class IT_Exchange_Memberships_Fix_Rule_Exemptions_Upgrade implements IT_Exchange
 
 		if ( $verbose ) {
 			$skin->debug( 'Upgraded Post ' . $post->ID );
+			$skin->debug( '' );
 		}
 	}
 
