@@ -131,6 +131,32 @@ function it_exchange_membership_addon_show_recurring_payments_version_nag() {
 add_action( 'admin_notices', 'it_exchange_membership_addon_show_recurring_payments_version_nag' );
 
 /**
+ * Shows a nag requiring version 4.2 of WordPress
+ *
+ * @since 1.18
+ *
+ * @return void
+ */
+function it_exchange_membership_addon_show_wp_version_nag() {
+	if ( version_compare( $GLOBALS['wp_version'], '4.2.0', '<' ) ) {
+		?>
+		<div id="it-exchange-add-on-min-version-nag" class="it-exchange-nag">
+			<?php printf( __( 'The Membership add-on requires WordPress version 4.2 or greater. %sPlease upgrade WordPress%s.', 'LION' ), '<a href="' . admin_url( 'update-core.php' ) . '">', '</a>' ); ?>
+		</div>
+		<script type="text/javascript">
+			jQuery( document ).ready( function () {
+				if ( jQuery( '.wrap > h2' ).length == '1' ) {
+					jQuery( "#it-exchange-add-on-min-version-nag" ).insertAfter( '.wrap > h2' ).addClass( 'after-h2' );
+				}
+			} );
+		</script>
+		<?php
+	}
+}
+
+add_action( 'admin_notices', 'it_exchange_membership_addon_show_wp_version_nag' );
+
+/**
  * Adds a members table to the Users WP Menu.
  *
  * @since 1.2.0
