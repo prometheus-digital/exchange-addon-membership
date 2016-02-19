@@ -47,7 +47,7 @@ abstract class IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchang
 	 * @return bool True if readable
 	 */
 	public function evaluate( IT_Exchange_User_Membership $user_membership, WP_Post $post ) {
-		return ! $this->is_post_exempt( $post ) && $this->matches_post( $post );
+		return $this->matches_post( $post );
 	}
 
 	/**

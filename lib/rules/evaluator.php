@@ -37,41 +37,42 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 	 */
 	public function evaluate_content( WP_Post $post, IT_Exchange_Customer $customer = null ) {
 
-		if ( ! $customer ) {
-			return $this->factory->make_all_for_post( $post );
-		}
-
+		$post_rules       = $this->factory->make_all_for_post( $post );
 		$user_memberships = it_exchange_get_user_memberships( $customer );
 
+		$wrong_membership_rules = array();
+		$exempted_rules         = array();
+		$passed_rules           = array();
+		$failed_rules           = array();
+
 		if ( empty( $user_memberships ) ) {
-			return $this->factory->make_all_for_post( $post );
+			$failed_rules = $post_rules;
 		}
 
-		$passed = array();
-		$failed = array();
+		foreach ( $post_rules as $post_rule ) {
 
-		foreach ( $user_memberships as $user_membership ) {
-			$rules = $this->factory->make_all_for_membership( $user_membership->get_membership() );
-
-			foreach ( $rules as $rule ) {
-
-				if ( ! $rule->matches_post( $post ) ) {
-					continue;
-				}
-
-				if ( ! $rule->evaluate( $user_membership, $post ) ) {
-					$failed[] = $rule;
+			foreach ( $user_memberships as $user_membership ) {
+				if ( $post_rule->get_membership()->ID != $user_membership->get_membership()->ID ) {
+					$wrong_membership_rules[] = $post_rule;
+				} elseif ( $post_rule->is_post_exempt( $post ) ) {
+					$exempted_rules[] = $post_rule;
+				} elseif ( $post_rule->evaluate( $user_membership, $post ) ) {
+					$passed_rules[] = $post_rule;
 				} else {
-					$passed[] = $rule;
+					$failed_rules[] = $post_rule;
 				}
+			}
+
+			if ( empty( $user_memberships ) && $post_rule->is_post_exempt( $post ) ) {
+				$exempted_rules[] = $post_rule;
 			}
 		}
 
-		if ( empty( $passed ) ) {
-			return $this->factory->make_all_for_post( $post );
+		if ( empty( $passed_rules ) && empty( $failed_rules ) ) {
+			return array_udiff( $wrong_membership_rules, $exempted_rules, __CLASS__ . '::_udiff' );
 		}
 
-		return $failed;
+		return array_udiff( $failed_rules, $exempted_rules, __CLASS__ . '::_udiff' );
 	}
 
 	/**
@@ -146,5 +147,23 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 			'rule'       => $failed,
 			'membership' => $failed_membership
 		);
+	}
+
+	public static function udiff( array $a, array $b ) {
+
+	}
+
+	/**
+	 * Udiff for rule objects.
+	 *
+	 * @since 1.18
+	 *
+	 * @param IT_Exchange_Membership_Content_Rule $a
+	 * @param IT_Exchange_Membership_Content_Rule $b
+	 *
+	 * @return int
+	 */
+	public static function _udiff( IT_Exchange_Membership_Content_Rule $a, IT_Exchange_Membership_Content_Rule $b ) {
+		return strcmp( $a->get_rule_id(), $b->get_rule_id() );
 	}
 }
