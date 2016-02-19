@@ -103,9 +103,22 @@ class IT_Exchange_Memberships_Fix_Rule_Exemptions_Upgrade implements IT_Exchange
 			'posts_per_page' => $number,
 			'page'           => $page,
 			'meta_query'     => array(
+				'relation' => 'AND',
 				array(
 					'key'     => '_item-content-rule-exemptions',
 					'compare' => 'EXISTS'
+				),
+				array(
+					'relation' => 'OR',
+					array(
+						'key'     => '_upgrade_completed',
+						'compare' => 'NOT EXISTS'
+					),
+					array(
+						'key'     => '_upgrade_completed',
+						'value'   => $this->get_slug(),
+						'compare' => '!='
+					)
 				)
 			)
 		);
@@ -199,6 +212,8 @@ class IT_Exchange_Memberships_Fix_Rule_Exemptions_Upgrade implements IT_Exchange
 		if ( $all_exempt ) {
 			update_post_meta( $post->ID, '_it-exchange-content-restriction-disabled', true );
 		}
+
+		update_post_meta( $post->ID, '_upgrade_completed', $this->get_slug() );
 
 		if ( $verbose ) {
 			$skin->debug( 'Upgraded Post ' . $post->ID );

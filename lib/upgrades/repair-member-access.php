@@ -289,6 +289,8 @@ class IT_Exchange_Memberships_Repair_Member_Access_Upgrade implements IT_Exchang
 			$customer->update_customer_meta( 'member_access', $member_access );
 		}
 
+		update_post_meta( $transaction->ID, '_upgrade_completed', $this->get_slug() );
+
 		if ( $verbose ) {
 			$skin->debug( 'Upgraded Txn: ' . $transaction->ID );
 			$skin->debug( '' );
