@@ -127,6 +127,8 @@ class IT_Exchange_Memberships_Fix_Rule_Exemptions_Upgrade implements IT_Exchange
 	 * @param WP_Post                           $post
 	 * @param IT_Exchange_Upgrade_SkinInterface $skin
 	 * @param bool                              $verbose
+	 *
+	 * @throws IT_Exchange_Upgrade_Exception
 	 */
 	protected function upgrade_post( WP_Post $post, IT_Exchange_Upgrade_SkinInterface $skin, $verbose ) {
 
@@ -162,6 +164,13 @@ class IT_Exchange_Memberships_Fix_Rule_Exemptions_Upgrade implements IT_Exchange
 				} elseif ( strpos( $exemption, 'taxonomy' ) !== false ) {
 					$type = 'taxonomy';
 					$term = preg_replace( '/\D/', '', $exemption );
+
+					if ( $this->is_term_shared( $term ) ) {
+						throw new IT_Exchange_Upgrade_Exception(
+							"Found shared term '{$term}'. All shared terms must be split before upgrading. " .
+							'Please upgrade to WordPress 4.3 or later.'
+						);
+					}
 				} else {
 					continue;
 				}
@@ -194,6 +203,28 @@ class IT_Exchange_Memberships_Fix_Rule_Exemptions_Upgrade implements IT_Exchange
 		if ( $verbose ) {
 			$skin->debug( 'Upgraded Post ' . $post->ID );
 		}
+	}
+
+	/**
+	 * Is a term shared.
+	 *
+	 * @since 1.18
+	 *
+	 * @param int $term_id
+	 *
+	 * @return bool
+	 */
+	protected function is_term_shared( $term_id ) {
+
+		global $wpdb;
+
+		if ( get_option( 'finished_splitting_shared_terms' ) ) {
+			return false;
+		}
+
+		$tt_count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->term_taxonomy WHERE term_id = %d", $term_id ) );
+
+		return $tt_count > 1;
 	}
 
 	/**
