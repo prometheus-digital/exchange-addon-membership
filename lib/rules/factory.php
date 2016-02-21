@@ -195,7 +195,8 @@ class IT_Exchange_Membership_Rule_Factory {
 			$i ++;
 		}
 
-		return $objects;
+		// ensure indexes are 0-based and continuous
+		return array_values( $objects );
 	}
 
 	/**
