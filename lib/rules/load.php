@@ -14,7 +14,7 @@ require_once dirname( __FILE__ ) . '/contracts/layoutable.php';
 require_once dirname( __FILE__ ) . '/factory.php';
 require_once dirname( __FILE__ ) . '/content/group.php';
 require_once dirname( __FILE__ ) . '/content/interface.php';
-require_once dirname( __FILE__ ) . '/content/abstract.php';
+require_once dirname( __FILE__ ) . '/content/base.php';
 require_once dirname( __FILE__ ) . '/content/post-type.php';
 require_once dirname( __FILE__ ) . '/content/post.php';
 

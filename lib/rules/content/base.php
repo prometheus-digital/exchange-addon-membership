@@ -7,9 +7,9 @@
  */
 
 /**
- * Class IT_Exchange_Membership_AbstractContent_Rule
+ * Class IT_Exchange_Membership_Base_Content_Rule
  */
-abstract class IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchange_Membership_Content_Rule {
+abstract class IT_Exchange_Membership_Base_Content_Rule implements IT_Exchange_Membership_Content_Rule {
 
 	/**
 	 * @var IT_Exchange_Membership

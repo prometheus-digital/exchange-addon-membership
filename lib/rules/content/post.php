@@ -9,7 +9,7 @@
 /**
  * Class IT_Exchange_Membership_Content_Rule_Post
  */
-class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_AbstractContent_Rule implements IT_Exchange_Membership_Rule_Delayable {
+class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Base_Content_Rule implements IT_Exchange_Membership_Rule_Delayable {
 
 	/**
 	 * @var string
