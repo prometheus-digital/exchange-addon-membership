@@ -20,10 +20,16 @@
  */
 function itegms_get_purchase_for_members_membership( IT_Exchange_Customer $member, IT_Exchange_Product $membership ) {
 
-	$sub = 'SELECT purchase FROM wp_itegms_relationships WHERE member = %d';
-	$sql = "SELECT * FROM wp_itegms_purchases WHERE membership = %d AND id IN ( $sub );";
-
 	global $wpdb;
+
+	$relationships    = new \ITEGMS\DB\Relationships();
+	$relationships_tn = $relationships->get_table_name( $wpdb );
+
+	$purchases    = new \ITEGMS\DB\Purchases();
+	$purchases_tn = $purchases->get_table_name( $wpdb );
+
+	$sub = "SELECT purchase FROM $relationships_tn WHERE member = %d";
+	$sql = "SELECT * FROM $purchases_tn WHERE membership = %d AND id IN ( $sub );";
 
 	$results = $wpdb->get_row( $wpdb->prepare( $sql, $membership->ID, $member->id ) );
 
