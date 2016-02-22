@@ -71,7 +71,7 @@ class IT_Exchange_Membership_Rule_Factory {
 
 		/** @var WP_Term $term */
 		foreach ( $terms as $term ) {
-			$IDs = array_merge( $IDs, get_option( "_item-content-rule-tax-$term->taxonomy-$term->term_id", array() ) );
+			$IDs = array_merge( $IDs, get_option( "_item-content-rule-tax-{$term->taxonomy}-{$term->term_id}", array() ) );
 		}
 
 		return array_unique( $IDs );
