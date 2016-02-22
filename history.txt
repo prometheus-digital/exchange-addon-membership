@@ -277,3 +277,12 @@
 	Add: Umbrella Memberships
 1.17.0.1 - 2016-02-02 - Timothy Jacobs, Elise Alley
 	Fix: Composer bundling
+1.17.0.2 - 2016-02-22 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Add: IT_Exchange_Subscription class for managing subscriptions
+	Add: Alter subscription status whenever a transaction status changes.
+	Fix: Subscription settings when multiple subscriptions per-transaction
+	Deprecate:
+		it_exchange_recurring_payments_addon_update_transaction_subscription_status()
+		it_exchange_recurring_payments_addon_interval_string()
+		it_exchange_recurring_payments_addon_expires_time
+		it_exchange_recurring_payments_addon_expires_time_{$method}
