@@ -44,7 +44,11 @@ function it_exchange_membership_addon_is_content_restricted( $post = null, &$fai
 		return false;
 	}
 
-	$evaluator    = new IT_Exchange_Membership_Rule_Evaluator_Service( new IT_Exchange_Membership_Rule_Factory() );
+	$evaluator = new IT_Exchange_Membership_Rule_Evaluator_Service(
+		new IT_Exchange_Membership_Rule_Factory(),
+		new IT_Exchange_User_Membership_Repository()
+	);
+
 	$customer     = it_exchange_get_current_customer();
 	$failed_rules = $evaluator->evaluate_content( $post, $customer ? $customer : null );
 
@@ -87,7 +91,11 @@ function it_exchange_membership_addon_is_product_restricted( $post = null, &$fai
 		return false;
 	}
 
-	$evaluator    = new IT_Exchange_Membership_Rule_Evaluator_Service( new IT_Exchange_Membership_Rule_Factory() );
+	$evaluator = new IT_Exchange_Membership_Rule_Evaluator_Service(
+		new IT_Exchange_Membership_Rule_Factory(),
+		new IT_Exchange_User_Membership_Repository()
+	);
+
 	$customer     = it_exchange_get_current_customer();
 	$failed_rules = $evaluator->evaluate_content( $post, $customer ? $customer : null );
 
@@ -126,7 +134,11 @@ function it_exchange_membership_addon_is_content_dripped( $post = null, &$failed
 		return false;
 	}
 
-	$evaluator = new IT_Exchange_Membership_Rule_Evaluator_Service( new IT_Exchange_Membership_Rule_Factory() );
+	$evaluator = new IT_Exchange_Membership_Rule_Evaluator_Service(
+		new IT_Exchange_Membership_Rule_Factory(),
+		new IT_Exchange_User_Membership_Repository()
+	);
+
 	$customer  = it_exchange_get_current_customer();
 
 	if ( ! $customer ) {
@@ -169,7 +181,11 @@ function it_exchange_membership_addon_is_product_dripped( $post = null, &$failed
 		return false;
 	}
 
-	$evaluator = new IT_Exchange_Membership_Rule_Evaluator_Service( new IT_Exchange_Membership_Rule_Factory() );
+	$evaluator = new IT_Exchange_Membership_Rule_Evaluator_Service(
+		new IT_Exchange_Membership_Rule_Factory(),
+		new IT_Exchange_User_Membership_Repository()
+	);
+
 	$customer  = it_exchange_get_current_customer();
 
 	if ( ! $customer ) {
@@ -245,35 +261,9 @@ function it_exchange_membership_addon_get_customer_memberships( $customer_id = f
  */
 function it_exchange_get_user_memberships( IT_Exchange_Customer $customer = null ) {
 
-	$membership_ids = it_exchange_membership_addon_get_customer_memberships( $customer ? $customer->ID : false );
+	$repository = new IT_Exchange_User_Membership_Repository();
 
-	$memberships = array();
-
-	foreach ( $membership_ids as $product_id => $transaction_id ) {
-
-		$txn  = it_exchange_get_transaction( $transaction_id );
-		$prod = it_exchange_get_product( $product_id );
-
-		if ( function_exists( 'it_exchange_get_subscription_by_transaction' ) ) {
-
-			try {
-				$subscription = it_exchange_get_subscription_by_transaction( $txn, $prod );
-
-				if ( $subscription ) {
-					$memberships[] = new IT_Exchange_User_Membership_Subscription_Driver( $subscription );
-
-					continue;
-				}
-			}
-			catch ( Exception $e ) {
-
-			}
-		}
-
-		$memberships[] = new IT_Exchange_User_Membership_Transaction_Driver( $txn, $prod );
-	}
-
-	return $memberships;
+	return $repository->get_user_memberships( $customer );
 }
 
 /**

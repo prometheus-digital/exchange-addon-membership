@@ -17,12 +17,19 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 	private $factory;
 
 	/**
+	 * @var IT_Exchange_User_Membership_Repository
+	 */
+	private $repository;
+
+	/**
 	 * IT_Exchange_Membership_Rule_Evaluator_Service constructor.
 	 *
-	 * @param IT_Exchange_Membership_Rule_Factory $factory
+	 * @param IT_Exchange_Membership_Rule_Factory    $factory
+	 * @param IT_Exchange_User_Membership_Repository $repository
 	 */
-	public function __construct( IT_Exchange_Membership_Rule_Factory $factory ) {
-		$this->factory = $factory;
+	public function __construct( IT_Exchange_Membership_Rule_Factory $factory, IT_Exchange_User_Membership_Repository $repository ) {
+		$this->factory    = $factory;
+		$this->repository = $repository;
 	}
 
 	/**
@@ -38,7 +45,7 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 	public function evaluate_content( WP_Post $post, IT_Exchange_Customer $customer = null ) {
 
 		$post_rules       = $this->factory->make_all_for_post( $post );
-		$user_memberships = it_exchange_get_user_memberships( $customer );
+		$user_memberships = $this->repository->get_user_memberships( $customer );
 
 		$wrong_membership_rules = array();
 		$exempted_rules         = array();
@@ -69,10 +76,10 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 		}
 
 		if ( empty( $passed_rules ) && empty( $failed_rules ) ) {
-			return array_udiff( $wrong_membership_rules, $exempted_rules, __CLASS__ . '::_udiff' );
+			return array_values( array_udiff( $wrong_membership_rules, $exempted_rules, __CLASS__ . '::_udiff' ) );
 		}
 
-		return array_udiff( $failed_rules, $exempted_rules, __CLASS__ . '::_udiff' );
+		return array_values( array_udiff( $failed_rules, $exempted_rules, __CLASS__ . '::_udiff' ) );
 	}
 
 	/**
@@ -87,11 +94,11 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 	 *
 	 * @return array|null Null if customer has immediate access,
 	 *                    or array with 'rule' containing rule granting earliest access and
-	 *                    'subscription' containing associated subscription.
+	 *                    'membership' containing associated user membership.
 	 */
 	public function evaluate_drip( WP_Post $post, IT_Exchange_Customer $customer ) {
 
-		$user_memberships = it_exchange_get_user_memberships( $customer );
+		$user_memberships = $this->repository->get_user_memberships( $customer );
 
 		/** @var IT_Exchange_Membership_Delay_Rule $failed */
 		$failed            = null;
@@ -147,10 +154,6 @@ class IT_Exchange_Membership_Rule_Evaluator_Service {
 			'rule'       => $failed,
 			'membership' => $failed_membership
 		);
-	}
-
-	public static function udiff( array $a, array $b ) {
-
 	}
 
 	/**
