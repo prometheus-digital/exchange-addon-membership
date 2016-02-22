@@ -142,6 +142,4 @@ class IT_Exchange_Membership_Delay_Rule_Drip_Test extends IT_Exchange_UnitTestCa
 		$this->assertArrayHasKey( 'months', $durations );
 		$this->assertArrayHasKey( 'years', $durations );
 	}
-
-
 }
