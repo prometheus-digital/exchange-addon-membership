@@ -89,4 +89,6 @@ if ( $current_version != ITE_MEMBERSHIP_PLUGIN_VERSION ) {
 	do_action( 'it_exchange_addon_membership_upgrade', $current_version, ITE_MEMBERSHIP_PLUGIN_VERSION );
 
 	update_option( 'exchange_mmebership_version', ITE_MEMBERSHIP_PLUGIN_VERSION );
+
+	update_option( 'it_exchange_show_upgrades_nag', true );
 }

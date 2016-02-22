@@ -286,3 +286,21 @@
 		it_exchange_recurring_payments_addon_interval_string()
 		it_exchange_recurring_payments_addon_expires_time
 		it_exchange_recurring_payments_addon_expires_time_{$method}
+1.18 - 2016-02-22 - Timothy Jacobs, Elise Alley, Lew Ayotte, Ty Carlson
+	Security Fix: Prevent non-authorized users from updating content protection rules
+	Major: Two upgrade routines.
+	Major: WP 4.2+ and Exchange 1.35.2 are required.
+	Add: Protection rule API for developers. Registering custom protection or delay rules is super simple.
+	Add: Taxonomy rules can now be dripped ( WP 4.4 only ).
+	Add: Content can be delayed until a certain date.
+	Add: Per-product restriction and delay messages.
+	Add: Rule groups can now be collapsed in the admin.
+	Add: Support for forcing a post to disregard protection rules.
+	Tweak: Update member access when transaction or subscription status changes.
+	Tweak: Breakup content rule types into sections
+	Tweak: Only show public post types as valid content rule options
+	Fix: Exemption rules could unintentionally make a post public.
+	Fix: Ensure line-breaks are preserved in delay and content restriction messages.
+	Fix: Members would incorrectly appear in the members table.
+	Fix: Members table max-page redirect
+	Fix: Don't include users with no memberships in the members table.
