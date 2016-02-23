@@ -304,3 +304,5 @@
 	Fix: Members would incorrectly appear in the members table.
 	Fix: Members table max-page redirect
 	Fix: Don't include users with no memberships in the members table.
+1.18.1 - 2016-02-23 - Timothy Jacobs, Elise Alley
+	Fix: Fatal error when memberships are deleted manually from the database
