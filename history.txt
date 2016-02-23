@@ -306,5 +306,5 @@
 	Fix: Don't include users with no memberships in the members table.
 1.19 - 2016-02-23 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Fix: Fatal error on child transaction screens
-1.18.1 - 2016-02-23 - Timothy Jacobs, Elise Alley
+1.19.1 - 2016-02-23 - Timothy Jacobs, Elise Alley
 	Fix: Fatal error when memberships are deleted manually from the database
