@@ -304,3 +304,5 @@
 	Fix: Members would incorrectly appear in the members table.
 	Fix: Members table max-page redirect
 	Fix: Don't include users with no memberships in the members table.
+1.19 - 2016-02-23 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Fix: Fatal error on child transaction screens
