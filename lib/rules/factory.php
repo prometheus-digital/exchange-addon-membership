@@ -37,7 +37,12 @@ class IT_Exchange_Membership_Rule_Factory {
 		$this->post = $post;
 
 		foreach ( $memberships as $membership ) {
-			$rules = array_merge( $rules, $this->make_all_for_membership( it_exchange_get_product( $membership ) ) );
+
+			$membership = it_exchange_get_product( $membership );
+
+			if ( $membership instanceof IT_Exchange_Membership ) {
+				$rules = array_merge( $rules, $this->make_all_for_membership( $membership ) );
+			}
 		}
 
 		$rules = array_filter( $rules, array( $this, '_filter' ) );
