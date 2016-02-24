@@ -299,29 +299,21 @@ add_action( 'it_exchange_enabled_addons_loaded', 'ithemes_exchange_membership_ad
  * @return void
  */
 function it_exchange_membership_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
-	global $post;
 
-	if ( isset( $_REQUEST['post_type'] ) ) {
-		$post_type = $_REQUEST['post_type'];
-	} else {
-		if ( isset( $_REQUEST['post'] ) ) {
-			$post_id = (int) $_REQUEST['post'];
-		} elseif ( isset( $_REQUEST['post_ID'] ) ) {
-			$post_id = (int) $_REQUEST['post_ID'];
-		} else {
-			$post_id = 0;
-		}
+	if ( 'users_page_it-exchange-members-table' === $hook_suffix ) {
+		wp_enqueue_script( 'jquery-ui-tooltip' );
+		wp_enqueue_script( 'it-exchange-dialog' );
 
-		if ( $post_id ) {
-			$post = get_post( $post_id );
-		}
-
-		if ( isset( $post ) && ! empty( $post ) ) {
-			$post_type = $post->post_type;
-		}
+		return;
 	}
 
-	if ( isset( $post_type ) && 'it_exchange_prod' === $post_type ) {
+	$screen = get_current_screen();
+
+	if ( ! $screen ) {
+		return;
+	}
+
+	if ( 'it_exchange_prod' === $screen->post_type ) {
 		$deps = array(
 			'post',
 			'jquery-ui-sortable',
@@ -332,7 +324,7 @@ function it_exchange_membership_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
 			'autosave'
 		);
 		wp_enqueue_script( 'it-exchange-membership-addon-add-edit-product', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/js/add-edit-product.js', $deps );
-	} else if ( isset( $post_type ) && 'it_exchange_prod' !== $post_type ) {
+	} else if ( 'it_exchange_prod' !== $screen->post_type && $screen->base == 'post' ) {
 
 		wp_register_script( 'switchery', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/assets/switchery/switchery.min.js' );
 
@@ -341,9 +333,6 @@ function it_exchange_membership_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
 		wp_localize_script( 'it-exchange-membership-addon-add-edit-post', 'ITE_MEMBERSHIP', array(
 			'nonce' => wp_create_nonce( 'it-exchange-membership-post-edit' )
 		) );
-	} else if ( 'users_page_it-exchange-members-table' === $hook_suffix ) {
-		wp_enqueue_script( 'jquery-ui-tooltip' );
-		wp_enqueue_script( 'it-exchange-dialog' );
 	}
 }
 
