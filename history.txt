@@ -312,3 +312,5 @@
 	Fix: Prevent JS errors interfering with Screen Options
 1.19.3 - 2016-02-25 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Fix: Fatal error with invalid products
+1.19.4 - 2016-02-25 - Timothy Jacobs, Elise Alley
+	Fix: Don't pass invalid products or transactions to RP
