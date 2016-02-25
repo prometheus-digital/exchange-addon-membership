@@ -31,6 +31,10 @@ class IT_Exchange_User_Membership_Repository {
 			$txn  = it_exchange_get_transaction( $transaction_id );
 			$prod = it_exchange_get_product( $product_id );
 
+			if ( ! $txn || ! $prod instanceof IT_Exchange_Membership ) {
+				continue;
+			}
+
 			if ( function_exists( 'it_exchange_get_subscription_by_transaction' ) ) {
 
 				try {
