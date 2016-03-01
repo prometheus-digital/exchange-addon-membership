@@ -17,14 +17,14 @@ class IT_Exchange_Membership_Delay_Rule_Date_Test extends IT_Exchange_UnitTestCa
 		$delayable->shouldReceive( 'get_delay_meta' )->with( '_item-content-rule-date-1' )->andReturn( 'tomorrow' );
 
 		$drip = new IT_Exchange_Membership_Delay_Rule_Date( $delayable, $membership );
-		$this->assertFalse( $drip->evaluate( $user_membership ) );
+		$this->assertFalse( $drip->evaluate( $user_membership, new WP_Post( new stdClass() ) ) );
 
 
 		$delayable = m::mock( 'IT_Exchange_Membership_Rule_Delayable' );
 		$delayable->shouldReceive( 'get_delay_meta' )->with( '_item-content-rule-date-1' )->andReturn( 'yesterday' );
 
 		$drip = new IT_Exchange_Membership_Delay_Rule_Date( $delayable, $membership );
-		$this->assertTrue( $drip->evaluate( $user_membership ) );
+		$this->assertTrue( $drip->evaluate( $user_membership, new WP_Post( new stdClass() ) ) );
 	}
 
 	public function test_get_availability_date() {

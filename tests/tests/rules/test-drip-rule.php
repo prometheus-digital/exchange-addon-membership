@@ -20,11 +20,11 @@ class IT_Exchange_Membership_Delay_Rule_Drip_Test extends IT_Exchange_UnitTestCa
 
 		$user_membership = m::mock( 'IT_Exchange_User_Membership' );
 		$user_membership->shouldReceive( 'get_start_date' )->andReturn( new DateTime( 'yesterday' ) );
-		$this->assertFalse( $drip->evaluate( $user_membership ) );
+		$this->assertFalse( $drip->evaluate( $user_membership, new WP_Post( new stdClass() ) ) );
 
 		$user_membership = m::mock( 'IT_Exchange_User_Membership' );
 		$user_membership->shouldReceive( 'get_start_date' )->andReturn( new DateTime( 'last week' ) );
-		$this->assertTrue( $drip->evaluate( $user_membership ) );
+		$this->assertTrue( $drip->evaluate( $user_membership, new WP_Post( new stdClass() ) ) );
 	}
 
 	public function test_get_availability_date() {
