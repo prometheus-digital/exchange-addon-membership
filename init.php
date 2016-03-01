@@ -90,5 +90,5 @@ if ( $current_version != ITE_MEMBERSHIP_PLUGIN_VERSION ) {
 
 	update_option( 'exchange_mmebership_version', ITE_MEMBERSHIP_PLUGIN_VERSION );
 
-	update_option( 'it_exchange_show_upgrades_nag', true );
+	//update_option( 'it_exchange_show_upgrades_nag', true );
 }
