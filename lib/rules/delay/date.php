@@ -57,7 +57,7 @@ class IT_Exchange_Membership_Delay_Rule_Date implements IT_Exchange_Membership_D
 	 *
 	 * @return bool True if readable
 	 */
-	public function evaluate( IT_Exchange_User_Membership $user_membership, WP_Post $post = null ) {
+	public function evaluate( IT_Exchange_User_Membership $user_membership, WP_Post $post ) {
 
 		if ( ! $this->date ) {
 			return false;
