@@ -178,7 +178,7 @@ class IT_Exchange_Memberships_Repair_Member_Access_Upgrade implements IT_Exchang
 						$member_access[ $transaction->ID ] = array();
 					}
 
-					if ( false === array_search( $sub->get_product()->ID, $member_access[ $transaction->ID ] ) ) {
+					if ( false === array_search( $sub->get_product()->ID, (array) $member_access[ $transaction->ID ] ) ) {
 						$member_access[ $transaction->ID ][] = $sub->get_product()->ID;
 
 						if ( $verbose ) {
@@ -194,7 +194,7 @@ class IT_Exchange_Memberships_Repair_Member_Access_Upgrade implements IT_Exchang
 						continue;
 					}
 
-					$i = array_search( $sub->get_product()->ID, $member_access[ $transaction->ID ] );
+					$i = array_search( $sub->get_product()->ID, (array) $member_access[ $transaction->ID ] );
 
 					if ( $i === false ) {
 						continue;
