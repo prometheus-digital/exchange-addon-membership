@@ -316,3 +316,6 @@
 	Fix: Don't pass invalid products or transactions to RP
 1.19.5 - 2016-03-01 - Timothy Jacobs, Elise Alley
 	Fix: PHP 5.2 compatibility
+1.19.6 - 2016-03-03 - Timothy Jacobs, Elise Alley
+	Fix: Bug when member access structure is improper
+	Fix: Compatibility with Tribe Events Calendar
