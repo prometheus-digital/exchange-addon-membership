@@ -198,7 +198,11 @@ class IT_Exchange_Memberships_Repair_Member_Access_Upgrade implements IT_Exchang
 						continue;
 					}
 
-					$i = array_search( $sub->get_product()->ID, (array) $member_access[ $transaction->ID ] );
+					if ( ! is_array( $member_access[ $transaction->ID ] ) ) {
+						$member_access[ $transaction->ID ] = (array) $member_access[ $transaction->ID ];
+					}
+
+					$i = array_search( $sub->get_product()->ID, $member_access[ $transaction->ID ] );
 
 					if ( $i === false ) {
 						continue;
@@ -270,6 +274,10 @@ class IT_Exchange_Memberships_Repair_Member_Access_Upgrade implements IT_Exchang
 
 				if ( empty( $member_access[ $transaction->ID ] ) ) {
 					continue;
+				}
+
+				if ( ! is_array( $member_access[ $transaction->ID ] ) ) {
+					$member_access[ $transaction->ID ] = (array) $member_access[ $transaction->ID ];
 				}
 
 				$i = array_search( $membership_id, $member_access[ $transaction->ID ] );
