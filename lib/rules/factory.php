@@ -93,8 +93,8 @@ class IT_Exchange_Membership_Rule_Factory {
 	 *
 	 * @return bool
 	 */
-	public function _filter( IT_Exchange_Membership_Content_Rule $rule ) {
-		return $rule->matches_post( $this->post );
+	public function _filter( IT_Exchange_Membership_Content_Rule $rule = null ) {
+		return $rule && $rule->matches_post( $this->post );
 	}
 
 	/**
