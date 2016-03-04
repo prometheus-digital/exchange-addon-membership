@@ -319,3 +319,6 @@
 1.19.6 - 2016-03-03 - Timothy Jacobs, Elise Alley
 	Fix: Bug when member access structure is improper
 	Fix: Compatibility with Tribe Events Calendar
+1.19.7 - 2016-03-04 - Timothy Jacobs, Elise Alley
+	Fix: Catch more instances of invalid member access data
+	Fix: Ensure null rules are filtered out
