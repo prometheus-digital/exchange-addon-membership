@@ -58,7 +58,9 @@ function it_exchange_membership_addon_is_content_restricted( $post = null, &$fai
 
 	$memberships = it_exchange_membership_addon_get_customer_memberships();
 
-	return apply_filters( 'it_exchange_membership_addon_is_content_restricted', ! empty( $failed_rules ), $memberships );
+	$failed_rules = apply_filters( 'it_exchange_membership_addon_is_content_restricted_failed_rules', $failed_rules, $memberships );
+
+	return apply_filters( 'it_exchange_membership_addon_is_content_restricted', ! empty( $failed_rules ), $memberships, $failed_rules );
 }
 
 /**
@@ -108,6 +110,8 @@ function it_exchange_membership_addon_is_product_restricted( $post = null, &$fai
 	$failed_rules = $evaluator->evaluate_content( $post, $customer ? $customer : null );
 
 	$memberships = it_exchange_membership_addon_get_customer_memberships();
+
+	$failed_rules = apply_filters( 'it_exchange_membership_addon_is_product_restricted_failed_rules', $failed_rules, $memberships );
 
 	return apply_filters( 'it_exchange_membership_addon_is_product_restricted', ! empty( $failed_rules ), $memberships );
 }
@@ -160,6 +164,8 @@ function it_exchange_membership_addon_is_content_dripped( $post = null, &$failed
 	$failed_rules = $evaluator->evaluate_drip( $post, $customer );
 	$memberships  = it_exchange_membership_addon_get_customer_memberships();
 
+	$failed_rules = apply_filters( 'it_exchange_membership_addon_is_content_dripped_failed_rules', $failed_rules, $memberships );
+
 	return apply_filters( 'it_exchange_membership_addon_is_content_dripped', ! empty( $failed_rules ), $memberships );
 }
 
@@ -210,6 +216,8 @@ function it_exchange_membership_addon_is_product_dripped( $post = null, &$failed
 
 	$failed_rules = $evaluator->evaluate_drip( $post, $customer );
 	$memberships  = it_exchange_membership_addon_get_customer_memberships();
+
+	$failed_rules = apply_filters( 'it_exchange_membership_addon_is_product_dripped_failed_rules', $failed_rules, $memberships );
 
 	return apply_filters( 'it_exchange_membership_addon_is_product_dripped', ! empty( $failed_rules ), $memberships );
 }
