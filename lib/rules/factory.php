@@ -103,10 +103,11 @@ class IT_Exchange_Membership_Rule_Factory {
 	 * @since 1.18
 	 *
 	 * @param IT_Exchange_Membership $membership
+	 * @param string                 $type
 	 *
 	 * @return IT_Exchange_Membership_Content_Rule[]
 	 */
-	public function make_all_for_membership( IT_Exchange_Membership $membership ) {
+	public function make_all_for_membership( IT_Exchange_Membership $membership, $type = '' ) {
 
 		$rules = $membership->get_feature( 'membership-content-access-rules' );
 
@@ -119,6 +120,10 @@ class IT_Exchange_Membership_Rule_Factory {
 		foreach ( $rules as $rule ) {
 
 			if ( empty( $rule['selected'] ) ) {
+				continue;
+			}
+
+			if ( ! empty( $type ) && $rule['selected'] !== $type ) {
 				continue;
 			}
 
