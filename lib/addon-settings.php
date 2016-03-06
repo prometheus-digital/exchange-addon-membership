@@ -139,16 +139,16 @@ class IT_Exchange_Membership_Add_On {
 		}
 
 		//Suhosin Fix
-		if ( empty( $settings['membership-restricted-content-message'] ) ) {
+		if ( ! empty( $settings['membership-restricted-content-message'] ) ) {
 			$settings['restricted-content-message'] = $settings['membership-restricted-content-message'];
 		}
-		if ( empty( $settings['membership-dripped-content-message'] ) ) {
+		if ( ! empty( $settings['membership-dripped-content-message'] ) ) {
 			$settings['dripped-content-message'] = $settings['membership-dripped-content-message'];
 		}
-		if ( empty( $settings['membership-restricted-product-message'] ) ) {
+		if ( ! empty( $settings['membership-restricted-product-message'] ) ) {
 			$settings['restricted-product-message'] = $settings['membership-restricted-product-message'];
 		}
-		if ( empty( $settings['membership-dripped-product-message'] ) ) {
+		if ( ! empty( $settings['membership-dripped-product-message'] ) ) {
 			$settings['dripped-product-message'] = $settings['membership-dripped-product-message'];
 		}
 		//End Suhosin Fix

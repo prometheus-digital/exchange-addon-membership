@@ -61,22 +61,23 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 
 		$options = wp_parse_args( $options, $defaults );
 
-		$options['toggle']         = $options['toggle'] === 'true';
-		$options['show_drip']      = $options['show_drip'] === 'on';
-		$options['show_drip_time'] = $options['show_drip_time'] === 'on';
+		$options[ 'toggle' ]         = $options[ 'toggle' ] === 'true';
+		$options[ 'show_drip' ]      = $options[ 'show_drip' ] === 'on';
+		$options[ 'show_drip_time' ] = $options[ 'show_drip_time' ] === 'on';
 
 		$grouped = $this->factory->make_all_for_membership_grouped( $membership );
 		ob_start();
 		?>
 
-		<div class="it-exchange-content-wrapper it-exchange-content-<?php echo $options['layout']; ?> it-exchange-clearfix">
+		<div
+			class="it-exchange-content-wrapper it-exchange-content-<?php echo $options[ 'layout' ]; ?> it-exchange-clearfix">
 
-			<?php if ( $options['include_product_title'] ): ?>
+			<?php if ( $options[ 'include_product_title' ] ): ?>
 				<h3><?php echo get_the_title( $membership ); ?></h3>
 			<?php endif; ?>
 
-			<?php if ( $options['as_child'] ): ?>
-				<?php echo $options['child_description']; ?>
+			<?php if ( $options[ 'as_child' ] ): ?>
+				<?php echo $options[ 'child_description' ]; ?>
 			<?php endif; ?>
 
 			<?php foreach ( $grouped as $maybe_group ): ?>
@@ -85,16 +86,17 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 
 					<?php
 					$group       = $maybe_group;
-					$group_class = $options['toggle'] ? 'it-exchange-content-group-toggle' : '';
-					$hidden      = $options['toggle'] ? ' class="it-exchange-hidden"' : '';
+					$group_class = $options[ 'toggle' ] ? 'it-exchange-content-group-toggle' : '';
+					$hidden      = $options[ 'toggle' ] ? ' class="it-exchange-hidden"' : '';
 					?>
 
-					<div class="it-exchange-content-group it-exchange-content-group-layout-<?php echo $group->get_layout() ?> <?php echo $group_class; ?>">
+					<div
+						class="it-exchange-content-group it-exchange-content-group-layout-<?php echo $group->get_layout() ?> <?php echo $group_class; ?>">
 
 						<p class="it-exchange-group-content-label">
 							<span class="it-exchange-group-title"><?php echo $group->get_name(); ?></span>
 
-							<?php if ( $options['toggle'] ): ?>
+							<?php if ( $options[ 'toggle' ] ): ?>
 								<span class="it-exchange-open-group"></span>
 							<?php endif; ?>
 						</p>
@@ -135,25 +137,26 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 	 */
 	protected function render_rule( IT_Exchange_Membership_Content_Rule $rule, array $options ) {
 
-		$group_class  = $options['toggle'] ? 'it-exchange-content-group-toggle' : '';
-		$hidden       = $options['toggle'] ? ' class="it-exchange-hidden"' : '';
-		$posts        = $rule->get_matching_posts( $options['posts_per_grouping'] );
+		$group_class  = $options[ 'toggle' ] ? 'it-exchange-content-group-toggle' : '';
+		$hidden       = $options[ 'toggle' ] ? ' class="it-exchange-hidden"' : '';
+		$posts        = $rule->get_matching_posts( $options[ 'posts_per_grouping' ] );
 		$more_content = $rule->get_more_content_url();
 
 		$posts = apply_filters( 'it_exchange_membership_addon_membership_content_restricted_posts', $posts, $rule->get_selection(), $rule->get_type(), $rule->get_term() );
 
 		ob_start();
 
-		echo $options['before'];
+		echo $options[ 'before' ];
 		?>
 
 		<?php if ( $rule instanceof IT_Exchange_Membership_Rule_Layoutable ): ?>
-			<div class="it-exchange-content-group it-exchange-content-group-layout-<?php echo $rule->get_layout() ?> <?php echo $group_class; ?>">
+			<div
+				class="it-exchange-content-group it-exchange-content-group-layout-<?php echo $rule->get_layout() ?> <?php echo $group_class; ?>">
 
 				<p class="it-exchange-group-content-label">
 					<span class="it-exchange-group-title"><?php echo $rule->get_short_description(); ?></span>
 
-					<?php if ( $options['toggle'] ): ?>
+					<?php if ( $options[ 'toggle' ] ): ?>
 						<span class="it-exchange-open-group"></span>
 					<?php endif; ?>
 				</p>
@@ -163,9 +166,9 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 						echo $this->render_post( $post, $rule, $options );
 					endforeach; ?>
 
-					<?php if ( ! empty( $more_content ) && $options['posts_per_grouping'] == count( $posts ) ): ?>
+					<?php if ( ! empty( $more_content ) && $options[ 'posts_per_grouping' ] == count( $posts ) ): ?>
 						<li class="it-exchange-content-more">
-							<?php if ( $options['link_to_content'] ): ?>
+							<?php if ( $options[ 'link_to_content' ] ): ?>
 								<a href="<?php echo $more_content; ?>">
 									<?php _e( 'Read more content in this group', 'LION' ); ?>
 								</a>
@@ -177,13 +180,35 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 				</ul>
 			</div>
 
-		<?php else:
+		<?php elseif ( ! empty( $posts ) ):
 			foreach ( $posts as $post ):
 				echo $this->render_post( $post, $rule, $options );
 			endforeach;
+		elseif ( $rule->get_more_content_url() ):
+			?>
+			<li>
+				<div class="it-exchange-content-group it-exchange-content-single">
+					<div class="it-exchange-content-item-icon">
+						<a class="it-exchange-item-icon" href="<?php echo $rule->get_more_content_url(); ?>"></a>
+					</div>
+
+					<div class="it-exchange-content-item-info">
+						<p class="it-exchange-group-content-label">
+							<?php if ( $options[ 'link_to_content' ] ): ?>
+								<a href="<?php echo $rule->get_more_content_url(); ?>">
+									<span class="it-exchange-item-title"><?php echo $rule->get_short_description(); ?></span>
+								</a>
+							<?php else: ?>
+								<span class="it-exchange-item-title"><?php echo $rule->get_short_description(); ?></span>
+							<?php endif; ?>
+						</p>
+					</div>
+				</div>
+			</li>
+			<?php
 		endif;
 
-		echo $options['after'];
+		echo $options[ 'after' ];
 
 		return ob_get_clean();
 	}
@@ -226,7 +251,7 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 
 				<div class="it-exchange-content-item-info">
 					<p class="it-exchange-group-content-label">
-						<?php if ( $options['show_drip'] && $options['show_drip_time'] && $delay && $now < $delay ): ?>
+						<?php if ( $options[ 'show_drip' ] && $options[ 'show_drip_time' ] && $delay && $now < $delay ): ?>
 							<span class="it-exchange-item-unavailable-message">
 								<?php printf( __( 'available in %s', 'LION' ), human_time_diff( $delay->format( 'U' ) ) ); ?>
 							</span>
@@ -234,7 +259,7 @@ class IT_Exchange_Membership_Front_Rule_Renderer {
 							<span class="it-exchange-item-title"><?php echo get_the_title( $post ); ?></span>
 						<?php else: ?>
 
-							<?php if ( $options['link_to_content'] ): ?>
+							<?php if ( $options[ 'link_to_content' ] ): ?>
 								<a href="<?php echo get_permalink( $post ); ?>">
 									<span class="it-exchange-item-title"><?php echo get_the_title( $post ); ?></span>
 								</a>
