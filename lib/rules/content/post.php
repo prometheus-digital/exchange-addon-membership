@@ -22,6 +22,11 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ba
 	private $delay_rule;
 
 	/**
+	 * @var array
+	 */
+	private static $cache = array();
+
+	/**
 	 * IT_Exchange_Membership_Content_Rule_Post constructor.
 	 *
 	 * @param string                 $post_type
@@ -159,7 +164,21 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ba
 
 		$data = $this->data;
 
-		$posts = get_posts( array( 'post_type' => $this->post_type, 'posts_per_page' => - 1, 'post_status' => 'any' ) );
+		if ( empty( self::$cache[ $this->post_type ] ) ) {
+
+			$query = new WP_Query( array(
+				'post_type'              => $this->post_type,
+				'posts_per_page'         => - 1,
+				'post_status'            => 'any',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false
+			) );
+
+			self::$cache[ $this->post_type ] = $query->posts;
+		}
+
+		$posts = self::$cache[ $this->post_type ];
 
 		$selected = empty( $data['term'] ) ? false : $data['term'];
 
@@ -170,7 +189,8 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ba
 			<?php _e( 'Select a post to restrict.', 'LION' ); ?>
 		</label>
 
-		<select class="it-exchange-membership-content-type-post" id="<?php echo $context; ?>-post" name="<?php echo $context; ?>[term]">
+		<select class="it-exchange-membership-content-type-post" id="<?php echo $context; ?>-post"
+		        name="<?php echo $context; ?>[term]">
 
 			<?php foreach ( $posts as $post ): ?>
 				<option value="<?php echo $post->ID; ?>" <?php selected( $post->ID, $selected ); ?>>
