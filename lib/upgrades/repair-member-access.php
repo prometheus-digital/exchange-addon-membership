@@ -157,8 +157,18 @@ class IT_Exchange_Memberships_Repair_Member_Access_Upgrade implements IT_Exchang
 		}
 
 		$customer = it_exchange_get_transaction_customer( $transaction );
-		$cleared  = it_exchange_transaction_is_cleared_for_delivery( $transaction );
-		$subs     = $this->get_transaction_subscriptions( $transaction );
+
+		if ( ! $customer ) {
+			if ( $verbose ) {
+				$skin->debug( 'Skipped Txn: ' . $transaction->ID . '. No memberships found.' );
+				$skin->debug( '' );
+			}
+
+			return;
+		}
+
+		$cleared = it_exchange_transaction_is_cleared_for_delivery( $transaction );
+		$subs    = $this->get_transaction_subscriptions( $transaction );
 
 		if ( $cleared ) {
 
