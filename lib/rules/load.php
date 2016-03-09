@@ -21,7 +21,7 @@ require_once dirname( __FILE__ ) . '/content/post.php';
 if ( function_exists( 'add_term_meta' ) ) {
 	require_once dirname( __FILE__ ) . '/content/term.php';
 } else {
-	require_once dirname( __FILE__ ) . '../legacy/term.php';
+	require_once dirname( __FILE__ ) . '/../legacy/term.php';
 }
 
 require_once dirname( __FILE__ ) . '/delay/interface.php';
