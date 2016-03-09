@@ -224,6 +224,11 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 					unset( $_REQUEST['it_exchange_content_access_rules'][ $key ]['delay'] );
 
 					$rule_model = $factory->make_content_rule( $rule['selected'], $rule, $membership );
+
+					if ( ! $rule_model ) {
+						continue;
+					}
+
 					$rule_model->save();
 
 					$saved_ids[] = $rule_model->get_rule_id();
