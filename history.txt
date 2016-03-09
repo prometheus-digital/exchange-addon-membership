@@ -322,3 +322,8 @@
 1.19.7 - 2016-03-04 - Timothy Jacobs, Elise Alley
 	Fix: Catch more instances of invalid member access data
 	Fix: Ensure null rules are filtered out
+1.19.8 - 201603-09 - Timothy Jacobs, Elise Alley
+	Add: Additional hooks and filters for modifying failed rules
+	Tweak: Add caching layer when retrieving posts for generating rules
+	Tweak: Show link to more content whenever possible
+	Fix: Ensure proper path structure
