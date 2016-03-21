@@ -330,3 +330,6 @@
 1.19.9 - 2016-03-21 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Tweak: Properly reflect subscription status
 	Tweak: Always show subscription ID field
+1.19.10 - 2016-03-21 - Timothy Jacobs, Elise Alley
+	Tweak: Only grant immediate access to membership if transaction is cleared for delivery
+	Fix: Prevent error if user doesn't have any relevant memberships
