@@ -327,3 +327,6 @@
 	Tweak: Add caching layer when retrieving posts for generating rules
 	Tweak: Show link to more content whenever possible
 	Fix: Ensure proper path structure
+1.19.9 - 2016-03-21 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Tweak: Properly reflect subscription status
+	Tweak: Always show subscription ID field
