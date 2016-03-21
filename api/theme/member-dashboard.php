@@ -184,6 +184,13 @@ class IT_Theme_API_Member_Dashboard implements IT_Theme_API {
 		$user_membership = it_exchange_get_user_membership_for_product( $customer, $product );
 		$factory         = new IT_Exchange_Membership_Rule_Factory();
 
+		if ( ! $user_membership ) {
+
+			$result .= __( 'The current payment status does not grant access to membership content.', 'it-l10n-ithemes-exchange' );
+
+			return $result;
+		}
+
 		foreach ( $all_access as $product_id => $ignore ) {
 
 			$count ++;

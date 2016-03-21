@@ -594,9 +594,11 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 	foreach ( $cart_object->products as $product ) {
 		$product_id   = $product['product_id'];
 		$product_type = it_exchange_get_product_type( $product_id );
+
 		if ( 'membership-product-type' === $product_type || it_exchange_product_supports_feature( $product_id, 'membership-content-access-rules' ) ) {
+
 			//This is a membership product!
-			if ( ! in_array( $product_id, (array) $member_access ) ) {
+			if ( ! in_array( $product_id, (array) $member_access ) && it_exchange_transaction_is_cleared_for_delivery( $transaction_id ) ) {
 				//If this user isn't already a member of this product, add it to their access list
 				$member_access[ $transaction_id ][] = $product_id;
 			}
