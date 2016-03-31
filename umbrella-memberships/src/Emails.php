@@ -30,6 +30,16 @@ class Emails {
 	private static $notifications;
 
 	/**
+	 * @var bool
+	 */
+	private static $doing_save = false;
+
+	/**
+	 * @var \IT_Exchange_Sendable[]
+	 */
+	private static $queue = array();
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -37,45 +47,10 @@ class Emails {
 		add_action( 'it_exchange_register_email_notifications', array( __CLASS__, 'register_emails' ) );
 		add_action( 'it_exchange_email_notifications_register_tags', array( __CLASS__, 'register_tags' ) );
 
-		add_action( 'ibd_wp_notifications_template_manager_itegms-invitation', array(
-			__CLASS__,
-			'invitation_listeners'
-		) );
-
-		add_action( 'ibd_wp_notifications_template_manager_itegms-invitation-new-user', array(
-			__CLASS__,
-			'invitation_new_user_listeners'
-		) );
-
-		add_action( 'ibd_wp_notifications_template_manager_itegms-removed', array(
-			__CLASS__,
-			'removed_listeners'
-		) );
-
-		add_action( 'ibd_wp_notifications_template_manager_itegms-expired', array(
-			__CLASS__,
-			'expired_listeners'
-		) );
-
-		add_action( 'itegms_create_relationship', array(
-			__CLASS__,
-			'send_invitation'
-		) );
-
-		add_action( 'itegms_create_relationship_new_user', array(
-			__CLASS__,
-			'send_invitation_new_user'
-		), 10, 2 );
-
-		add_action( 'itegms_delete_relationship', array(
-			__CLASS__,
-			'send_removal'
-		) );
-
-		add_action( 'itegms_expire_relationship', array(
-			__CLASS__,
-			'send_expired'
-		) );
+		add_action( 'itegms_create_relationship', array( __CLASS__, 'send_invitation' ) );
+		add_action( 'itegms_create_relationship_new_user', array( __CLASS__, 'send_invitation_new_user' ), 10, 2 );
+		add_action( 'itegms_delete_relationship', array( __CLASS__, 'send_removal' ) );
+		add_action( 'itegms_expire_relationship', array( __CLASS__, 'send_expired' ) );
 	}
 
 	/**
@@ -183,6 +158,28 @@ class Emails {
 	}
 
 	/**
+	 * Call when perform a save to bulk send all emails
+	 *
+	 * @param bool $doing
+	 */
+	public static function doing_save( $doing = true ) {
+		self::$doing_save = $doing;
+
+		if ( ! $doing && self::$queue ) {
+
+			try {
+				it_exchange_send_email( self::$queue );
+
+			}
+			catch ( \IT_Exchange_Email_Delivery_Exception $e ) {
+				it_exchange_add_message( 'error', $e->getMessage() );
+			}
+
+			self::$queue = array();
+		}
+	}
+
+	/**
 	 * Send the invitation notification.
 	 *
 	 * @since 1.0
@@ -190,15 +187,21 @@ class Emails {
 	 * @param Relationship $rel
 	 */
 	public static function send_invitation( Relationship $rel ) {
-		it_exchange_send_email( new \IT_Exchange_Email(
-				new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
-				self::$notifications->get_notification( 'itegms-invitation' ),
-				array(
-					'umbrella-membership' => $rel,
-					'customer'            => $rel->get_purchase()->get_customer()
-				)
+
+		$email = new \IT_Exchange_Email(
+			new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
+			self::$notifications->get_notification( 'itegms-invitation' ),
+			array(
+				'umbrella-membership' => $rel,
+				'customer'            => $rel->get_purchase()->get_customer()
 			)
 		);
+
+		if ( self::$doing_save ) {
+			self::$queue[] = $email;
+		} else {
+			it_exchange_send_email( $email );
+		}
 	}
 
 	/**
@@ -211,16 +214,21 @@ class Emails {
 	 */
 	public static function send_invitation_new_user( Relationship $rel, $password ) {
 
-		it_exchange_send_email( new \IT_Exchange_Email(
-				new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
-				self::$notifications->get_notification( 'itegms-invitation-new-user' ),
-				array(
-					'umbrella-membership'          => $rel,
-					'customer'                     => $rel->get_purchase()->get_customer(),
-					'umbrella-membership-password' => $password
-				)
+		$email = new \IT_Exchange_Email(
+			new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
+			self::$notifications->get_notification( 'itegms-invitation-new-user' ),
+			array(
+				'umbrella-membership'          => $rel,
+				'customer'                     => $rel->get_purchase()->get_customer(),
+				'umbrella-membership-password' => $password
 			)
 		);
+
+		if ( self::$doing_save ) {
+			self::$queue[] = $email;
+		} else {
+			it_exchange_send_email( $email );
+		}
 	}
 
 	/**
@@ -232,15 +240,20 @@ class Emails {
 	 */
 	public static function send_removal( Relationship $rel ) {
 
-		it_exchange_send_email( new \IT_Exchange_Email(
-				new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
-				self::$notifications->get_notification( 'itegms-removed' ),
-				array(
-					'umbrella-membership' => $rel,
-					'customer'            => $rel->get_purchase()->get_customer()
-				)
+		$email = new \IT_Exchange_Email(
+			new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
+			self::$notifications->get_notification( 'itegms-removed' ),
+			array(
+				'umbrella-membership' => $rel,
+				'customer'            => $rel->get_purchase()->get_customer()
 			)
 		);
+
+		if ( self::$doing_save ) {
+			self::$queue[] = $email;
+		} else {
+			it_exchange_send_email( $email );
+		}
 	}
 
 	/**
@@ -252,15 +265,20 @@ class Emails {
 	 */
 	public static function send_expired( Relationship $rel ) {
 
-		it_exchange_send_email( new \IT_Exchange_Email(
-				new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
-				self::$notifications->get_notification( 'itegms-expired' ),
-				array(
-					'umbrella-membership' => $rel,
-					'customer'            => $rel->get_purchase()->get_customer()
-				)
+		$email = new \IT_Exchange_Email(
+			new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
+			self::$notifications->get_notification( 'itegms-expired' ),
+			array(
+				'umbrella-membership' => $rel,
+				'customer'            => $rel->get_purchase()->get_customer()
 			)
 		);
+
+		if ( self::$doing_save ) {
+			self::$queue[] = $email;
+		} else {
+			it_exchange_send_email( $email );
+		}
 	}
 
 	/**

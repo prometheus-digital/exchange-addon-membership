@@ -426,6 +426,8 @@ class Hooks {
 
 			return;
 		}
+		
+		Emails::doing_save();
 
 		$new_users = isset( $_POST['itegms_member'] ) ? $_POST['itegms_member'] : array();
 
@@ -519,6 +521,8 @@ class Hooks {
 		if ( ! it_exchange_has_messages( 'error' ) ) {
 			it_exchange_add_message( 'notice', __( "Members Updated.", 'LION' ) );
 		}
+		
+		Emails::doing_save( false );
 	}
 
 	/**
