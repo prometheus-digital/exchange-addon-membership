@@ -169,6 +169,8 @@ class Emails {
 		$tag->add_available_for( 'itegms-invitation' )->add_available_for( 'itegms-invitation-new-user' )
 		    ->add_available_for( 'itegms-removed' )->add_available_for( 'itegms-expired' );
 
+		$replacer->add_tag( $tag );
+
 		$tag = new \IT_Exchange_Email_Tag_Base(
 			'umbrella_membership_password', __( 'Umbrella Membership Password', 'LION' ),
 			__( 'The newly created user\'s auto-generated password.', 'LION' ), function ( $context ) {
