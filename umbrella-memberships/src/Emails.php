@@ -113,7 +113,7 @@ class Emails {
 					'defaults' => array(
 						'subject' => sprintf( __( "You're access to %s has been revoked by %s", 'LION' ),
 							'[it_exchange_email show=umbrella_membership_name]', '[it_exchange_email show=customer_first_name]' ),
-						'body'    => self::get_default_expired()
+						'body'    => self::get_default_removed()
 					),
 					'group'    => __( 'Umbrella Memberships', 'LION' )
 				)
@@ -123,7 +123,7 @@ class Emails {
 					'defaults' => array(
 						'subject' => sprintf( __( "You're access to %s has expired", 'LION' ),
 							'[it_exchange_email show=umbrella_membership_name]' ),
-						'body'    => self::get_default_removed()
+						'body'    => self::get_default_expired()
 					),
 					'group'    => __( 'Umbrella Memberships', 'LION' )
 				)
