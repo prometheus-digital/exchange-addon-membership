@@ -65,12 +65,13 @@ class Emails {
 		$notifications
 			->register_notification( new \IT_Exchange_Customer_Email_Notification(
 				__( 'Umbrella Membership Invitation', 'LION' ), 'itegms-invitation', null, array(
-					'defaults' => array(
+					'defaults'    => array(
 						'subject' => sprintf( __( "You've been given access to %s by %s", 'LION' ),
 							'[it_exchange_email show=umbrella_membership_name]', '[it_exchange_email show=customer_first_name]' ),
 						'body'    => self::get_default_invitation()
 					),
-					'group'    => __( 'Umbrella Memberships', 'LION' )
+					'group'       => __( 'Umbrella Memberships', 'LION' ),
+					'description' => __( "Email sent to members when they're invited to an umbrella membership.", 'LION' )
 				)
 			) )
 			->register_notification( new \IT_Exchange_Customer_Email_Notification(
@@ -80,7 +81,8 @@ class Emails {
 							'[it_exchange_email show=umbrella_membership_name]', '[it_exchange_email show=customer_first_name]' ),
 						'body'    => self::get_default_new_user()
 					),
-					'group'    => __( 'Umbrella Memberships', 'LION' )
+					'group'    => __( 'Umbrella Memberships', 'LION' ),
+					'description' => __( "Email sent to members when they're invited to an umbrella membership and have had an account created for them.", 'LION' )
 				)
 			) )
 			->register_notification( new \IT_Exchange_Customer_Email_Notification(
@@ -90,7 +92,8 @@ class Emails {
 							'[it_exchange_email show=umbrella_membership_name]', '[it_exchange_email show=customer_first_name]' ),
 						'body'    => self::get_default_removed()
 					),
-					'group'    => __( 'Umbrella Memberships', 'LION' )
+					'group'    => __( 'Umbrella Memberships', 'LION' ),
+					'description' => __( "Email sent to members when they're removed from an umbrella membership.", 'LION' )
 				)
 			) )
 			->register_notification( new \IT_Exchange_Customer_Email_Notification(
@@ -100,7 +103,8 @@ class Emails {
 							'[it_exchange_email show=umbrella_membership_name]' ),
 						'body'    => self::get_default_expired()
 					),
-					'group'    => __( 'Umbrella Memberships', 'LION' )
+					'group'    => __( 'Umbrella Memberships', 'LION' ),
+					'description' => __( "Email sent to members when their membership has expired.", 'LION' )
 				)
 			) );
 
