@@ -25,9 +25,18 @@ use ITEGMS\Relationship\Relationship;
 class Emails {
 
 	/**
+	 * @var \IT_Exchange_Email_Notifications
+	 */
+	private static $notifications;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
+
+		add_action( 'it_exchange_register_email_notifications', array( __CLASS__, 'register_emails' ) );
+		add_action( 'it_exchange_email_notifications_register_tags', array( __CLASS__, 'register_tags' ) );
+
 		add_action( 'ibd_wp_notifications_template_manager_itegms-invitation', array(
 			__CLASS__,
 			'invitation_listeners'
@@ -70,166 +79,105 @@ class Emails {
 	}
 
 	/**
-	 * Invitation listeners.
+	 * Register email notifications with Exchange.
 	 *
-	 * @since 1.0
+	 * @since 1.19.11
 	 *
-	 * @param Manager $manager
+	 * @param \IT_Exchange_Email_Notifications $notifications
 	 */
-	public static function invitation_listeners( Manager $manager ) {
+	public static function register_emails( \IT_Exchange_Email_Notifications $notifications ) {
 
-		foreach ( self::get_common_listeners() as $listener ) {
-			$manager->listen( $listener );
-		}
+		$notifications
+			->register_notification( new \IT_Exchange_Customer_Email_Notification(
+				__( 'Umbrella Membership Invitation', 'LION' ), 'itegms-invitation', null, array(
+					'defaults' => array(
+						'subject' => sprintf( __( "You've been given access to %s by %s", 'LION' ),
+							'[it_exchange_email show=umbrella_membership_name]', '[it_exchange_email show=customer_first_name]' ),
+						'body'    => self::get_default_invitation()
+					),
+					'group'    => __( 'Umbrella Memberships', 'LION' )
+				)
+			) )
+			->register_notification( new \IT_Exchange_Customer_Email_Notification(
+				__( 'Umbrella Membership Invitation New User', 'LION' ), 'itegms-invitation-new-user', null, array(
+					'defaults' => array(
+						'subject' => sprintf( __( "You've been given access to %s by %s", 'LION' ),
+							'[it_exchange_email show=umbrella_membership_name]', '[it_exchange_email show=customer_first_name]' ),
+						'body'    => self::get_default_new_user()
+					),
+					'group'    => __( 'Umbrella Memberships', 'LION' )
+				)
+			) )
+			->register_notification( new \IT_Exchange_Customer_Email_Notification(
+				__( 'Umbrella Membership Removal', 'LION' ), 'itegms-removed', null, array(
+					'defaults' => array(
+						'subject' => sprintf( __( "You're access to %s has been revoked by %s", 'LION' ),
+							'[it_exchange_email show=umbrella_membership_name]', '[it_exchange_email show=customer_first_name]' ),
+						'body'    => self::get_default_expired()
+					),
+					'group'    => __( 'Umbrella Memberships', 'LION' )
+				)
+			) )
+			->register_notification( new \IT_Exchange_Customer_Email_Notification(
+				__( 'Umbrella Membership Expired', 'LION' ), 'itegms-expired', null, array(
+					'defaults' => array(
+						'subject' => sprintf( __( "You're access to %s has expired", 'LION' ),
+							'[it_exchange_email show=umbrella_membership_name]' ),
+						'body'    => self::get_default_removed()
+					),
+					'group'    => __( 'Umbrella Memberships', 'LION' )
+				)
+			) );
 
-		$manager->listen( new Listener( 'membership_dashboard_url', function ( Relationship $rel ) {
-
-			$membership = $rel->get_purchase()->get_membership();
-
-			$page_slug       = 'memberships';
-			$permalinks      = (bool) get_option( 'permalink_structure' );
-			$membership_slug = $membership->post_name;
-
-			if ( $permalinks ) {
-				$url = trailingslashit( it_exchange_get_page_url( $page_slug ) ) . $membership_slug;
-			} else {
-				$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
-			}
-
-			return $url;
-		} ) );
+		self::$notifications = $notifications;
 	}
 
 	/**
-	 * Invitation listeners when a new user is created as a result of the
-	 * invitation.
+	 * Register custom email tags.
 	 *
-	 * @since 1.0
+	 * @since 1.19.11
 	 *
-	 * @param Manager $manager
+	 * @param \IT_Exchange_Email_Tag_Replacer $replacer
 	 */
-	public static function invitation_new_user_listeners( Manager $manager ) {
+	public static function register_tags( \IT_Exchange_Email_Tag_Replacer $replacer ) {
 
-		foreach ( self::get_common_listeners() as $listener ) {
-			$manager->listen( $listener );
-		}
+		$tag = new \IT_Exchange_Email_Tag_Base(
+			'umbrella_membership_name', __( 'Umbrella Membership Name', 'LION' ),
+			__( 'The name of the membership being joined.', 'LION' ), function ( $context ) {
 
-		$manager->listen( new Listener( 'membership_dashboard_url', function ( Relationship $rel ) {
+			/** @var Relationship $relationship */
+			$relationship = $context['umbrella-membership'];
 
-			$membership = $rel->get_purchase()->get_membership();
-
-			$page_slug       = 'memberships';
-			$permalinks      = (bool) get_option( 'permalink_structure' );
-			$membership_slug = $membership->post_name;
-
-			if ( $permalinks ) {
-				$url = trailingslashit( it_exchange_get_page_url( $page_slug ) ) . $membership_slug;
-			} else {
-				$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
-			}
-
-			return $url;
-		} ) );
-
-		$manager->listen( new Listener( 'password', function ( $password ) {
-			return $password;
-		} ) );
-	}
-
-	/**
-	 * Removed listeners.
-	 *
-	 * @since 1.0
-	 *
-	 * @param Manager $manager
-	 */
-	public static function removed_listeners( Manager $manager ) {
-
-		foreach ( self::get_common_listeners() as $listener ) {
-			$manager->listen( $listener );
-		}
-	}
-
-	/**
-	 * Expired listeners.
-	 *
-	 * @since 1.0
-	 *
-	 * @param Manager $manager
-	 */
-	public static function expired_listeners( Manager $manager ) {
-
-		foreach ( self::get_common_listeners() as $listener ) {
-			$manager->listen( $listener );
-		}
-	}
-
-	/**
-	 * Get common listeners.
-	 *
-	 * @since 1.0
-	 *
-	 * @return Listener[]
-	 */
-	private static function get_common_listeners() {
-		$listeners = array();
-
-		$listeners[] = new Listener( 'shop_name', function () {
-
-			$settings = it_exchange_get_option( 'settings_general' );
-
-			return $settings['company-name'];
+			return $relationship->get_purchase()->get_membership()->post_title;
 		} );
+		$tag->add_required_context( 'umbrella-membership' );
+		$tag->add_available_for( 'itegms-invitation' )->add_available_for( 'itegms-invitation-new-user' )
+		    ->add_available_for( 'itegms-removed' )->add_available_for( 'itegms-expired' );
 
-		$listeners[] = new Listener( 'username', function ( \WP_User $to ) {
-			return $to->user_login;
+		$replacer->add_tag( $tag );
+
+		$tag = new \IT_Exchange_Email_Tag_Base(
+			'umbrella_membership_dashboard', __( 'Umbrella Membership Dashboard', 'LION' ),
+			__( 'A link to the user dashboard for the membership.', 'LION' ), function ( $context ) {
+
+			/** @var Relationship $relationship */
+			$relationship = $context['umbrella-membership'];
+
+			return $relationship->get_purchase()->get_membership()->get_dashboard();
 		} );
+		$tag->add_required_context( 'umbrella-membership' );
+		$tag->add_available_for( 'itegms-invitation' )->add_available_for( 'itegms-invitation-new-user' )
+		    ->add_available_for( 'itegms-removed' )->add_available_for( 'itegms-expired' );
 
-		$listeners[] = new Listener( 'user_email', function ( \WP_User $to ) {
-			return $to->user_email;
+		$tag = new \IT_Exchange_Email_Tag_Base(
+			'umbrella_membership_password', __( 'Umbrella Membership Password', 'LION' ),
+			__( 'The newly created user\'s auto-generated password.', 'LION' ), function ( $context ) {
+			return $context['umbrella-membership-password'];
 		} );
+		$tag->add_required_context( 'umbrella-membership-password' );
+		$tag->add_available_for( 'itegms-invitation-new-user' );
 
-		$listeners[] = new Listener( 'first_name', function ( \WP_User $to ) {
-			return $to->first_name;
-		} );
-
-		$listeners[] = new Listener( 'last_name', function ( \WP_User $to ) {
-			return $to->last_name;
-		} );
-
-		$listeners[] = new Listener( 'login_url', function () {
-			return it_exchange_get_page_url( 'login' );
-		} );
-
-		$listeners[] = new Listener( 'profile_url', function () {
-			return it_exchange_get_page_url( 'profile' );
-		} );
-
-		$listeners[] = new Listener( 'membership_name', function ( Relationship $rel ) {
-			return $rel->get_purchase()->get_membership()->post_title;
-		} );
-
-		$listeners[] = new Listener( 'membership_url', function ( Relationship $rel ) {
-			return get_permalink( $rel->get_purchase()->get_membership()->ID );
-		} );
-
-		$listeners[] = new Listener( 'payer_first_name', function ( Relationship $rel ) {
-			return $rel->get_purchase()->get_customer()->wp_user->first_name;
-		} );
-
-		$listeners[] = new Listener( 'payer_last_name', function ( Relationship $rel ) {
-			return $rel->get_purchase()->get_customer()->wp_user->last_name;
-		} );
-
-		$listeners[] = new Listener( 'payer_username', function ( Relationship $rel ) {
-			return $rel->get_purchase()->get_customer()->wp_user->user_login;
-		} );
-
-		$listeners[] = new Listener( 'payer_email', function ( Relationship $rel ) {
-			return $rel->get_purchase()->get_customer()->wp_user->user_email;
-		} );
-
-		return $listeners;
+		$replacer->add_tag( $tag );
 	}
 
 	/**
@@ -240,41 +188,15 @@ class Emails {
 	 * @param Relationship $rel
 	 */
 	public static function send_invitation( Relationship $rel ) {
-
-		$to      = $rel->get_member()->wp_user;
-		$manager = Factory::make( 'itegms-invitation' );
-		$message = Settings::get( 'invitation' );
-		$subject = sprintf( __( 'You\'ve been given access to %1$s by %2$s', 'LION' ),
-			$rel->get_purchase()->get_membership()->post_title,
-			$rel->get_purchase()->get_customer()->wp_user->first_name
+		it_exchange_send_email( new \IT_Exchange_Email(
+				new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
+				self::$notifications->get_notification( 'itegms-invitation' ),
+				array(
+					'umbrella-membership' => $rel,
+					'customer'            => $rel->get_purchase()->get_customer()
+				)
+			)
 		);
-
-		/**
-		 * Filter the subject line of the invitation notification.
-		 *
-		 * @since 1.0
-		 *
-		 * @param string       $subject
-		 * @param Relationship $rel
-		 */
-		$subject = apply_filters( 'itegms_invitation_notification_subject', $subject, $rel );
-
-		/**
-		 * Filter the message of the invitation notification.
-		 *
-		 * @since 1.0
-		 *
-		 * @param string       $message
-		 * @param Relationship $rel
-		 */
-		$message = apply_filters( 'itegms_invitation_notification_message', $message, $rel );
-
-		$notification = new Notification( $to, $manager, $message, $subject );
-
-		$notification->add_data_source( $rel );
-
-		$notification->set_strategy( new iThemes_Exchange() );
-		$notification->send();
 	}
 
 	/**
@@ -287,42 +209,16 @@ class Emails {
 	 */
 	public static function send_invitation_new_user( Relationship $rel, $password ) {
 
-		$to      = $rel->get_member()->wp_user;
-		$manager = Factory::make( 'itegms-invitation-new-user' );
-		$message = Settings::get( 'invitation-new-user' );
-		$subject = sprintf( __( 'You\'ve been given access to %1$s by %2$s', 'LION' ),
-			$rel->get_purchase()->get_membership()->post_title,
-			$rel->get_purchase()->get_customer()->wp_user->first_name );
-
-		/**
-		 * Filter the subject line of the invitation new user notification.
-		 *
-		 * @since 1.0
-		 *
-		 * @param string       $subject
-		 * @param Relationship $rel
-		 * @param string       $password
-		 */
-		$subject = apply_filters( 'itegms_invitation_new_user_notification_subject', $subject, $rel, $password );
-
-		/**
-		 * Filter the message of the invitation new user notification.
-		 *
-		 * @since 1.0
-		 *
-		 * @param string       $message
-		 * @param Relationship $rel
-		 * @param string       $password
-		 */
-		$message = apply_filters( 'itegms_invitation_new_user_notification_message', $message, $rel, $password );
-
-		$notification = new Notification( $to, $manager, $message, $subject );
-
-		$notification->add_data_source( $rel );
-		$notification->add_data_source( new Container( $password ), 'password' );
-
-		$notification->set_strategy( new iThemes_Exchange() );
-		$notification->send();
+		it_exchange_send_email( new \IT_Exchange_Email(
+				new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
+				self::$notifications->get_notification( 'itegms-invitation-new-user' ),
+				array(
+					'umbrella-membership'          => $rel,
+					'customer'                     => $rel->get_purchase()->get_customer(),
+					'umbrella-membership-password' => $password
+				)
+			)
+		);
 	}
 
 	/**
@@ -334,39 +230,15 @@ class Emails {
 	 */
 	public static function send_removal( Relationship $rel ) {
 
-		$to      = $rel->get_member()->wp_user;
-		$manager = Factory::make( 'itegms-removed' );
-		$message = Settings::get( 'removed' );
-		$subject = sprintf( __( 'Your access to %1$s has been revoked by %2$s', 'LION' ),
-			$rel->get_purchase()->get_membership()->post_title,
-			$rel->get_purchase()->get_customer()->wp_user->first_name );
-
-		/**
-		 * Filter the subject line of the removal notification.
-		 *
-		 * @since 1.0
-		 *
-		 * @param string       $subject
-		 * @param Relationship $rel
-		 */
-		$subject = apply_filters( 'itegms_removal_notification_subject', $subject, $rel );
-
-		/**
-		 * Filter the message of the removal notification.
-		 *
-		 * @since 1.0
-		 *
-		 * @param string       $message
-		 * @param Relationship $rel
-		 */
-		$message = apply_filters( 'itegms_removal_notification_message', $message, $rel );
-
-		$notification = new Notification( $to, $manager, $message, $subject );
-
-		$notification->add_data_source( $rel );;
-
-		$notification->set_strategy( new iThemes_Exchange() );
-		$notification->send();
+		it_exchange_send_email( new \IT_Exchange_Email(
+				new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
+				self::$notifications->get_notification( 'itegms-removed' ),
+				array(
+					'umbrella-membership' => $rel,
+					'customer'            => $rel->get_purchase()->get_customer()
+				)
+			)
+		);
 	}
 
 	/**
@@ -378,37 +250,100 @@ class Emails {
 	 */
 	public static function send_expired( Relationship $rel ) {
 
-		$to      = $rel->get_member()->wp_user;
-		$manager = Factory::make( 'itegms-expired' );
-		$message = Settings::get( 'expired' );
-		$subject = sprintf( __( 'Your access to %1$s has expired.', 'LION' ),
-			$rel->get_purchase()->get_membership()->post_title );
+		it_exchange_send_email( new \IT_Exchange_Email(
+				new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
+				self::$notifications->get_notification( 'itegms-expired' ),
+				array(
+					'umbrella-membership' => $rel,
+					'customer'            => $rel->get_purchase()->get_customer()
+				)
+			)
+		);
+	}
 
-		/**
-		 * Filter the subject line of the expired notification.
-		 *
-		 * @since 1.0
-		 *
-		 * @param string       $subject
-		 * @param Relationship $rel
-		 */
-		$subject = apply_filters( 'itegms_expired_notification_subject', $subject, $rel );
+	/**
+	 * Get the default invitation email.
+	 *
+	 * @since 1.19.11
+	 *
+	 * @return string
+	 */
+	protected static function get_default_invitation() {
+		return <<<TAG
+		Hi [it_exchange_email show="first_name"],
 
-		/**
-		 * Filter the message of the expired notification.
-		 *
-		 * @since 1.0
-		 *
-		 * @param string       $message
-		 * @param Relationship $rel
-		 */
-		$message = apply_filters( 'itegms_expired_notification_message', $message, $rel );
+Welcome to [it_exchange_email show="company_name"]'s [it_exchange_email show="umbrella_membership_name"] program. You've been invited to this program by [it_exchange_email show="customer_fullname"]. If you have any questions about this, you can contact [it_exchange_email show="customer_first_name"] by email at [it_exchange_email show="customer_email"].
 
-		$notification = new Notification( $to, $manager, $message, $subject );
+You can access your exclusive membership content at the following url: [it_exchange_email show="umbrella_membership_dashboard"]
 
-		$notification->add_data_source( $rel );;
+- The [it_exchange_email show="company_name"] Team
+TAG;
+	}
 
-		$notification->set_strategy( new iThemes_Exchange() );
-		$notification->send();
+	/**
+	 * Get the default new user invitation email.
+	 *
+	 * @since 1.19.11
+	 *
+	 * @return string
+	 */
+	protected static function get_default_new_user() {
+		return <<<TAG
+		Hi [it_exchange_email show="first_name"],
+
+Welcome to [it_exchange_email show="company_name"]!
+
+You've been invited to [it_exchange_email show="company_name"]'s [it_exchange_email show="umbrella_membership_name"] program by [it_exchange_email show="customer_fullname"]. If you have any questions about this, you can contact [it_exchange_email show="customer_first_name"] by email at [it_exchange_email show="customer_email"].
+
+We've automatically created an account for you.
+
+You can login here, [it_exchange_email show="login_link"], with the following information:
+
+Username: [it_exchange_email show="username"]
+
+Password: [it_exchange_email show="umbrella_membership_password"]
+
+We recommend that you change your password when you login. You can do that from your profile page: [it_exchange_email show="profile_link"]
+
+You can access your exclusive membership content at the following url: [it_exchange_email show="umbrella_membership_dashboard"]
+
+Welcome to [it_exchange_email show="company_name"]!
+
+- The [it_exchange_email show="company_name"] Team
+TAG;
+	}
+
+	/**
+	 * Get the default removed email.
+	 *
+	 * @since 1.19.11
+	 *
+	 * @return string
+	 */
+	protected static function get_default_removed() {
+		return <<<TAG
+Hi [it_exchange_email show="first_name"],
+
+Your access to [it_exchange_email show="company_name"]'s [it_exchange_email show="umbrella_membership_name"] program has been revoked by [it_exchange_email show="customer_fullname"]. If you have any questions about this, you can contact [it_exchange_email show="customer_first_name"] by email at [it_exchange_email show="customer_email"].
+
+- The [it_exchange_email show="company_name"] Team
+TAG;
+	}
+
+	/**
+	 * Get the default expired email.
+	 *
+	 * @since 1.19.11
+	 *
+	 * @return string
+	 */
+	protected static function get_default_expired() {
+		return <<<TAG
+Hi [it_exchange_email show="first_name"],
+
+Your access to [it_exchange_email show="company_name"]'s [it_exchange_email show="umbrella_membership_name"] program has expired. This is typically due to a lapse of payment. If you have any questions about this, you can contact [it_exchange_email show="customer_fullname"] by email at [it_exchange_email show="customer_email"].
+
+- The [it_exchange_email show="company_name"] Team
+TAG;
 	}
 }

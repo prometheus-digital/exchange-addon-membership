@@ -54,4 +54,26 @@ class IT_Exchange_Membership extends IT_Exchange_Product {
 		return array_map( 'it_exchange_get_product', $ids );
 	}
 
+	/**
+	 * Get the URL to the dashboard.
+	 * 
+	 * @since 1.19.11
+	 * 
+	 * @return string
+	 */
+	public function get_dashboard() {
+
+		$page_slug       = 'memberships';
+		$permalinks      = (bool) get_option( 'permalink_structure' );
+		$membership_slug = $this->post_name;
+
+		if ( $permalinks ) {
+			$url = trailingslashit( it_exchange_get_page_url( $page_slug ) ) . $membership_slug;
+		} else {
+			$url = it_exchange_get_page_url( $page_slug ) . '=' . $membership_slug;
+		}
+		
+		return $url;
+	}
+
 }

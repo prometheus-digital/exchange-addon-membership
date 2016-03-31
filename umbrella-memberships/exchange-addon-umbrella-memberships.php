@@ -95,7 +95,7 @@ class Plugin {
 			'file'              => dirname( __FILE__ ) . '/init.php',
 			'icon'              => self::$url . 'assets/img/icon-50.png',
 			'category'          => 'other',
-			'settings-callback' => array( 'ITEGMS\Settings', 'display' ),
+			//'settings-callback' => array( 'ITEGMS\Settings', 'display' ),
 			'basename'          => plugin_basename( __FILE__ ),
 			'labels'            => array(
 				'singular_name' => __( 'Umbrella Membership', 'LION' ),
