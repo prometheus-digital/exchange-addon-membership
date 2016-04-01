@@ -67,7 +67,7 @@ class Emails {
 				__( 'Umbrella Membership Invitation', 'LION' ), 'itegms-invitation', null, array(
 					'defaults'    => array(
 						'subject' => sprintf( __( "You've been given access to %s by %s", 'LION' ),
-							'[it_exchange_email show=umbrella_membership_name]', '[it_exchange_email show=customer_first_name]' ),
+							'[it_exchange_email show=membership_name]', '[it_exchange_email show=customer_first_name]' ),
 						'body'    => self::get_default_invitation()
 					),
 					'group'       => __( 'Umbrella Memberships', 'LION' ),
@@ -76,34 +76,34 @@ class Emails {
 			) )
 			->register_notification( new \IT_Exchange_Customer_Email_Notification(
 				__( 'Umbrella Membership Invitation New User', 'LION' ), 'itegms-invitation-new-user', null, array(
-					'defaults' => array(
+					'defaults'    => array(
 						'subject' => sprintf( __( "You've been given access to %s by %s", 'LION' ),
-							'[it_exchange_email show=umbrella_membership_name]', '[it_exchange_email show=customer_first_name]' ),
+							'[it_exchange_email show=membership_name]', '[it_exchange_email show=customer_first_name]' ),
 						'body'    => self::get_default_new_user()
 					),
-					'group'    => __( 'Umbrella Memberships', 'LION' ),
+					'group'       => __( 'Umbrella Memberships', 'LION' ),
 					'description' => __( "Email sent to members when they're invited to an umbrella membership and have had an account created for them.", 'LION' )
 				)
 			) )
 			->register_notification( new \IT_Exchange_Customer_Email_Notification(
 				__( 'Umbrella Membership Removal', 'LION' ), 'itegms-removed', null, array(
-					'defaults' => array(
+					'defaults'    => array(
 						'subject' => sprintf( __( "You're access to %s has been revoked by %s", 'LION' ),
-							'[it_exchange_email show=umbrella_membership_name]', '[it_exchange_email show=customer_first_name]' ),
+							'[it_exchange_email show=membership_name]', '[it_exchange_email show=customer_first_name]' ),
 						'body'    => self::get_default_removed()
 					),
-					'group'    => __( 'Umbrella Memberships', 'LION' ),
+					'group'       => __( 'Umbrella Memberships', 'LION' ),
 					'description' => __( "Email sent to members when they're removed from an umbrella membership.", 'LION' )
 				)
 			) )
 			->register_notification( new \IT_Exchange_Customer_Email_Notification(
 				__( 'Umbrella Membership Expired', 'LION' ), 'itegms-expired', null, array(
-					'defaults' => array(
+					'defaults'    => array(
 						'subject' => sprintf( __( "You're access to %s has expired", 'LION' ),
-							'[it_exchange_email show=umbrella_membership_name]' ),
+							'[it_exchange_email show=membership_name]' ),
 						'body'    => self::get_default_expired()
 					),
-					'group'    => __( 'Umbrella Memberships', 'LION' ),
+					'group'       => __( 'Umbrella Memberships', 'LION' ),
 					'description' => __( "Email sent to members when their membership has expired.", 'LION' )
 				)
 			) );
@@ -119,36 +119,6 @@ class Emails {
 	 * @param \IT_Exchange_Email_Tag_Replacer $replacer
 	 */
 	public static function register_tags( \IT_Exchange_Email_Tag_Replacer $replacer ) {
-
-		$tag = new \IT_Exchange_Email_Tag_Base(
-			'umbrella_membership_name', __( 'Umbrella Membership Name', 'LION' ),
-			__( 'The name of the membership being joined.', 'LION' ), function ( $context ) {
-
-			/** @var Relationship $relationship */
-			$relationship = $context['umbrella-membership'];
-
-			return $relationship->get_purchase()->get_membership()->post_title;
-		} );
-		$tag->add_required_context( 'umbrella-membership' );
-		$tag->add_available_for( 'itegms-invitation' )->add_available_for( 'itegms-invitation-new-user' )
-		    ->add_available_for( 'itegms-removed' )->add_available_for( 'itegms-expired' );
-
-		$replacer->add_tag( $tag );
-
-		$tag = new \IT_Exchange_Email_Tag_Base(
-			'umbrella_membership_dashboard', __( 'Umbrella Membership Dashboard', 'LION' ),
-			__( 'A link to the user dashboard for the membership.', 'LION' ), function ( $context ) {
-
-			/** @var Relationship $relationship */
-			$relationship = $context['umbrella-membership'];
-
-			return $relationship->get_purchase()->get_membership()->get_dashboard();
-		} );
-		$tag->add_required_context( 'umbrella-membership' );
-		$tag->add_available_for( 'itegms-invitation' )->add_available_for( 'itegms-invitation-new-user' )
-		    ->add_available_for( 'itegms-removed' )->add_available_for( 'itegms-expired' );
-
-		$replacer->add_tag( $tag );
 
 		$tag = new \IT_Exchange_Email_Tag_Base(
 			'umbrella_membership_password', __( 'Umbrella Membership Password', 'LION' ),
@@ -203,7 +173,8 @@ class Emails {
 			$notification,
 			array(
 				'umbrella-membership' => $rel,
-				'customer'            => $rel->get_purchase()->get_customer()
+				'customer'            => $rel->get_purchase()->get_customer(),
+				'membership'          => $rel->get_purchase()->get_membership()
 			)
 		);
 
@@ -236,7 +207,8 @@ class Emails {
 			array(
 				'umbrella-membership'          => $rel,
 				'customer'                     => $rel->get_purchase()->get_customer(),
-				'umbrella-membership-password' => $password
+				'umbrella-membership-password' => $password,
+				'membership'                   => $rel->get_purchase()->get_membership()
 			)
 		);
 
@@ -267,7 +239,8 @@ class Emails {
 			$notification,
 			array(
 				'umbrella-membership' => $rel,
-				'customer'            => $rel->get_purchase()->get_customer()
+				'customer'            => $rel->get_purchase()->get_customer(),
+				'membership'          => $rel->get_purchase()->get_membership()
 			)
 		);
 
@@ -298,7 +271,8 @@ class Emails {
 			$notification,
 			array(
 				'umbrella-membership' => $rel,
-				'customer'            => $rel->get_purchase()->get_customer()
+				'customer'            => $rel->get_purchase()->get_customer(),
+				'membership'          => $rel->get_purchase()->get_membership()
 			)
 		);
 
@@ -320,9 +294,9 @@ class Emails {
 		return <<<TAG
 		Hi [it_exchange_email show="first_name"],
 
-Welcome to [it_exchange_email show="company_name"]'s [it_exchange_email show="umbrella_membership_name"] program. You've been invited to this program by [it_exchange_email show="customer_fullname"]. If you have any questions about this, you can contact [it_exchange_email show="customer_first_name"] by email at [it_exchange_email show="customer_email"].
+Welcome to [it_exchange_email show="company_name"]'s [it_exchange_email show="membership_name"] program. You've been invited to this program by [it_exchange_email show="customer_fullname"]. If you have any questions about this, you can contact [it_exchange_email show="customer_first_name"] by email at [it_exchange_email show="customer_email"].
 
-You can access your exclusive membership content at the following url: [it_exchange_email show="umbrella_membership_dashboard"]
+You can access your exclusive membership content at the following url: [it_exchange_email show="membership_dashboard"]
 
 - The [it_exchange_email show="company_name"] Team
 TAG;
@@ -341,7 +315,7 @@ TAG;
 
 Welcome to [it_exchange_email show="company_name"]!
 
-You've been invited to [it_exchange_email show="company_name"]'s [it_exchange_email show="umbrella_membership_name"] program by [it_exchange_email show="customer_fullname"]. If you have any questions about this, you can contact [it_exchange_email show="customer_first_name"] by email at [it_exchange_email show="customer_email"].
+You've been invited to [it_exchange_email show="company_name"]'s [it_exchange_email show="membership_name"] program by [it_exchange_email show="customer_fullname"]. If you have any questions about this, you can contact [it_exchange_email show="customer_first_name"] by email at [it_exchange_email show="customer_email"].
 
 We've automatically created an account for you.
 
@@ -353,7 +327,7 @@ Password: [it_exchange_email show="umbrella_membership_password"]
 
 We recommend that you change your password when you login. You can do that from your profile page: [it_exchange_email show="profile_link"]
 
-You can access your exclusive membership content at the following url: [it_exchange_email show="umbrella_membership_dashboard"]
+You can access your exclusive membership content at the following url: [it_exchange_email show="membership_dashboard"]
 
 Welcome to [it_exchange_email show="company_name"]!
 
@@ -372,7 +346,7 @@ TAG;
 		return <<<TAG
 Hi [it_exchange_email show="first_name"],
 
-Your access to [it_exchange_email show="company_name"]'s [it_exchange_email show="umbrella_membership_name"] program has been revoked by [it_exchange_email show="customer_fullname"]. If you have any questions about this, you can contact [it_exchange_email show="customer_first_name"] by email at [it_exchange_email show="customer_email"].
+Your access to [it_exchange_email show="company_name"]'s [it_exchange_email show="membership_name"] program has been revoked by [it_exchange_email show="customer_fullname"]. If you have any questions about this, you can contact [it_exchange_email show="customer_first_name"] by email at [it_exchange_email show="customer_email"].
 
 - The [it_exchange_email show="company_name"] Team
 TAG;
@@ -389,7 +363,7 @@ TAG;
 		return <<<TAG
 Hi [it_exchange_email show="first_name"],
 
-Your access to [it_exchange_email show="company_name"]'s [it_exchange_email show="umbrella_membership_name"] program has expired. This is typically due to a lapse of payment. If you have any questions about this, you can contact [it_exchange_email show="customer_fullname"] by email at [it_exchange_email show="customer_email"].
+Your access to [it_exchange_email show="company_name"]'s [it_exchange_email show="membership_name"] program has expired. This is typically due to a lapse of payment. If you have any questions about this, you can contact [it_exchange_email show="customer_fullname"] by email at [it_exchange_email show="customer_email"].
 
 - The [it_exchange_email show="company_name"] Team
 TAG;

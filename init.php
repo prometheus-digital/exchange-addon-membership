@@ -69,6 +69,8 @@ require_once( dirname( __FILE__ ) . '/lib/interface.user-membership.php' );
 require_once( dirname( __FILE__ ) . '/lib/class.subscription-driver.php' );
 require_once( dirname( __FILE__ ) . '/lib/class.transaction-driver.php' );
 
+require_once( dirname( __FILE__ ) . '/lib/class.emails.php' );
+
 require_once( dirname( __FILE__ ) . '/lib/deprecated.php' );
 
 require_once( dirname( __FILE__ ) . '/lib/rules/load.php' );
