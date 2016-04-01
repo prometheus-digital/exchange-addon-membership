@@ -192,9 +192,15 @@ class Emails {
 	 */
 	public static function send_invitation( Relationship $rel ) {
 
+		$notification = self::$notifications->get_notification( 'itegms-invitation' );
+
+		if ( ! $notification->is_active() ) {
+			return;
+		}
+
 		$email = new \IT_Exchange_Email(
 			new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
-			self::$notifications->get_notification( 'itegms-invitation' ),
+			$notification,
 			array(
 				'umbrella-membership' => $rel,
 				'customer'            => $rel->get_purchase()->get_customer()
@@ -218,9 +224,15 @@ class Emails {
 	 */
 	public static function send_invitation_new_user( Relationship $rel, $password ) {
 
+		$notification = self::$notifications->get_notification( 'itegms-invitation-new-user' );
+
+		if ( ! $notification->is_active() ) {
+			return;
+		}
+
 		$email = new \IT_Exchange_Email(
 			new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
-			self::$notifications->get_notification( 'itegms-invitation-new-user' ),
+			$notification,
 			array(
 				'umbrella-membership'          => $rel,
 				'customer'                     => $rel->get_purchase()->get_customer(),
@@ -244,9 +256,15 @@ class Emails {
 	 */
 	public static function send_removal( Relationship $rel ) {
 
+		$notification = self::$notifications->get_notification( 'itegms-removed' );
+
+		if ( ! $notification->is_active() ) {
+			return;
+		}
+
 		$email = new \IT_Exchange_Email(
 			new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
-			self::$notifications->get_notification( 'itegms-removed' ),
+			$notification,
 			array(
 				'umbrella-membership' => $rel,
 				'customer'            => $rel->get_purchase()->get_customer()
@@ -269,9 +287,15 @@ class Emails {
 	 */
 	public static function send_expired( Relationship $rel ) {
 
+		$notification = self::$notifications->get_notification( 'itegms-expired' );
+
+		if ( ! $notification->is_active() ) {
+			return;
+		}
+
 		$email = new \IT_Exchange_Email(
 			new \IT_Exchange_Email_Recipient_Customer( $rel->get_member() ),
-			self::$notifications->get_notification( 'itegms-expired' ),
+			$notification,
 			array(
 				'umbrella-membership' => $rel,
 				'customer'            => $rel->get_purchase()->get_customer()
