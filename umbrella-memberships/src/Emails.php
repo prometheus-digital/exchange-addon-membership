@@ -291,14 +291,18 @@ class Emails {
 	 * @return string
 	 */
 	protected static function get_default_invitation() {
+
+		/** @var \IT_Exchange_Email_Tag_Replacer $r */
+		$r = it_exchange_email_notifications()->get_replacer();
+
 		return <<<TAG
-		Hi [it_exchange_email show="first_name"],
+		Hi {$r->format_tag( 'first_name' )}
 
-Welcome to [it_exchange_email show="company_name"]'s [it_exchange_email show="membership_name"] program. You've been invited to this program by [it_exchange_email show="customer_fullname"]. If you have any questions about this, you can contact [it_exchange_email show="customer_first_name"] by email at [it_exchange_email show="customer_email"].
+Welcome to {$r->format_tag( 'company_name' )}'s {$r->format_tag( 'membership_name' )} program. You've been invited to this program by {$r->format_tag( 'customer_fullname' )}. If you have any questions about this, you can contact {$r->format_tag( 'customer_first_name' )} by email at {$r->format_tag( 'customer_email' )}.
 
-You can access your exclusive membership content at the following url: [it_exchange_email show="membership_dashboard"]
+You can access your exclusive membership content at the following url: {$r->format_tag( 'membership_dashboard' )}
 
-- The [it_exchange_email show="company_name"] Team
+- The {$r->format_tag( 'company_name' )} Team
 TAG;
 	}
 
@@ -310,28 +314,32 @@ TAG;
 	 * @return string
 	 */
 	protected static function get_default_new_user() {
+
+		/** @var \IT_Exchange_Email_Tag_Replacer $r */
+		$r = it_exchange_email_notifications()->get_replacer();
+
 		return <<<TAG
-		Hi [it_exchange_email show="first_name"],
+		Hi {$r->format_tag( 'first_name' )}
 
-Welcome to [it_exchange_email show="company_name"]!
+Welcome to {$r->format_tag( 'company_name' )}!
 
-You've been invited to [it_exchange_email show="company_name"]'s [it_exchange_email show="membership_name"] program by [it_exchange_email show="customer_fullname"]. If you have any questions about this, you can contact [it_exchange_email show="customer_first_name"] by email at [it_exchange_email show="customer_email"].
+You've been invited to {$r->format_tag( 'company_name' )}'s {$r->format_tag( 'membership_name' )} program by {$r->format_tag( 'customer_fullname' )}. If you have any questions about this, you can contact {$r->format_tag( 'customer_first_name' )} by email at {$r->format_tag( 'customer_email' )}.
 
 We've automatically created an account for you.
 
-You can login here, [it_exchange_email show="login_link"], with the following information:
+You can login here, {$r->format_tag( 'login_link' )}, with the following information:
 
-Username: [it_exchange_email show="username"]
+Username: {$r->format_tag( 'username' )}
 
-Password: [it_exchange_email show="umbrella_membership_password"]
+Password: {$r->format_tag( 'umbrella_membership_password' )}
 
-We recommend that you change your password when you login. You can do that from your profile page: [it_exchange_email show="profile_link"]
+We recommend that you change your password when you login. You can do that from your profile page: {$r->format_tag( 'profile_link' )}
 
-You can access your exclusive membership content at the following url: [it_exchange_email show="membership_dashboard"]
+You can access your exclusive membership content at the following url: {$r->format_tag( 'membership_dashboard' )}
 
-Welcome to [it_exchange_email show="company_name"]!
+Welcome to {$r->format_tag( 'company_name' )}!
 
-- The [it_exchange_email show="company_name"] Team
+- The {$r->format_tag( 'company_name' )} Team
 TAG;
 	}
 
@@ -343,12 +351,16 @@ TAG;
 	 * @return string
 	 */
 	protected static function get_default_removed() {
+
+		/** @var \IT_Exchange_Email_Tag_Replacer $r */
+		$r = it_exchange_email_notifications()->get_replacer();
+
 		return <<<TAG
-Hi [it_exchange_email show="first_name"],
+Hi {$r->format_tag( 'first_name' )}
 
-Your access to [it_exchange_email show="company_name"]'s [it_exchange_email show="membership_name"] program has been revoked by [it_exchange_email show="customer_fullname"]. If you have any questions about this, you can contact [it_exchange_email show="customer_first_name"] by email at [it_exchange_email show="customer_email"].
+Your access to {$r->format_tag( 'company_name' )}'s {$r->format_tag( 'membership_name' )} program has been revoked by {$r->format_tag( 'customer_fullname' )}. If you have any questions about this, you can contact {$r->format_tag( 'customer_first_name' )} by email at {$r->format_tag( 'customer_email' )}.
 
-- The [it_exchange_email show="company_name"] Team
+- The {$r->format_tag( 'company_name' )} Team
 TAG;
 	}
 
@@ -360,12 +372,16 @@ TAG;
 	 * @return string
 	 */
 	protected static function get_default_expired() {
+
+		/** @var \IT_Exchange_Email_Tag_Replacer $r */
+		$r = it_exchange_email_notifications()->get_replacer();
+
 		return <<<TAG
-Hi [it_exchange_email show="first_name"],
+Hi {$r->format_tag( 'first_name' )}
 
-Your access to [it_exchange_email show="company_name"]'s [it_exchange_email show="membership_name"] program has expired. This is typically due to a lapse of payment. If you have any questions about this, you can contact [it_exchange_email show="customer_fullname"] by email at [it_exchange_email show="customer_email"].
+Your access to {$r->format_tag( 'company_name' )}'s {$r->format_tag( 'membership_name' )} program has expired. This is typically due to a lapse of payment. If you have any questions about this, you can contact {$r->format_tag( 'customer_fullname' )} by email at {$r->format_tag( 'customer_email' )}.
 
-- The [it_exchange_email show="company_name"] Team
+- The {$r->format_tag( 'company_name' )} Team
 TAG;
 	}
 }

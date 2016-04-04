@@ -158,14 +158,17 @@ class IT_Exchange_Membership_Emails {
 	 * @return string
 	 */
 	protected static function get_default_welcome() {
+
+		$r = it_exchange_email_notifications()->get_replacer();
+
 		return <<<TAG
-		Hi [it_exchange_email show="first_name"],
+		Hi {$r->format_tag( 'first_name' )}
 
-Welcome to [it_exchange_email show="company_name"]'s [it_exchange_email show="membership_name"] program.
+Welcome to {$r->format_tag( 'company_name' )}'s {$r->format_tag( 'membership_name' )} program.
 
-You can access your exclusive membership content at the following url: [it_exchange_email show="membership_dashboard"]
+You can access your exclusive membership content at the following url: {$r->format_tag( 'membership_dashboard' )}
 
-- The [it_exchange_email show="company_name"] Team
+- The {$r->format_tag( 'company_name' )} Team
 TAG;
 	}
 
