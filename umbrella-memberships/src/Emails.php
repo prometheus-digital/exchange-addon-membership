@@ -45,7 +45,7 @@ class Emails {
 	public function __construct() {
 
 		add_action( 'it_exchange_register_email_notifications', array( __CLASS__, 'register_emails' ) );
-		add_action( 'it_exchange_email_notifications_register_tags', array( __CLASS__, 'register_tags' ) );
+		add_action( 'it_exchange_email_notifications_register_tags', array( __CLASS__, 'register_tags' ), 20 );
 
 		add_action( 'itegms_create_relationship', array( __CLASS__, 'send_invitation' ) );
 		add_action( 'itegms_create_relationship_new_user', array( __CLASS__, 'send_invitation_new_user' ), 10, 2 );
@@ -129,6 +129,23 @@ class Emails {
 		$tag->add_available_for( 'itegms-invitation-new-user' );
 
 		$replacer->add_tag( $tag );
+
+		$tags = array(
+			'customer_first_name',
+			'customer_last_name',
+			'customer_fullname',
+			'customer_username',
+			'customer_email'
+		);
+
+		foreach ( $tags as $tag ) {
+			$tag = $replacer->get_tag( $tag );
+
+			if ( $tag ) {
+				$tag->add_available_for( 'itegms-invitation' )->add_available_for( 'itegms-invitation-new-user' )
+				    ->add_available_for( 'itegms-removed' )->add_available_for( 'itegms-expired' );
+			}
+		}
 	}
 
 	/**
