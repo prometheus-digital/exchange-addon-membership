@@ -63,7 +63,7 @@ class IT_Exchange_Membership_Emails {
 			__( 'Membership Welcome', 'LION' ), 'membership-welcome', null, array(
 				'defaults'    => array(
 					'subject' => sprintf( __( 'Welcome to %s!', 'LION' ),
-						'[it_exchange_email show=membership_name]' ),
+						$notifications->get_replacer()->format_tag( 'membership_name' ) ),
 					'body'    => self::get_default_welcome()
 				),
 				'group'       => __( 'Membership', 'LION' ),
