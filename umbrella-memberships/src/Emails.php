@@ -62,12 +62,14 @@ class Emails {
 	 */
 	public static function register_emails( \IT_Exchange_Email_Notifications $notifications ) {
 
+		$r = $notifications->get_replacer();
+
 		$notifications
 			->register_notification( new \IT_Exchange_Customer_Email_Notification(
 				__( 'Umbrella Membership Invitation', 'LION' ), 'itegms-invitation', null, array(
 					'defaults'    => array(
 						'subject' => sprintf( __( "You've been given access to %s by %s", 'LION' ),
-							'[it_exchange_email show=membership_name]', '[it_exchange_email show=customer_first_name]' ),
+							$r->format_tag( 'membership_name' ), $r->format_tag( 'customer_first_name' ) ),
 						'body'    => self::get_default_invitation()
 					),
 					'group'       => __( 'Umbrella Memberships', 'LION' ),
@@ -78,7 +80,7 @@ class Emails {
 				__( 'Umbrella Membership Invitation New User', 'LION' ), 'itegms-invitation-new-user', null, array(
 					'defaults'    => array(
 						'subject' => sprintf( __( "You've been given access to %s by %s", 'LION' ),
-							'[it_exchange_email show=membership_name]', '[it_exchange_email show=customer_first_name]' ),
+							$r->format_tag( 'membership_name' ), $r->format_tag( 'customer_first_name' ) ),
 						'body'    => self::get_default_new_user()
 					),
 					'group'       => __( 'Umbrella Memberships', 'LION' ),
@@ -89,7 +91,7 @@ class Emails {
 				__( 'Umbrella Membership Removal', 'LION' ), 'itegms-removed', null, array(
 					'defaults'    => array(
 						'subject' => sprintf( __( "You're access to %s has been revoked by %s", 'LION' ),
-							'[it_exchange_email show=membership_name]', '[it_exchange_email show=customer_first_name]' ),
+							$r->format_tag( 'membership_name' ), $r->format_tag( 'customer_first_name' ) ),
 						'body'    => self::get_default_removed()
 					),
 					'group'       => __( 'Umbrella Memberships', 'LION' ),
@@ -100,7 +102,7 @@ class Emails {
 				__( 'Umbrella Membership Expired', 'LION' ), 'itegms-expired', null, array(
 					'defaults'    => array(
 						'subject' => sprintf( __( "You're access to %s has expired", 'LION' ),
-							'[it_exchange_email show=membership_name]' ),
+							$r->format_tag( 'membership_name' ) ),
 						'body'    => self::get_default_expired()
 					),
 					'group'       => __( 'Umbrella Memberships', 'LION' ),
