@@ -88,10 +88,10 @@ add_action( 'admin_notices', 'it_exchange_membership_show_php_version_nag' );
  * @return void
  */
 function it_exchange_membership_addon_show_version_nag() {
-	if ( version_compare( $GLOBALS['it_exchange']['version'], '1.35.2', '<' ) ) {
+	if ( version_compare( $GLOBALS['it_exchange']['version'], '1.36.0', '<' ) ) {
 		?>
 		<div id="it-exchange-add-on-min-version-nag" class="it-exchange-nag">
-			<?php printf( __( 'The Membership add-on requires iThemes Exchange version 1.35.2 or greater. %sPlease upgrade Exchange%s.', 'LION' ), '<a href="' . admin_url( 'update-core.php' ) . '">', '</a>' ); ?>
+			<?php printf( __( 'The Membership add-on requires iThemes Exchange version 1.36 or greater. %sPlease upgrade Exchange%s.', 'LION' ), '<a href="' . admin_url( 'update-core.php' ) . '">', '</a>' ); ?>
 		</div>
 		<script type="text/javascript">
 			jQuery( document ).ready( function () {
