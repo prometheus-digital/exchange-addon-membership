@@ -602,7 +602,10 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 
 				$product = it_exchange_get_product( $product_id );
 				$user_membership = it_exchange_get_user_membership_for_product( $customer, $product );
-				IT_Exchange_Membership_Emails::send_welcome( $user_membership );
+
+				if ( $user_membership ) {
+					IT_Exchange_Membership_Emails::send_welcome( $user_membership );
+				}
 
 				//If this user isn't already a member of this product, add it to their access list
 				$member_access[ $transaction_id ][] = $product_id;
@@ -772,7 +775,10 @@ function it_exchange_update_member_access_on_transaction_status_change( $transac
 
 				$product = it_exchange_get_product( $membership );
 				$user_membership = it_exchange_get_user_membership_for_product( $customer, $product );
-				IT_Exchange_Membership_Emails::send_welcome( $user_membership );
+
+				if ( $user_membership ) {
+					IT_Exchange_Membership_Emails::send_welcome( $user_membership );
+				}
 
 				$member_access[ $transaction->ID ][] = $membership;
 			}
@@ -820,7 +826,10 @@ function it_exchange_update_member_access_on_subscription_status_change( $new_st
 			$member_access[ $subscription->get_transaction()->ID ][] = $subscription->get_product()->ID;
 
 			$user_membership = it_exchange_get_user_membership_for_product( $customer, $subscription->get_product() );
-			IT_Exchange_Membership_Emails::send_welcome( $user_membership );
+
+			if ( $user_membership ) {
+				IT_Exchange_Membership_Emails::send_welcome( $user_membership );
+			}
 		}
 	}
 
