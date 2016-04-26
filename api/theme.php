@@ -6,8 +6,8 @@
  * @since 1.0.0
 */
 
-include( 'theme/restricted.php' );
-include( 'theme/dripped.php' );
-include( 'theme/member-dashboard.php' );
-include( 'theme/membership-confirmation.php' );
-include( 'theme/membership-product.php' );
+include_once( 'theme/restricted.php' );
+include_once( 'theme/dripped.php' );
+include_once( 'theme/member-dashboard.php' );
+include_once( 'theme/membership-confirmation.php' );
+include_once( 'theme/membership-product.php' );

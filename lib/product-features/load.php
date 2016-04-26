@@ -1,18 +1,18 @@
 <?php
 /**
  * Includes all of our product features
- * @since 1.0.0
+ * @since   1.0.0
  * @package IT_Exchange_Addon_Membership
-*/
+ */
 
 // Product Feature: Content Access
-require( 'class.content-access.php' );
+require_once( dirname( __FILE__ ) . '/class.content-access.php' );
 
 // Product Feature: Membership Welcome Message
-require( 'class.welcome-message.php' );
+require_once( dirname( __FILE__ ) . '/class.welcome-message.php' );
 
 // Product Feature: Membership Information
-require( 'class.membership-information.php' );
+require_once( dirname( __FILE__ ) . '/class.membership-information.php' );
 
 // Product Feature: Membership Hierarchy
-require( 'class.membership-hierarchy.php' );
+require_once( dirname( __FILE__ ) . '/class.membership-hierarchy.php' );
