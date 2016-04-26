@@ -39,6 +39,7 @@ if ( ! defined( 'COOKIEHASH' ) ) {
 
 function _manually_load_plugin() {
 	require_once dirname( __FILE__ ) . '/../../ithemes-exchange/init.php';
+	include_once dirname( __FILE__ ) . '/../../exchange-addon-recurring-payments/exchange-addon-recurring-payments.php';
 	require_once dirname( __FILE__ ) . '/../exchange-addon-membership.php';
 }
 
@@ -66,7 +67,15 @@ require dirname( __FILE__ ) . '/../../ithemes-exchange/tests/framework/transacti
 require dirname( __FILE__ ) . '/../../ithemes-exchange/tests/framework/product-factory.php';
 require dirname( __FILE__ ) . '/../../ithemes-exchange/tests/framework/download-factory.php';
 require dirname( __FILE__ ) . '/../../ithemes-exchange/tests/framework/test-case.php';
+require dirname( __FILE__ ) . '/../../ithemes-exchange/tests/mocks/mock-session.php';
+
+add_filter( 'it_exchange_membership_addon_activation', '__return_false' );
 
 activate_plugin( 'ithemes-exchange/init.php' );
+
+if ( file_exists( dirname( __FILE__ ) . '/../../exchange-addon-recurring-payments/exchange-addon-recurring-payments.php' ) ) {
+	activate_plugin( 'exchange-addon-recurring-payments/exchange-addon-recurring-payments.php' );
+}
+
 activate_plugin( 'exchange-addon-membership/exchange-addon-membership.php' );
 

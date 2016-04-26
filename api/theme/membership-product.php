@@ -16,7 +16,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 
 	/**
 	 * Current product in iThemes Exchange Global
-	 * @var object $product
+	 * @var IT_Exchange_Product $product
 	 * @since 0.4.0
 	*/
 	private $product;
@@ -223,8 +223,8 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	 * @return string
 	*/
 	function upgrade_details( $options=array() ) {
+		
 		$result = '';
-		$membership_settings = it_exchange_get_option( 'addon_membership' );
 		
 		$defaults      = array(
 			'before'       => '',
@@ -243,14 +243,12 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 			return it_exchange_product_has_feature( $this->product->ID, 'membership-hierarchy', array( 'setting' => 'children' ) );
 
 		// Repeats checks for when flags were not passed.
-		if ( it_exchange_product_supports_feature( $this->product->ID, 'membership-hierarchy' )	
-				&& it_exchange_product_has_feature( $this->product->ID, 'membership-hierarchy', array( 'setting' => 'children' ) ) ) {
+		if ( $this->product->supports_feature( 'membership-hierarchy' ) && $this->product->has_feature( 'membership-hierarchy', array( 'setting' => 'children' ) ) ) {
 				
 			$child_ids = it_exchange_membership_addon_setup_recursive_member_access_array( array( $this->product->ID => '' ) );
-									
+		
 			if ( !empty( $child_ids ) ) {
 				$base_price = it_exchange_get_product_feature( $this->product->ID, 'base-price' );
-				$db_product_price = it_exchange_convert_to_database_number( $base_price );
 				$most_priciest = 0;
 				$most_priciest_txn_id = 0;
 				
@@ -273,7 +271,6 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 					
 					if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'recurring-enabled' ) ) ) {
 						$existing_membership_recurring_enabled = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'recurring-enabled' ) );
-						$existing_membership_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
 						$existing_membership_interval = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'interval' ) );
 						$existing_membership_interval_count = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'interval-count' ) );
 					} else {
@@ -295,6 +292,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 					}
 					
 					if ( $existing_membership_recurring_enabled && $upgrade_membership_recurring_enabled ) {
+
 						//forever upgrade to non-forever Products need to be process manually (see notes below)
 						$days_this_year = date_i18n( 'z', mktime( 0,0,0,12,31,date_i18n('Y') ) );
 
@@ -322,13 +320,13 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 									break;
 								}
 							}
-							//Just in case they used a coupon
-							if ( $transaction->cart_details->total < $product['product_subtotal'] )
+							// Just in case they used a coupon
+							// this doesn't properly take into account coupons that are applied per-product
+							if ( $transaction->cart_details->total < $product['product_subtotal'] ) {
 								$last_payment = $transaction->cart_details->total;
-							
+							}
 						}
-						
-						$post_date = strtotime( $transaction->post_date );
+
 						$todays_date = time();
 
 						if ( 0 === $last_payment ) {
@@ -343,7 +341,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								
 								$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
 							} else {
-								return;
+								return $result;
 							}
 						} else {
 							if ( $existing_membership_recurring_enabled ) {
@@ -365,7 +363,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								}
 								$daily_cost_of_existing_membership = apply_filters( 'daily_cost_of_existing_recurring_membership', $last_payment / $divisor / $existing_membership_interval_count, $base_price, $days_this_year, $this->product->ID, $transaction );
 								$next_payment_date = strtotime( '+' . $existing_membership_interval_count . ' ' . $existing_membership_interval, strtotime( $transaction->post_date ) );
-								$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
+								$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / ( 60 * 60 * 24 ) ), 0 );
 							} else if ( !$upgrade_membership_recurring_enabled ) {
 								//This is a forever to forever upgrade
 								$credit = max( $last_payment, 0 );
@@ -405,8 +403,6 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 							} else {
 								$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
 							}
-								
-							$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
 							
 							if ( 0 < $free_days ) {
 								$upgrade_type = false;
@@ -423,6 +419,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 									$upgrade_type = 'credit';
 								}
 								
+
 								//For cancelling, I need to get the subscription ID and payment method
 								//And since I've done all this hard work, I should store the other pertinent information
 								$upgrade_details = it_exchange_get_session_data( 'updowngrade_details' );
@@ -442,7 +439,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								it_exchange_update_session_data( 'updowngrade_details', $upgrade_details );
 							} else {
 								//no free days, just upgrade!
-								return;
+								return $result;
 							}
 						} else if ( !empty( $credit ) ) {
 							// If we're upgrading from a non-recurring to a non-recurring product, we want to give the
@@ -459,7 +456,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 							$result = $options['before_desc'] . sprintf( __( ' %s upgrade credit will be applied at checkout', 'LION' ), it_exchange_format_price( $credit )  ) . $options['after_desc'];
 						} else {
 							//no free days, just upgrade!
-							return;
+							return $result;
 						}
 					
 					} else if ( !$existing_membership_recurring_enabled && !$existing_membership_recurring_enabled ) {
@@ -483,7 +480,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						it_exchange_update_session_data( 'updowngrade_details', $upgrade_details );
 
 					} else {
-						return;
+						return $result;
 					}
 					
 				}
