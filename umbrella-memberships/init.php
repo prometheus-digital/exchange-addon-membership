@@ -45,6 +45,6 @@ new Hooks();
  */
 new Emails();
 
-if ( is_admin() ) {
+if ( is_admin() || php_sapi_name() === 'cli' ) {
 	Plugin::upgrade();
 }
