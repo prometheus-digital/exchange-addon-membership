@@ -424,7 +424,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								//And since I've done all this hard work, I should store the other pertinent information
 								$upgrade_details = it_exchange_get_session_data( 'updowngrade_details' );
 								$upgrade_details[$this->product->ID] = array(
-									'credit'                 => $credit,
+									'credit'                 => round( $credit, 2 ),
 									'free_days'              => $free_days,
 									'old_transaction_method' => $transaction->transaction_method,
 									'old_transaction_id'     => $most_priciest_txn_id,
@@ -446,7 +446,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 							// customer a credit for the cost of the existing membership, basically they just need to pay the difference
 							$upgrade_details = it_exchange_get_session_data( 'updowngrade_details' );
 							$upgrade_details[$this->product->ID] = array(
-								'credit'                 => $credit,
+								'credit'                 => round( $credit, 2 ),
 								'free_days'              => 0,
 								'old_transaction_method' => $transaction->transaction_method,
 								'old_transaction_id'     => $most_priciest_txn_id,
@@ -470,7 +470,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						//And since I've done all this hard work, I should store the other pertinent information
 						$upgrade_details = it_exchange_get_session_data( 'updowngrade_details' );
 						$upgrade_details[$this->product->ID] = array(
-							'credit'                 => $credit,
+							'credit'                 => round( $credit, 2 ),
 							'free_days'              => 0,
 							'old_transaction_method' => $transaction->transaction_method,
 							'old_transaction_id'     => $most_priciest_txn_id,
