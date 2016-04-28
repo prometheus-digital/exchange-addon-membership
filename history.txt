@@ -337,3 +337,5 @@
 	Updated bundled-addons/exchange-addon-recurring-payments to version 1.8.4
 1.19.12 - 2016-04-28 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Fix: iThemes Exchange version nag
+1.19.13 - 2016-04-28 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Fix: t_paamayim_nekudotayim error on PHP 5.2
