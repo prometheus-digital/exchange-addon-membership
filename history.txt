@@ -333,3 +333,5 @@
 1.19.10 - 2016-03-21 - Timothy Jacobs, Elise Alley
 	Tweak: Only grant immediate access to membership if transaction is cleared for delivery
 	Fix: Prevent error if user doesn't have any relevant memberships
+1.19.11 - 2016-04-28 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Updated bundled-addons/exchange-addon-recurring-payments to version 1.8.4
