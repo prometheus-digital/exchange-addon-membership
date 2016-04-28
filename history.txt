@@ -335,3 +335,5 @@
 	Fix: Prevent error if user doesn't have any relevant memberships
 1.19.11 - 2016-04-28 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Updated bundled-addons/exchange-addon-recurring-payments to version 1.8.4
+1.19.12 - 2016-04-28 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Fix: iThemes Exchange version nag
