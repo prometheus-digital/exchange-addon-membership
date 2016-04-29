@@ -497,8 +497,8 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	 * @return string
 	*/
 	function downgrade_details( $options=array() ) {
+
 		$result = '';
-		$membership_settings = it_exchange_get_option( 'addon_membership' );
 		
 		$defaults      = array(
 			'before'         => '',
@@ -524,14 +524,9 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 			
 			if ( !empty( $parent_access_session ) && !array_key_exists( $this->product->ID, $parent_access_session )
 				&& false !== $most_parent = it_exchange_membership_addon_get_most_parent_from_member_access( $this->product->ID, $parent_access_session ) ) {
-				
+
 				$base_price = it_exchange_get_product_feature( $this->product->ID, 'base-price' );
-				$db_product_price = it_exchange_convert_to_database_number( $base_price );
-				$most_priciest = 0;
-				$most_priciest_txn_id = 0;
-				
-				$parent_product_base_price = it_exchange_get_product_feature( $most_parent, 'base-price' );
-				$most_priciest = it_exchange_convert_to_database_number( $parent_product_base_price );
+
 				$most_priciest_txn_id = $parent_access_session[$most_parent];
 				$most_producty = it_exchange_get_product( $most_parent );
 				
@@ -539,7 +534,6 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 					
 					if ( it_exchange_product_has_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'recurring-enabled' ) ) ) {
 						$existing_membership_recurring_enabled = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'recurring-enabled' ) );
-						$existing_membership_auto_renew = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'auto-renew' ) );
 						$existing_membership_interval = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'interval' ) );
 						$existing_membership_interval_count = it_exchange_get_product_feature( $most_producty->ID, 'recurring-payments', array( 'setting' => 'interval-count' ) );
 					} else {
@@ -557,7 +551,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 					}
 					
 					if ( empty( $existing_membership_interval_count ) ) {
-						return;	
+						return $result;
 					}
 										
 					if ( !( !$existing_membership_recurring_enabled && $upgrade_membership_recurring_enabled ) ) {
@@ -593,8 +587,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								$last_payment = $transaction->cart_details->total;
 							
 						}
-						
-						$post_date = strtotime( $transaction->post_date );
+
 						$todays_date = time();
 						
 						if ( 0 === $last_payment ) {
@@ -609,7 +602,7 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								
 								$remaining_days = max( floor( ( $next_payment_date - $todays_date ) / (60*60*24) ), 0 );
 							} else {
-								return;
+								return $result;
 							}
 						} else {
 							if ( $existing_membership_recurring_enabled ) {
@@ -668,8 +661,6 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								$free_days = max( floor( $credit / $daily_cost_of_upgrade_membership ), 0 );
 							}
 							
-							$transaction_method = it_exchange_get_transaction_method( $transaction->ID );
-							
 							if ( 0 < $free_days ) {
 								$upgrade_type = false;
 
@@ -704,14 +695,12 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 								it_exchange_update_session_data( 'updowngrade_details', $upgrade_details );	
 							} else {
 								//no free days, just downgrade!
-								return;
+								return $result;
 							}
-							
 						} else {
 							//no free days, just downgrade!
-							return;
+							return $result;
 						}
-												
 					} else {
 						//If the existing membership is forever and they're wanting to downgrade
 						//to a recurring membership, we cannot give them any downgrade options
@@ -720,14 +709,10 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 						//
 						//The reason for this is that it is too complicated to determine the "daily" cost
 						//of a "forever" membership.
-						return;
+						return $result;
 					}
-					
 				}
-				
 			}
-			/**/
-			
 		}
 		
 		return $result;

@@ -94,8 +94,9 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 	 * @param $i2
 	 * @param $p2
 	 * @param $credit
+	 * @param $free_days
 	 */
-	public function test_upgrade_auto_renew_to_auto_renew( $i1, $p1, $days_ago, $i2, $p2, $credit ) {
+	public function test_upgrade_auto_renew_to_auto_renew( $i1, $p1, $days_ago, $i2, $p2, $credit, $free_days ) {
 
 		/** @var $membership_1 IT_Exchange_Product * */
 		$membership_1 = $this->product_factory->create_and_get( array(
@@ -142,20 +143,21 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 			$this->assertArrayNotHasKey( $membership_2->ID, $session );
 		} else {
 			$this->assertArrayHasKey( $membership_2->ID, $session );
-			$this->assertEquals( $credit, $session[ $membership_2->ID ]['credit'], '', 0.01 );
+			$this->assertEquals( $credit, $session[ $membership_2->ID ]['credit'], "Credit doesn't match", 0.01 );
+			$this->assertEquals( $free_days, $session[ $membership_2->ID ]['free_days'], "Free days doesn't match" );
 		}
 	}
 
 	public function _dp_upgrade_auto_renew_to_auto_renew() {
 		return array(
-			array( 'month', '5.00', 7, 'month', '10.00', '3.78' ),
-			array( 'month', '75.00', 3, 'month', '250.00', '66.58' ),
-			array( 'month', '750.00', 3, 'month', '1250.00', '665.75' ),
-			array( 'month', '5.00', 0, 'month', '10.00', '5.00' ),
-			array( 'month', '5.00', 30, 'month', '10.00', 0 ),
-			array( 'month', '5.00', 15, 'year', '20.00', '2.47' ),
-			array( 'year', '5.00', 90, 'year', '20.00', '3.77' ),
-			array( 'year', '5.00', 240, 'month', '20.00', '1.71' ),
+			array( 'month', '5.00', 7, 'month', '10.00', '3.78', 12 ),
+			array( 'month', '75.00', 3, 'month', '250.00', '66.58', 27 ),
+			array( 'month', '750.00', 3, 'month', '1250.00', '665.75', 27 ),
+			array( 'month', '5.00', 0, 'month', '10.00', '5.00', 15 ),
+			array( 'month', '5.00', 30, 'month', '10.00', 0, 0 ),
+			array( 'month', '5.00', 15, 'year', '20.00', '2.47', 45 ),
+			array( 'year', '5.00', 90, 'year', '20.00', '3.77', 69 ),
+			array( 'year', '5.00', 240, 'month', '20.00', '1.71', 3 ),
 		);
 	}
 
@@ -210,7 +212,8 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 			$this->assertArrayNotHasKey( $membership_2->ID, $session );
 		} else {
 			$this->assertArrayHasKey( $membership_2->ID, $session );
-			$this->assertEquals( $credit, $session[ $membership_2->ID ]['credit'], '', 0.01 );
+			$this->assertEquals( $credit, $session[ $membership_2->ID ]['credit'], "Credit doesn't match", 0.01 );
+			$this->assertEmpty( $session[ $membership_2->ID ]['free_days'] );
 		}
 	}
 
@@ -228,8 +231,9 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 	 * @param $p2
 	 * @param $i2
 	 * @param $credit
+	 * @param $free_days
 	 */
-	public function test_upgrade_life_to_auto_renew( $p1, $days_ago, $p2, $i2, $credit ) {
+	public function test_upgrade_life_to_auto_renew( $p1, $days_ago, $p2, $i2, $credit, $free_days ) {
 
 		/** @var $membership_1 IT_Exchange_Product * */
 		$membership_1 = $this->product_factory->create_and_get( array(
@@ -274,13 +278,14 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 			$this->assertArrayNotHasKey( $membership_2->ID, $session );
 		} else {
 			$this->assertArrayHasKey( $membership_2->ID, $session );
-			$this->assertEquals( $credit, $session[ $membership_2->ID ]['credit'], '', 0.01 );
+			$this->assertEquals( $credit, $session[ $membership_2->ID ]['credit'], "Credit doesn't match", 0.01 );
+			$this->assertEquals( $free_days, $session[ $membership_2->ID ]['free_days'], "Free days doesn't match" );
 		}
 	}
 
 	public function _dp_upgrade_life_to_auto_renew() {
 		return array(
-			array( '5.00', 60, '15.00', 'monthly', '5.00' )
+			array( '5.00', 60, '15.00', 'monthly', '5.00', 10 )
 		);
 	}
 
@@ -339,6 +344,7 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 		} else {
 			$this->assertArrayHasKey( $membership_2->ID, $session );
 			$this->assertEquals( $credit, $session[ $membership_2->ID ]['credit'], '', 0.01 );
+			$this->assertEmpty( $session[ $membership_2->ID ]['free_days'] );
 		}
 	}
 
