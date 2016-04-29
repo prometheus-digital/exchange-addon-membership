@@ -358,4 +358,136 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 			array( 'year', '5.00', 240, '20.00', '1.71' ),
 		);
 	}
+
+	/**
+	 * @dataProvider _dp_downgrade_auto_renew_to_auto_renew
+	 *
+	 * @param $p1
+	 * @param $i1
+	 * @param $days_ago
+	 * @param $p2
+	 * @param $i2
+	 * @param $credit
+	 * @param $free_days
+	 */
+	public function test_downgrade_auto_renew_to_auto_renew( $p1, $i1, $days_ago, $p2, $i2, $credit, $free_days ) {
+
+		/** @var $membership_1 IT_Exchange_Product * */
+		$membership_1 = $this->product_factory->create_and_get( array(
+			'type'       => 'membership-product-type',
+			'base-price' => $p1
+		) );
+		$membership_1->update_feature( 'recurring-payments', 'on' );
+		$membership_1->update_feature( 'recurring-payments', 1, array( 'setting' => 'interval-count' ) );
+		$membership_1->update_feature( 'recurring-payments', $i1, array( 'setting' => 'interval' ) );
+		$membership_1->update_feature( 'recurring-payments', 'on', array( 'setting' => 'auto-renew' ) );
+
+		/** @var $membership_2 IT_Exchange_Product * */
+		$membership_2 = $this->product_factory->create_and_get( array(
+			'type'       => 'membership-product-type',
+			'base-price' => $p2
+		) );
+		$membership_2->update_feature( 'recurring-payments', 'on' );
+		$membership_2->update_feature( 'recurring-payments', 1, array( 'setting' => 'interval-count' ) );
+		$membership_2->update_feature( 'recurring-payments', $i2, array( 'setting' => 'interval' ) );
+		$membership_2->update_feature( 'recurring-payments', 'on', array( 'setting' => 'auto-renew' ) );
+		$membership_2->update_feature( 'membership-hierarchy', array( $membership_1->ID ), array( 'setting' => 'children' ) );
+
+		$this->assertContains( $membership_2->ID, it_exchange_membership_addon_get_all_the_parents( $membership_1->ID ) );
+
+		$this->signup( $membership_2->ID, $days_ago );
+		$GLOBALS['it_exchange']['product'] = $membership_1;
+
+		$api         = new IT_Theme_API_Membership_Product();
+		$description = $api->downgrade_details( array(
+			'supports'    => false,
+			'has'         => false,
+			'before_desc' => '',
+			'after_desc'  => ''
+		) );
+
+		$session = it_exchange_get_session_data( 'updowngrade_details' );
+
+		$this->assertInternalType( 'array', $session );
+
+		if ( empty( $credit ) ) {
+			$this->assertArrayNotHasKey( $membership_1->ID, $session );
+		} else {
+			$this->assertArrayHasKey( $membership_1->ID, $session );
+			$this->assertEquals( $credit, $session[ $membership_1->ID ]['credit'], "Credit doesn't match", 0.01 );
+			$this->assertEquals( $free_days, $session[ $membership_1->ID ]['free_days'], "Free days doesn't match" );
+		}
+	}
+
+	public function _dp_downgrade_auto_renew_to_auto_renew() {
+		return array(
+			array( 'month', '10.00', 15, 'month', '5.00', '4.93', 30 ),
+			array( 'month', '20.00', 15, 'year', '5.00', '9.86', 720 ),
+			array( 'year', '20.00', 90, 'year', '5.00', '4.93', 360 ),
+			array( 'month', '20.00', 270, 'year', '5.00', '14.79', 1080 ),
+		);
+	}
+
+	/**
+	 * @dataProvider _dp_downgrade_auto_renew_to_life
+	 *
+	 * @param $p1
+	 * @param $i1
+	 * @param $days_ago
+	 * @param $p2
+	 * @param $credit
+	 * @param $free_days
+	 */
+	public function test_downgrade_auto_renew_to_life( $p1, $i1, $days_ago, $p2, $credit, $free_days ) {
+
+		/** @var $membership_1 IT_Exchange_Product * */
+		$membership_1 = $this->product_factory->create_and_get( array(
+			'type'       => 'membership-product-type',
+			'base-price' => $p1
+		) );
+		$membership_1->update_feature( 'recurring-payments', 'on' );
+		$membership_1->update_feature( 'recurring-payments', 1, array( 'setting' => 'interval-count' ) );
+		$membership_1->update_feature( 'recurring-payments', $i1, array( 'setting' => 'interval' ) );
+		$membership_1->update_feature( 'recurring-payments', 'on', array( 'setting' => 'auto-renew' ) );
+
+		/** @var $membership_2 IT_Exchange_Product * */
+		$membership_2 = $this->product_factory->create_and_get( array(
+			'type'       => 'membership-product-type',
+			'base-price' => $p2
+		) );
+		$membership_2->update_feature( 'recurring-payments', 'off' );
+		$membership_2->update_feature( 'recurring-payments', 'off', array( 'setting' => 'auto-renew' ) );
+		$membership_2->update_feature( 'membership-hierarchy', array( $membership_1->ID ), array( 'setting' => 'children' ) );
+
+		$this->assertContains( $membership_2->ID, it_exchange_membership_addon_get_all_the_parents( $membership_1->ID ) );
+
+		$this->signup( $membership_2->ID, $days_ago );
+		$GLOBALS['it_exchange']['product'] = $membership_1;
+
+		$api         = new IT_Theme_API_Membership_Product();
+		$description = $api->downgrade_details( array(
+			'supports'    => false,
+			'has'         => false,
+			'before_desc' => '',
+			'after_desc'  => ''
+		) );
+
+		$session = it_exchange_get_session_data( 'updowngrade_details' );
+
+		$this->assertInternalType( 'array', $session );
+
+		if ( empty( $credit ) ) {
+			$this->assertArrayNotHasKey( $membership_1->ID, $session );
+		} else {
+			$this->assertArrayHasKey( $membership_1->ID, $session );
+			$this->assertEquals( $credit, $session[ $membership_1->ID ]['credit'], "Credit doesn't match", 0.01 );
+			$this->assertEquals( $free_days, $session[ $membership_1->ID ]['free_days'], "Free days doesn't match" );
+		}
+	}
+
+	public function _dp_downgrade_auto_renew_to_life() {
+		return array(
+			array( 'month', '20.00', 15, '15.00', '9.86', 0 ),
+		);
+	}
 }
