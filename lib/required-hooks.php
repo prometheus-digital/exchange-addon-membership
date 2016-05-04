@@ -876,6 +876,31 @@ function it_exchange_before_delete_membership_product( $post_id ) {
 add_action( 'before_delete_post', 'it_exchange_before_delete_membership_product' );
 
 /**
+ * Whenever protected content is deleted, delete all its associated protection rules.
+ * 
+ * @since 1.19.14
+ * 
+ * @param int $post_id
+ */
+function it_exchange_delete_rules_when_protected_content_deleted( $post_id ) {
+
+	$post = get_post( $post_id );
+
+	if ( ! $post || $post->post_type === 'it_exchange_prod' ) {
+		return;
+	}
+
+	$factory = new IT_Exchange_Membership_Rule_Factory();
+	$rules   = $factory->make_all_for_post( $post );
+
+	foreach ( $rules as $rule ) {
+		$rule->delete();
+	}
+}
+
+add_action( 'before_delete_post', 'it_exchange_delete_rules_when_protected_content_deleted' );
+
+/**
  * Checks if $post is restriction rules apply, if so, return Membership restricted templates
  * If not, check if $post drip rules apply, if so, return Membership dripped templates
  * Otherwise, return $post's $content
