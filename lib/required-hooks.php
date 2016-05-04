@@ -798,7 +798,7 @@ function it_exchange_update_member_access_on_subscription_status_change( $new_st
 
 	$tid = $subscription->get_transaction()->ID;
 
-	if ( $new_status !== 'active' ) {
+	if ( ! in_array( $new_status, array( IT_Exchange_Subscription::STATUS_ACTIVE, IT_Exchange_Subscription::STATUS_COMPLIMENTARY ) ) ) {
 		unset( $member_access[ $tid ] );
 	} else {
 
