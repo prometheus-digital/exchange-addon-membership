@@ -339,3 +339,7 @@
 	Fix: iThemes Exchange version nag
 1.19.13 - 2016-04-28 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Fix: t_paamayim_nekudotayim error on PHP 5.2
+1.19.14 - 2016-04-04 - Timothy Jacobs, Elise Alley
+	Fix: Complimentary subscriptions not showing access in the membership dashboard
+	Fix: Fatal error if a post with membership rules is deleted before deleting protection rules
+	Fix: Don't display trashed content on the membership dashboard
