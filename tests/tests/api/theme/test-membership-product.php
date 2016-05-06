@@ -53,6 +53,10 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 	 */
 	protected function signup( $membership_id, $days_ago = 0 ) {
 
+		if ( $days_ago ) {
+			$days_ago += 1; // extra buffer
+		}
+
 		$cart = array(
 			'products'  => array(
 				"$membership_id-hash" => array(
@@ -73,6 +77,10 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 			$date->sub( new DateInterval( "P{$days_ago}D" ) );
 		}
 
+		add_filter( 'it_exchange_bump_subscription_new_expiration_date', function ( $time ) use ( $days_ago ) {
+			return $time - ( DAY_IN_SECONDS * $days_ago );
+		} );
+
 		$txn_id = $this->transaction_factory->create( array(
 			'cart_object' => (object) $cart,
 			'post_date'   => $date->format( 'Y-m-d H:i:s' ),
@@ -80,12 +88,15 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 			'status'      => 'paid'
 		) );
 
+		remove_all_filters( 'it_exchange_bump_subscription_new_expiration_date' );
+
 		it_exchange_membership_addon_setup_customer_session();
 
 		return $txn_id;
 	}
 
 	/**
+	 * @group        upgrades
 	 * @dataProvider _dp_upgrade_auto_renew_to_auto_renew
 	 *
 	 * @param $i1
@@ -143,25 +154,26 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 			$this->assertArrayNotHasKey( $membership_2->ID, $session );
 		} else {
 			$this->assertArrayHasKey( $membership_2->ID, $session );
-			$this->assertEquals( $credit, $session[ $membership_2->ID ]['credit'], "Credit doesn't match", 0.01 );
+			$this->assertEquals( $credit, (float) $session[ $membership_2->ID ]['credit'], "Credit doesn't match", 0.01 );
 			$this->assertEquals( $free_days, $session[ $membership_2->ID ]['free_days'], "Free days doesn't match" );
 		}
 	}
 
 	public function _dp_upgrade_auto_renew_to_auto_renew() {
 		return array(
-			array( 'month', '5.00', 7, 'month', '10.00', '3.78', 12 ),
-			array( 'month', '75.00', 3, 'month', '250.00', '66.58', 27 ),
-			array( 'month', '750.00', 3, 'month', '1250.00', '665.75', 27 ),
-			array( 'month', '5.00', 0, 'month', '10.00', '5.00', 15 ),
+			array( 'month', '5.00', 7, 'month', '10.00', 3.83, 12 ),
+			array( 'month', '75.00', 3, 'month', '250.00', 67.50, 8 ),
+			array( 'month', '750.00', 3, 'month', '1250.00', 675.00, 16 ),
+			array( 'month', '5.00', 0, 'month', '10.00', 5.00, 15 ),
 			array( 'month', '5.00', 30, 'month', '10.00', 0, 0 ),
-			array( 'month', '5.00', 15, 'year', '20.00', '2.47', 45 ),
-			array( 'year', '5.00', 90, 'year', '20.00', '3.77', 69 ),
-			array( 'year', '5.00', 240, 'month', '20.00', '1.71', 3 ),
+			array( 'month', '5.00', 15, 'year', '20.00', 2.50, 46 ),
+			array( 'year', '5.00', 90, 'year', '20.00', 3.77, 69 ),
+			array( 'year', '5.00', 240, 'month', '20.00', 1.71, 3 ),
 		);
 	}
 
 	/**
+	 * @groupo       upgrades
 	 * @dataProvider _dp_upgrade_life_to_life
 	 *
 	 * @param $p1
@@ -224,6 +236,7 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 	}
 
 	/**
+	 * @group        upgrades
 	 * @dataProvider _dp_upgrade_life_to_auto_renew
 	 *
 	 * @param $p1
@@ -290,6 +303,7 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 	}
 
 	/**
+	 * @group        upgrades
 	 * @dataProvider _dp_upgrade_auto_renew_to_life
 	 *
 	 * @param $p1
