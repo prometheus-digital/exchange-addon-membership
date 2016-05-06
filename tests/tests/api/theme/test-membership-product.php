@@ -54,7 +54,7 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 	protected function signup( $membership_id, $days_ago = 0 ) {
 
 		if ( $days_ago ) {
-			$days_ago += 1; // extra buffer
+			//$days_ago -= 1; // extra buffer
 		}
 
 		$cart = array(
@@ -71,15 +71,11 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 			'total'     => it_exchange_get_product_feature( $membership_id, 'base-price' )
 		);
 
-		$date = new DateTime();
+		$date = new DateTime( date( 'Y-m-d' ) . ' 00:00:00', new DateTimeZone( 'UTC' ) );
 
 		if ( $days_ago ) {
 			$date->sub( new DateInterval( "P{$days_ago}D" ) );
 		}
-
-		add_filter( 'it_exchange_bump_subscription_new_expiration_date', function ( $time ) use ( $days_ago ) {
-			return $time - ( DAY_IN_SECONDS * $days_ago );
-		} );
 
 		$txn_id = $this->transaction_factory->create( array(
 			'cart_object' => (object) $cart,
@@ -87,8 +83,6 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 			'method'      => 'offline-payments',
 			'status'      => 'paid'
 		) );
-
-		remove_all_filters( 'it_exchange_bump_subscription_new_expiration_date' );
 
 		it_exchange_membership_addon_setup_customer_session();
 
@@ -154,21 +148,21 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 			$this->assertArrayNotHasKey( $membership_2->ID, $session );
 		} else {
 			$this->assertArrayHasKey( $membership_2->ID, $session );
-			$this->assertEquals( $credit, (float) $session[ $membership_2->ID ]['credit'], "Credit doesn't match", 0.01 );
 			$this->assertEquals( $free_days, $session[ $membership_2->ID ]['free_days'], "Free days doesn't match" );
+			$this->assertEquals( $credit, $session[ $membership_2->ID ]['credit'], "Credit doesn't match", 0.01 );
 		}
 	}
 
 	public function _dp_upgrade_auto_renew_to_auto_renew() {
 		return array(
 			array( 'month', '5.00', 7, 'month', '10.00', 3.83, 12 ),
-			array( 'month', '75.00', 3, 'month', '250.00', 67.50, 8 ),
-			array( 'month', '750.00', 3, 'month', '1250.00', 675.00, 16 ),
+			array( 'month', '75.00', 4, 'month', '250.00', 67.50, 8 ),
+			array( 'month', '750.00', 4, 'month', '1250.00', 675.00, 16 ),
 			array( 'month', '5.00', 0, 'month', '10.00', 5.00, 15 ),
 			array( 'month', '5.00', 30, 'month', '10.00', 0, 0 ),
 			array( 'month', '5.00', 15, 'year', '20.00', 2.50, 46 ),
 			array( 'year', '5.00', 90, 'year', '20.00', 3.77, 69 ),
-			array( 'year', '5.00', 240, 'month', '20.00', 1.71, 3 ),
+			array( 'year', '5.00', 241, 'month', '20.00', 1.71, 3 ),
 		);
 	}
 
@@ -298,21 +292,22 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 
 	public function _dp_upgrade_life_to_auto_renew() {
 		return array(
-			array( '5.00', 60, '15.00', 'monthly', '5.00', 10 )
+			array( '5.00', 60, '15.00', 'month', 0, 0 )
 		);
 	}
 
 	/**
 	 * @group        upgrades
+	 * @group fail
 	 * @dataProvider _dp_upgrade_auto_renew_to_life
 	 *
-	 * @param $p1
 	 * @param $i1
+	 * @param $p1
 	 * @param $days_ago
 	 * @param $p2
 	 * @param $credit
 	 */
-	public function test_upgrade_auto_renew_to_life( $p1, $i1, $days_ago, $p2, $credit ) {
+	public function test_upgrade_auto_renew_to_life( $i1, $p1, $days_ago, $p2, $credit ) {
 
 		/** @var $membership_1 IT_Exchange_Product * */
 		$membership_1 = $this->product_factory->create_and_get( array(
@@ -364,12 +359,12 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 
 	public function _dp_upgrade_auto_renew_to_life() {
 		return array(
-			array( 'month', '5.00', 7, '10.00', '3.78' ),
+			array( 'month', '5.00', 7, '10.00', 3.83 ),
 			array( 'month', '5.00', 0, '10.00', '5.00' ),
 			array( 'month', '5.00', 30, '10.00', 0 ),
-			array( 'month', '5.00', 15, '20.00', '2.47' ),
-			array( 'year', '5.00', 90, '20.00', '3.77' ),
-			array( 'year', '5.00', 240, '20.00', '1.71' ),
+			array( 'month', '5.00', 15, '20.00', 2.50 ),
+			array( 'year', '5.00', 90, '20.00', 3.77 ),
+			array( 'year', '5.00', 241, '20.00', 1.71 ),
 		);
 	}
 
