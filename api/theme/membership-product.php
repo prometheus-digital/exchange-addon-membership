@@ -313,14 +313,14 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 			$request = new ITE_Prorate_Forever_Credit_Request( $most_producty, $this->product, $transaction );
 		}
 
-		$details = $this->requestor->request_upgrade( $request );
+		$this->requestor->request_upgrade( $request );
 
-		if ( isset( $details['upgrade_type'] ) && $details['upgrade_type'] === 'days' ) {
-			$days   = $details['free_days'];
+		if ( $request->get_upgrade_type() === 'days' ) {
+			$days   = $request->get_free_days();
 			$result = sprintf( _n( '%d days free, then regular price', '%d day free, then regular price', $days, 'LION' ), $days );
-		} else if ( isset( $details['upgrade_type'] ) && $details['upgrade_type'] === 'credit' ) {
-			$credit = it_exchange_format_price( $details['credit'] );
-			$result = sprintf( __( ' %s upgrade credit, then regular price', 'LION' ), $credit );
+		} else if ( $request->get_upgrade_type() === 'credit' ) {
+			$credit = it_exchange_format_price( $request->get_credit() );
+			$result = sprintf( __( '%s upgrade credit, then regular price', 'LION' ), $credit );
 		}
 
 		if ( trim( $result ) !== '' ) {
