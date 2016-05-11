@@ -298,7 +298,7 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 
 	/**
 	 * @group        upgrades
-	 * @group fail
+	 * @group        fail
 	 * @dataProvider _dp_upgrade_auto_renew_to_life
 	 *
 	 * @param $i1
@@ -369,17 +369,18 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 	}
 
 	/**
+	 * @group        downgrades
 	 * @dataProvider _dp_downgrade_auto_renew_to_auto_renew
 	 *
-	 * @param $p1
 	 * @param $i1
+	 * @param $p1
 	 * @param $days_ago
-	 * @param $p2
 	 * @param $i2
+	 * @param $p2
 	 * @param $credit
 	 * @param $free_days
 	 */
-	public function test_downgrade_auto_renew_to_auto_renew( $p1, $i1, $days_ago, $p2, $i2, $credit, $free_days ) {
+	public function test_downgrade_auto_renew_to_auto_renew( $i1, $p1, $days_ago, $i2, $p2, $credit, $free_days ) {
 
 		/** @var $membership_1 IT_Exchange_Product * */
 		$membership_1 = $this->product_factory->create_and_get( array(
@@ -400,12 +401,13 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 		$membership_2->update_feature( 'recurring-payments', 1, array( 'setting' => 'interval-count' ) );
 		$membership_2->update_feature( 'recurring-payments', $i2, array( 'setting' => 'interval' ) );
 		$membership_2->update_feature( 'recurring-payments', 'on', array( 'setting' => 'auto-renew' ) );
-		$membership_2->update_feature( 'membership-hierarchy', array( $membership_1->ID ), array( 'setting' => 'children' ) );
 
-		$this->assertContains( $membership_2->ID, it_exchange_membership_addon_get_all_the_parents( $membership_1->ID ) );
+		$membership_1->update_feature( 'membership-hierarchy', array( $membership_2->ID ), array( 'setting' => 'children' ) );
 
-		$this->signup( $membership_2->ID, $days_ago );
-		$GLOBALS['it_exchange']['product'] = $membership_1;
+		$this->assertContains( $membership_1->ID, it_exchange_membership_addon_get_all_the_parents( $membership_2->ID ) );
+
+		$this->signup( $membership_1->ID, $days_ago );
+		$GLOBALS['it_exchange']['product'] = $membership_2;
 
 		$api         = new IT_Theme_API_Membership_Product();
 		$description = $api->downgrade_details( array(
@@ -420,34 +422,35 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 		$this->assertInternalType( 'array', $session );
 
 		if ( empty( $credit ) ) {
-			$this->assertArrayNotHasKey( $membership_1->ID, $session );
+			$this->assertArrayNotHasKey( $membership_2->ID, $session );
 		} else {
-			$this->assertArrayHasKey( $membership_1->ID, $session );
-			$this->assertEquals( $credit, $session[ $membership_1->ID ]['credit'], "Credit doesn't match", 0.01 );
-			$this->assertEquals( $free_days, $session[ $membership_1->ID ]['free_days'], "Free days doesn't match" );
+			$this->assertArrayHasKey( $membership_2->ID, $session );
+			$this->assertEquals( $credit, $session[ $membership_2->ID ]['credit'], "Credit doesn't match", 0.01 );
+			$this->assertEquals( $free_days, $session[ $membership_2->ID ]['free_days'], "Free days doesn't match" );
 		}
 	}
 
 	public function _dp_downgrade_auto_renew_to_auto_renew() {
 		return array(
-			array( 'month', '10.00', 15, 'month', '5.00', '4.93', 30 ),
-			array( 'month', '20.00', 15, 'year', '5.00', '9.86', 720 ),
-			array( 'year', '20.00', 90, 'year', '5.00', '4.93', 360 ),
-			array( 'month', '20.00', 270, 'year', '5.00', '14.79', 1080 ),
+			array( 'month', '10.00', 15, 'month', '5.00', 4.99, 30 ),
+			array( 'month', '20.00', 15, 'year', '5.00', 10.00, 720 ),
+			array( 'year', '20.00', 90, 'year', '5.00', 14.79, 1080 ),
+			array( 'year', '20.00', 270, 'year', '5.00', 4.93, 360 ),
 		);
 	}
 
 	/**
+	 * @group        downgrades
 	 * @dataProvider _dp_downgrade_auto_renew_to_life
 	 *
-	 * @param $p1
 	 * @param $i1
+	 * @param $p1
 	 * @param $days_ago
 	 * @param $p2
 	 * @param $credit
 	 * @param $free_days
 	 */
-	public function test_downgrade_auto_renew_to_life( $p1, $i1, $days_ago, $p2, $credit, $free_days ) {
+	public function test_downgrade_auto_renew_to_life( $i1, $p1, $days_ago, $p2, $credit, $free_days ) {
 
 		/** @var $membership_1 IT_Exchange_Product * */
 		$membership_1 = $this->product_factory->create_and_get( array(
@@ -466,12 +469,13 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 		) );
 		$membership_2->update_feature( 'recurring-payments', 'off' );
 		$membership_2->update_feature( 'recurring-payments', 'off', array( 'setting' => 'auto-renew' ) );
-		$membership_2->update_feature( 'membership-hierarchy', array( $membership_1->ID ), array( 'setting' => 'children' ) );
 
-		$this->assertContains( $membership_2->ID, it_exchange_membership_addon_get_all_the_parents( $membership_1->ID ) );
+		$membership_1->update_feature( 'membership-hierarchy', array( $membership_2->ID ), array( 'setting' => 'children' ) );
 
-		$this->signup( $membership_2->ID, $days_ago );
-		$GLOBALS['it_exchange']['product'] = $membership_1;
+		$this->assertContains( $membership_1->ID, it_exchange_membership_addon_get_all_the_parents( $membership_2->ID ) );
+
+		$this->signup( $membership_1->ID, $days_ago );
+		$GLOBALS['it_exchange']['product'] = $membership_2;
 
 		$api         = new IT_Theme_API_Membership_Product();
 		$description = $api->downgrade_details( array(
@@ -486,17 +490,17 @@ class Test_IT_Theme_API_Membership_Product_Upgrade_Downgrades extends IT_Exchang
 		$this->assertInternalType( 'array', $session );
 
 		if ( empty( $credit ) ) {
-			$this->assertArrayNotHasKey( $membership_1->ID, $session );
+			$this->assertArrayNotHasKey( $membership_2->ID, $session );
 		} else {
-			$this->assertArrayHasKey( $membership_1->ID, $session );
-			$this->assertEquals( $credit, $session[ $membership_1->ID ]['credit'], "Credit doesn't match", 0.01 );
-			$this->assertEquals( $free_days, $session[ $membership_1->ID ]['free_days'], "Free days doesn't match" );
+			$this->assertArrayHasKey( $membership_2->ID, $session );
+			$this->assertEquals( $credit, $session[ $membership_2->ID ]['credit'], "Credit doesn't match", 0.01 );
+			$this->assertEquals( $free_days, $session[ $membership_2->ID ]['free_days'], "Free days doesn't match" );
 		}
 	}
 
 	public function _dp_downgrade_auto_renew_to_life() {
 		return array(
-			array( 'month', '20.00', 15, '15.00', '9.86', 0 ),
+			array( 'month', '20.00', 15, '15.00', 10.00, 0 ),
 		);
 	}
 }
