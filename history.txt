@@ -343,3 +343,5 @@
 	Fix: Complimentary subscriptions not showing access in the membership dashboard
 	Fix: Fatal error if a post with membership rules is deleted before deleting protection rules
 	Fix: Don't display trashed content on the membership dashboard
+1.19.15 - 2016-05-23 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
+	Fix: Error with Guest Checkout
