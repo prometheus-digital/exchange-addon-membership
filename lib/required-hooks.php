@@ -600,7 +600,7 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 			//This is a membership product!
 			if ( ! in_array( $product_id, (array) $member_access ) && it_exchange_transaction_is_cleared_for_delivery( $transaction_id ) ) {
 				//If this user isn't already a member of this product, add it to their access list
-				$member_access[ $transaction_id ][] = $product_id;
+				$member_access[ $transaction_id ][] = (int) $product_id;
 			}
 		}
 
