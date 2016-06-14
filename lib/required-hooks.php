@@ -894,7 +894,9 @@ function it_exchange_delete_rules_when_protected_content_deleted( $post_id ) {
 	$rules   = $factory->make_all_for_post( $post, array( 'include_non_published_memberships' => true ) );
 
 	foreach ( $rules as $rule ) {
-		$rule->delete();
+		if ( $rule instanceof IT_Exchange_Membership_Content_Rule_Post ) {
+			$rule->delete();
+		}
 	}
 }
 
