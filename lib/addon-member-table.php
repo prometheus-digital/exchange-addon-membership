@@ -337,7 +337,8 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 					'key'     => '_it_exchange_transaction_id',
 					'compare' => 'EXISTS'
 				)
-			)
+			),
+			'show_hidden' => true
 		) );
 
 		$current = empty( $_GET['membership'] ) ? false : $_GET['membership'];
