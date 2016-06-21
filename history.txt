@@ -345,3 +345,8 @@
 	Fix: Don't display trashed content on the membership dashboard
 1.19.15 - 2016-05-23 - Packaging Bot (bundled-addons/exchange-addon-recurring-payments)
 	Fix: Error with Guest Checkout
+1.19.16 - 2016-06-21 - Timothy Jacobs, Elise Alley
+	Fix: Only use access rules from published memberships
+	Fix: Only delete single post rules when a post is deleted
+	Fix: Cast product ID to an int when building the member_access data
+	Fix: Include hidden products in the Memberships dropdown in the Members list table.
