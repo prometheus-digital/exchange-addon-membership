@@ -600,7 +600,7 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 			//This is a membership product!
 			if ( ! in_array( $product_id, (array) $member_access ) && it_exchange_transaction_is_cleared_for_delivery( $transaction_id ) ) {
 				//If this user isn't already a member of this product, add it to their access list
-				$member_access[ $transaction_id ][] = $product_id;
+				$member_access[ $transaction_id ][] = (int) $product_id;
 			}
 		}
 
@@ -891,10 +891,12 @@ function it_exchange_delete_rules_when_protected_content_deleted( $post_id ) {
 	}
 
 	$factory = new IT_Exchange_Membership_Rule_Factory();
-	$rules   = $factory->make_all_for_post( $post );
+	$rules   = $factory->make_all_for_post( $post, array( 'include_non_published_memberships' => true ) );
 
 	foreach ( $rules as $rule ) {
-		$rule->delete();
+		if ( $rule instanceof IT_Exchange_Membership_Content_Rule_Post ) {
+			$rule->delete();
+		}
 	}
 }
 

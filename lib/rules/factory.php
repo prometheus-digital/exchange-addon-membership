@@ -22,10 +22,15 @@ class IT_Exchange_Membership_Rule_Factory {
 	 * @since 1.18
 	 *
 	 * @param WP_Post $post
+	 * @param array   $args
 	 *
 	 * @return IT_Exchange_Membership_Content_Rule[]
 	 */
-	public function make_all_for_post( WP_Post $post ) {
+	public function make_all_for_post( WP_Post $post, array $args = array() ) {
+
+		$args = wp_parse_args( $args, array(
+			'include_non_published_memberships' => false
+		) );
 
 		$memberships = $this->get_possible_membership_ids_for_post( $post );
 
@@ -37,6 +42,10 @@ class IT_Exchange_Membership_Rule_Factory {
 		$this->post = $post;
 
 		foreach ( $memberships as $membership ) {
+
+			if ( ! $args['include_non_published_memberships'] && get_post_status( $membership ) !== 'publish' ) {
+				continue;
+			}
 
 			$membership = it_exchange_get_product( $membership );
 
