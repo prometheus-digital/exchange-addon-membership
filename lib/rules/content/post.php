@@ -139,7 +139,11 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ba
 
 		$post = get_post( $this->get_term() );
 
-		if ( ! current_user_can( 'read_post', $post ) ) {
+		if ( empty( $post->post_status ) || ! $status = get_post_status_object( $post->post_status ) ) {
+			return array();
+		}
+
+		if ( ! $status->public ) {
 			return array();
 		}
 

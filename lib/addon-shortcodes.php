@@ -49,7 +49,7 @@ function it_exchange_membership_addon_add_included_content_shortcode( $atts ) {
 	$all_access = it_exchange_membership_addon_setup_recursive_member_access_array( array( $atts['product_id'] => '' ) );
 
 	if ( empty( $all_access ) ) {
-		return '';
+		$all_access = array( $atts['product_id'] => '' );
 	}
 
 	$product_id  = $atts['product_id'];
