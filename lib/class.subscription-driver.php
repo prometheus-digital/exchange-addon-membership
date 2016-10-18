@@ -9,7 +9,7 @@
 /**
  * Class IT_Exchange_User_Membership_Subscription_Driver
  */
-class IT_Exchange_User_Membership_Subscription_Driver implements IT_Exchange_User_Membership {
+class IT_Exchange_User_Membership_Subscription_Driver implements ITE_Proratable_User_Membership {
 
 	/**
 	 * @var IT_Exchange_Subscription
@@ -118,4 +118,15 @@ class IT_Exchange_User_Membership_Subscription_Driver implements IT_Exchange_Use
 	public function current_status_grants_access() {
 		return $this->get_status() === IT_Exchange_Subscription::STATUS_ACTIVE;
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function get_available_upgrades() { return $this->subscription->get_available_upgrades(); }
+
+	/**
+	 * @inheritDoc
+	 */
+	public function get_available_downgrades() { return $this->subscription->get_available_downgrades(); }
+
 }
