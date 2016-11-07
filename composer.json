@@ -16,7 +16,8 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "ITEGMS\\"    : "umbrella-memberships/src/"
+            "ITEGMS\\"    : "umbrella-memberships/src/",
+            "iThemes\\Exchange\\Membership\\REST\\": "lib/REST/"
         }
     },
     "require-dev": {
