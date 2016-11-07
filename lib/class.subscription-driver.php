@@ -116,6 +116,9 @@ class IT_Exchange_User_Membership_Subscription_Driver implements IT_Exchange_Use
 	 * @return bool
 	 */
 	public function current_status_grants_access() {
-		return $this->get_status() === IT_Exchange_Subscription::STATUS_ACTIVE;
+		return in_array( $this->get_status(), array(
+			IT_Exchange_Subscription::STATUS_ACTIVE,
+			IT_Exchange_Subscription::STATUS_COMPLIMENTARY
+		) );
 	}
 }

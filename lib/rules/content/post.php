@@ -137,7 +137,13 @@ class IT_Exchange_Membership_Content_Rule_Post extends IT_Exchange_Membership_Ba
 			return array();
 		}
 
-		return array( get_post( $this->get_term() ) );
+		$post = get_post( $this->get_term() );
+
+		if ( ! current_user_can( 'read_post', $post ) ) {
+			return array();
+		}
+
+		return array( $post );
 	}
 
 	/**

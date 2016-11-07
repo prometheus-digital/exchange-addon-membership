@@ -798,7 +798,7 @@ function it_exchange_update_member_access_on_subscription_status_change( $new_st
 
 	$tid = $subscription->get_transaction()->ID;
 
-	if ( $new_status !== 'active' ) {
+	if ( ! in_array( $new_status, array( IT_Exchange_Subscription::STATUS_ACTIVE, IT_Exchange_Subscription::STATUS_COMPLIMENTARY ) ) ) {
 		unset( $member_access[ $tid ] );
 	} else {
 
@@ -874,6 +874,31 @@ function it_exchange_before_delete_membership_product( $post_id ) {
 }
 
 add_action( 'before_delete_post', 'it_exchange_before_delete_membership_product' );
+
+/**
+ * Whenever protected content is deleted, delete all its associated protection rules.
+ * 
+ * @since 1.19.14
+ * 
+ * @param int $post_id
+ */
+function it_exchange_delete_rules_when_protected_content_deleted( $post_id ) {
+
+	$post = get_post( $post_id );
+
+	if ( ! $post || $post->post_type === 'it_exchange_prod' ) {
+		return;
+	}
+
+	$factory = new IT_Exchange_Membership_Rule_Factory();
+	$rules   = $factory->make_all_for_post( $post );
+
+	foreach ( $rules as $rule ) {
+		$rule->delete();
+	}
+}
+
+add_action( 'before_delete_post', 'it_exchange_delete_rules_when_protected_content_deleted' );
 
 /**
  * Checks if $post is restriction rules apply, if so, return Membership restricted templates
