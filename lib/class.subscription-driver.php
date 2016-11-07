@@ -9,7 +9,7 @@
 /**
  * Class IT_Exchange_User_Membership_Subscription_Driver
  */
-class IT_Exchange_User_Membership_Subscription_Driver implements IT_Exchange_User_Membership {
+class IT_Exchange_User_Membership_Subscription_Driver implements ITE_Proratable_User_Membership {
 
 	/**
 	 * @var IT_Exchange_Subscription
@@ -121,4 +121,15 @@ class IT_Exchange_User_Membership_Subscription_Driver implements IT_Exchange_Use
 			IT_Exchange_Subscription::STATUS_COMPLIMENTARY
 		) );
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function get_available_upgrades() { return $this->subscription->get_available_upgrades(); }
+
+	/**
+	 * @inheritDoc
+	 */
+	public function get_available_downgrades() { return $this->subscription->get_available_downgrades(); }
+
 }

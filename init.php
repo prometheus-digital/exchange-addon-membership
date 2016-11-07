@@ -66,6 +66,7 @@ require_once( dirname( __FILE__ ) . '/lib/product-features/load.php' );
 
 require_once( dirname( __FILE__ ) . '/lib/class.user-membership-repository.php' );
 require_once( dirname( __FILE__ ) . '/lib/interface.user-membership.php' );
+require_once( dirname( __FILE__ ) . '/lib/interface.proratable-user-membership.php' );
 require_once( dirname( __FILE__ ) . '/lib/class.subscription-driver.php' );
 require_once( dirname( __FILE__ ) . '/lib/class.transaction-driver.php' );
 
