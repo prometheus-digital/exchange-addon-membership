@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'iThemes\\Exchange\\Membership\\REST\\' => array($baseDir . '/lib/REST'),
     'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
     'IronBound\\WP_Notifications\\' => array($vendorDir . '/ironbound/wp-notifications/src'),
     'IronBound\\DB\\' => array($vendorDir . '/ironbound/db/src'),

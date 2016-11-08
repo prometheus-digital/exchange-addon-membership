@@ -33,6 +33,13 @@ class IT_Exchange_User_Membership_Transaction_Driver implements ITE_Proratable_U
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function get_id() {
+		return $this->transaction->get_ID() . ':' . $this->get_membership()->ID;
+	}
+
+	/**
 	 * Get the user associated with this membership.
 	 *
 	 * This isn't necessarily the payer.

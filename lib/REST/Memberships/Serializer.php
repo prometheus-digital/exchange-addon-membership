@@ -6,7 +6,7 @@
  * @license GPLv2
  */
 
-namespace iThemes\Exchange\REST\Memberships;
+namespace iThemes\Exchange\Membership\REST\Memberships;
 
 /**
  * Class Serializer
@@ -29,6 +29,7 @@ class Serializer {
 		$u = $user_membership;
 
 		$data = array(
+			'id'            => $u->get_id(),
 			'beneficiary'   => $u->get_user()->ID,
 			'start_date'    => mysql_to_rfc3339( $u->get_start_date()->format( 'Y-m-d H:i:s' ) ),
 			'end_date'      => $u->get_end_date() ? mysql_to_rfc3339( $u->get_end_date()->format( 'Y-m-d H:i:s' ) ) : '',
@@ -54,6 +55,11 @@ class Serializer {
 			'title'      => 'user-membership',
 			'type'       => 'object',
 			'properties' => array(
+				'id'            => array(
+					'description' => __( 'The unique ID for this membership.', 'LION' ),
+					'type'        => 'string',
+					'readonly'    => true,
+				),
 				'beneficiary'   => array(
 					'description' => __( 'The customer receiving the benefits of this membership.', 'LION' ),
 					'type'        => 'integer',

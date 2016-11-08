@@ -26,6 +26,13 @@ class IT_Exchange_User_Membership_Subscription_Driver implements ITE_Proratable_
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function get_id() {
+		return $this->subscription->get_id();
+	}
+
+	/**
 	 * Get the user associated with this membership.
 	 *
 	 * This isn't necessarily the payer.
