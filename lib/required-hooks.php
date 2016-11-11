@@ -1373,7 +1373,7 @@ function it_exchange_membership_addon_get_credit_pricing_cart_product_base_price
 	return $db_base_price;
 }
 
-add_filter( 'it_exchange_get_cart_product_base_price', 'it_exchange_membership_addon_get_credit_pricing_cart_product_base_price', 10, 3 );
+//add_filter( 'it_exchange_get_cart_product_base_price', 'it_exchange_membership_addon_get_credit_pricing_cart_product_base_price', 10, 3 );
 
 /**
  * Replaces base-price with upgrade price
