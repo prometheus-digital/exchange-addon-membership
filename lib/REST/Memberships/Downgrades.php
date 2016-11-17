@@ -49,7 +49,9 @@ class Downgrades extends Base implements Getable, Postable {
 	public function handle_get( Request $request ) {
 
 		/** @var \ITE_Proratable_User_Membership $membership */
-		$membership = $this->repository->get_membership_by_id( $request->get_param( 'membership_id', 'URL' ) );
+		$membership = $this->repository->get_membership_by_id(
+			rawurldecode( $request->get_param( 'membership_id', 'URL' ) )
+		);
 
 		$options = $membership->get_available_downgrades();
 		$data    = array();
@@ -68,7 +70,9 @@ class Downgrades extends Base implements Getable, Postable {
 	 */
 	public function user_can_get( Request $request, \IT_Exchange_Customer $user = null ) {
 
-		$membership = $this->repository->get_membership_by_id( $request->get_param( 'membership_id', 'URL' ) );
+		$membership = $this->repository->get_membership_by_id(
+			rawurldecode( $request->get_param( 'membership_id', 'URL' ) )
+		);
 
 		if ( ! $membership instanceof \ITE_Proratable_User_Membership ) {
 			return new \WP_Error(
@@ -86,7 +90,9 @@ class Downgrades extends Base implements Getable, Postable {
 	 */
 	public function handle_post( Request $request ) {
 
-		$membership = $this->repository->get_membership_by_id( $request->get_param( 'membership_id', 'URL' ) );
+		$membership = $this->repository->get_membership_by_id(
+			rawurldecode( $request->get_param( 'membership_id', 'URL' ) )
+		);
 
 		if ( ! $membership instanceof \ITE_Proratable_User_Membership ) {
 			return new \WP_Error(
@@ -96,7 +102,7 @@ class Downgrades extends Base implements Getable, Postable {
 			);
 		}
 
-		$product = $request['product'];
+		$product_id = $request['product'];
 
 		$all_available   = $membership->get_available_downgrades();
 		$prorate_request = null;
@@ -104,7 +110,7 @@ class Downgrades extends Base implements Getable, Postable {
 
 		foreach ( $all_available as $available ) {
 
-			if ( $available->get_product_receiving_credit()->ID == $product ) {
+			if ( $available->get_product_receiving_credit()->ID == $product_id ) {
 				$prorate_request = $available;
 				$found           = true;
 				break;
@@ -127,13 +133,15 @@ class Downgrades extends Base implements Getable, Postable {
 			);
 		}
 
-		if ( ! $item = $cart->get_items( 'product' )->filter( function ( \ITE_Cart_Product $cart_product ) use ( $product ) {
-			return $cart_product->get_product()->ID == $product;
+		if ( ! $item = $cart->get_items( 'product' )->filter( function ( \ITE_Cart_Product $cart_product ) use ( $product_id ) {
+			return $cart_product->get_product()->ID == $product_id;
 		} )->first()
 		) {
-			$item = \ITE_Cart_Product::create( $product );
+			$item = \ITE_Cart_Product::create( it_exchange_get_product( $product_id ) );
 			$cart->add_item( $item );
 		}
+
+		$prorate_request->set_cart( $cart );
 
 		if ( ! $this->requestor->request_downgrade( $prorate_request ) ) {
 			return new \WP_Error(

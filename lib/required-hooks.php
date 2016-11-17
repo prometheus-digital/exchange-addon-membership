@@ -396,8 +396,62 @@ add_action( 'admin_print_styles', 'it_exchange_membership_addon_admin_wp_enqueue
  * @return void
  */
 function it_exchange_membership_addon_load_public_scripts( $current_view ) {
-	// Frontend Membership Dashboard CSS & JS
-	wp_enqueue_script( 'it-exchange-membership-addon-public-js', ITUtility::get_url_from_file( dirname( __FILE__ ) . '/assets/js/membership-dashboard.js' ), array( 'jquery-zoom' ), false, true );
+
+	if ( ! it_exchange_is_page( 'memberships' ) ) {
+		return;
+	}
+
+	wp_enqueue_script(
+		'it-exchange-membership-addon-public-js',
+		ITUtility::get_url_from_file( dirname( __FILE__ ) . '/assets/js/membership-dashboard.js' ),
+		array( 'it-exchange-rest', 'jquery.payment' )
+	);
+
+	$membership = it_exchange_membership_addon_get_current_membership();
+
+	if ( ! $membership instanceof IT_Exchange_Membership ) {
+		return;
+	}
+
+	$user_membership = it_exchange_get_user_membership_for_product( it_exchange_get_current_customer(), $membership );
+
+	if ( ! $user_membership ) {
+		return;
+	}
+
+	$serializer = new \iThemes\Exchange\Membership\REST\Memberships\Serializer();
+
+	wp_localize_script( 'it-exchange-membership-addon-public-js', 'ITExchangeMembershipPublic', array(
+		'userMembership' => $serializer->serialize( $user_membership ),
+		'i18n'           => array(
+			'changeMyMembership' => __( 'Change my Membership', 'LION' ),
+			'upgrade'            => __( 'Upgrade', 'LION' ),
+			'downgrade'          => __( 'Downgrade', 'LION' ),
+			'prorate'            => __( 'Prorate', 'LION' ),
+			'cancel'             => __( 'Cancel', 'LION' ),
+		)
+	) );
+
+	wp_add_inline_script(
+		'it-exchange-membership-addon-public-js',
+		include( dirname( __FILE__ ) . '/assets/templates/change-my-membership.html' )
+	);
+
+	wp_add_inline_script(
+		'it-exchange-rest',
+		include( IT_Exchange::$dir . 'lib/assets/templates/visual-cc.html' )
+	);
+
+	wp_add_inline_script(
+		'it-exchange-rest',
+		include( IT_Exchange::$dir . 'lib/assets/templates/token-selector.html' )
+	);
+
+	wp_add_inline_script(
+		'it-exchange-rest',
+		include( IT_Exchange::$dir . 'lib/assets/templates/checkout.html' )
+	);
+
 	wp_enqueue_style( 'it-exchange-membership-addon-public-css', ITUtility::get_url_from_file( dirname( __FILE__ ) . '/assets/styles/membership-dashboard.css' ) );
 }
 
@@ -607,14 +661,6 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 		if ( ! empty ( $cancel_subscription[ $product_id ] ) ) {
 			$transaction->update_transaction_meta( 'free_days', $cancel_subscription[ $product_id ]['free_days'] );
 			$transaction->update_transaction_meta( 'credit', $cancel_subscription[ $product_id ]['credit'] );
-		}
-	}
-
-	if ( ! empty( $cancel_subscription ) ) {
-		foreach ( $cancel_subscription as $cancel_subscription_item ) {
-			$old_transaction_id = $cancel_subscription_item['old_transaction_id'];
-			$old_transaction    = it_exchange_get_transaction( $old_transaction_id );
-			$old_transaction->update_status( 'cancelled' );
 		}
 	}
 

@@ -41,7 +41,9 @@ class Membership extends Route\Base implements Getable {
 	 */
 	public function handle_get( Request $request ) {
 
-		$membership = $this->repository->get_membership_by_id( $request->get_param( 'membership_id', 'URL' ) );
+		$membership = $this->repository->get_membership_by_id(
+			rawurldecode( $request->get_param( 'membership_id', 'URL' ) )
+		);
 
 		$data = $this->serializer->serialize( $membership );
 
@@ -53,7 +55,9 @@ class Membership extends Route\Base implements Getable {
 	 */
 	public function user_can_get( Request $request, \IT_Exchange_Customer $user = null ) {
 
-		$membership = $this->repository->get_membership_by_id( $request->get_param( 'membership_id', 'URL' ) );
+		$membership = $this->repository->get_membership_by_id(
+			rawurldecode( $request->get_param( 'membership_id', 'URL' ) )
+		);
 
 		if ( ! $membership ) {
 			return new \WP_Error(
@@ -82,7 +86,7 @@ class Membership extends Route\Base implements Getable {
 	/**
 	 * @inheritDoc
 	 */
-	public function get_path() { return 'memberships/(?P<membership_id>\d+\:\d+)/'; }
+	public function get_path() { return 'memberships/(?P<membership_id>\d+(?:\:|\%3A)\d+)/'; }
 
 	/**
 	 * @inheritDoc

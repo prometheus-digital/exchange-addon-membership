@@ -18,5 +18,6 @@
 <?php foreach ( it_exchange_get_template_part_elements( 'content_memberships', 'available_content', array( 'welcome-message', 'membership-content' ) ) as $detail ) : ?>
 	<?php it_exchange_get_template_part( 'content-memberships/elements/' . $detail ); ?>
 <?php endforeach; ?>
+<div id="it-exchange-change-my-membership"></div>
 <?php do_action( 'it_exchange_membership_addon_content_memberships_end_content_loop' ); ?>
 <?php do_action( 'it_exchange_membership_addon_content_memberships_after_content_loop' ); ?>

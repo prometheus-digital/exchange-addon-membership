@@ -22,7 +22,9 @@ add_action( 'it_exchange_register_rest_routes', function ( \iThemes\Exchange\RES
 	if ( class_exists( '\iThemes\Exchange\RecurringPayments\REST\Subscriptions\ProrateSerializer' ) ) {
 
 		$serializer = new ProrateSerializer();
-		$requestor  = new ITE_Prorate_Credit_Requestor( new ITE_Daily_Price_Calculator() );
+		$requestor = new ITE_Prorate_Credit_Requestor( new ITE_Daily_Price_Calculator() );
+		$requestor->register_provider( 'IT_Exchange_Subscription' );
+		$requestor->register_provider( 'IT_Exchange_Transaction' );
 
 		$upgrades = new Upgrades( $serializer, $requestor, $repository );
 		$manager->register_route( $upgrades->set_parent( $membership ) );
