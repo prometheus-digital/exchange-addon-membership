@@ -415,14 +415,34 @@ function it_exchange_membership_addon_load_public_scripts( $current_view ) {
 
 	$user_membership = it_exchange_get_user_membership_for_product( it_exchange_get_current_customer(), $membership );
 
-	if ( ! $user_membership ) {
+	if ( ! $user_membership instanceof ITE_Proratable_User_Membership ) {
 		return;
 	}
 
-	$serializer = new \iThemes\Exchange\Membership\REST\Memberships\Serializer();
+	$membership_serializer = new \iThemes\Exchange\Membership\REST\Memberships\Serializer();
+	$prorate_serializer    = new \iThemes\Exchange\RecurringPayments\REST\Subscriptions\ProrateSerializer();
+	$requestor             = new ITE_Prorate_Credit_Requestor( new ITE_Daily_Price_Calculator() );
+	$requestor->register_provider( 'IT_Exchange_Subscription' );
+	$requestor->register_provider( 'IT_Exchange_Transaction' );
+
+	$upgrades = $downgrades = array();
+
+	foreach ( $user_membership->get_available_upgrades() as $upgrade ) {
+		if ( $requestor->request_upgrade( $upgrade, false ) ) {
+			$upgrades[] = $prorate_serializer->serialize( $upgrade );
+		}
+	}
+
+	foreach ( $user_membership->get_available_downgrades() as $downgrade ) {
+		if ( $requestor->request_downgrade( $downgrade ) ) {
+			$downgrades[] = $prorate_serializer->serialize( $downgrade );
+		}
+	}
 
 	wp_localize_script( 'it-exchange-membership-addon-public-js', 'ITExchangeMembershipPublic', array(
-		'userMembership' => $serializer->serialize( $user_membership ),
+		'userMembership' => $membership_serializer->serialize( $user_membership ),
+		'upgrades'       => $upgrades,
+		'downgrades'     => $downgrades,
 		'i18n'           => array(
 			'changeMyMembership' => __( 'Change my Membership', 'LION' ),
 			'upgrade'            => __( 'Upgrade', 'LION' ),
@@ -431,6 +451,20 @@ function it_exchange_membership_addon_load_public_scripts( $current_view ) {
 			'cancel'             => __( 'Cancel', 'LION' ),
 		)
 	) );
+
+	add_filter( 'it_exchange_preload_schemas', function( $schemas ) {
+		$schemas = is_array( $schemas ) ? $schemas : array();
+
+		return array_merge( $schemas, array(
+			'cart',
+			'cart-item-product',
+			'cart-item-fee',
+			'cart-item-tax',
+			'cart-purchase',
+			'payment-token',
+			'prorate-request',
+		) );
+	} );
 
 	wp_add_inline_script(
 		'it-exchange-membership-addon-public-js',
