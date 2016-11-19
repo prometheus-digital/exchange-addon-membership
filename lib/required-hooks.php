@@ -466,22 +466,22 @@ function it_exchange_membership_addon_load_public_scripts( $current_view ) {
 		) );
 	} );
 
-	wp_add_inline_script(
+	it_exchange_add_inline_script(
 		'it-exchange-membership-addon-public-js',
 		include( dirname( __FILE__ ) . '/assets/templates/change-my-membership.html' )
 	);
 
-	wp_add_inline_script(
+	it_exchange_add_inline_script(
 		'it-exchange-rest',
 		include( IT_Exchange::$dir . 'lib/assets/templates/visual-cc.html' )
 	);
 
-	wp_add_inline_script(
+	it_exchange_add_inline_script(
 		'it-exchange-rest',
 		include( IT_Exchange::$dir . 'lib/assets/templates/token-selector.html' )
 	);
 
-	wp_add_inline_script(
+	it_exchange_add_inline_script(
 		'it-exchange-rest',
 		include( IT_Exchange::$dir . 'lib/assets/templates/checkout.html' )
 	);
