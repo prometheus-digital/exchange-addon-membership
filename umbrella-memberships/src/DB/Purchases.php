@@ -10,14 +10,18 @@
 
 namespace ITEGMS\DB;
 
-use IronBound\DB\Table\Table;
+use IronBound\DB\Table\BaseTable;
+use IronBound\DB\Table\Column\IntegerBased;
 
 /**
  * Class Purchases
  *
  * @package ITEGMS\DB
  */
-class Purchases implements Table {
+class Purchases extends BaseTable {
+
+	/** @var array */
+	private $columns = array();
 
 	/**
 	 * Retrieve the name of the database table.
@@ -53,14 +57,23 @@ class Purchases implements Table {
 	 * @return array
 	 */
 	public function get_columns() {
-		return array(
-			'id'          => '%d',
-			'transaction' => '%d',
-			'customer'    => '%d',
-			'membership'  => '%d',
-			'seats'       => '%d',
-			'active'      => '%d'
+
+		if ( $this->columns ) {
+			return $this->columns;
+		}
+
+		$this->columns = array(
+			'id'          =>
+				new IntegerBased( 'BIGINT', 'id', array( 'unsigned', 'auto_increment', 'NOT NULL' ), array( 20 ) ),
+			'transaction' => new IntegerBased( 'BIGINT', 'transaction', array( 'unsigned', 'NOT NULL' ), array( 20 ) ),
+			'customer'    => new IntegerBased( 'BIGINT', 'customer', array( 'unsigned', 'NOT NULL' ), array( 20 ) ),
+			'membership'  => new IntegerBased( 'BIGINT', 'membership', array( 'unsigned', 'NOT NULL' ), array( 20 ) ),
+			'seats'       => new IntegerBased( 'INT', 'seats', array( 'unsigned', 'NOT NULL' ) ),
+			'active'      =>
+				new IntegerBased( 'TINYINT', 'active', array( 'unsigned', 'NOT NULL', 'DEFAULT 1' ), array( 1 ) ),
 		);
+
+		return $this->columns;
 	}
 
 	/**
@@ -93,29 +106,15 @@ class Purchases implements Table {
 	}
 
 	/**
-	 * Get creation SQL.
-	 *
-	 * @since 1.0
-	 *
-	 * @param \wpdb $wpdb
-	 *
-	 * @return string
+	 * @inheritDoc
 	 */
-	public function get_creation_sql( \wpdb $wpdb ) {
+	protected function get_keys() {
+		$keys = parent::get_keys();
 
-		$tn = $this->get_table_name( $wpdb );
+		$keys[] = 'UNIQUE KEY transaction (transaction)';
+		$keys[] = 'UNIQUE KEY customer__membership__transaction (customer,membership,transaction)';
 
-		return "CREATE TABLE {$tn} (
-		id bigint(20) unsigned auto_increment NOT NULL,
-		transaction bigint(20) unsigned NOT NULL,
-		customer bigint(20) unsigned NOT NULL,
-		membership bigint(20) unsigned NOT NULL,
-		seats int unsigned NOT NULL,
-		active tinyint(1) unsigned NOT NULL DEFAULT 1,
-		PRIMARY KEY  (id),
-		UNIQUE KEY transaction (transaction),
-		UNIQUE KEY customer__membership__transaction (customer,membership,transaction)
-		) {$wpdb->get_charset_collate()};";
+		return $keys;
 	}
 
 	/**

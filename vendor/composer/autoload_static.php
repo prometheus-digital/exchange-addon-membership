@@ -11,9 +11,17 @@ class ComposerStaticInit5aa020621c0c97d06a77e68f5218e50c
     );
 
     public static $prefixLengthsPsr4 = array (
+        'p' => 
+        array (
+            'phpDocumentor\\Reflection\\' => 25,
+        ),
         'i' => 
         array (
             'iThemes\\Exchange\\Membership\\REST\\' => 33,
+        ),
+        'W' => 
+        array (
+            'Webmozart\\Assert\\' => 17,
         ),
         'S' => 
         array (
@@ -22,8 +30,6 @@ class ComposerStaticInit5aa020621c0c97d06a77e68f5218e50c
         'I' => 
         array (
             'IronBound\\WP_Notifications\\' => 27,
-            'IronBound\\DB\\' => 13,
-            'IronBound\\Cache\\' => 16,
             'ITEGMS\\' => 7,
         ),
         'D' => 
@@ -33,9 +39,19 @@ class ComposerStaticInit5aa020621c0c97d06a77e68f5218e50c
     );
 
     public static $prefixDirsPsr4 = array (
+        'phpDocumentor\\Reflection\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+        ),
         'iThemes\\Exchange\\Membership\\REST\\' => 
         array (
             0 => __DIR__ . '/../..' . '/lib/REST',
+        ),
+        'Webmozart\\Assert\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/webmozart/assert/src',
         ),
         'Symfony\\Component\\Yaml\\' => 
         array (
@@ -44,14 +60,6 @@ class ComposerStaticInit5aa020621c0c97d06a77e68f5218e50c
         'IronBound\\WP_Notifications\\' => 
         array (
             0 => __DIR__ . '/..' . '/ironbound/wp-notifications/src',
-        ),
-        'IronBound\\DB\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/ironbound/db/src',
-        ),
-        'IronBound\\Cache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/ironbound/cache/src',
         ),
         'ITEGMS\\' => 
         array (
@@ -64,13 +72,6 @@ class ComposerStaticInit5aa020621c0c97d06a77e68f5218e50c
     );
 
     public static $prefixesPsr0 = array (
-        'p' => 
-        array (
-            'phpDocumentor' => 
-            array (
-                0 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            ),
-        ),
         'P' => 
         array (
             'Prophecy\\' => 
@@ -523,6 +524,7 @@ class ComposerStaticInit5aa020621c0c97d06a77e68f5218e50c
         'PHP_Token_STRING' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_STRING_CAST' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_STRING_VARNAME' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
+        'PHP_Token_SUPER' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_SWITCH' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_Stream' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token/Stream.php',
         'PHP_Token_Stream_CachingFactory' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token/Stream/CachingFactory.php',
@@ -537,6 +539,7 @@ class ComposerStaticInit5aa020621c0c97d06a77e68f5218e50c
         'PHP_Token_UNSET' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_UNSET_CAST' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_USE' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
+        'PHP_Token_USE_FUNCTION' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_VAR' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_VARIABLE' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_WHERE' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',

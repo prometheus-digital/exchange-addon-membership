@@ -20,32 +20,12 @@ use ITEGMS\Purchase\Purchase;
  * Class Relationship
  *
  * @package ITEGMS\Relationship
+ *
+ * @property int $id
+ * @property int $member
+ * @property int $purchase
  */
 class Relationship extends Model {
-
-	/**
-	 * @var int
-	 */
-	private $id;
-
-	/**
-	 * @var int
-	 */
-	private $purchase;
-
-	/**
-	 * @var int
-	 */
-	private $member;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param \stdClass $data
-	 */
-	public function __construct( \stdClass $data ) {
-		$this->init( $data );
-	}
 
 	/**
 	 * Create a relationship model.
@@ -165,15 +145,12 @@ class Relationship extends Model {
 	 */
 	private static function insert( Purchase $purchase, \IT_Exchange_Customer $member ) {
 
-		$db = Manager::make_simple_query_object( 'itegms-relationships' );
-
-		$id = $db->insert( array(
+		$model = static::_do_create( array(
 			'purchase' => $purchase->get_pk(),
-			'member'   => $member->id
+			'member' => $member->id
 		) );
 
-		if ( $id ) {
-			$model = self::get( $id );
+		if ( $model ) {
 
 			/**
 			 * Fires when a new relationship is inserted into the database.
@@ -199,19 +176,6 @@ class Relationship extends Model {
 	 */
 	public function get_pk() {
 		return $this->id;
-	}
-
-	/**
-	 * Init an object.
-	 *
-	 * @since 1.0
-	 *
-	 * @param \stdClass $data
-	 */
-	protected function init( \stdClass $data ) {
-		$this->id       = $data->id;
-		$this->purchase = $data->purchase;
-		$this->member   = $data->member;
 	}
 
 	/**
@@ -250,7 +214,7 @@ class Relationship extends Model {
 		}
 
 		$this->purchase = $purchase->get_pk();
-		$this->update( 'purchase', $purchase->get_pk() );
+		$this->save();
 	}
 
 	/**

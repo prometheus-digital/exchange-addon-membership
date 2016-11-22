@@ -21,47 +21,15 @@ use ITEGMS\Relationship\Relationship_Query;
  * Class Purchase
  *
  * @package ITEGMS\Purchase
+ *
+ * @property int  $id
+ * @property int  $transaction
+ * @property int  $customer
+ * @property int  $membership
+ * @property int  $seats
+ * @property bool $active
  */
 class Purchase extends Model {
-
-	/**
-	 * @var int
-	 */
-	private $id;
-
-	/**
-	 * @var int
-	 */
-	private $transaction;
-
-	/**
-	 * @var int
-	 */
-	private $customer;
-
-	/**
-	 * @var int
-	 */
-	private $membership;
-
-	/**
-	 * @var int
-	 */
-	private $seats = 1;
-
-	/**
-	 * @var bool
-	 */
-	private $active = true;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param \stdClass $data
-	 */
-	public function __construct( \stdClass $data ) {
-		$this->init( $data );
-	}
 
 	/**
 	 * Create a purchase object.
@@ -85,8 +53,6 @@ class Purchase extends Model {
 
 			if ( $product['count'] > 1 ) {
 
-				$db = Manager::make_simple_query_object( 'itegms-purchases' );
-
 				$data = array(
 					'transaction' => $transaction->ID,
 					'customer'    => it_exchange_get_transaction_customer_id( $transaction ),
@@ -95,11 +61,9 @@ class Purchase extends Model {
 					'active'      => it_exchange_transaction_is_cleared_for_delivery( $transaction )
 				);
 
-				$id = $db->insert( $data );
+				$model = static::_do_create( $data );
 
-				if ( $id ) {
-
-					$purchase = self::get( $id );
+				if ( $model ) {
 
 					/**
 					 * Fires when a purchase object is created.
@@ -108,9 +72,9 @@ class Purchase extends Model {
 					 *
 					 * @param Purchase $purchase
 					 */
-					do_action( 'itegms_create_purchase', $purchase );
+					do_action( 'itegms_create_purchase', $model );
 
-					return $purchase;
+					return $model;
 				} else {
 					return null;
 				}
@@ -121,22 +85,6 @@ class Purchase extends Model {
 	}
 
 	/**
-	 * Init an object.
-	 *
-	 * @since 1.0
-	 *
-	 * @param \stdClass $data
-	 */
-	protected function init( \stdClass $data ) {
-		$this->id          = (int) $data->id;
-		$this->transaction = (int) $data->transaction;
-		$this->customer    = (int) $data->customer;
-		$this->membership  = (int) $data->membership;
-		$this->seats       = (int) $data->seats;
-		$this->active      = (bool) $data->active;
-	}
-
-	/**
 	 * Activate a purchase.
 	 *
 	 * @since 1.0
@@ -144,7 +92,7 @@ class Purchase extends Model {
 	public function activate() {
 
 		$this->active = true;
-		$this->update( 'active', true );
+		$this->save();
 
 		/**
 		 * Fires when a purchase is activated.
@@ -164,7 +112,7 @@ class Purchase extends Model {
 	public function deactivate() {
 
 		$this->active = false;
-		$this->update( 'active', false );
+		$this->save();
 
 		/**
 		 * Fires when a purchase is deactivated.
