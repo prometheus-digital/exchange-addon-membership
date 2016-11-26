@@ -386,16 +386,20 @@ function it_exchange_membership_addon_admin_wp_enqueue_styles() {
 
 add_action( 'admin_print_styles', 'it_exchange_membership_addon_admin_wp_enqueue_styles' );
 
+add_action( 'init', function() {
+	if ( it_exchange_is_page( 'memberships' ) ) {
+		add_filter( 'it_exchange_preload_cart_item_types', '__return_true' );
+	}
+} );
+
 /**
  * Enqueues Membership scripts to WordPress frontend
  *
  * @since 1.0.0
  *
- * @param string $current_view WordPress passed variable
- *
  * @return void
  */
-function it_exchange_membership_addon_load_public_scripts( $current_view ) {
+function it_exchange_membership_addon_load_public_scripts() {
 
 	if ( ! it_exchange_is_page( 'memberships' ) ) {
 		return;
