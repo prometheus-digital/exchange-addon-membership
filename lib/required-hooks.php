@@ -676,14 +676,12 @@ add_action( 'it_exchange_after_print_extended_description_metabox', 'it_exchange
  */
 function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 
-	$cart_object         = get_post_meta( $transaction_id, '_it_exchange_cart_object', true );
-	$customer_id         = get_post_meta( $transaction_id, '_it_exchange_customer_id', true );
-	$customer            = new IT_Exchange_Customer( $customer_id );
+	$customer            = it_exchange_get_transaction_customer( $transaction_id );
 	$transaction         = it_exchange_get_transaction( $transaction_id );
 	$member_access       = $customer->get_customer_meta( 'member_access' );
 	$cancel_subscription = it_exchange_get_session_data( 'cancel_subscription' );
 
-	foreach ( $cart_object->products as $product ) {
+	foreach ( it_exchange_get_transaction_products( $transaction_id ) as $product ) {
 		$product_id   = $product['product_id'];
 		$product_type = it_exchange_get_product_type( $product_id );
 
@@ -744,7 +742,7 @@ function it_exchange_membership_addon_setup_customer_session() {
 	}
 
 	$user_id       = get_current_user_id();
-	$customer      = new IT_Exchange_Customer( $user_id );
+	$customer      = it_exchange_get_customer( $user_id );
 	$member_access = $customer->get_customer_meta( 'member_access' );
 
 	if ( empty( $member_access ) ) {
