@@ -88,7 +88,10 @@ require( dirname( __FILE__ ) . '/lib/updater/load.php' );
  */
 function it_exchange_membership_addon_activation() {
 	if ( apply_filters( 'it_exchange_membership_addon_activation', true ) ) {
-		if ( WP_Filesystem( 'Direct', plugin_dir_path( __FILE__ ) ) ) {
+
+		if ( file_exists( WP_PLUGIN_DIR . '/exchange-addon-recurring-payments/exchange-addon-recurring-payments.php' ) ) {
+			add_action( 'activated_plugin', 'it_exchange_membership_addon_activated_bundled_addons', 10, 2 );
+		} elseif ( WP_Filesystem( 'Direct', plugin_dir_path( __FILE__ ) ) ) {
 			copy_dir( plugin_dir_path( __FILE__ ) . 'bundled-addons/', WP_PLUGIN_DIR );
 			add_action( 'activated_plugin', 'it_exchange_membership_addon_activated_bundled_addons', 10, 2 );
 		}
