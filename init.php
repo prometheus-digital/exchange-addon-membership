@@ -8,7 +8,7 @@
 /**
  * New API functions.
  */
-include( 'api/load.php' );
+require_once( dirname( __FILE__ ) . '/api/load.php' );
 
 /**
  * Exchange will build your add-on's settings page for you and link to it from our add-on
@@ -17,59 +17,61 @@ include( 'api/load.php' );
  * the options. This includes the wizard settings. Additionally, we use the Exchange storage API to
  * save / retreive options. Add-ons are not required to do this.
  */
-include( 'lib/addon-settings.php' );
+require_once( dirname( __FILE__ ) . '/lib/addon-settings.php' );
 
 /**
  * The following file contains utility functions specific to our membership add-on
  * If you're building your own addon, it's likely that you will
  * need to do similar things.
  */
-include( 'lib/addon-functions.php' );
+require_once( dirname( __FILE__ ) . '/lib/addon-functions.php' );
 
 /**
  * The following file contains shortcodes specific to our membership add-on
  * If you're building your own addon, it's likely that you will
  * need to do similar things.
  */
-include( 'lib/addon-shortcodes.php' );
+require_once( dirname( __FILE__ ) . '/lib/addon-shortcodes.php' );
 
 /**
  * Our own Members table... basic the Users table but just members
  */
-include( 'lib/addon-member-table.php' );
+require_once( dirname( __FILE__ ) . '/lib/addon-member-table.php' );
 
 /**
  * Exchange Add-ons require several hooks in order to work properly.
  * We've placed them all in one file to help add-on devs identify them more easily
  */
-include( 'lib/required-hooks.php' );
+require_once( dirname( __FILE__ ) . '/lib/required-hooks.php' );
 
 /**
  * We decided to place all AJAX hooked functions into this file, just for ease of use
  */
-include( 'lib/addon-ajax-hooks.php' );
+require_once( dirname( __FILE__ ) . '/lib/addon-ajax-hooks.php' );
 
 /**
  * The following file adds a new metabox are to non-iThemes Exchange posttypes
  */
-include( 'lib/addon-metaboxes.php' );
+require_once( dirname( __FILE__ ) . '/lib/addon-metaboxes.php' );
 
 /**
  * Custom integrations.
  */
-include( 'lib/integrations/builder/init.php' );
+include_once( dirname( __FILE__ ) . '/lib/integrations/builder/init.php' );
 
 /**
  * New Product Features added by the Exchange Membership Add-on.
  */
-require( 'lib/product-features/load.php' );
+require_once( dirname( __FILE__ ) . '/lib/product-features/load.php' );
 
 require_once( dirname( __FILE__ ) . '/lib/class.user-membership-repository.php' );
 require_once( dirname( __FILE__ ) . '/lib/interface.user-membership.php' );
+require_once( dirname( __FILE__ ) . '/lib/interface.proratable-user-membership.php' );
 require_once( dirname( __FILE__ ) . '/lib/class.subscription-driver.php' );
 require_once( dirname( __FILE__ ) . '/lib/class.transaction-driver.php' );
 
 require_once( dirname( __FILE__ ) . '/lib/class.emails.php' );
+require_once( dirname( __FILE__ ) . '/lib/REST/load.php' );
 
 require_once( dirname( __FILE__ ) . '/lib/deprecated.php' );
 

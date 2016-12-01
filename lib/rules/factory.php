@@ -127,7 +127,11 @@ class IT_Exchange_Membership_Rule_Factory {
 				continue;
 			}
 
-			$objects[] = $this->make_content_rule( $rule['selected'], $rule, $membership );
+			$object = $this->make_content_rule( $rule['selected'], $rule, $membership );
+
+			if ( $object ) {
+				$objects[] = $object;
+			}
 		}
 
 		return $objects;

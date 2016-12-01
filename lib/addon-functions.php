@@ -456,7 +456,7 @@ function it_exchange_membership_addon_setup_recursive_member_access_array( $memb
  * @param int   $product_id    Membership product to check
  * @param array $parent_access Parent access session (or other array)
  *
- * @return array
+ * @return int|false
  */
 function it_exchange_membership_addon_get_most_parent_from_member_access( $product_id, $parent_access ) {
 	$most_parent = false;

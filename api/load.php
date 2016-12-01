@@ -9,7 +9,7 @@
 if ( ! is_admin() ) {
 
 	// Frontend only
-	include( 'theme.php' );
+	include_once( 'theme.php' );
 }
 
 require_once dirname( __FILE__ ) . '/memberships.php';

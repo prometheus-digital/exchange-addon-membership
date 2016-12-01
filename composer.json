@@ -3,7 +3,6 @@
     "description": "Build a WordPress membership site with content protection.",
     "type": "wp-plugin",
     "require": {
-        "ironbound/db": "^1.0",
         "ironbound/wp-notifications": "^1.0"
     },
     "license": "GPLv2+",
@@ -16,7 +15,8 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "ITEGMS\\"    : "umbrella-memberships/src/"
+            "ITEGMS\\"    : "umbrella-memberships/src/",
+            "iThemes\\Exchange\\Membership\\REST\\": "lib/REST/"
         }
     },
     "require-dev": {

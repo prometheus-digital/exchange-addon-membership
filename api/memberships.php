@@ -243,7 +243,7 @@ function it_exchange_membership_addon_get_customer_memberships( $customer_id = f
 			$memberships = it_exchange_get_session_data( 'member_access' );
 		}
 	} else {
-		$customer      = new IT_Exchange_Customer( $customer_id );
+		$customer      = it_exchange_get_customer( $customer_id );
 		$member_access = $customer->get_customer_meta( 'member_access' );
 		if ( ! empty( $member_access ) ) {
 

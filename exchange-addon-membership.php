@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: iThemes Exchange - Membership Add-on
- * Version: 1.19.10
+ * Version: 1.19.15
  * Description: Adds the membership management to iThemes Exchange
  * Plugin URI: http://ithemes.com/exchange/membership/
  * Author: iThemes
@@ -17,7 +17,7 @@
 */
 
 define( 'ITE_MEMBERSHIP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
-define( 'ITE_MEMBERSHIP_PLUGIN_VERSION', '1.19.10' );
+define( 'ITE_MEMBERSHIP_PLUGIN_VERSION', '1.19.14' );
 
 /**
  * This registers our plugin as a membership addon
@@ -88,7 +88,10 @@ require( dirname( __FILE__ ) . '/lib/updater/load.php' );
  */
 function it_exchange_membership_addon_activation() {
 	if ( apply_filters( 'it_exchange_membership_addon_activation', true ) ) {
-		if ( WP_Filesystem( 'Direct', plugin_dir_path( __FILE__ ) ) ) {
+
+		if ( file_exists( WP_PLUGIN_DIR . '/exchange-addon-recurring-payments/exchange-addon-recurring-payments.php' ) ) {
+			add_action( 'activated_plugin', 'it_exchange_membership_addon_activated_bundled_addons', 10, 2 );
+		} elseif ( WP_Filesystem( 'Direct', plugin_dir_path( __FILE__ ) ) ) {
 			copy_dir( plugin_dir_path( __FILE__ ) . 'bundled-addons/', WP_PLUGIN_DIR );
 			add_action( 'activated_plugin', 'it_exchange_membership_addon_activated_bundled_addons', 10, 2 );
 		}

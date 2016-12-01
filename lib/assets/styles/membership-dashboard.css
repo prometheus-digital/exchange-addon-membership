@@ -219,6 +219,43 @@
 	margin-top: 4px;
 }
 
+/** -----------------------------------------------------:[ Updowngrade ]:---------- */
+
+.it-exchange-membership-updowngrade-item {
+	border-bottom: 1px solid #ddd;
+	padding-bottom: 2em;
+	margin-bottom: 2em;
+	position: relative;
+	transition: .2s ease-in opacity;
+	list-style-type: none;
+}
+.it-exchange-membership-updowngrade-item:last-child {
+	border-bottom: none;
+}
+.it-exchange-membership-updowngrade-item.faded {
+	opacity: .5;
+}
+.it-exchange-membership-updowngrade-item .it-exchange-change-my-membership-offer--cancel {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: none;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	color: initial;
+	font-weight: initial;
+	font-size: 1.2em;
+	transition: .2s ease-in opacity;
+}
+.it-exchange-membership-updowngrade-item .it-exchange-change-my-membership-offer--cancel:hover {
+	opacity: .3;
+}
+
+.it-exchange-change-my-membership-offer--checkout-container {
+	margin-top: 20px;
+}
+
 /** -----------------------------------------------------:[ media ]:---------- */
 @media screen and (max-width: 750px) {
 	.it-exchange-membership-membership-content .it-exchange-content-grid li,

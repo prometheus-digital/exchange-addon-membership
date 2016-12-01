@@ -12,6 +12,15 @@
 interface IT_Exchange_User_Membership {
 
 	/**
+	 * Get the Membership ID.
+	 *
+	 * @since 1.20.0
+	 *
+	 * @return string
+	 */
+	public function get_id();
+
+	/**
 	 * Get the user associated with this membership.
 	 *
 	 * This isn't necessarily the payer.

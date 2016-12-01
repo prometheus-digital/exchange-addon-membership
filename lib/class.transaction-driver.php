@@ -9,7 +9,7 @@
 /**
  * Class IT_Exchange_User_Membership_Transaction_Driver
  */
-class IT_Exchange_User_Membership_Transaction_Driver implements IT_Exchange_User_Membership {
+class IT_Exchange_User_Membership_Transaction_Driver implements ITE_Proratable_User_Membership {
 
 	/**
 	 * @var IT_Exchange_Transaction
@@ -30,6 +30,13 @@ class IT_Exchange_User_Membership_Transaction_Driver implements IT_Exchange_User
 	public function __construct( IT_Exchange_Transaction $transaction, IT_Exchange_Membership $membership ) {
 		$this->transaction = $transaction;
 		$this->membership  = $membership;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_id() {
+		return $this->transaction->get_ID() . ':' . $this->get_membership()->ID;
 	}
 
 	/**
@@ -164,5 +171,53 @@ class IT_Exchange_User_Membership_Transaction_Driver implements IT_Exchange_User
 		}
 
 		return false !== array_search( $this->get_membership()->ID, $member_access[ $this->transaction->ID ] );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_available_upgrades() {
+
+		$all_parents = it_exchange_membership_addon_get_all_the_parents( $this->get_product()->ID );
+
+		if ( ! $all_parents ) {
+			return array();
+		}
+
+		$requests = array();
+
+		foreach ( $all_parents as $parent_id ) {
+			$parent = it_exchange_get_product( $parent_id );
+
+			if ( $parent ) {
+				$requests[] = new ITE_Prorate_Forever_Credit_Request( $this->get_membership(), $parent, $this );
+			}
+		}
+
+		return $requests;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_available_downgrades() {
+
+		$all_children = it_exchange_membership_addon_get_all_the_children( $this->get_product()->ID );
+
+		if ( ! $all_children ) {
+			return array();
+		}
+
+		$requests = array();
+
+		foreach ( $all_children as $child_id ) {
+			$child = it_exchange_get_product( $child_id );
+
+			if ( $child ) {
+				$requests[] = new ITE_Prorate_Forever_Credit_Request( $this->get_membership(), $parent, $this );
+			}
+		}
+
+		return $requests;
 	}
 }
