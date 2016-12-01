@@ -122,7 +122,10 @@ add_shortcode( 'it-exchange-membership-included-content', 'it_exchange_membershi
  * @return string the shortcode content
  */
 function it_exchange_membership_addon_member_content_shortcode( $atts, $content = null ) {
-	$membership_settings = it_exchange_get_option( 'addon_membership' );
+
+	if ( current_user_can( 'edit_post', get_post() ) ) {
+		return do_shortcode( $content );
+	}
 
 	$defaults = array(
 		'membership_ids' => 0,
