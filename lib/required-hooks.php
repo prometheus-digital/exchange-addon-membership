@@ -687,10 +687,12 @@ function it_exchange_membership_addon_add_transaction( $transaction_id ) {
 
 		if ( 'membership-product-type' === $product_type || it_exchange_product_supports_feature( $product_id, 'membership-content-access-rules' ) ) {
 
-			//This is a membership product!
-			if ( ! in_array( $product_id, (array) $member_access ) && it_exchange_transaction_is_cleared_for_delivery( $transaction_id ) ) {
+			if (
+				it_exchange_transaction_is_cleared_for_delivery( $transaction_id ) &&
+				( ! isset( $member_access[ $transaction_id ] ) || ! in_array( $product_id, $member_access[ $transaction_id ] ) )
+			) {
 
-				$product = it_exchange_get_product( $product_id );
+				$product         = it_exchange_get_product( $product_id );
 				$user_membership = it_exchange_get_user_membership_for_product( $customer, $product );
 
 				if ( $user_membership ) {
@@ -887,6 +889,10 @@ add_action( 'it_exchange_update_transaction_status', 'it_exchange_update_member_
  */
 function it_exchange_update_member_access_on_subscription_status_change( $new_status, $old_status, $subscription ) {
 
+	if ( ! $subscription->get_product() instanceof IT_Exchange_Membership ) {
+		return;
+	}
+
 	$customer      = $subscription->get_beneficiary();
 	$member_access = $customer->get_customer_meta( 'member_access' );
 
@@ -896,7 +902,7 @@ function it_exchange_update_member_access_on_subscription_status_change( $new_st
 
 	$tid = $subscription->get_transaction()->ID;
 
-	if ( ! in_array( $new_status, array( IT_Exchange_Subscription::STATUS_ACTIVE, IT_Exchange_Subscription::STATUS_COMPLIMENTARY ) ) ) {
+	if ( ! $subscription->is_status( IT_Exchange_Subscription::STATUS_ACTIVE, IT_Exchange_Subscription::STATUS_COMPLIMENTARY ) ) {
 		unset( $member_access[ $tid ] );
 	} else {
 

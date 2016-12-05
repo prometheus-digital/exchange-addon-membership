@@ -178,7 +178,7 @@ class IT_Exchange_User_Membership_Transaction_Driver implements ITE_Proratable_U
 	 */
 	public function get_available_upgrades() {
 
-		$all_parents = it_exchange_membership_addon_get_all_the_parents( $this->get_product()->ID );
+		$all_parents = it_exchange_membership_addon_get_all_the_parents( $this->get_membership()->ID );
 
 		if ( ! $all_parents ) {
 			return array();
@@ -190,7 +190,7 @@ class IT_Exchange_User_Membership_Transaction_Driver implements ITE_Proratable_U
 			$parent = it_exchange_get_product( $parent_id );
 
 			if ( $parent ) {
-				$requests[] = new ITE_Prorate_Forever_Credit_Request( $this->get_membership(), $parent, $this );
+				$requests[] = new ITE_Prorate_Forever_Credit_Request( $this->get_membership(), $parent, $this->transaction );
 			}
 		}
 
@@ -202,7 +202,7 @@ class IT_Exchange_User_Membership_Transaction_Driver implements ITE_Proratable_U
 	 */
 	public function get_available_downgrades() {
 
-		$all_children = it_exchange_membership_addon_get_all_the_children( $this->get_product()->ID );
+		$all_children = it_exchange_membership_addon_get_all_the_children( $this->get_membership()->ID );
 
 		if ( ! $all_children ) {
 			return array();
@@ -214,7 +214,7 @@ class IT_Exchange_User_Membership_Transaction_Driver implements ITE_Proratable_U
 			$child = it_exchange_get_product( $child_id );
 
 			if ( $child ) {
-				$requests[] = new ITE_Prorate_Forever_Credit_Request( $this->get_membership(), $parent, $this );
+				$requests[] = new ITE_Prorate_Forever_Credit_Request( $this->get_membership(), $child, $this->transaction );
 			}
 		}
 
