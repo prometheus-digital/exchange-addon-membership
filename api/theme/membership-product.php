@@ -47,12 +47,6 @@ class IT_Theme_API_Membership_Product implements IT_Theme_API {
 	function __construct() {
 		// Set the current global product as a property
 		$this->product = empty( $GLOBALS['it_exchange']['product'] ) ? false : $GLOBALS['it_exchange']['product'];
-
-		$requestor = new ITE_Prorate_Credit_Requestor( new ITE_Daily_Price_Calculator() );
-		$requestor->register_provider( 'IT_Exchange_Subscription' );
-		$requestor->register_provider( 'IT_Exchange_Transaction' );
-
-		$this->requestor = $requestor;
 	}
 
 	/**
