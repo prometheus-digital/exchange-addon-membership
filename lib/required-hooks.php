@@ -438,7 +438,7 @@ function it_exchange_membership_addon_load_public_scripts() {
 	}
 
 	foreach ( $user_membership->get_available_downgrades() as $downgrade ) {
-		if ( $requestor->request_downgrade( $downgrade ) ) {
+		if ( $requestor->request_downgrade( $downgrade, false ) ) {
 			$downgrades[] = $prorate_serializer->serialize( $downgrade );
 		}
 	}
