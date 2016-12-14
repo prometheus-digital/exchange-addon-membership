@@ -423,9 +423,13 @@ function it_exchange_membership_addon_load_public_scripts() {
 		return;
 	}
 
+	$context_filterer = new \iThemes\Exchange\REST\Helpers\ContextFilterer();
+
 	$membership_serializer = new \iThemes\Exchange\Membership\REST\Memberships\Serializer();
 	$prorate_serializer    = new \iThemes\Exchange\RecurringPayments\REST\Subscriptions\ProrateSerializer();
-	$requestor             = new ITE_Prorate_Credit_Requestor( new ITE_Daily_Price_Calculator() );
+	$prorate_schema        = $prorate_serializer->get_schema();
+
+	$requestor = new ITE_Prorate_Credit_Requestor( new ITE_Daily_Price_Calculator() );
 	$requestor->register_provider( 'IT_Exchange_Subscription' );
 	$requestor->register_provider( 'IT_Exchange_Transaction' );
 
@@ -433,18 +437,22 @@ function it_exchange_membership_addon_load_public_scripts() {
 
 	foreach ( $user_membership->get_available_upgrades() as $upgrade ) {
 		if ( $requestor->request_upgrade( $upgrade, false ) ) {
-			$upgrades[] = $prorate_serializer->serialize( $upgrade );
+			$upgrades[] = $context_filterer->filter( $prorate_serializer->serialize( $upgrade ), 'view', $prorate_schema );
 		}
 	}
 
 	foreach ( $user_membership->get_available_downgrades() as $downgrade ) {
 		if ( $requestor->request_downgrade( $downgrade, false ) ) {
-			$downgrades[] = $prorate_serializer->serialize( $downgrade );
+			$downgrades[] = $context_filterer->filter( $prorate_serializer->serialize( $downgrade ), 'view', $prorate_schema );
 		}
 	}
 
 	wp_localize_script( 'it-exchange-membership-addon-public-js', 'ITExchangeMembershipPublic', array(
-		'userMembership' => $membership_serializer->serialize( $user_membership ),
+		'userMembership' => $context_filterer->filter(
+			$membership_serializer->serialize( $user_membership ),
+			'view',
+			$membership_serializer->get_schema()
+		),
 		'upgrades'       => $upgrades,
 		'downgrades'     => $downgrades,
 		'i18n'           => array(
