@@ -47,7 +47,20 @@ class Membership extends Route\Base implements Getable {
 
 		$data = $this->serializer->serialize( $membership );
 
-		return new \WP_REST_Response( $data );
+		$response = new \WP_REST_Response( $data );
+
+		if ( $membership->get_user() ) {
+			$response->add_link(
+				'beneficiary',
+				\iThemes\Exchange\REST\get_rest_url(
+					$this->get_manager()->get_first_route( 'iThemes\Exchange\REST\Route\Customer\Customer' ),
+					array( 'customer_id' => $membership->get_user()->get_ID() )
+				),
+				array( 'embeddable' => true )
+			);
+		}
+
+		return $response;
 	}
 
 	/**
