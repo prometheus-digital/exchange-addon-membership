@@ -54,7 +54,7 @@ class Membership extends Route\Base implements Getable {
 				'beneficiary',
 				\iThemes\Exchange\REST\get_rest_url(
 					$this->get_manager()->get_first_route( 'iThemes\Exchange\REST\Route\Customer\Customer' ),
-					array( 'customer_id' => $membership->get_user()->get_ID() )
+					array( 'customer_id' => $membership->get_user()->ID )
 				),
 				array( 'embeddable' => true )
 			);

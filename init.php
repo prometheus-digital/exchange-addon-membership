@@ -57,7 +57,7 @@ require_once( dirname( __FILE__ ) . '/lib/addon-metaboxes.php' );
 /**
  * Custom integrations.
  */
-include_once( dirname( __FILE__ ) . '/lib/integrations/builder/init.php' );
+include_once( dirname( __FILE__ ) . '/lib/integrations/load.php' );
 
 /**
  * New Product Features added by the Exchange Membership Add-on.
