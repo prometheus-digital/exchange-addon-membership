@@ -386,6 +386,24 @@ function it_exchange_membership_addon_admin_wp_enqueue_styles() {
 
 add_action( 'admin_print_styles', 'it_exchange_membership_addon_admin_wp_enqueue_styles' );
 
+/**
+ * Register backbone REST dependencies.
+ *
+ * @since 1.20.0
+ *
+ * @param array $dependencies
+ *
+ * @return array
+ */
+function it_exchange_membership_backbone_dependencies( $dependencies ) {
+
+	$dependencies['membership'] = plugin_dir_url( __FILE__ ) . 'js/rest.js';
+
+	return $dependencies;
+}
+
+add_filter( 'it_exchange_rest_backbone_addon_libs', 'it_exchange_membership_backbone_dependencies' );
+
 add_action( 'init', function() {
 	if ( it_exchange_is_page( 'memberships' ) ) {
 		add_filter( 'it_exchange_preload_cart_item_types', '__return_true' );
@@ -464,19 +482,16 @@ function it_exchange_membership_addon_load_public_scripts() {
 		)
 	) );
 
-	add_filter( 'it_exchange_preload_schemas', function( $schemas ) {
-		$schemas = is_array( $schemas ) ? $schemas : array();
-
-		return array_merge( $schemas, array(
-			'cart',
-			'cart-item-product',
-			'cart-item-fee',
-			'cart-item-tax',
-			'cart-purchase',
-			'payment-token',
-			'prorate-request',
-		) );
-	} );
+	it_exchange_preload_schemas( array(
+		'cart',
+		'cart-item-product',
+		'cart-item-fee',
+		'cart-item-tax',
+		'cart-purchase',
+		'payment-token',
+		'prorate-request',
+		'address',
+	) );
 
 	it_exchange_add_inline_script(
 		'it-exchange-membership-addon-public-js',
