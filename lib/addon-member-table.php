@@ -332,15 +332,9 @@ class IT_Exchange_Membership_List_Table extends WP_List_Table {
 		$member_products = it_exchange_get_products( array(
 			'product_type' => 'membership-product-type',
 			'numberposts'  => - 1,
-			'meta_query'   => array(
-				array(
-					'key'     => '_it_exchange_transaction_id',
-					'compare' => 'EXISTS'
-				)
-			)
 		) );
 
-		$current = empty( $_GET['membership'] ) ? false : $_GET['membership'];
+		$current = empty( $_GET['membership'] ) ? false : absint( $_GET['membership'] );
 		?>
 
 		<label class="screen-reader-text" for="filter-by-membership">
