@@ -78,9 +78,17 @@ require_once( dirname( __FILE__ ) . '/lib/deprecated.php' );
 require_once( dirname( __FILE__ ) . '/lib/rules/load.php' );
 require_once( dirname( __FILE__ ) . '/lib/upgrades/load.php' );
 
-$current_version = get_option( 'exchange_mmebership_version', '1.17.0' );
+$current_version = get_option( 'exchange_mmebership_version' );
 
 if ( $current_version != ITE_MEMBERSHIP_PLUGIN_VERSION ) {
+
+	$upgrader = it_exchange_make_upgrader();
+
+	if ( ! $current_version ) {
+		$current_version = '1.17.0';
+		$upgrader->complete( $upgrader->get_upgrade( 'memberships-repair-member-access' ) );
+		$upgrader->complete( $upgrader->get_upgrade( 'membership-rule-exemptions' ) );
+	}
 
 	/**
 	 * Runs when the version upgrades.
@@ -94,5 +102,7 @@ if ( $current_version != ITE_MEMBERSHIP_PLUGIN_VERSION ) {
 
 	update_option( 'exchange_mmebership_version', ITE_MEMBERSHIP_PLUGIN_VERSION );
 
-	//update_option( 'it_exchange_show_upgrades_nag', true );
+	if ( $upgrader->get_available_upgrades() ) {
+		update_option( 'it_exchange_show_upgrades_nag', true );
+	}
 }

@@ -59,7 +59,7 @@ class IT_Exchange_User_Membership_Repository {
 	/**
 	 * Get a membership by an ID.
 	 *
-	 * @since 1.20.0
+	 * @since 2.0.0
 	 *
 	 * @param string $id
 	 *

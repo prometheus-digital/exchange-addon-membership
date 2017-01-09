@@ -1,0 +1,26 @@
+{
+    "name": "ithemes/exchange-addon-membership",
+    "description": "Build a WordPress membership site with content protection.",
+    "type": "wp-plugin",
+    "require": {
+        "ironbound/db": "^1.0",
+        "ironbound/wp-notifications": "^1.0"
+    },
+    "license": "GPLv2+",
+    "authors": [
+        {
+            "name": "iThemes",
+            "email": "sales@ithemes.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "ITEGMS\\"    : "umbrella-memberships/src/"
+        }
+    },
+    "require-dev": {
+        "mockery/mockery": "0.9.4",
+        "phpunit/phpunit": "^4.8"
+    }
+}

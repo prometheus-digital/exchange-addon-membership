@@ -2,7 +2,7 @@
 /**
  * Nav Menu Roles integration.
  *
- * @since 1.20.0
+ * @since 2.0.0
  */
 
 if ( ! class_exists( 'Nav_Menu_Roles' ) ) {
@@ -12,7 +12,7 @@ if ( ! class_exists( 'Nav_Menu_Roles' ) ) {
 /**
  * Add memberships product to Nav Menu Roles.
  *
- * @since 1.20.0
+ * @since 2.0.0
  *
  * @param array $roles
  *
@@ -37,7 +37,7 @@ add_filter( 'nav_menu_roles', 'it_exchange_add_memberships_to_nav_menu_roles' );
 /**
  * Handle menu visibility for Nav Menu Roles.
  *
- * @since 1.20.0
+ * @since 2.0.0
  *
  * @param bool   $visible
  * @param object $item

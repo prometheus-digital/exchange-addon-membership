@@ -14,7 +14,7 @@ interface IT_Exchange_User_Membership {
 	/**
 	 * Get the Membership ID.
 	 *
-	 * @since 1.20.0
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */

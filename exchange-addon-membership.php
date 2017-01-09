@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: iThemes Exchange - Membership Add-on
- * Version: 1.19.15
+ * Version: 2.0.0
  * Description: Adds the membership management to iThemes Exchange
  * Plugin URI: http://ithemes.com/exchange/membership/
  * Author: iThemes
@@ -16,70 +16,20 @@
  *
 */
 
-define( 'ITE_MEMBERSHIP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
-define( 'ITE_MEMBERSHIP_PLUGIN_VERSION', '1.19.14' );
-
 /**
- * This registers our plugin as a membership addon
+ * Load the Memberships plugin.
  *
- * @since 1.0.0
- *
- * @return void
-*/
-function it_exchange_register_membership_addon() {
-
-	require_once dirname( __FILE__ ) . '/lib/class.membership.php';
-
-	$options = array(
-		'name'              => __( 'Membership', 'LION' ),
-		'description'       => __( 'Add Memberships levels to your customers.', 'LION' ),
-		'author'            => 'iThemes',
-		'author_url'        => 'http://ithemes.com/exchange/membership/',
-		'icon'              => ITUtility::get_url_from_file( dirname( __FILE__ ) . '/lib/images/membership50px.png' ),
-		'wizard-icon'       => ITUtility::get_url_from_file( dirname( __FILE__ ) . '/lib/images/wizard-membership.png' ),
-		'file'              => dirname( __FILE__ ) . '/init.php',
-		'category'          => 'product-type',
-		'basename'          => plugin_basename( __FILE__ ),
-		'labels'      => array(
-			'singular_name' => __( 'Membership', 'LION' ),
-		),
-		'settings-callback' => 'it_exchange_membership_addon_settings_callback',
-		'supports' => array(
-			'sw-shortcode' => true
-		),
-		'options' => array(
-			'class' => 'IT_Exchange_Membership'
-		)
-	);
-	it_exchange_register_addon( 'membership-product-type', $options );
+ * @since 2.0.0
+ */
+function it_exchange_load_memberships() {
+	if ( ! function_exists( 'it_exchange_load_deprecated' ) || it_exchange_load_deprecated() ) {
+		require_once dirname( __FILE__ ) . '/deprecated/exchange-addon-membership.php';
+	} else {
+		require_once dirname( __FILE__ ) . '/plugin.php';
+	}
 }
-add_action( 'it_exchange_register_addons', 'it_exchange_register_membership_addon' );
 
-/**
- * Loads the translation data for WordPress
- *
- * @uses load_plugin_textdomain()
- * @since 1.0.3
- * @return void
-*/
-function it_exchange_membership_set_textdomain() {
-	load_plugin_textdomain( 'LION', false, dirname( plugin_basename( __FILE__  ) ) . '/lang/' );
-}
-add_action( 'plugins_loaded', 'it_exchange_membership_set_textdomain' );
-
-/**
- * Registers Plugin with iThemes updater class
- *
- * @since 1.0.0
- *
- * @param object $updater ithemes updater object
- * @return void
-*/
-function ithemes_exchange_addon_membership_updater_register( $updater ) { 
-	    $updater->register( 'exchange-addon-membership', __FILE__ );
-}
-add_action( 'ithemes_updater_register', 'ithemes_exchange_addon_membership_updater_register' );
-require( dirname( __FILE__ ) . '/lib/updater/load.php' );
+add_action( 'plugins_loaded', 'it_exchange_load_memberships' );
 
 /**
  * When addon is activated, copy bundled-addons folders to plugins directory
@@ -118,9 +68,4 @@ function it_exchange_membership_addon_activated_bundled_addons( $plugin, $networ
 				$output = activate_plugin( $new_plugin, '', $network_wide );
 		}
 	}
-}
-
-if ( file_exists( dirname( __FILE__ ) . '/vendor/autoload.php' ) && version_compare( PHP_VERSION, '5.3', '>=' ) ) {
-	require_once dirname( __FILE__ ) . '/vendor/autoload.php';
-	require_once dirname( __FILE__ ) . '/umbrella-memberships/load.php';
 }

@@ -2,7 +2,7 @@
 /**
  * Load the REST API.
  *
- * @since   1.20.0
+ * @since   2.0.0
  * @license GPLv2
  */
 

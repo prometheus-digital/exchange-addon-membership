@@ -389,7 +389,7 @@ add_action( 'admin_print_styles', 'it_exchange_membership_addon_admin_wp_enqueue
 /**
  * Register backbone REST dependencies.
  *
- * @since 1.20.0
+ * @since 2.0.0
  *
  * @param array $dependencies
  *

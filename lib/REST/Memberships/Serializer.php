@@ -2,7 +2,7 @@
 /**
  * Membership Serializer.
  *
- * @since   1.20.0
+ * @since   2.0.0
  * @license GPLv2
  */
 
@@ -18,7 +18,7 @@ class Serializer {
 	/**
 	 * Serialize a user membership.
 	 *
-	 * @since 1.20.0
+	 * @since 2.0.0
 	 *
 	 * @param \IT_Exchange_User_Membership $user_membership
 	 *
@@ -45,7 +45,7 @@ class Serializer {
 	/**
 	 * Get the user membership schema.
 	 *
-	 * @since 1.20.0
+	 * @since 2.0.0
 	 *
 	 * @return array
 	 */
