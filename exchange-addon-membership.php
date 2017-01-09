@@ -32,6 +32,20 @@ function it_exchange_load_memberships() {
 add_action( 'plugins_loaded', 'it_exchange_load_memberships' );
 
 /**
+ * Registers Plugin with iThemes updater class
+ *
+ * @since 1.0.0
+ *
+ * @param object $updater ithemes updater object
+ * @return void
+ */
+function ithemes_exchange_addon_membership_updater_register( $updater ) {
+	$updater->register( 'exchange-addon-membership', __FILE__ );
+}
+add_action( 'ithemes_updater_register', 'ithemes_exchange_addon_membership_updater_register' );
+require( dirname( __FILE__ ) . '/lib/updater/load.php' );
+
+/**
  * When addon is activated, copy bundled-addons folders to plugins directory
  *
  * @since 1.0.0

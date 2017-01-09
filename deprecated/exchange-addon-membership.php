@@ -51,20 +51,6 @@ function it_exchange_membership_set_textdomain() {
 }
 add_action( 'plugins_loaded', 'it_exchange_membership_set_textdomain' );
 
-/**
- * Registers Plugin with iThemes updater class
- *
- * @since 1.0.0
- *
- * @param object $updater ithemes updater object
- * @return void
-*/
-function ithemes_exchange_addon_membership_updater_register( $updater ) { 
-	    $updater->register( 'exchange-addon-membership', __FILE__ );
-}
-add_action( 'ithemes_updater_register', 'ithemes_exchange_addon_membership_updater_register' );
-require( dirname( __FILE__ ) . '/lib/updater/load.php' );
-
 if ( file_exists( dirname( __FILE__ ) . '/vendor/autoload.php' ) && version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 	require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 	require_once dirname( __FILE__ ) . '/umbrella-memberships/load.php';
