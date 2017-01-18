@@ -321,10 +321,10 @@ function it_exchange_get_user_membership_for_product( IT_Exchange_Customer $cust
 
 	$active_user_memberships_matching_product = array();
 
-	/** @var IT_Exchange_User_Membership $membership */
-	foreach ( $user_memberships_matching_product as $membership ) {
-		if ( $membership->current_status_grants_access() ) {
-			$active_user_memberships_matching_product[] = $membership;
+	/** @var IT_Exchange_User_Membership $user_membership */
+	foreach ( $user_memberships_matching_product as $user_membership ) {
+		if ( $user_membership->current_status_grants_access() ) {
+			$active_user_memberships_matching_product[] = $user_membership;
 		}
 	}
 
@@ -340,11 +340,11 @@ function it_exchange_get_user_membership_for_product( IT_Exchange_Customer $cust
 	/** @var IT_Exchange_User_Membership $earliest_membership */
 	$earliest_membership = null;
 
-	foreach ( $active_user_memberships_matching_product as $membership ) {
+	foreach ( $active_user_memberships_matching_product as $user_membership ) {
 		if ( ! $earliest_membership ) {
-			$earliest_membership = $membership;
-		} elseif ( $earliest_membership->get_start_date() > $membership->get_start_date() ) {
-			$earliest_membership = $membership;
+			$earliest_membership = $user_membership;
+		} elseif ( $earliest_membership->get_start_date() > $user_membership->get_start_date() ) {
+			$earliest_membership = $user_membership;
 		}
 	}
 
