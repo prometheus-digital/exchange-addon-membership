@@ -130,6 +130,15 @@ class IT_Exchange_User_Membership_Subscription_Driver implements ITE_Proratable_
 	}
 
 	/**
+	 * Get the subscription powering this membership.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return IT_Exchange_Subscription
+	 */
+	public function get_subscription() { return $this->subscription; }
+
+	/**
 	 * @inheritDoc
 	 */
 	public function get_available_upgrades() { return $this->subscription->get_available_upgrades(); }

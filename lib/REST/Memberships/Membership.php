@@ -60,6 +60,28 @@ class Membership extends Route\Base implements Getable {
 			);
 		}
 
+		if ( $membership instanceof \IT_Exchange_User_Membership_Transaction_Driver ) {
+			$response->add_link(
+				'transaction',
+				\iThemes\Exchange\REST\get_rest_url(
+					$this->get_manager()->get_first_route( 'iThemes\Exchange\REST\Route\Transaction\Transaction' ),
+					array( 'transaction_id' => $membership->get_transaction()->get_ID() )
+				),
+				array( 'embeddable' => true )
+			);
+		}
+
+		if ( $membership instanceof \IT_Exchange_User_Membership_Subscription_Driver ) {
+			$response->add_link(
+				'subscription',
+				\iThemes\Exchange\REST\get_rest_url(
+					$this->get_manager()->get_first_route( 'iThemes\Exchange\RecurringPayments\REST\Subscriptions\Subscription' ),
+					array( 'subscription_id' => $membership->get_subscription()->get_id() )
+				),
+				array( 'embeddable' => true )
+			);
+		}
+
 		return $response;
 	}
 

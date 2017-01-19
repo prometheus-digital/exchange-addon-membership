@@ -174,6 +174,15 @@ class IT_Exchange_User_Membership_Transaction_Driver implements ITE_Proratable_U
 	}
 
 	/**
+	 * Get the transaction powering this membership.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return IT_Exchange_Transaction
+	 */
+	public function get_transaction() { return $this->transaction; }
+
+	/**
 	 * @inheritdoc
 	 */
 	public function get_available_upgrades() {

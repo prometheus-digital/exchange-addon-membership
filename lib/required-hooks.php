@@ -443,15 +443,17 @@ function it_exchange_membership_addon_load_public_scripts() {
 
 	$context_filterer = new \iThemes\Exchange\REST\Helpers\ContextFilterer();
 
-	$membership_serializer = new \iThemes\Exchange\Membership\REST\Memberships\Serializer();
-	$prorate_serializer    = new \iThemes\Exchange\RecurringPayments\REST\Subscriptions\ProrateSerializer();
-	$prorate_schema        = $prorate_serializer->get_schema();
+	$membership_serializer   = new \iThemes\Exchange\Membership\REST\Memberships\Serializer();
+	$subscription_serializer = new \iThemes\Exchange\RecurringPayments\REST\Subscriptions\Serializer();
+	$transaction_serializer  = new \iThemes\Exchange\REST\Route\Transaction\Serializer();
+	$prorate_serializer      = new \iThemes\Exchange\RecurringPayments\REST\Subscriptions\ProrateSerializer();
+	$prorate_schema          = $prorate_serializer->get_schema();
 
 	$requestor = new ITE_Prorate_Credit_Requestor( new ITE_Daily_Price_Calculator() );
 	$requestor->register_provider( 'IT_Exchange_Subscription' );
 	$requestor->register_provider( 'IT_Exchange_Transaction' );
 
-	$upgrades = $downgrades = array();
+	$upgrades = $downgrades = $subscription = $transaction = array();
 
 	foreach ( $user_membership->get_available_upgrades() as $upgrade ) {
 		if ( $requestor->request_upgrade( $upgrade, false ) ) {
@@ -465,6 +467,22 @@ function it_exchange_membership_addon_load_public_scripts() {
 		}
 	}
 
+	if ( $user_membership instanceof IT_Exchange_User_Membership_Transaction_Driver ) {
+	    $transaction = $context_filterer->filter(
+            $transaction_serializer->serialize( $user_membership->get_transaction(), it_exchange_get_current_customer() ),
+            'view',
+            $transaction_serializer->get_schema()
+        );
+    }
+
+	if ( $user_membership instanceof IT_Exchange_User_Membership_Subscription_Driver ) {
+		$subscription = $context_filterer->filter(
+			$subscription_serializer->serialize( $user_membership->get_subscription() ),
+			'view',
+			$subscription_serializer->get_schema()
+		);
+	}
+
 	wp_localize_script( 'it-exchange-membership-addon-public-js', 'ITExchangeMembershipPublic', array(
 		'userMembership' => $context_filterer->filter(
 			$membership_serializer->serialize( $user_membership ),
@@ -473,6 +491,8 @@ function it_exchange_membership_addon_load_public_scripts() {
 		),
 		'upgrades'       => $upgrades,
 		'downgrades'     => $downgrades,
+        'subscription'   => $subscription,
+        'transaction'    => $transaction,
 		'i18n'           => array(
 			'changeMyMembership' => __( 'Change my Membership', 'LION' ),
 			'upgrade'            => __( 'Upgrade', 'LION' ),

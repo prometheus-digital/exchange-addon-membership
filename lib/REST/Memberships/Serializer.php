@@ -37,7 +37,15 @@ class Serializer {
 			'status'        => array( 'slug' => $u->get_status(), 'label' => $u->get_status( true ) ),
 			'auto_renewing' => $u->is_auto_renewing(),
 			'grants_access' => $u->current_status_grants_access(),
+			'subscription'  => 0,
+			'transaction'   => 0,
 		);
+
+		if ( $user_membership instanceof \IT_Exchange_User_Membership_Subscription_Driver ) {
+			$data['subscription'] = $user_membership->get_subscription()->get_id();
+		} elseif ( $user_membership instanceof \IT_Exchange_User_Membership_Transaction_Driver ) {
+			$data['transaction'] = $user_membership->get_transaction()->get_ID();
+		}
 
 		return $data;
 	}
