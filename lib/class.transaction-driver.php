@@ -35,9 +35,21 @@ class IT_Exchange_User_Membership_Transaction_Driver implements ITE_Proratable_U
 	/**
 	 * @inheritdoc
 	 */
-	public function get_id() {
+	public function get_ID() {
 		return $this->transaction->get_ID() . ':' . $this->get_membership()->ID;
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function __toString() {
+		return sprintf( __( 'Membership to %s', 'LION' ), $this->get_membership()->post_title );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function get_object_type() { return it_exchange_object_type_registry()->get( 'membership' ); }
 
 	/**
 	 * Get the user associated with this membership.

@@ -76,7 +76,7 @@ class Membership extends Route\Base implements Getable {
 				'subscription',
 				\iThemes\Exchange\REST\get_rest_url(
 					$this->get_manager()->get_first_route( 'iThemes\Exchange\RecurringPayments\REST\Subscriptions\Subscription' ),
-					array( 'subscription_id' => $membership->get_subscription()->get_id() )
+					array( 'subscription_id' => $membership->get_subscription()->get_ID() )
 				),
 				array( 'embeddable' => true )
 			);

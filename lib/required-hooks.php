@@ -5,6 +5,10 @@
  * @since   1.0.0
  */
 
+add_action( 'it_exchange_register_object_types', function ( ITE_Object_Type_Registry $registry ) {
+	$registry->register( new ITE_Membership_Object_Type() );
+} );
+
 /**
  * Shows the nag when needed.
  *

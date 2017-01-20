@@ -29,7 +29,7 @@ class Serializer {
 		$u = $user_membership;
 
 		$data = array(
-			'id'            => $u->get_id(),
+			'id'            => $u->get_ID(),
 			'beneficiary'   => $u->get_user()->ID,
 			'start_date'    => mysql_to_rfc3339( $u->get_start_date()->format( 'Y-m-d H:i:s' ) ),
 			'end_date'      => $u->get_end_date() ? mysql_to_rfc3339( $u->get_end_date()->format( 'Y-m-d H:i:s' ) ) : '',
@@ -42,7 +42,7 @@ class Serializer {
 		);
 
 		if ( $user_membership instanceof \IT_Exchange_User_Membership_Subscription_Driver ) {
-			$data['subscription'] = $user_membership->get_subscription()->get_id();
+			$data['subscription'] = $user_membership->get_subscription()->get_ID();
 		} elseif ( $user_membership instanceof \IT_Exchange_User_Membership_Transaction_Driver ) {
 			$data['transaction'] = $user_membership->get_transaction()->get_ID();
 		}

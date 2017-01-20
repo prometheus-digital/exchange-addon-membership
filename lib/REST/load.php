@@ -7,6 +7,7 @@
  */
 
 use iThemes\Exchange\Membership\REST\Memberships\Membership;
+use iThemes\Exchange\Membership\REST\Memberships\ProrateHelper;
 use iThemes\Exchange\Membership\REST\Memberships\Serializer;
 use iThemes\Exchange\Membership\REST\Memberships\Downgrades;
 use iThemes\Exchange\Membership\REST\Memberships\Upgrades;
@@ -22,14 +23,22 @@ add_action( 'it_exchange_register_rest_routes', function ( \iThemes\Exchange\RES
 	if ( class_exists( '\iThemes\Exchange\RecurringPayments\REST\Subscriptions\ProrateSerializer' ) ) {
 
 		$serializer = new ProrateSerializer();
-		$requestor = new ITE_Prorate_Credit_Requestor( new ITE_Daily_Price_Calculator() );
+		$requestor  = new ITE_Prorate_Credit_Requestor( new ITE_Daily_Price_Calculator() );
 		$requestor->register_provider( 'IT_Exchange_Subscription' );
 		$requestor->register_provider( 'IT_Exchange_Transaction' );
 
-		$upgrades = new Upgrades( $serializer, $requestor, $repository );
+		$helper = new ITE_Prorate_REST_Helper(
+			it_exchange_object_type_registry()->get( 'membership' ),
+			$requestor,
+			$manager,
+			$serializer,
+			'membership_id'
+		);
+
+		$upgrades = new Upgrades( $serializer, $helper );
 		$manager->register_route( $upgrades->set_parent( $membership ) );
 
-		$downgrades = new Downgrades( $serializer, $requestor, $repository );
+		$downgrades = new Downgrades( $serializer, $helper );
 		$manager->register_route( $downgrades->set_parent( $membership ) );
 	}
 } );

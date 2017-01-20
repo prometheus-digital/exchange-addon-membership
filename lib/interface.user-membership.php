@@ -9,7 +9,7 @@
 /**
  * Interface IT_Exchange_User_Membership
  */
-interface IT_Exchange_User_Membership {
+interface IT_Exchange_User_Membership extends ITE_Object {
 
 	/**
 	 * Get the Membership ID.
@@ -18,7 +18,7 @@ interface IT_Exchange_User_Membership {
 	 *
 	 * @return string
 	 */
-	public function get_id();
+	public function get_ID();
 
 	/**
 	 * Get the user associated with this membership.

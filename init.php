@@ -1,9 +1,12 @@
 <?php
 /**
  * iThemes Exchange Membership Add-on
+ *
  * @package IT_Exchange_Addon_Membership
  * @since   1.0.0
  */
+
+require_once dirname( __FILE__ ) . '/lib/class.object-type.php';
 
 /**
  * New API functions.

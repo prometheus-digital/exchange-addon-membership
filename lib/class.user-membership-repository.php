@@ -11,6 +11,18 @@
  */
 class IT_Exchange_User_Membership_Repository {
 
+	/** @var ITE_Object_Type */
+	private $object_type;
+
+	/**
+	 * IT_Exchange_User_Membership_Repository constructor.
+	 *
+	 * @param ITE_Object_Type $object_type
+	 */
+	public function __construct( ITE_Object_Type $object_type = null ) {
+		$this->object_type = $object_type ?: it_exchange_object_type_registry()->get( 'membership' );
+	}
+
 	/**
 	 * Retrieve a user's memberships.
 	 *
@@ -66,33 +78,6 @@ class IT_Exchange_User_Membership_Repository {
 	 * @return IT_Exchange_User_Membership|null
 	 */
 	public function get_membership_by_id( $id ) {
-
-		if ( class_exists( '\IT_Exchange_Subscription' ) ) {
-			try {
-				$subscription = IT_Exchange_Subscription::get( $id );
-
-				if ( $subscription ) {
-					return new IT_Exchange_User_Membership_Subscription_Driver( $subscription );
-				}
-
-			} catch ( InvalidArgumentException $e ) {
-
-			}
-		}
-
-		$parts = explode( ':', $id );
-
-		if ( count( $parts ) !== 2 ) {
-			return null;
-		}
-
-		$transaction = it_exchange_get_transaction( $parts[0] );
-		$product     = it_exchange_get_product( $parts[1] );
-
-		if ( ! $transaction || ! $product instanceof IT_Exchange_Membership ) {
-			return null;
-		}
-
-		return new IT_Exchange_User_Membership_Transaction_Driver( $transaction, $product );
+		return $this->object_type->get_object_by_id( $id );
 	}
 }
