@@ -352,3 +352,5 @@
 	Fix: Include hidden products in the Memberships dropdown in the Members list table.
 1.19.17 - 2016-09-27 - Timothy Jacobs, Elise Alley
 	Fix: Issue with single post rules not showing in content shortcode for logged-out users.
+1.19.18 - 2017-01-23 - Lew Ayotte, Elise Alley
+	Fix: Removal of accidental inclusion of PHPUnit Testing, to improve security
