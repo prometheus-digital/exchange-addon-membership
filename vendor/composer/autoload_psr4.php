@@ -6,10 +6,8 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
     'IronBound\\WP_Notifications\\' => array($vendorDir . '/ironbound/wp-notifications/src'),
     'IronBound\\DB\\' => array($vendorDir . '/ironbound/db/src'),
     'IronBound\\Cache\\' => array($vendorDir . '/ironbound/cache/src'),
     'ITEGMS\\' => array($baseDir . '/umbrella-memberships/src'),
-    'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
 );
