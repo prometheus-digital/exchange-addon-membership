@@ -14,7 +14,7 @@
             "reference": "6f706e7dd0d1cfa1a153dbd6de79e2db99fe0589",
             "shasum": ""
         },
-        "time": "2015-10-05 05:36:49",
+        "time": "2015-10-05T05:36:49+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -53,7 +53,7 @@
             "ironbound/cache": "^1.0.0",
             "php": ">=5.3.0"
         },
-        "time": "2015-10-14 02:12:10",
+        "time": "2015-10-14T02:12:10+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -94,7 +94,7 @@
         "suggest": {
             "mandrill/mandrill": "Allows for sending notifications via Mandrill"
         },
-        "time": "2015-10-05 05:58:41",
+        "time": "2015-10-05T05:58:41+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
