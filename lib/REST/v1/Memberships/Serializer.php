@@ -6,7 +6,7 @@
  * @license GPLv2
  */
 
-namespace iThemes\Exchange\Membership\REST\Memberships;
+namespace iThemes\Exchange\Membership\REST\v1\Memberships;
 
 /**
  * Class Serializer

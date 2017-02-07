@@ -6,12 +6,11 @@
  * @license GPLv2
  */
 
-use iThemes\Exchange\Membership\REST\Memberships\Membership;
-use iThemes\Exchange\Membership\REST\Memberships\ProrateHelper;
-use iThemes\Exchange\Membership\REST\Memberships\Serializer;
-use iThemes\Exchange\Membership\REST\Memberships\Downgrades;
-use iThemes\Exchange\Membership\REST\Memberships\Upgrades;
-use iThemes\Exchange\RecurringPayments\REST\Subscriptions\ProrateSerializer;
+use iThemes\Exchange\Membership\REST\v1\Memberships\Membership;
+use iThemes\Exchange\Membership\REST\v1\Memberships\Serializer;
+use iThemes\Exchange\Membership\REST\v1\Memberships\Downgrades;
+use iThemes\Exchange\Membership\REST\v1\Memberships\Upgrades;
+use iThemes\Exchange\RecurringPayments\REST\v1\Subscriptions\ProrateSerializer;
 
 add_action( 'it_exchange_register_rest_routes', function ( \iThemes\Exchange\REST\Manager $manager ) {
 
@@ -20,7 +19,7 @@ add_action( 'it_exchange_register_rest_routes', function ( \iThemes\Exchange\RES
 	$membership = new Membership( new Serializer(), $repository );
 	$manager->register_route( $membership );
 
-	if ( class_exists( '\iThemes\Exchange\RecurringPayments\REST\Subscriptions\ProrateSerializer' ) ) {
+	if ( class_exists( '\iThemes\Exchange\RecurringPayments\REST\v1\Subscriptions\ProrateSerializer' ) ) {
 
 		$serializer = new ProrateSerializer();
 		$requestor  = new ITE_Prorate_Credit_Requestor( new ITE_Daily_Price_Calculator() );

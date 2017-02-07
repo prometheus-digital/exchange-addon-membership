@@ -1,21 +1,20 @@
 <?php
 /**
- * Prorate Upgrades.
+ * Prorate Downgrades.
  *
  * @since   1.9.0
  * @license GPLv2
  */
 
-namespace iThemes\Exchange\Membership\REST\Memberships;
+namespace iThemes\Exchange\Membership\REST\v1\Memberships;
 
-use iThemes\Exchange\RecurringPayments\REST\Subscriptions\ProrateSerializer;
+use iThemes\Exchange\RecurringPayments\REST\v1\Subscriptions\ProrateSerializer;
 use iThemes\Exchange\REST\Getable;
 use iThemes\Exchange\REST\Postable;
 use iThemes\Exchange\REST\Request;
 use iThemes\Exchange\REST\Route\Base;
-use iThemes\Exchange\REST\Route\Cart\Item;
 
-class Upgrades extends Base implements Getable, Postable {
+class Downgrades extends Base implements Getable, Postable {
 
 	/** @var ProrateSerializer */
 	private $serializer;
@@ -38,7 +37,7 @@ class Upgrades extends Base implements Getable, Postable {
 	 * @inheritDoc
 	 */
 	public function handle_get( Request $request ) {
-		return $this->helper->details( $request, 'upgrade' );
+		return $this->helper->details( $request, 'downgrade' );
 	}
 
 	/**
@@ -52,7 +51,7 @@ class Upgrades extends Base implements Getable, Postable {
 	 * @inheritDoc
 	 */
 	public function handle_post( Request $request ) {
-		return $this->helper->accept( $request, 'upgrade' );
+		return $this->helper->accept( $request, 'downgrade' );
 	}
 
 	/**
@@ -70,7 +69,7 @@ class Upgrades extends Base implements Getable, Postable {
 	/**
 	 * @inheritDoc
 	 */
-	public function get_path() { return 'upgrades/'; }
+	public function get_path() { return 'downgrades/'; }
 
 	/**
 	 * @inheritDoc

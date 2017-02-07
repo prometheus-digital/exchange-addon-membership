@@ -447,10 +447,10 @@ function it_exchange_membership_addon_load_public_scripts() {
 
 	$context_filterer = new \iThemes\Exchange\REST\Helpers\ContextFilterer();
 
-	$membership_serializer   = new \iThemes\Exchange\Membership\REST\Memberships\Serializer();
-	$subscription_serializer = new \iThemes\Exchange\RecurringPayments\REST\Subscriptions\Serializer();
-	$transaction_serializer  = new \iThemes\Exchange\REST\Route\Transaction\Serializer();
-	$prorate_serializer      = new \iThemes\Exchange\RecurringPayments\REST\Subscriptions\ProrateSerializer();
+	$membership_serializer   = new \iThemes\Exchange\Membership\REST\v1\Memberships\Serializer();
+	$subscription_serializer = new \iThemes\Exchange\RecurringPayments\REST\v1\Subscriptions\Serializer();
+	$transaction_serializer  = new \iThemes\Exchange\REST\Route\v1\Transaction\Serializer();
+	$prorate_serializer      = new \iThemes\Exchange\RecurringPayments\REST\v1\Subscriptions\ProrateSerializer();
 	$prorate_schema          = $prorate_serializer->get_schema();
 
 	$requestor = new ITE_Prorate_Credit_Requestor( new ITE_Daily_Price_Calculator() );

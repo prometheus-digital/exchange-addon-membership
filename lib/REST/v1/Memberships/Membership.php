@@ -6,7 +6,7 @@
  * @license GPLv2
  */
 
-namespace iThemes\Exchange\Membership\REST\Memberships;
+namespace iThemes\Exchange\Membership\REST\v1\Memberships;
 
 use iThemes\Exchange\REST\Getable;
 use iThemes\Exchange\REST\Request;
@@ -15,7 +15,7 @@ use iThemes\Exchange\REST\Route;
 /**
  * Class Membership
  *
- * @package iThemes\Exchange\Membership\REST\Memberships
+ * @package iThemes\Exchange\Membership\REST\v1\Memberships
  */
 class Membership extends Route\Base implements Getable {
 
@@ -53,7 +53,7 @@ class Membership extends Route\Base implements Getable {
 			$response->add_link(
 				'beneficiary',
 				\iThemes\Exchange\REST\get_rest_url(
-					$this->get_manager()->get_first_route( 'iThemes\Exchange\REST\Route\Customer\Customer' ),
+					$this->get_manager()->get_first_route( 'iThemes\Exchange\REST\Route\v1\Customer\Customer' ),
 					array( 'customer_id' => $membership->get_user()->ID )
 				),
 				array( 'embeddable' => true )
@@ -64,7 +64,7 @@ class Membership extends Route\Base implements Getable {
 			$response->add_link(
 				'transaction',
 				\iThemes\Exchange\REST\get_rest_url(
-					$this->get_manager()->get_first_route( 'iThemes\Exchange\REST\Route\Transaction\Transaction' ),
+					$this->get_manager()->get_first_route( 'iThemes\Exchange\REST\Route\v1\Transaction\Transaction' ),
 					array( 'transaction_id' => $membership->get_transaction()->get_ID() )
 				),
 				array( 'embeddable' => true )
@@ -75,7 +75,7 @@ class Membership extends Route\Base implements Getable {
 			$response->add_link(
 				'subscription',
 				\iThemes\Exchange\REST\get_rest_url(
-					$this->get_manager()->get_first_route( 'iThemes\Exchange\RecurringPayments\REST\Subscriptions\Subscription' ),
+					$this->get_manager()->get_first_route( 'iThemes\Exchange\RecurringPayments\REST\v1\Subscriptions\Subscription' ),
 					array( 'subscription_id' => $membership->get_subscription()->get_ID() )
 				),
 				array( 'embeddable' => true )
