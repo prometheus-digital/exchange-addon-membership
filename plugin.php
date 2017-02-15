@@ -52,7 +52,7 @@ add_action( 'it_exchange_register_addons', 'it_exchange_register_membership_addo
 function it_exchange_membership_set_textdomain() {
 	load_plugin_textdomain( 'LION', false, dirname( plugin_basename( __FILE__  ) ) . '/lang/' );
 }
-add_action( 'plugins_loaded', 'it_exchange_membership_set_textdomain' );
+it_exchange_membership_set_textdomain();
 
 require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 require_once dirname( __FILE__ ) . '/umbrella-memberships/load.php';
