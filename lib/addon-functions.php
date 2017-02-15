@@ -689,3 +689,16 @@ function it_exchange_membership_addon_excerpt_dripped_template( array $failed = 
 
 	return ob_get_clean();
 }
+
+/**
+ * Get the content restriction priority.
+ *
+ * This defaults to 8, but is adjustable via a filter.
+ *
+ * @since 2.0.0
+ *
+ * @return int
+ */
+function it_exchange_memberships_get_restrict_content_priority() {
+    return apply_filters( 'it_exchange_memberships_restrict_content_priority', 8 );
+}

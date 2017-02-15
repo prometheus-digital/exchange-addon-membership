@@ -1091,7 +1091,7 @@ function it_exchange_membership_addon_content_filter( $content ) {
 	return $content;
 }
 
-add_filter( 'the_content', 'it_exchange_membership_addon_content_filter', 8 );
+add_filter( 'the_content', 'it_exchange_membership_addon_content_filter', it_exchange_memberships_get_restrict_content_priority() );
 
 /**
  * Checks if $post is restriction rules apply, if so, return Membership restricted templates
@@ -1117,7 +1117,7 @@ function it_exchange_membership_addon_excerpt_filter( $excerpt ) {
 	return $excerpt;
 }
 
-add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter', 8 );
+add_filter( 'the_excerpt', 'it_exchange_membership_addon_excerpt_filter', it_exchange_memberships_get_restrict_content_priority() );
 
 /**
  * Checks if $product is restriction rules apply, if so, return Membership restricted templates
