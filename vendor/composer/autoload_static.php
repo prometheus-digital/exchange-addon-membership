@@ -64,10 +64,10 @@ class ComposerStaticInit5aa020621c0c97d06a77e68f5218e50c
         'IronBound\\WP_Notifications\\Template\\Listener' => __DIR__ . '/..' . '/ironbound/wp-notifications/src/Template/Listener.php',
         'IronBound\\WP_Notifications\\Template\\Manager' => __DIR__ . '/..' . '/ironbound/wp-notifications/src/Template/Manager.php',
         'IronBound\\WP_Notifications\\Template\\Null_Listener' => __DIR__ . '/..' . '/ironbound/wp-notifications/src/Template/Null_Listener.php',
-        'iThemes\\Exchange\\Membership\\REST\\Memberships\\Downgrades' => __DIR__ . '/../..',
-        'iThemes\\Exchange\\Membership\\REST\\Memberships\\Membership' => __DIR__ . '/../..',
-        'iThemes\\Exchange\\Membership\\REST\\Memberships\\Serializer' => __DIR__ . '/../..',
-        'iThemes\\Exchange\\Membership\\REST\\Memberships\\Upgrades' => __DIR__ . '/../..',
+        'iThemes\\Exchange\\Membership\\REST\\v1\\Memberships\\Downgrades' => __DIR__ . '/../..' . '/lib/REST/v1/Memberships/Downgrades.php',
+        'iThemes\\Exchange\\Membership\\REST\\v1\\Memberships\\Membership' => __DIR__ . '/../..' . '/lib/REST/v1/Memberships/Membership.php',
+        'iThemes\\Exchange\\Membership\\REST\\v1\\Memberships\\Serializer' => __DIR__ . '/../..' . '/lib/REST/v1/Memberships/Serializer.php',
+        'iThemes\\Exchange\\Membership\\REST\\v1\\Memberships\\Upgrades' => __DIR__ . '/../..' . '/lib/REST/v1/Memberships/Upgrades.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

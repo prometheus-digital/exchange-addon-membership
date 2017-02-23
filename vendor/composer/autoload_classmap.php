@@ -36,8 +36,8 @@ return array(
     'IronBound\\WP_Notifications\\Template\\Listener' => $vendorDir . '/ironbound/wp-notifications/src/Template/Listener.php',
     'IronBound\\WP_Notifications\\Template\\Manager' => $vendorDir . '/ironbound/wp-notifications/src/Template/Manager.php',
     'IronBound\\WP_Notifications\\Template\\Null_Listener' => $vendorDir . '/ironbound/wp-notifications/src/Template/Null_Listener.php',
-    'iThemes\\Exchange\\Membership\\REST\\Memberships\\Downgrades' => $baseDir . '/lib/REST/Memberships/Downgrades.php',
-    'iThemes\\Exchange\\Membership\\REST\\Memberships\\Membership' => $baseDir . '/lib/REST/Memberships/Membership.php',
-    'iThemes\\Exchange\\Membership\\REST\\Memberships\\Serializer' => $baseDir . '/lib/REST/Memberships/Serializer.php',
-    'iThemes\\Exchange\\Membership\\REST\\Memberships\\Upgrades' => $baseDir . '/lib/REST/Memberships/Upgrades.php',
+    'iThemes\\Exchange\\Membership\\REST\\v1\\Memberships\\Downgrades' => $baseDir . '/lib/REST/v1/Memberships/Downgrades.php',
+    'iThemes\\Exchange\\Membership\\REST\\v1\\Memberships\\Membership' => $baseDir . '/lib/REST/v1/Memberships/Membership.php',
+    'iThemes\\Exchange\\Membership\\REST\\v1\\Memberships\\Serializer' => $baseDir . '/lib/REST/v1/Memberships/Serializer.php',
+    'iThemes\\Exchange\\Membership\\REST\\v1\\Memberships\\Upgrades' => $baseDir . '/lib/REST/v1/Memberships/Upgrades.php',
 );
