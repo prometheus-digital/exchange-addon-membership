@@ -379,7 +379,7 @@ function it_exchange_membership_addon_is_customer_member_of( $membership, $custo
 		} else {
 			return false;
 		}
-	}
+	}   
 
 	return ! empty( $member_access[ $membership_id ] );
 }
@@ -408,9 +408,20 @@ function it_exchange_is_customer_eligible_for_trial( IT_Exchange_Product $member
 
 	foreach ( $member_access as $prod_id => $txn_id ) {
 		if ( $prod_id === $membership_id || in_array( $prod_id, $children ) || in_array( $prod_id, $parents ) ) {
-			return false;
+
+			/**
+			 * Filter whether a customer is eligible for a trial.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param bool                      $eligible
+			 * @param IT_Exchange_Product       $membership
+			 * @param IT_Exchange_Customer|null $customer
+			 */
+			return apply_filters( 'it_exchange_is_customer_eligible_for_trial', false, $membership, $customer );
 		}
 	}
 
-	return true;
+	// This filter is documented in api/memberships.php
+	return apply_filters( 'it_exchange_is_customer_eligible_for_trial', true, $membership, $customer );
 }
