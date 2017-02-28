@@ -2,7 +2,7 @@
 /**
  * Contains tests for the membership product theme API.
  *
- * @since   1.19.11
+ * @since   2.0.0
  * @license GPLv2
  */
 

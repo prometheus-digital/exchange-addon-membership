@@ -379,7 +379,7 @@ function it_exchange_membership_addon_is_customer_member_of( $membership, $custo
 		} else {
 			return false;
 		}
-	}   
+	}
 
 	return ! empty( $member_access[ $membership_id ] );
 }

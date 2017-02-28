@@ -57,7 +57,7 @@ class IT_Exchange_Membership extends IT_Exchange_Product {
 	/**
 	 * Get the URL to the dashboard.
 	 * 
-	 * @since 1.19.11
+	 * @since 2.0.0
 	 * 
 	 * @return string
 	 */

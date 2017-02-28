@@ -56,7 +56,7 @@ class Emails {
 	/**
 	 * Register email notifications with Exchange.
 	 *
-	 * @since 1.19.11
+	 * @since 2.0.0
 	 *
 	 * @param \IT_Exchange_Email_Notifications $notifications
 	 */
@@ -116,7 +116,7 @@ class Emails {
 	/**
 	 * Register custom email tags.
 	 *
-	 * @since 1.19.11
+	 * @since 2.0.0
 	 *
 	 * @param \IT_Exchange_Email_Tag_Replacer $replacer
 	 */
@@ -305,7 +305,7 @@ class Emails {
 	/**
 	 * Get the default invitation email.
 	 *
-	 * @since 1.19.11
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */
@@ -328,7 +328,7 @@ TAG;
 	/**
 	 * Get the default new user invitation email.
 	 *
-	 * @since 1.19.11
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */
@@ -365,7 +365,7 @@ TAG;
 	/**
 	 * Get the default removed email.
 	 *
-	 * @since 1.19.11
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */
@@ -386,7 +386,7 @@ TAG;
 	/**
 	 * Get the default expired email.
 	 *
-	 * @since 1.19.11
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */

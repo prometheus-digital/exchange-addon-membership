@@ -2,7 +2,7 @@
 /**
  * Contains the class for managing emails.
  *
- * @since   1.9.11
+ * @since   2.0.0
  * @license GPLv2
  */
 
@@ -22,7 +22,7 @@ class IT_Exchange_Membership_Emails {
 	/**
 	 * Send a welcome email.
 	 *
-	 * @since 1.9.11
+	 * @since 2.0.0
 	 *
 	 * @param IT_Exchange_User_Membership $membership
 	 */
@@ -53,7 +53,7 @@ class IT_Exchange_Membership_Emails {
 	/**
 	 * Register emails.
 	 *
-	 * @since 1.9.11
+	 * @since 2.0.0
 	 *
 	 * @param IT_Exchange_Email_Notifications $notifications
 	 */
@@ -75,7 +75,7 @@ class IT_Exchange_Membership_Emails {
 	/**
 	 * Register email tags.
 	 *
-	 * @since 1.9.11
+	 * @since 2.0.0
 	 *
 	 * @param IT_Exchange_Email_Tag_Replacer $replacer
 	 */
@@ -127,7 +127,7 @@ class IT_Exchange_Membership_Emails {
 	/**
 	 * Replace the membership name tag.
 	 *
-	 * @since 1.9.11
+	 * @since 2.0.0
 	 *
 	 * @param array $context
 	 *
@@ -140,7 +140,7 @@ class IT_Exchange_Membership_Emails {
 	/**
 	 * Replace the membership dashboard tag.
 	 *
-	 * @since 1.9.11
+	 * @since 2.0.0
 	 *
 	 * @param array $context
 	 *
@@ -153,7 +153,7 @@ class IT_Exchange_Membership_Emails {
 	/**
 	 * Get the default welcome email contents.
 	 *
-	 * @since 1.9.11
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */
