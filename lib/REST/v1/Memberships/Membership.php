@@ -8,6 +8,7 @@
 
 namespace iThemes\Exchange\Membership\REST\v1\Memberships;
 
+use iThemes\Exchange\REST\Auth\AuthScope;
 use iThemes\Exchange\REST\Getable;
 use iThemes\Exchange\REST\Request;
 use iThemes\Exchange\REST\Route;
@@ -88,7 +89,7 @@ class Membership extends Route\Base implements Getable {
 	/**
 	 * @inheritDoc
 	 */
-	public function user_can_get( Request $request, \IT_Exchange_Customer $user = null ) {
+	public function user_can_get( Request $request, AuthScope $scope ) {
 
 		$membership = $this->repository->get_membership_by_id(
 			rawurldecode( $request->get_param( 'membership_id', 'URL' ) )
@@ -102,7 +103,7 @@ class Membership extends Route\Base implements Getable {
 			);
 		}
 
-		if ( ! $user || ! user_can( $user->wp_user, 'edit_user', $membership->get_user()->ID ) ) {
+		if ( ! $scope->can( 'edit_user', $membership->get_user()->ID ) ) {
 			return new \WP_Error(
 				'it_exchange_rest_invalid_context',
 				__( 'Sorry, you are not allowed to view that membership.', 'LION' ),
