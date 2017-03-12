@@ -473,7 +473,7 @@ function it_exchange_membership_addon_load_public_scripts() {
 
 	if ( $user_membership instanceof IT_Exchange_User_Membership_Transaction_Driver ) {
 	    $transaction = $context_filterer->filter(
-            $transaction_serializer->serialize( $user_membership->get_transaction(), it_exchange_get_current_customer() ),
+            $transaction_serializer->serialize( $user_membership->get_transaction() ),
             'view',
             $transaction_serializer->get_schema()
         );
@@ -1600,3 +1600,28 @@ function it_exchange_membership_addon_account_based_pages( $account_based_pages 
 }
 
 add_filter( 'it_exchange_account_based_pages', 'it_exchange_membership_addon_account_based_pages' );
+
+/**
+ * If a cart contains a membership product, don't allow it to be purchased by a guest.
+ *
+ * @since 2.0.0
+ *
+ * @param bool          $allowed
+ * @param ITE_Line_Item $item
+ *
+ * @return bool
+ */
+function it_exchange_memberships_forbid_cart_purchase_by_guest( $allowed, ITE_Line_Item $item ) {
+
+    if ( ! $allowed ) {
+        return $allowed;
+    }
+
+    if ( ! $item instanceof ITE_Cart_Product ) {
+        return $allowed;
+    }
+
+    return $item->get_product()->product_type !== 'membership-product-type';
+}
+
+add_filter( 'it_exchange_can_line_item_be_purchased_by_guest', 'it_exchange_memberships_forbid_cart_purchase_by_guest', 10, 2 );
