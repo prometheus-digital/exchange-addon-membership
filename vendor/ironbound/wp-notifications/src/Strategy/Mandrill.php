@@ -2,10 +2,10 @@
 /**
  * Send notifications using Mandrill.
  *
- * @author      iThemes
+ * @author      ExchangeWP
  * @since       1.0
  *
- * @copyright   Copyright (c) 2015, Iron Bound Designs, Inc.
+ * @copyright   Copyright (c) 2015, Iron Bound Designs, Inc, 2017 ExchangeWP.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License v2 or later
  */
 

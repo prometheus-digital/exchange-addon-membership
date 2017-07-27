@@ -127,7 +127,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 	 * @return void
 	 */
 	public function print_metabox( $post ) {
-		// Grab the iThemes Exchange Product object from the WP $post object
+		// Grab the ExchangeWP Product object from the WP $post object
 		$product = it_exchange_get_product( $post );
 
 		// Set the value of the feature for this product
@@ -200,7 +200,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Content_Access {
 			return;
 		}
 
-		// Abort if this product type doesn't support this feature 
+		// Abort if this product type doesn't support this feature
 		if ( ! it_exchange_product_type_supports_feature( $product_type, 'membership-content-access-rules' ) ) {
 			return;
 		}

@@ -12,7 +12,7 @@
 class IT_Exchange_Memberships_Repair_Member_Access_Upgrade implements IT_Exchange_UpgradeInterface {
 
 	/**
-	 * Get the iThemes Exchange version this upgrade applies to.
+	 * Get the ExchangeWP version this upgrade applies to.
 	 *
 	 * @since 1.33
 	 *

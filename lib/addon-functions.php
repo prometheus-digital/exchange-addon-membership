@@ -1,6 +1,6 @@
 <?php
 /**
- * iThemes Exchange Membership Add-on
+ * ExchangeWP Membership Add-on
  * @package IT_Exchange_Addon_Membership
  * @since   1.0.0
  */
@@ -110,7 +110,7 @@ function it_exchange_membership_addon_build_content_rules( $rules, $product_id )
 }
 
 /**
- * Builds the actual restriction rule HTML, used for non-iThemes Exchange post types
+ * Builds the actual restriction rule HTML, used for non-ExchangeWP post types
  *
  * @since 1.0.0
  *

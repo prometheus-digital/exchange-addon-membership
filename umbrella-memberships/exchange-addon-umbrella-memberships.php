@@ -78,20 +78,20 @@ class Plugin {
 	}
 
 	/**
-	 * Register this add-on with iThemes Exchange.
+	 * Register this add-on with ExchangeWP.
 	 *
 	 * @since 1.0
 	 */
 	public function register() {
 
-		$desc = __( 'Sell umbrella memberships with iThemes Exchange.', 'LION' );
+		$desc = __( 'Sell umbrella memberships with ExchangeWP.', 'LION' );
 		$desc .= ' ' . __( "Allows for one customer to pay and manage memberships for multiple users.", 'LION' );
 
 		$options = array(
 			'name'              => __( 'Umbrella Memberships', 'LION' ),
 			'description'       => $desc,
-			'author'            => 'iThemes',
-			'author_url'        => 'https://ithemes.com/exchange/membership',
+			'author'            => 'ExchangeWP',
+			'author_url'        => 'https://exchangewp.com/downloads/membership/',
 			'file'              => dirname( __FILE__ ) . '/init.php',
 			'icon'              => self::$url . 'assets/img/icon-50.png',
 			'category'          => 'other',

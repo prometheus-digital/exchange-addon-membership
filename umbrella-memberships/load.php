@@ -20,7 +20,7 @@ add_action( 'plugins_loaded', function () {
 				?>
 
 				<div class="notice notice-info">
-					<p><?php _e( 'Umbrella Memberships is now a part of the core iThemes Exchange Membership add-on. We\'ve deactivated the old add-on.', 'LION' ); ?></p>
+					<p><?php _e( 'Umbrella Memberships is now a part of the core ExchangeWP Membership add-on. We\'ve deactivated the old add-on.', 'LION' ); ?></p>
 				</div>
 
 				<?php

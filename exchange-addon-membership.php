@@ -1,13 +1,13 @@
 <?php
 /*
- * Plugin Name: iThemes Exchange - Membership Add-on
+ * Plugin Name: ExchangeWP - Membership Add-on
  * Version: 1.19.18
- * Description: Adds the membership management to iThemes Exchange
- * Plugin URI: http://ithemes.com/exchange/membership/
- * Author: iThemes
- * Author URI: http://ithemes.com
- * iThemes Package: exchange-addon-membership
- 
+ * Description: Adds the membership management to ExchangeWP
+ * Plugin URI: https://exchangewp.com/downloads/membership/
+ * Author: ExchangeWP
+ * Author URI: https://exchangewp.com
+ * ExchangeWP Package: exchange-addon-membership
+
  * Installation:
  * 1. Download and unzip the latest release zip file.
  * 2. If you use the WordPress plugin uploader to install this plugin skip to step 4.
@@ -33,8 +33,8 @@ function it_exchange_register_membership_addon() {
 	$options = array(
 		'name'              => __( 'Membership', 'LION' ),
 		'description'       => __( 'Add Memberships levels to your customers.', 'LION' ),
-		'author'            => 'iThemes',
-		'author_url'        => 'http://ithemes.com/exchange/membership/',
+		'author'            => 'ExchangeWP',
+		'author_url'        => 'https://exchangewp.com/downloads/membership/',
 		'icon'              => ITUtility::get_url_from_file( dirname( __FILE__ ) . '/lib/images/membership50px.png' ),
 		'wizard-icon'       => ITUtility::get_url_from_file( dirname( __FILE__ ) . '/lib/images/wizard-membership.png' ),
 		'file'              => dirname( __FILE__ ) . '/init.php',
@@ -75,11 +75,11 @@ add_action( 'plugins_loaded', 'it_exchange_membership_set_textdomain' );
  * @param object $updater ithemes updater object
  * @return void
 */
-function ithemes_exchange_addon_membership_updater_register( $updater ) { 
+function ithemes_exchange_addon_membership_updater_register( $updater ) {
 	    $updater->register( 'exchange-addon-membership', __FILE__ );
 }
 add_action( 'ithemes_updater_register', 'ithemes_exchange_addon_membership_updater_register' );
-require( dirname( __FILE__ ) . '/lib/updater/load.php' );
+// require( dirname( __FILE__ ) . '/lib/updater/load.php' );
 
 /**
  * When addon is activated, copy bundled-addons folders to plugins directory

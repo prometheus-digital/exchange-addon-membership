@@ -1,6 +1,6 @@
 <?php
 /**
- * iThemes Exchange Membership Add-on
+ * ExchangeWP Membership Add-on
  * @package IT_Exchange_Addon_Membership
  * @since   1.0.0
  */
@@ -50,7 +50,7 @@ include( 'lib/required-hooks.php' );
 include( 'lib/addon-ajax-hooks.php' );
 
 /**
- * The following file adds a new metabox are to non-iThemes Exchange posttypes
+ * The following file adds a new metabox are to non-ExchangeWP posttypes
  */
 include( 'lib/addon-metaboxes.php' );
 

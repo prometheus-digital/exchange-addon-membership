@@ -1,6 +1,6 @@
 <?php
 /**
- * iThemes Exchange Membership Add-on
+ * ExchangeWP Membership Add-on
  * @package IT_Exchange_Addon_Membership
  * @since   1.0.0
  */
@@ -21,7 +21,7 @@ function it_exchange_membership_addon_show_permlink_update_nag() {
 		} else {
 			?>
 			<div id="it-exchange-add-on-permalink-nag" class="it-exchange-nag">
-				<?php printf( __( 'The latest version of iThemes Exchange Membership requires you to reset your WordPress permalinks. %sClick here to reset your permalinks%s', 'LION' ), '<a href="' . add_query_arg( 'flush-rewrite-rules', 1 ) . '">', '</a>' ); ?>
+				<?php printf( __( 'The latest version of ExchangeWP Membership requires you to reset your WordPress permalinks. %sClick here to reset your permalinks%s', 'LION' ), '<a href="' . add_query_arg( 'flush-rewrite-rules', 1 ) . '">', '</a>' ); ?>
 			</div>
 			<script type="text/javascript">
 				jQuery( document ).ready( function () {
@@ -91,7 +91,7 @@ function it_exchange_membership_addon_show_version_nag() {
 	if ( version_compare( $GLOBALS['it_exchange']['version'], '1.35.2', '<' ) ) {
 		?>
 		<div id="it-exchange-add-on-min-version-nag" class="it-exchange-nag">
-			<?php printf( __( 'The Membership add-on requires iThemes Exchange version 1.35.2 or greater. %sPlease upgrade Exchange%s.', 'LION' ), '<a href="' . admin_url( 'update-core.php' ) . '">', '</a>' ); ?>
+			<?php printf( __( 'The Membership add-on requires ExchangeWP version 1.35.2 or greater. %sPlease upgrade Exchange%s.', 'LION' ), '<a href="' . admin_url( 'update-core.php' ) . '">', '</a>' ); ?>
 		</div>
 		<script type="text/javascript">
 			jQuery( document ).ready( function () {
@@ -166,7 +166,7 @@ add_action( 'admin_notices', 'it_exchange_membership_addon_show_wp_version_nag' 
 function it_exchange_membership_addon_admin_menu() {
 
 	$cap  = it_exchange_get_admin_menu_capability( 'members-table', 'activate_plugins' );
-	$hook = add_submenu_page( 'users.php', 'iThemes Exchange ' . __( 'Members', 'LION' ), __( 'Members', 'LION' ), $cap, 'it-exchange-members-table', 'it_exchange_membership_addon_members_table' );
+	$hook = add_submenu_page( 'users.php', 'ExchangeWP ' . __( 'Members', 'LION' ), __( 'Members', 'LION' ), $cap, 'it-exchange-members-table', 'it_exchange_membership_addon_members_table' );
 	add_action( "load-$hook", 'it_exchange_membership_addon_members_table_add_screen_option' );
 }
 
@@ -220,7 +220,7 @@ function it_exchange_membership_addon_members_table() {
 
 	$wp_list_table = new IT_Exchange_Membership_List_Table();
 	$pagenum       = $wp_list_table->get_pagenum();
-	$title         = __( 'iThemes Exchange Members' );
+	$title         = __( 'ExchangeWP Members' );
 
 	$wp_list_table->prepare_items();
 	$total_pages = $wp_list_table->get_pagination_arg( 'total_pages' );
@@ -259,7 +259,7 @@ function it_exchange_membership_addon_members_table() {
 }
 
 /**
- * Adds actions to the plugins page for the iThemes Exchange Membership plugin
+ * Adds actions to the plugins page for the ExchangeWP Membership plugin
  *
  * @since 1.0.0
  *
@@ -277,7 +277,7 @@ function it_exchange_membership_plugin_row_actions( $actions ) {
 add_filter( 'plugin_action_links_exchange-addon-membership/exchange-addon-membership.php', 'it_exchange_membership_plugin_row_actions', 10 );
 
 /**
- * Adds digital downloads to the iThemes Exchange Membership plugin
+ * Adds digital downloads to the ExchangeWP Membership plugin
  *
  * @since 1.0.0
  *
@@ -578,7 +578,7 @@ add_action( 'it_exchange_after_print_extended_description_metabox', 'it_exchange
  *
  * @since 1.0.0
  *
- * @param int $transaction_id iThemes Exchange Transaction ID
+ * @param int $transaction_id ExchangeWP Transaction ID
  *
  * @return void
  */
@@ -628,7 +628,7 @@ add_action( 'it_exchange_add_transaction_success', 'it_exchange_membership_addon
  *
  * @since 1.0.0
  *
- * @param int $transaction_id iThemes Exchange Child Transaction ID
+ * @param int $transaction_id ExchangeWP Child Transaction ID
  *
  * @return void
  */
@@ -877,9 +877,9 @@ add_action( 'before_delete_post', 'it_exchange_before_delete_membership_product'
 
 /**
  * Whenever protected content is deleted, delete all its associated protection rules.
- * 
+ *
  * @since 1.19.14
- * 
+ *
  * @param int $post_id
  */
 function it_exchange_delete_rules_when_protected_content_deleted( $post_id ) {
@@ -1016,11 +1016,11 @@ function it_exchange_membership_addon_content_confirmation_after_product_attrubu
 add_filter( 'it_exchange_content_confirmation_after_product_attibutes', 'it_exchange_membership_addon_content_confirmation_after_product_attrubutes' );
 
 /**
- * Adds Membership Template Path to iThemes Exchange Template paths
+ * Adds Membership Template Path to ExchangeWP Template paths
  *
  * @since 1.0.0
  *
- * @param array $possible_template_paths iThemes Exchange existing Template paths array
+ * @param array $possible_template_paths ExchangeWP existing Template paths array
  * @param array $template_names
  *
  * @return array
@@ -1082,7 +1082,7 @@ function it_exchange_memnbership_addon_get_content_product_product_info_loop_ele
 add_filter( 'it_exchange_get_content_product_product_info_loop_elements', 'it_exchange_memnbership_addon_get_content_product_product_info_loop_elements' );
 
 /**
- * Registers the membership frontend dashboard page in iThemes Exchange
+ * Registers the membership frontend dashboard page in ExchangeWP
  *
  * @since 1.0.0
  *
@@ -1219,7 +1219,7 @@ function it_exchange_get_membership_page_urls( $page ) {
 }
 
 /**
- * Adds memberships to iThemes Exchange's pages API for:
+ * Adds memberships to ExchangeWP's pages API for:
  *  protected pages
  *  profile pages
  *  account based pages
@@ -1264,7 +1264,7 @@ function it_exchange_membership_addon_redirect_for_protected_pages_to_login_when
 add_filter( 'it_exchange_redirect_for-protected-pages-to-registration-when-not-logged-in', 'it_exchange_membership_addon_redirect_for_protected_pages_to_login_when_not_logged_in', 10, 3 );
 
 /**
- * Adds memberships URLs to customer's menus in the iThemes Exchange account pages
+ * Adds memberships URLs to customer's menus in the ExchangeWP account pages
  *
  * @since 1.0.0
  *
@@ -1315,12 +1315,12 @@ function it_exchange_membership_addon_append_to_customer_menu_loop( $nav = '' ) 
 add_filter( 'it_exchange_after_customer_menu_loop', 'it_exchange_membership_addon_append_to_customer_menu_loop', 10, 2 );
 
 /**
- * Adds memberships URLs to customer's menus in the iThemes Exchange account pages
+ * Adds memberships URLs to customer's menus in the ExchangeWP account pages
  *
  * @since 1.0.0
  *
  * @param string $product_name Product Name
- * @param object $product_obj  iThemes Exchange Product Object
+ * @param object $product_obj  ExchangeWP Product Object
  *
  * @return string $product_name Product Name
  */
@@ -1355,7 +1355,7 @@ add_filter( 'it_exchange_email_notification_order_table_product_name', 'it_excha
  * @since 1.0.0
  *
  * @param string $db_base_price default Base Price
- * @param array  $product       iThemes Exchange Product
+ * @param array  $product       ExchangeWP Product
  * @param bool   $format        Whether or not the price should be formatted
  *
  * @return string $db_base_price modified, if upgrade price has been set for product

@@ -17,7 +17,7 @@ class IT_Exchange_Memberships_Fix_Rule_Exemptions_Upgrade implements IT_Exchange
 	private $factory;
 
 	/**
-	 * Get the iThemes Exchange version this upgrade applies to.
+	 * Get the ExchangeWP version this upgrade applies to.
 	 *
 	 * @since 1.33
 	 *

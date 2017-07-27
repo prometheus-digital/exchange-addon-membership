@@ -125,7 +125,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 	 * @param WP_Post $post
 	 */
 	function print_metabox( $post ) {
-		// Grab the iThemes Exchange Product object from the WP $post object
+		// Grab the ExchangeWP Product object from the WP $post object
 		$product  = it_exchange_get_product( $post );
 		$defaults = it_exchange_get_option( 'addon_membership' );
 
@@ -275,7 +275,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Information {
 			return;
 		}
 
-		// Abort if this product type doesn't support this feature 
+		// Abort if this product type doesn't support this feature
 		if ( ! it_exchange_product_type_supports_feature( $product_type, 'membership-information' ) ) {
 			return;
 		}
