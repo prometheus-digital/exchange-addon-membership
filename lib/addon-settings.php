@@ -39,6 +39,7 @@ function it_exchange_membership_addon_default_settings( $values ) {
 		'membership-prerequisites-label'     => __( 'Prerequisites', 'LION' ),
 		'membership-intended-audience-label' => __( 'Intended Audience', 'LION' ),
 		'membership-objectives-label'        => __( 'Objectives', 'LION' ),
+		'membership_license'								 => '',
 		'memberships-group-toggle'           => true,
 		'memberships-dashboard-view'         => 'grid',
 
@@ -191,6 +192,29 @@ class IT_Exchange_Membership_Add_On {
 			<h3><?php _e( 'Membership', 'LION' ); ?></h3>
 		<?php endif; ?>
 		<div class="it-exchange-addon-settings it-exchange-membership-addon-settings">
+			<h4>License Key</h4>
+						<?php
+						   $exchangewp_membership_options = get_option( 'it-storage-exchange_addon_membership' );
+						   $license = $exchangewp_membership_options['membership_license'];
+						   // var_dump($license);
+						   $exstatus = trim( get_option( 'exchange_membership_license_status' ) );
+						   // var_dump($exstatus);
+						?>
+						<p>
+						 <label class="description" for="exchange_membership_license_key"><?php _e('Enter your license key'); ?></label>
+						 <!-- <input id="membership_license" name="it-exchange-add-on-membership-membership_license" type="text" value="<?php #esc_attr_e( $license ); ?>" /> -->
+						 <?php $form->add_text_box( 'membership_license' ); ?>
+						 <span>
+						   <?php if( $exstatus !== false && $exstatus == 'valid' ) { ?>
+									<span style="color:green;"><?php _e('active'); ?></span>
+									<?php wp_nonce_field( 'exchange_membership_nonce', 'exchange_membership_nonce' ); ?>
+									<input type="submit" class="button-secondary" name="exchange_membership_license_deactivate" value="<?php _e('Deactivate License'); ?>"/>
+								<?php } else {
+									wp_nonce_field( 'exchange_membership_nonce', 'exchange_membership_nonce' ); ?>
+									<input type="submit" class="button-secondary" name="exchange_membership_license_activate" value="<?php _e('Activate License'); ?>"/>
+								<?php } ?>
+						 </span>
+						</p>
 			<p>
 				<label for="membership-restricted-show-excerpt"><?php _e( 'Show content excerpt?', 'LION' ); ?>
 					<span class="tip" title="<?php _e( 'Use this to display the post\'s excerpt before the content message.', 'LION' ); ?>">i</span></label>
@@ -381,6 +405,157 @@ class IT_Exchange_Membership_Add_On {
 			$this->error_message = $errors;
 		} else {
 			$this->status_message = __( 'Settings not saved.', 'LION' );
+		}
+
+		if( isset( $_POST['exchange_membership_license_activate'] ) ) {
+
+			// run a quick security check
+		 	if( ! check_admin_referer( 'exchange_membership_nonce', 'exchange_membership_nonce' ) )
+				return; // get out if we didn't click the Activate button
+
+			// retrieve the license from the database
+			// $license = trim( get_option( 'exchange_membership_license_key' ) );
+	   $exchangewp_membership_options = get_option( 'it-storage-exchange_addon_membership' );
+	   $license = trim( $exchangewp_membership_options['membership_license'] );
+
+			// data to send in our API request
+			$api_params = array(
+				'edd_action' => 'activate_license',
+				'license'    => $license,
+				'item_name'  => urlencode( 'membership' ), // the name of our product in EDD
+				'url'        => home_url()
+			);
+
+			// Call the custom API.
+			$response = wp_remote_post( 'https://exchangewp.com', array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
+
+			// make sure the response came back okay
+			if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+
+				if ( is_wp_error( $response ) ) {
+					$message = $response->get_error_message();
+				} else {
+					$message = __( 'An error occurred, please try again.' );
+				}
+
+			} else {
+
+				$license_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+				if ( false === $license_data->success ) {
+
+					switch( $license_data->error ) {
+
+						case 'expired' :
+
+							$message = sprintf(
+								__( 'Your license key expired on %s.' ),
+								date_i18n( get_option( 'date_format' ), strtotime( $license_data->expires, current_time( 'timestamp' ) ) )
+							);
+							break;
+
+						case 'revoked' :
+
+							$message = __( 'Your license key has been disabled.' );
+							break;
+
+						case 'missing' :
+
+							$message = __( 'Invalid license.' );
+							break;
+
+						case 'invalid' :
+						case 'site_inactive' :
+
+							$message = __( 'Your license is not active for this URL.' );
+							break;
+
+						case 'item_name_mismatch' :
+
+							$message = sprintf( __( 'This appears to be an invalid license key for %s.' ), 'membership' );
+							break;
+
+						case 'no_activations_left':
+
+							$message = __( 'Your license key has reached its activation limit.' );
+							break;
+
+						default :
+
+							$message = __( 'An error occurred, please try again.' );
+							break;
+					}
+
+				}
+
+			}
+
+			// Check if anything passed on a message constituting a failure
+			if ( ! empty( $message ) ) {
+				$base_url = admin_url( 'admin.php?page=' . 'membership-license' );
+				$redirect = add_query_arg( array( 'sl_activation' => 'false', 'message' => urlencode( $message ) ), $base_url );
+
+				// wp_redirect( 'admin.php?page=it-exchange-addons&add-on-settings=membership-product-type' );
+				return;
+			}
+
+			//$license_data->license will be either "valid" or "invalid"
+			update_option( 'exchange_membership_license_status', $license_data->license );
+			// wp_redirect( 'admin.php?page=it-exchange-addons&add-on-settings=membership-product-type' );
+			return;
+		}
+
+	 // deactivate here
+	 // listen for our activate button to be clicked
+		if( isset( $_POST['exchange_membership_license_deactivate'] ) ) {
+
+			// run a quick security check
+		 	if( ! check_admin_referer( 'exchange_membership_nonce', 'exchange_membership_nonce' ) )
+				return; // get out if we didn't click the Activate button
+
+			// retrieve the license from the database
+			// $license = trim( get_option( 'exchange_membership_license_key' ) );
+
+	   $exchangewp_membership_options = get_option( 'it-storage-exchange_addon_membership' );
+	   $license = $exchangewp_membership_options['membership_license'];
+
+
+			// data to send in our API request
+			$api_params = array(
+				'edd_action' => 'deactivate_license',
+				'license'    => $license,
+				'item_name'  => urlencode( 'membership' ), // the name of our product in EDD
+				'url'        => home_url()
+			);
+			// Call the custom API.
+			$response = wp_remote_post( 'https://exchangewp.com', array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
+
+			// make sure the response came back okay
+			if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+
+				if ( is_wp_error( $response ) ) {
+					$message = $response->get_error_message();
+				} else {
+					$message = __( 'An error occurred, please try again.' );
+				}
+
+				// $base_url = admin_url( 'admin.php?page=' . 'membership-license' );
+				// $redirect = add_query_arg( array( 'sl_activation' => 'false', 'message' => urlencode( $message ) ), $base_url );
+
+				// wp_redirect( 'admin.php?page=it-exchange-addons&add-on-settings=membership-product-type' );
+				return;
+			}
+
+			// decode the license data
+			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
+			// $license_data->license will be either "deactivated" or "failed"
+			if( $license_data->license == 'deactivated' ) {
+				delete_option( 'exchange_membership_license_status' );
+			}
+
+			// wp_redirect( admin_url( 'admin.php?page=it-exchange-addons&add-on-settings=membership-product-type' ) );
+			return;
+
 		}
 	}
 
