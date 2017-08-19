@@ -2,9 +2,9 @@
 /**
  * API for making complex queries.
  *
- * @author      iThemes
+ * @author      ExchangeWP
  * @since       1.0
- * @copyright   2015 (c) Iron Bound Designs, 2016 iThemes.
+ * @copyright   2015 (c) Iron Bound Designs, 2016 iThemes, 2017 ExchangeWP.
  * @license     GPLv2
  */
 

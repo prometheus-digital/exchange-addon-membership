@@ -59,9 +59,9 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	 * @return void
 	*/
 	function init_feature_metaboxes() {
-		
+
 		global $post;
-		
+
 		if ( isset( $_REQUEST['post_type'] ) ) {
 			$post_type = $_REQUEST['post_type'];
 		} else {
@@ -78,23 +78,23 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 			if ( isset( $post ) && !empty( $post ) )
 				$post_type = $post->post_type;
 		}
-			
+
 		if ( !empty( $_REQUEST['it-exchange-product-type'] ) )
 			$product_type = $_REQUEST['it-exchange-product-type'];
 		else
 			$product_type = it_exchange_get_product_type( $post );
-		
+
 		if ( !empty( $post_type ) && 'it_exchange_prod' === $post_type ) {
 			if ( !empty( $product_type ) &&  it_exchange_product_type_supports_feature( $product_type, 'membership-welcome-message' ) )
 				add_action( 'it_exchange_product_metabox_callback_' . $product_type, array( $this, 'register_metabox' ), 1 ); //we want this to appear first in Membership product types
 		}
-		
+
 	}
 
 	/**
 	 * Registers the feature metabox for a specific product type
 	 *
-	 * Hooked to it_exchange_product_metabox_callback_[product-type] where product type supports the feature 
+	 * Hooked to it_exchange_product_metabox_callback_[product-type] where product type supports the feature
 	 *
 	 * @since 1.0.0
 	 * @return void
@@ -110,19 +110,19 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	 * @return void
 	*/
 	function print_metabox( $post ) {
-		// Grab the iThemes Exchange Product object from the WP $post object
+		// Grab the ExchangeWP Product object from the WP $post object
 		$product = it_exchange_get_product( $post );
 
 		// Set the value of the feature for this product
 		$product_feature_value = it_exchange_get_product_feature( $product->ID, 'membership-welcome-message' );
-		
+
 		$description = __( "This message will appear above the list of protected membership content in your user's account. Use it to describe this membership, let them know what to read first or do next.", 'LION' );
 		$description = apply_filters( 'it_exchange_membership_addon_product_welcome-message_metabox_description', $description );
 
 		if ( $description ) {
 			echo '<p class="intro-description">' . $description . '</p>';
 		}
-	
+
         echo wp_editor( $product_feature_value, 'welcome-message-template', array( 'textarea_name' => 'it-exchange-product-membership-welcome-message', 'textarea_rows' => 10, 'textarea_cols' => 30, 'editor_class' => 'large-text' ) );
 	}
 
@@ -144,7 +144,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 		if ( ! $product_id )
 			return;
 
-		// Abort if this product type doesn't support this feature 
+		// Abort if this product type doesn't support this feature
 		if ( ! it_exchange_product_type_supports_feature( $product_type, 'membership-welcome-message' ) || empty( $_POST['it-exchange-product-membership-welcome-message']  ))
 			return;
 
@@ -160,7 +160,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	 * @since 1.0.0
 	 *
 	 * @param integer $product_id the product id
-	 * @param mixed $new_value the new value 
+	 * @param mixed $new_value the new value
 	 * @return bolean
 	*/
 	function save_feature( $product_id, $new_value ) {
@@ -206,7 +206,7 @@ class IT_Exchange_Addon_Membership_Product_Feature_Membership_Welcome {
 	/**
 	 * Does the product support this feature?
 	 *
-	 * This is different than if it has the feature, a product can 
+	 * This is different than if it has the feature, a product can
 	 * support a feature but might not have the feature set.
 	 *
 	 * @since 1.0.0

@@ -1,6 +1,6 @@
 <?php
 /**
- * iThemes Exchange Membership Add-on
+ * ExchangeWP Membership Add-on
  * @package IT_Exchange_Addon_Membership
  * @since   1.0.0
  */

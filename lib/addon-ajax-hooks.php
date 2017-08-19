@@ -1,6 +1,6 @@
 <?php
 /**
- * iThemes Exchange Membership Add-on
+ * ExchangeWP Membership Add-on
  * @package IT_Exchange_Addon_Membership
  * @since   1.0.0
  */
@@ -615,4 +615,3 @@ function it_exchange_membership_addon_ajax_add_membership_parent() {
 }
 
 add_action( 'wp_ajax_it-exchange-membership-addon-add-membership-parent', 'it_exchange_membership_addon_ajax_add_membership_parent' );
-

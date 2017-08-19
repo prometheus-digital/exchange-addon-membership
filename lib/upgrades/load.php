@@ -10,7 +10,7 @@ require_once dirname( __FILE__ ) . '/repair-member-access.php';
 require_once dirname( __FILE__ ) . '/rule-exemptions.php';
 
 /**
- * Register our upgrade routines against the iThemes Exchange upgrader.
+ * Register our upgrade routines against the ExchangeWP upgrader.
  *
  * @since 1.18
  *
