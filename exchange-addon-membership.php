@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: ExchangeWP - Membership Add-on
- * Version: 0.0.1
+ * Version: 1.19.20
  * Description: Adds the membership management to ExchangeWP
  * Plugin URI: https://exchangewp.com/downloads/membership/
  * Author: ExchangeWP
@@ -17,7 +17,7 @@
 */
 
 define( 'ITE_MEMBERSHIP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
-define( 'ITE_MEMBERSHIP_PLUGIN_VERSION', '1.19.18' );
+define( 'ITE_MEMBERSHIP_PLUGIN_VERSION', '1.19.20' );
 
 /**
  * This registers our plugin as a membership addon
@@ -117,9 +117,9 @@ function exchange_membership_plugin_updater() {
 		$license = $license_key['exchange_license'];
 
 		$edd_updater = new EDD_SL_Plugin_Updater( 'https://exchangewp.com', __FILE__, array(
-				'version' 		=> '0.0.1', 				// current version number
-				'license' 		=> $license, 		// license key (used get_option above to retrieve from DB)
-				'item_name' 	=> 'membership', 	  // name of this plugin
+				'version' 		=> '1.19.20', 				// current version number
+				'license' 		=> $license, 				// license key (used get_option above to retrieve from DB)
+				'item_id'		 	=> 366,					 	  // name of this plugin
 				'author' 	  	=> 'ExchangeWP',    // author of this plugin
 				'url'       	=> home_url(),
 				'wp_override' => true,
